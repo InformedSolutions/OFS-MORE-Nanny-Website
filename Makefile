@@ -1,4 +1,4 @@
-PROJECT_SETTINGS=django_govuk_app.settings.dev
+PROJECT_SETTINGS=nanny.settings.dev
 
 install:
 	pip install -r requirements.txt

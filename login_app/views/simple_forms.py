@@ -1,5 +1,5 @@
 from .base import render_form
-from template.forms.forms import SimpleForm, LongForm, FieldsetForm
+from login_app.forms.forms import SimpleForm, LongForm, FieldsetForm
 
 
 def simple_form(request):

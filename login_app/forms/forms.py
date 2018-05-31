@@ -5,6 +5,7 @@ from govuk_forms.forms import GOVUKForm
 from govuk_forms.widgets import InlineCheckboxSelectMultiple, InlineRadioSelect, \
     SeparatedCheckboxSelectMultiple, SeparatedRadioSelect
 
+
 options = (('a', 'Alpha'), ('b', 'Beta'))
 separated_options = (('a', 'Alpha'), ('b', 'Beta'), ('c', 'Gamma'), ('d', 'Delta'), ('e', 'Epsilon'))
 grouped_options = (
