@@ -1,0 +1,6 @@
+django==2.0.5
+django-debug-toolbar==1.9.1
+django-extensions==2.0.7
+django-govuk-template==0.7
+django-govuk-forms==0.6
+unittest-xml-reporting==2.2.0

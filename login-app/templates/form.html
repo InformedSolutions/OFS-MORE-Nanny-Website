@@ -1,0 +1,18 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}GOV.UK Django Template{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+<br>
+<form method="post">
+    <div>
+        {{ form }}
+        {% csrf_token %}
+        {{ form.submit_button }}
+    </div>
+</form>
+
+
+{% endblock %}
