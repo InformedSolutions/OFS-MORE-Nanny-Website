@@ -14,8 +14,8 @@ class NewUserSignInFormView(FormView):
     success_url = 'Check-Email'
 
     def form_valid(self, request):
-        #TODO - Insert calls to Identity-Gateway API for creation of new application.
-        #TODO - Add calls to Notify-Gateway API to send email to appplicant, once above implemented.
+        # TODO - Insert calls to Identity-Gateway API for creation of new application.
+        # TODO - Add calls to Notify-Gateway API to send email to appplicant, once above implemented.
 
         # return HttpResponseRedirect(self.get_success_url())
         return HttpResponseRedirect(reverse(self.success_url))
