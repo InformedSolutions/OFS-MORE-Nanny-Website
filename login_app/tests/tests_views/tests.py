@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.urls import resolve, reverse
 
 from login_app import views
+from login_app import forms
 
 
 class LoginTests(TestCase):
@@ -31,6 +32,7 @@ class LoginTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(found.func.view_class, views.AccountSelectionFormView)
+        # self.assertFormError(response, forms.AcccountSelectionForm, field=account_selection)
 
     def test_can_select_new_application(self):
         """
@@ -38,7 +40,6 @@ class LoginTests(TestCase):
         page.
         """
         response = self.client.post(reverse('Account-Selection'), {'account_selection': 'new'})
-        # found = resolve(response.request.get('url'))
         found = resolve(response.url)
 
         self.assertEqual(response.status_code, 302)
@@ -75,10 +76,11 @@ class LoginTests(TestCase):
 
         for email in test_invalid_emails:
             response = self.client.post(reverse('New-User-Sign-In'), {'email_address': email})
-            found = resolve(response.url)
+            found = resolve(response.request.get('PATH_INFO'))
 
             self.assertEqual(response.status_code, 200)
             self.assertEqual(found.func.view_class, views.NewUserSignInFormView)
+            # self.assertFormError(response, forms.ContactEmailForm, field=ContactEmailForm.email_address)
 
     def test_valid_email_address_creates_account_and_redirects(self):
         """
@@ -86,9 +88,20 @@ class LoginTests(TestCase):
         redirects to the appropriate page.
         """
         response = self.client.post(reverse('New-User-Sign-In'), {'email_address': 'eva@walle.com'})
-        found = resolve(response.request.get('PATH_INFO'))
+        found = resolve(response.url)
 
         self.assertEqual(response.status_code, 302)
-        # self.assertEqual(found.func.view_class, views.CheckEmailView)
+        self.assertEqual(found.func.view_class, views.CheckEmailView)
 
-        #TODO - Assert response codes from Identity API for queries before and after POST request with valid email.
+        # TODO - Assert response codes from Identity API for queries before and after POST request with valid email.
+
+    def test_check_email_page_can_be_rendered(self):
+        """
+        Test that the check email page can be rendered and that it contains a link to the 'Resend-Email' page.
+        """
+        response = self.client.get(reverse('Check-Email'))
+        found = resolve(response.request.get('PATH_INFO'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(found.func.view_class, views.CheckEmailView)
+        self.assertContains(response, '<a href="{}">resend the email</a>'.format(reverse('Resend-Email')), html=True)
