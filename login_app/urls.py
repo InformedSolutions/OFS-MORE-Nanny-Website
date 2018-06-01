@@ -15,6 +15,7 @@ urlpatterns = [
     url(r'new-application/$', views.NewUserSignInFormView.as_view(), name='New-User-Sign-In'),
     url(r'new-application/check-email', views.CheckEmailView.as_view(), name='Check-Email'),
     url(r'new-application/email-resent', views.ServiceUnavailableView.as_view(), name='Resend-Email'),
+    url(r'sign-in/', views.ExistingUserSignIn.as_view(), name='Existing-User-Sign-In')
 ]
 
 # Django toolbar settings for development environments
