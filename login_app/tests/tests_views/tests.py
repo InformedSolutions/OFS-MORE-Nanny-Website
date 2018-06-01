@@ -147,3 +147,14 @@ class LoginTests(TestCase):
         self.assertEqual(found.func.view_class, views.CheckEmailView)
 
         # TODO - Assert response codes from Identity API for queries before and after POST request with valid email.
+
+    def test_resend_email_page_can_be_rendered(self):
+        """
+        Test that the 'Resend-Email' page can be rendered and that it contains a link to the 'Help-And-Contacts' page.
+        """
+        response = self.client.post(reverse('Existing-User-Sign-In'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '<a href="{}">contact Ofsted</a>'.format(reverse('Help-And-Contacts')), html=True)
+
+        # TODO - Assert response codes from Identity API before and after choosing to resend email validation link.
