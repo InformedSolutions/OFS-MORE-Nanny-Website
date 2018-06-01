@@ -1,0 +1,21 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Sign in or start a new application{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+
+{% include "back-button.html" %}
+
+{{ form.error_summary }}
+
+<h1 class="form-title heading-large">Sign in or start a new application</h1>
+
+<form method="post" novalidate>
+    {{ form.as_div }}
+    {% csrf_token %}
+    <input type="submit" class="button" value="Continue" alt='Continue'>
+</form>
+
+{% endblock %}
