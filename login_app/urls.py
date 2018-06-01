@@ -12,6 +12,7 @@ urlpatterns = [
     # url(r'^revealing_form/', views.revealing_form, name='revealing_form')
     url(r'service-unavailable/', views.ServiceUnavailableView.as_view(), name='Service-Unavailable'),
     url(r'sign-in/new-application', views.AccountSelectionFormView.as_view(), name='Account-Selection'),
+    url(r'new-application/', views.NewUserSignInFormView.as_view(), name='New-User-Sign-In'),
 ]
 
 # Django toolbar settings for development environments
