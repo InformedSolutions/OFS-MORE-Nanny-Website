@@ -11,7 +11,7 @@ class ExistingUserSignIn(FormView):
     """
     template_name = 'existing-user-sign-in.html'
     form_class = ContactEmailForm
-    success_url = 'Check-Email'
+    success_url = 'Check-Existing-Email'
 
     def form_valid(self, request):
         # TODO - Insert calls to Identity-Gateway API for creation of new application.
