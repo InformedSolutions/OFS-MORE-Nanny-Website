@@ -15,7 +15,7 @@ class AccountSelectionFormView(FormView):
     def form_valid(self, request):
 
         if request.cleaned_data['account_selection'] == 'new':
-            self.success_url = reverse('Service-Unavailable')
+            self.success_url = reverse('New-User-Sign-In')
         elif request.cleaned_data['account_selection'] == 'existing':
             self.success_url = reverse('Service-Unavailable')
 
