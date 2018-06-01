@@ -98,14 +98,16 @@ class LoginTests(TestCase):
 
     def test_check_email_page_can_be_rendered(self):
         """
-        Test that the check email page can be rendered and that it contains a link to the 'Resend-Email' page.
+        Test that the check email pages can be rendered and that it contains a link to the 'Resend-Email' page.
         """
-        response = self.client.get(reverse('Check-Email'))
-        found = resolve(response.request.get('PATH_INFO'))
+        check_email_pages = ('Check-New-Email', 'Check-Existing-Email')  # Check both the 'Check-Email' pages.
+        for page in check_email_pages:
+            response = self.client.get(reverse(page))
+            found = resolve(response.request.get('PATH_INFO'))
 
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(found.func.view_class, views.CheckEmailView)
-        self.assertContains(response, '<a href="{}">resend the email</a>'.format(reverse('Resend-Email')), html=True)
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(found.func.view_class, views.CheckEmailView)
+            self.assertContains(response, '<a href="{}">resend the email</a>'.format(reverse('Resend-Email')), html=True)
 
     def test_can_render_existing_user_sign_in_page(self):
         """
