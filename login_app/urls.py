@@ -10,7 +10,8 @@ urlpatterns = [
     # url(r'^long_form/', views.long_form, name='long_form'),
     # url(r'^fieldset_form/', views.fieldset_form, name='fieldset_form'),
     # url(r'^revealing_form/', views.revealing_form, name='revealing_form')
-    url(r'service-unavailable/', views.ServiceUnavailableView.as_view(), name="Service-Unavailable"),
+    url(r'service-unavailable/', views.ServiceUnavailableView.as_view(), name='Service-Unavailable'),
+    url(r'sign-in/new-application', views.AccountSelectionFormView.as_view(), name='Account-Selection'),
 ]
 
 # Django toolbar settings for development environments
