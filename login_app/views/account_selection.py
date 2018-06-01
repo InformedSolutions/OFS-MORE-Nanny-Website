@@ -17,6 +17,6 @@ class AccountSelectionFormView(FormView):
         if request.cleaned_data['account_selection'] == 'new':
             self.success_url = reverse('New-User-Sign-In')
         elif request.cleaned_data['account_selection'] == 'existing':
-            self.success_url = reverse('Service-Unavailable')
+            self.success_url = reverse('Existing-User-Sign-In')
 
         return HttpResponseRedirect(self.get_success_url())
