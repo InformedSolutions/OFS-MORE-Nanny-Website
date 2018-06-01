@@ -25,5 +25,5 @@ class ContactEmailForm(GOVUKForm):
         email_address = self.cleaned_data['email_address']
         # RegEx for valid e-mail addresses
         if re.match(utils.REGEX['EMAIL'], email_address) is None:
-            raise forms.ValidationError('Please enter a valid email address')
+            raise forms.ValidationError('Please enter a valid email address, like yourname@example.com')
         return email_address
