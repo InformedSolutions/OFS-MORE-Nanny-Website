@@ -10,12 +10,12 @@ urlpatterns = [
     # url(r'^long_form/', views.long_form, name='long_form'),
     # url(r'^fieldset_form/', views.fieldset_form, name='fieldset_form'),
     # url(r'^revealing_form/', views.revealing_form, name='revealing_form')
-    url(r'service-unavailable/', views.ServiceUnavailableView.as_view(), name='Service-Unavailable'),
-    url(r'sign-in/new-application', views.AccountSelectionFormView.as_view(), name='Account-Selection'),
-    url(r'new-application/$', views.NewUserSignInFormView.as_view(), name='New-User-Sign-In'),
-    url(r'new-application/check-email', views.CheckEmailView.as_view(), name='Check-Email'),
-    url(r'new-application/email-resent', views.ServiceUnavailableView.as_view(), name='Resend-Email'),
-    url(r'sign-in/', views.ExistingUserSignIn.as_view(), name='Existing-User-Sign-In')
+    url(r'^service-unavailable/', views.ServiceUnavailableView.as_view(), name='Service-Unavailable'),
+    url(r'^sign-in/new-application', views.AccountSelectionFormView.as_view(), name='Account-Selection'),
+    url(r'^new-application/$', views.NewUserSignInFormView.as_view(), name='New-User-Sign-In'),
+    url(r'^new-application/check-email', views.CheckEmailView.as_view(), name='Check-Email'),
+    url(r'^email-resent/', views.ResendEmail.as_view(), name='Resend-Email'),
+    url(r'^sign-in/', views.ExistingUserSignIn.as_view(), name='Existing-User-Sign-In')
 ]
 
 # Django toolbar settings for development environments
