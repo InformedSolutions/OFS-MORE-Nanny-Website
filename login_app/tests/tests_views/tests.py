@@ -51,9 +51,10 @@ class LoginTests(TestCase):
         page.
         """
         response = self.client.post(reverse('Account-Selection'), {'account_selection': 'existing'})
+        found = resolve(response.url)
 
         self.assertEqual(response.status_code, 302)
-        # TODO : Assert exactly which page the client should land on.
+        self.assertEqual(found.func.view_class, views.ExistingUserSignIn)
 
     def test_can_render_new_user_sign_in_page(self):
         """
@@ -63,7 +64,7 @@ class LoginTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
 
-    def test_invalid_email_redirects_to_self(self):
+    def test_invalid_new_user_email_redirects_to_self(self):
         """
         Test that entering an invalid email on the 'New-User-Sign-In' page redirects back to the same page.
         """
@@ -82,7 +83,7 @@ class LoginTests(TestCase):
             self.assertEqual(found.func.view_class, views.NewUserSignInFormView)
             # self.assertFormError(response, forms.ContactEmailForm, field=ContactEmailForm.email_address)
 
-    def test_valid_email_address_creates_account_and_redirects(self):
+    def test_valid_new_email_address_creates_account_and_redirects(self):
         """
         Test that entering a valid email address on the 'New-User-Sign-In' page creates an account with that email and
         redirects to the appropriate page.
@@ -105,3 +106,44 @@ class LoginTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(found.func.view_class, views.CheckEmailView)
         self.assertContains(response, '<a href="{}">resend the email</a>'.format(reverse('Resend-Email')), html=True)
+
+    def test_can_render_existing_user_sign_in_page(self):
+        """
+        Test to assert that the 'New-User-Sign-In' page can be rendered.
+        """
+        response = self.client.get(reverse('Existing-User-Sign-In'))
+
+        self.assertEqual(response.status_code, 200)
+
+    def test_invalid_existing_user_email_redirects_to_self(self):
+        """
+        Test that entering an invalid email on the 'New-User-Sign-In' page redirects back to the same page.
+        """
+        test_invalid_emails = (
+            '',
+            't',
+            '123',
+            'knights@ni'
+        )
+
+        for email in test_invalid_emails:
+            response = self.client.post(reverse('Existing-User-Sign-In'), {'email_address': email})
+            found = resolve(response.request.get('PATH_INFO'))
+
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(found.func.view_class, views.ExistingUserSignIn)
+            # self.assertFormError(response, forms.ContactEmailForm, field=ContactEmailForm.email_address)
+            # self.assertFieldOutput()
+
+    def test_valid_existing_email_address_loads_account_and_redirects(self):
+        """
+        Test that entering a valid email address on the 'New-User-Sign-In' page creates an account with that email and
+        redirects to the appropriate page.
+        """
+        response = self.client.post(reverse('Existing-User-Sign-In'), {'email_address': 'eva@walle.com'})
+        found = resolve(response.url)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(found.func.view_class, views.CheckEmailView)
+
+        # TODO - Assert response codes from Identity API for queries before and after POST request with valid email.
