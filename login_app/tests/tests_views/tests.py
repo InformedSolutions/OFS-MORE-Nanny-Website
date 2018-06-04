@@ -211,3 +211,13 @@ class LoginTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(found.func.view_class, views.LinkUsedView)
+
+    def test_can_render_application_saved_page(self):
+        """
+        Test that the 'Application-Saved' page can be rendered.
+        """
+        response = self.client.get(reverse('Application-Saved'))
+        found = resolve(response.request.get('PATH_INFO'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(found.func.view_class, views.ApplicationSavedView)
