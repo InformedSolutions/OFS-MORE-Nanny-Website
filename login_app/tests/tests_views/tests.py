@@ -54,7 +54,7 @@ class LoginTests(TestCase):
         found = resolve(response.url)
 
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(found.func.view_class, views.ExistingUserSignIn)
+        self.assertEqual(found.func.view_class, views.ExistingUserSignInFormView)
 
     def test_can_render_new_user_sign_in_page(self):
         """
@@ -69,19 +69,19 @@ class LoginTests(TestCase):
         Test that entering an invalid email on the 'New-User-Sign-In' page redirects back to the same page.
         """
         test_invalid_emails = (
-            '',
-            't',
-            '123',
-            'knights@ni'
+            ('', 'Please enter an email address'),
+            ('t', 'Please enter a valid email address, like yourname@example.com'),
+            ('123', 'Please enter a valid email address, like yourname@example.com'),
+            ('knights@ni', 'Please enter a valid email address, like yourname@example.com'),
         )
 
-        for email in test_invalid_emails:
+        for email, error in test_invalid_emails:
             response = self.client.post(reverse('New-User-Sign-In'), {'email_address': email})
             found = resolve(response.request.get('PATH_INFO'))
 
             self.assertEqual(response.status_code, 200)
             self.assertEqual(found.func.view_class, views.NewUserSignInFormView)
-            # self.assertFormError(response, forms.ContactEmailForm, field=ContactEmailForm.email_address)
+            self.assertFormError(response, 'form', 'email_address', error)
 
     def test_valid_new_email_address_creates_account_and_redirects(self):
         """
@@ -122,20 +122,19 @@ class LoginTests(TestCase):
         Test that entering an invalid email on the 'New-User-Sign-In' page redirects back to the same page.
         """
         test_invalid_emails = (
-            '',
-            't',
-            '123',
-            'knights@ni'
+            ('', 'Please enter an email address'),
+            ('t', 'Please enter a valid email address, like yourname@example.com'),
+            ('123', 'Please enter a valid email address, like yourname@example.com'),
+            ('knights@ni', 'Please enter a valid email address, like yourname@example.com'),
         )
 
-        for email in test_invalid_emails:
+        for email, error in test_invalid_emails:
             response = self.client.post(reverse('Existing-User-Sign-In'), {'email_address': email})
             found = resolve(response.request.get('PATH_INFO'))
 
             self.assertEqual(response.status_code, 200)
-            self.assertEqual(found.func.view_class, views.ExistingUserSignIn)
-            # self.assertFormError(response, forms.ContactEmailForm, field=ContactEmailForm.email_address)
-            # self.assertFieldOutput()
+            self.assertEqual(found.func.view_class, views.ExistingUserSignInFormView)
+            self.assertFormError(response, 'form', 'email_address', error)
 
     def test_valid_existing_email_address_loads_account_and_redirects(self):
         """
@@ -160,3 +159,45 @@ class LoginTests(TestCase):
         self.assertContains(response, '<a href="{}">contact Ofsted</a>'.format(reverse('Help-And-Contacts')), html=True)
 
         # TODO - Assert response codes from Identity API before and after choosing to resend email validation link.
+
+    def test_security_code_page_can_be_rendered(self):
+        """
+        Test that the 'Security-Code' page can be rendered.
+        """
+        response = self.client.get(reverse('Security-Code'))
+        found = resolve(response.request.get('PATH_INFO'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(found.func.view_class, views.SecurityCodeFormView)
+
+        # TODO: Test that the user details sms_expiry is updated.
+
+    def test_invalid_sms_code_form_error_messages(self):
+        """
+        Test that invalid security codes reload same page with appropriate error messages raised.
+        """
+        codes_errors = (
+            ('', 'Please enter the 5 digit code we sent to your mobile'),
+            ('1', 'The code must be 5 digits. You have entered fewer than 5 digits'),
+            ('123456', 'The code must be 5 digits. You have entered more than 5 digits'),
+            # ('', ''),  # TODO: Add incorrect security code test.
+        )
+
+        for code, error in codes_errors:
+            response = self.client.post(reverse('Security-Code'), {'sms_code': code})
+            found = resolve(response.request.get('PATH_INFO'))
+
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(found.func.view_class, views.SecurityCodeFormView)
+            self.assertFormError(response, 'form', 'sms_code', error)
+
+    def test_valid_sms_code_redirects_correctly(self):
+        """
+        Test that entering a correct SMS code redirects the user to the appropriate page.
+        """
+        # code = Identity-Gateway API call
+        response = self.client.post(reverse('Security-Code'), {'sms_code': code})
+        found = resolve(response.url)
+
+        self.assertEqual(response.status_code, 302)
+        # self.assertEqual(found.func.view_class, views.TaskListView)
