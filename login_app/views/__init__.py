@@ -7,3 +7,4 @@ from .resend_email import *
 from .security_code import *
 from .link_used import *
 from .application_saved import *
+from .phone_number import *
