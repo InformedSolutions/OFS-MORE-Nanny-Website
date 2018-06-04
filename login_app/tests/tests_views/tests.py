@@ -201,3 +201,13 @@ class LoginTests(TestCase):
 
         self.assertEqual(response.status_code, 302)
         # self.assertEqual(found.func.view_class, views.TaskListView)
+
+    def test_can_render_link_used_page(self):
+        """
+        Test that the 'Link-Used' page can be rendered.
+        """
+        response = self.client.get(reverse('Link-Used'))
+        found = resolve(response.request.get('PATH_INFO'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(found.func.view_class, views.LinkUsedView)
