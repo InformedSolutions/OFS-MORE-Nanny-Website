@@ -13,6 +13,7 @@ urlpatterns = [
     url(r'^email-resent/', views.ResendEmail.as_view(), name='Resend-Email'),
     url(r'^sign-in/', views.ExistingUserSignInFormView.as_view(), name='Existing-User-Sign-In'),
     url(r'^security-code/', views.SecurityCodeFormView.as_view(), name='Security-Code'),
+    url(r'^link-used/', views.LinkUsedView.as_view(), name='Link-Used'),
 ]
 
 # Django toolbar settings for development environments
