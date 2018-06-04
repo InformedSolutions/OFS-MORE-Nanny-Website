@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect
 from login_app.forms import ContactEmailForm
 
 
-class ExistingUserSignIn(FormView):
+class ExistingUserSignInFormView(FormView):
     """
     Class containing the methods for handling requests to the 'New-User-Sign-In' page.
     """
