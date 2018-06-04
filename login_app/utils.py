@@ -1,5 +1,37 @@
-# Regex Validation Strings
+import re
 
+from django import forms
+
+
+class PhoneNumberField(forms.CharField):
+
+    def __init__(self, number_type=None, *args, **kwargs):
+        if number_type not in ('mobile', 'other_phone'):
+            raise ValueError("You must pass number_type as either 'mobile' or 'other_phone'.")
+
+        self.number_type = number_type
+        self.regex_type = 'MOBILE' if 'mobile' in self.number_type else 'PHONE'
+
+        super(PhoneNumberField, self).__init__(*args, **kwargs)
+
+    def clean(self, number):
+        """
+        Clean method for the PhoneNumberField.
+        :param number: Number entered by user to be validated.
+        :return: number: Cleaned number input.
+        """
+        if not self.required and number == '':  # Skip the regex match if unrequired field left blank.
+            return number
+
+        no_space_number = number.replace(' ', '')
+
+        if re.match(REGEX[self.regex_type], no_space_number) is None:
+            raise forms.ValidationError('Please enter a valid {} number'.format(self.regex_type.lower()))
+
+        return number
+
+
+# Regex Validation Strings
 REGEX = {
     "EMAIL": "^([a-zA-Z0-9_\-\.']+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$",
     "MOBILE": "^(07\d{8,12}|447\d{7,11}|00447\d{7,11}|\+447\d{7,11})$",
