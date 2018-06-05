@@ -221,3 +221,94 @@ class LoginTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(found.func.view_class, views.ApplicationSavedView)
+
+    def test_can_render_phone_number_page(self):
+        """
+        Test that the 'Phone-Number' page can be loaded.
+        """
+        response = self.client.get(reverse('Phone-Number'))
+        found = resolve(response.request.get('PATH_INFO'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(found.func.view_class, views.PhoneNumbersFormView)
+
+    def test_can_add_mobile_number(self):
+        """
+        Test that a valid mobile number entered on the 'Phone-Number' page is saved.
+        """
+        response = self.client.post(reverse('Phone-Number'),
+                                    {'mobile_number': '07754000000',
+                                     'other_phone_number': ''})
+        found = resolve(response.request.get('PATH_INFO'))
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(found.func.view_class, views.SummaryView)
+        # TODO: Add API calls before and after to check phone number has been added to the application.
+
+
+    def test_can_add_both_mobile_and_other_phone_number(self):
+        """
+        Test that entering valid numbers on the 'Phone-Number' page saves both.
+        """
+        response = self.client.post(reverse('Phone-Number'),
+                                    {'mobile_number': '07754000000',
+                                     'other_phone_number': '07754000000'})
+        found = resolve(response.request.get('PATH_INFO'))
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(found.func.view_class, views.SummaryView)
+        # TODO: Add API calls before and after to check both numbers have been added to the application.
+
+    def test_invalid_mobile_number_validation_messages(self):
+        """
+        Test that invalid mobile numbers throw an error with the appropriate message.
+        """
+        number_errors = (
+            ('', 'Please enter a mobile number'),
+            ('1', 'Please enter a valid mobile number'),
+            ('123456', 'Please enter a valid mobile number'),
+        )
+
+        for number, error in number_errors:
+            response = self.client.post(reverse('Phone-Number'),
+                                        {'mobile_number': number,
+                                         'other_phone_number': ''})
+        found = resolve(response.request.get('PATH_INFO'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(found.func.view_class, views.PhoneNumbersFormView)
+        self.assertFormError(response, 'form', 'mobile_number', error)
+
+    def test_invalid_other_phone_number_validation_messages(self):
+        """
+        Test that invalid other phone numbers throw an error with the appropriate message.
+        """
+        number_errors = (
+            ('1', 'Please enter a valid phone number'),
+            ('123456', 'Please enter a valid phone number'),
+        )
+
+        for number, error in number_errors:
+            response = self.client.post(reverse('Phone-Number'),
+                                        {'mobile_number': '07754000000',
+                                         'other_phone_number': number})
+        found = resolve(response.request.get('PATH_INFO'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(found.func.view_class, views.PhoneNumbersFormView)
+        self.assertFormError(response, 'form', 'other_phone_number', error)
+
+    def test_other_number_can_be_left_blank(self):
+        """
+        Test that other number can be blank and won't throw an error during validation.
+        """
+        response = self.client.post(reverse('Phone-Number'),
+                                    {'mobile_number': '',
+                                     'other_phone_number': ''})
+        found = resolve(response.request.get('PATH_INFO'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(found.func.view_class, views.PhoneNumbersFormView)
+
+        # self.assertFieldOutput('other_phone_number', valid=True)
+        self.assertEqual(False, 'other_phone_number' in response.context_data['form'].errors)
