@@ -1,0 +1,35 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Your phone number{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+
+{% include "back-button.html" %}
+
+
+{{ form.error_summary }}
+
+
+<h1 class="form-title heading-large">Your phone number</h1>
+
+<form method="post" novalidate>
+
+    {% csrf_token %}
+
+    <p>We will send a code to your mobile when you sign in next time.</p>
+
+    {{ fields.0 }}
+
+    <p>Let us know if you have another number, like a landline phone.</p>
+
+    {{ fields.1 }}
+
+    <p>We will use the numbers to contact you.</p>
+
+    <input type="submit" class="button" value="Continue" alt='Continue'>
+
+</form>
+
+{% endblock %}
