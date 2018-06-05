@@ -11,12 +11,13 @@ urlpatterns = [
     url(r'^new-application/check-email/', views.CheckEmailView.as_view(), name='Check-New-Email'),
     url(r'^sign-in/check-email/', views.CheckEmailView.as_view(), name='Check-Existing-Email'),
     url(r'^email-resent/', views.ResendEmail.as_view(), name='Resend-Email'),
-    url(r'^sign-in/', views.ExistingUserSignInFormView.as_view(), name='Existing-User-Sign-In'),
+    url(r'^sign-in/$', views.ExistingUserSignInFormView.as_view(), name='Existing-User-Sign-In'),
     url(r'^security-code/', views.SecurityCodeFormView.as_view(), name='Security-Code'),
     url(r'^link-used/', views.LinkUsedView.as_view(), name='Link-Used'),
     url(r'^application-saved/', views.ApplicationSavedView.as_view(), name='Application-Saved'),
     url(r'^phone-number/', views.PhoneNumbersFormView.as_view(), name='Phone-Number'),
     url(r'^resend-code/', views.ResendSecurityCodeView.as_view(), name='Resend-Security-Code'),
+    url(r'^sign-in/question/', views.SecurityQuestionFormView.as_view(), name='Security-Question'),
 ]
 
 # Django toolbar settings for development environments
