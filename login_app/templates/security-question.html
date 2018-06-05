@@ -1,0 +1,27 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Sign in question{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+{{ form.error_summary }}
+
+<!--<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>-->
+<form method="post" novalidate>
+
+    <h1 class="form-title heading-large">Your sign in question</h1>
+
+    <p>We need to make sure you are the person who is signing in.</p>
+
+    <p>{{ form.help_text }}</p>
+
+    {{ form.as_div }}
+    {% csrf_token %}
+    <input type="submit" class="button" value="Continue" alt='Continue'>
+
+</form>
+
+{% endblock %}
