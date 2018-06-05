@@ -31,6 +31,23 @@ class PhoneNumberField(forms.CharField):
         return number
 
 
+class DBSNumberField(forms.CharField):
+
+    def clean(self, dbs_number):
+        """
+        :param dbs_number:
+        :return:
+        """
+        # if not len(dbs_number):
+        #     raise forms.ValidationError('')
+
+        if len(dbs_number) > 12:
+            raise forms.ValidationError('The certificate number should be 12 digits long')
+        if len(dbs_number) < 12:
+            raise forms.ValidationError('The certificate number should be 12 digits long')
+        return dbs_number
+
+
 # Regex Validation Strings
 REGEX = {
     "EMAIL": "^([a-zA-Z0-9_\-\.']+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$",
