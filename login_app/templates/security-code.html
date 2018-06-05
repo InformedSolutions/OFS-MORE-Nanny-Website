@@ -6,8 +6,6 @@
 {% block inner_content %}
 
 
-{% include "back-button.html" %}
-
 {{ form.error_summary }}
 
 <h1 class="form-title heading-large">Enter security code</h1>
@@ -25,7 +23,7 @@
 </form>
 
 <br>
-<a href="">Didn't get a code?</a>
+<a href="{% url 'Resend-Security-Code' %}">Didn't get a code?</a>
 <br>
 <a href="">Don't have your phone?</a>
 
