@@ -16,6 +16,7 @@ urlpatterns = [
     url(r'^link-used/', views.LinkUsedView.as_view(), name='Link-Used'),
     url(r'^application-saved/', views.ApplicationSavedView.as_view(), name='Application-Saved'),
     url(r'^phone-number/', views.PhoneNumbersFormView.as_view(), name='Phone-Number'),
+    url(r'^resend-code/', views.ResendSecurityCodeView.as_view(), name='Resend-Security-Code'),
 ]
 
 # Django toolbar settings for development environments
