@@ -16,6 +16,10 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
+# URL prefix for the identity-gateway API.
+IDENTITY_URL_PREFIX = ""
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
@@ -41,6 +45,7 @@ THIRD_PARTY_APPS = [
 ]
 
 PROJECT_APPS = [
+    'identity_models',
     'login_app.apps.LoginAppConfig'
 ]
 
