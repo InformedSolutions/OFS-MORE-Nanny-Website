@@ -312,3 +312,25 @@ class LoginTests(TestCase):
 
         # self.assertFieldOutput('other_phone_number', valid=True)
         self.assertEqual(False, 'other_phone_number' in response.context_data['form'].errors)
+
+    def test_can_render_resend_sms_code_page(self):
+        """
+        Test that the 'Resend-Security-Code' page can be rendered.
+        """
+        response = self.client.get(reverse('Resend-Security-Code'))
+        found = resolve(response.request.get('PATH_INFO'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(found.func.view_class, views.ResendSecurityCodeView)
+
+    def test_resend_security_code_updates_user_details_and_redirects(self):
+        """
+        Test that clicking 'Send new code' on 'Resend-Security-Code' page updates the user's security code and redirects
+        back to the 'Security-Code' page.
+        """
+        response = self.client.post(reverse('Resend-Security-Code'))
+        found = resolve(response.url)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(found.func.view_class, views.SecurityCodeFormView)
+        # TODO: Make API call before and after to check that the account's security code has changed.
