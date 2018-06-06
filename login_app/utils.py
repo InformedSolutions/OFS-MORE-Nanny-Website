@@ -1,8 +1,12 @@
+import random
 import re
+import string
+import time
 
 from urllib.parse import urlencode
 
 from django import forms
+from django.conf import settings
 from django.shortcuts import reverse
 
 
@@ -12,6 +16,13 @@ def build_url(*args, **kwargs):
     if get:
         url += '?' + urlencode(get)
     return url
+
+
+def generate_email_validation_link(email_address):
+    link = ''.join([random.choice(string.ascii_letters + string.digits) for n in range(12)]).upper()
+    full_link = str(settings.PUBLIC_APPLICATION_URL) + 'validate/' + link + '?email_address=' + email_address
+
+    return full_link, int(time.time())
 
 
 class PhoneNumberField(forms.CharField):
