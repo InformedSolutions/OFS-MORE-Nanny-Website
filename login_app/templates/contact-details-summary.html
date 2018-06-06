@@ -1,0 +1,73 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Check your answers: your sign in details{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+{% include "back-button.html" %}
+
+<h1 class="form-title heading-large">
+    Check your answers: your sign in details
+</h1>
+
+
+<table class="check-your-answers" style="table-layout: fixed; width: 100%">
+    <colgroup>
+        <col class="summary-column">
+        <col class="summary-column">
+        <col class="change-answer">
+    </colgroup>
+    <thead>
+    <tr>
+        <th colspan="3">
+            <div class="heading-medium">
+                Your login details
+            </div>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Your email
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{ email }}
+        </td>
+        <td class="change-answer">
+            <!--<a href="{{ URL_prefix }}/sign-in/change-email/email?id={{application_id}}#id_email_address"-->
+            <a href="" alt='Change email address'>
+                Change <span class="visuallyhidden">email address</span>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Your mobile number
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{ mobile_number }}
+        </td>
+        <td class="change-answer">
+            <a href="" alt='Change mobile number'>
+                Change <span class="visuallyhidden">mobile number</span>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Other phone number
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{ add_phone_number }}
+        </td>
+        <td class="change-answer">
+            <a href="" alt='Change other number'>
+                Change <span class="visuallyhidden">landline number</span>
+            </a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+{% endblock %}
