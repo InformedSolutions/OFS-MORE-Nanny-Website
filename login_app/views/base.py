@@ -29,4 +29,6 @@ class BaseFormView(FormView):
         """
         Method to return a dictionary of parameters to be included as variables in the success url, e.g. application_id.
         """
-        return dict()
+        email_address = self.request.GET['email_address']
+
+        return {'email_address': email_address}
