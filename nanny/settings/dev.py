@@ -2,8 +2,9 @@ import socket
 
 from .base import *
 
-
 DEBUG = True
+
+TEST_NOTIFY_CONNECTION = False
 
 DEV_APPS = [
   'debug_toolbar',

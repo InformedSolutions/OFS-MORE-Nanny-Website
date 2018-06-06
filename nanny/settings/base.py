@@ -19,6 +19,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # URL prefix for the identity-gateway API.
 IDENTITY_URL_PREFIX = ""
 
+NOTIFY_URL = os.environ.get('APP_NOTIFY_URL')
+
+EXECUTING_AS_TEST = os.environ.get('EXECUTING_AS_TEST')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
