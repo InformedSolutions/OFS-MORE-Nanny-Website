@@ -4,6 +4,9 @@ from login_app.utils import PhoneNumberField
 
 
 class PhoneNumbersForm(GOVUKForm):
+    """
+    GOV.UK form for entering contact phone numbers.
+    """
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
