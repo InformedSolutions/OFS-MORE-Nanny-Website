@@ -27,11 +27,3 @@ class ExistingUserSignInFormView(BaseFormView):
 
         return HttpResponseRedirect(self.get_success_url())
 
-    def get_success_parameters(self):
-        """
-        Method to return a dictionary of parameters to be included as variables in the success url, e.g. application_id.
-        """
-        params = dict()
-        params['email_address'] = self.request.POST['email_address']
-
-        return params
