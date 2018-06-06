@@ -1,19 +1,33 @@
-from django.views.generic import FormView
+from identity_models.user_details import UserDetails
 
 from login_app.forms import PhoneNumbersForm
 
+from .base import BaseFormView
 
-class PhoneNumbersFormView(FormView):
+
+class PhoneNumbersFormView(BaseFormView):
     """
     Class for handling requests to the 'Phone-Number' page.
     """
     template_name = 'phone-number.html'
     form_class = PhoneNumbersForm
-    success_url = 'Phone-Number'
+    success_url = 'Contact-Details-Summary'
+
+    def form_valid(self, form):
+        email_address = self.request.GET['email_address']
+        api_response = UserDetails.api.get_record(email=email_address)
+
+        record = api_response.record
+        record['mobile_number'] = form.cleaned_data['mobile_number']
+        record['add_phone_number'] = form.cleaned_data['other_phone_number']
+
+        UserDetails.api.put(record)  # Update entire record.
+
+        return super(PhoneNumbersFormView, self).form_valid(form)
 
     def get_context_data(self, **kwargs):
         """
-        Override base FormView method to add 'fields' key to context for rendering in template.
+        Override base BaseFormView method to add 'fields' key to context for rendering in template.
         """
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
