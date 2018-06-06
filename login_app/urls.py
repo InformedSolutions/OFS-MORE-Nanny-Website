@@ -18,6 +18,7 @@ urlpatterns = [
     url(r'^phone-number/', views.PhoneNumbersFormView.as_view(), name='Phone-Number'),
     url(r'^resend-code/', views.ResendSecurityCodeView.as_view(), name='Resend-Security-Code'),
     url(r'^sign-in/question/', views.SecurityQuestionFormView.as_view(), name='Security-Question'),
+    url(r'^sign-in/check-answers/', views.ContactDetailsSummaryView.as_view(), name='Contact-Details-Summary'),
 ]
 
 # Django toolbar settings for development environments
