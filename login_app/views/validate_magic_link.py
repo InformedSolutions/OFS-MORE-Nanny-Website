@@ -37,17 +37,22 @@ class ValidateMagicLinkView(View):
             success_template = 'Phone-Number'
 
         else:
-            magic_link_sms, sms_expiry_date = utils.generate_sms_code()
-
-            self.record['magic_link_sms'] = magic_link_sms
-            self.record['sms_expiry_date'] = sms_expiry_date
-
-            notify.send_text(self.record['mobile_number'],
-                             personalisation={'magic_link_sms': magic_link_sms},
-                             template_id='d285f17b-8534-4110-ba6c-e7e788eeafb2')
-
+            self.record = self.sms_magic_link(self.record)
             success_template = 'Security-Code'
 
         self.record['email_expiry_date'] = 0
         UserDetails.api.put(self.record)
         return build_url(success_template, get={'email_address': self.record['email']})
+
+    @staticmethod
+    def sms_magic_link(record):
+        magic_link_sms, sms_expiry_date = utils.generate_sms_code()
+
+        record['magic_link_sms'] = magic_link_sms
+        record['sms_expiry_date'] = sms_expiry_date
+
+        notify.send_text(record['mobile_number'],
+                         personalisation={'link': magic_link_sms},
+                         template_id='d285f17b-8534-4110-ba6c-e7e788eeafb2')
+
+        return record
