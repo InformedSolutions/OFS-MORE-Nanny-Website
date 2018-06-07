@@ -70,4 +70,11 @@
     </tbody>
 </table>
 
+<br>
+
+<form method="post" novalidate>
+    <input type="submit" class="button" value="Continue" alt='Continue'>
+    {% csrf_token %}
+</form>
+
 {% endblock %}
