@@ -1,3 +1,4 @@
+import os
 import json
 
 import requests
@@ -13,13 +14,16 @@ def send_email(email, personalisation, template_id):
     :return: :class:`Response <Response>` object containing http request response
     :rtype: requests.Response
     """
-
     base_request_url = settings.NOTIFY_URL
     header = {'content-type': 'application/json'}
 
     # If executing function in test mode override email address
     if settings.EXECUTING_AS_TEST == 'True':
         email = 'simulate-delivered@notifications.service.gov.uk'
+        # If executing login function in test mode set env variable for later retrieval by test code
+        os.environ['EMAIL_VALIDATION_URL'] = personalisation['validation_link']
+    else:
+        print(personalisation['validation_link'])
 
     notification_request = {
         'email': email,
@@ -48,6 +52,9 @@ def send_text(phone, personalisation, template_id):
     # If executing function in test mode override phone number
     if settings.EXECUTING_AS_TEST == 'True':
         phone = '07700900111'
+        os.environ['SMS_VALIDATION_CODE'] = personalisation['magic_link_sms']
+    else:
+        print(personalisation['magic_link_sms'])
 
     notification_request = {
         'phoneNumber': phone,
