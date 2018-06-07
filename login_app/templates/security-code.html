@@ -10,7 +10,7 @@
 
 <h1 class="form-title heading-large">Enter security code</h1>
 
-<p>We have sent a 5 digit security code by text to PHONE NUMBER.</p>
+<p>We have sent a 5 digit security code by text to ********{{ mobile_number_end }}.</p>
 
 <p>This can take a minute or so to arrive.</p>
 
@@ -23,8 +23,8 @@
 </form>
 
 <br>
-<a href="{% url 'Resend-Security-Code' %}">Didn't get a code?</a>
+<a href="{% url 'Resend-Security-Code' %}?email_address={{ email_address }}">Didn't get a code?</a>
 <br>
-<a href="{% url 'Security-Question' %}">Don't have your phone?</a>
+<a href="{% url 'Security-Question' %}?email_address={{ email_address }}">Don't have your phone?</a>
 
 {% endblock %}
