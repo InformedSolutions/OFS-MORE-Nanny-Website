@@ -19,15 +19,13 @@ class BaseSecurityQuestionForm(GOVUKForm):
     def clean_security_answer(self):
         security_answer = self.cleaned_data['security_answer']
 
-        self.answer = ''  # TODO:
-
-        if self.answer.replace(' ', '') != security_answer.replace(' ', ''):
+        if self.correct_answer.replace(' ', '') != security_answer.replace(' ', ''):
             raise forms.ValidationError('Your answer must match what you told us in your application')
 
         return security_answer
 
     def __init__(self, *args, **kwargs):
-        self.answer = None  # TODO: Insert API call to determine the correct answer.
+        self.correct_answer = None
         super(BaseSecurityQuestionForm, self).__init__(*args, **kwargs)
 
 
