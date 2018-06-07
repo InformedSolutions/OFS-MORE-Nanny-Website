@@ -10,7 +10,11 @@
 
 <h1 class="form-title heading-large">Enter security code</h1>
 
-<p>We have sent a 5 digit security code by text to ********{{ mobile_number_end }}.</p>
+{% if code_resent %}
+    <p>We have resent a 5 digit security code by text to *********{{ mobile_number_end }}.</p>
+{% else %}
+    <p>We have sent a 5 digit security code by text to *********{{ mobile_number_end }}.</p>
+{% endif %}
 
 <p>This can take a minute or so to arrive.</p>
 
@@ -23,8 +27,11 @@
 </form>
 
 <br>
-<a href="{% url 'Resend-Security-Code' %}?email_address={{ email_address }}">Didn't get a code?</a>
-<br>
-<a href="{% url 'Security-Question' %}?email_address={{ email_address }}">Don't have your phone?</a>
+{% if sms_resend_attempts >= 3 %}
+    <a href="{% url 'Resend-Security-Code' %}?email_address={{ email_address }}">Still didn't get a code?</a>
+{% else %}
+    <a href="{% url 'Resend-Security-Code' %}?email_address={{ email_address }}">Didn't get a code?</a>
+    <a href="{% url 'Security-Question' %}?email_address={{ email_address }}"><p>Don't have your phone?</a>
+{% endif %}
 
 {% endblock %}
