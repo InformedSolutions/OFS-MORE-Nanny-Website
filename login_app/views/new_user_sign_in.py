@@ -21,11 +21,11 @@ class NewUserSignInFormView(BaseFormView):
     def form_valid(self, email_form):
         email_address = email_form.cleaned_data['email_address']
         api_response = UserDetails.api.get_record(email=email_address)
-        record = api_response.record
 
         if api_response.status_code == 404:
             UserDetails.api.create(email=email_address, application_id=uuid.uuid4())
 
+        record = api_response.record
         validation_link, email_expiry_date = utils.generate_email_validation_link(email_address)
 
         record['magic_link_email'] = validation_link.split('/')[-1]
@@ -34,7 +34,7 @@ class NewUserSignInFormView(BaseFormView):
 
         # Send an example email from the CM application login journey.
         notify.send_email(email=email_address,
-                          personalisation={"validation_link": validation_link},
+                          personalisation={"link": validation_link},
                           template_id='ecd2a788-257b-4bb9-8784-5aed82bcbb92')
 
         return HttpResponseRedirect(self.get_success_url())
