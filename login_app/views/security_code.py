@@ -1,20 +1,19 @@
-from django.views.generic import FormView
-from django.shortcuts import reverse
-from django.http import HttpResponseRedirect
+from identity_models.user_details import UserDetails
 
 from login_app.forms import SecurityCodeForm
 
+from .base import BaseFormView
 
-class SecurityCodeFormView(FormView):
+
+class SecurityCodeFormView(BaseFormView):
     """
     Class containing the methods for handling requests to the 'Security-Code' page.
     """
     template_name = 'security-code.html'
     form_class = SecurityCodeForm
-    success_url = 'Security-Code'
+    success_url = 'Contact-Details-Summary'  # TODO: Replace this with Task List once that view is built.
 
-    def form_valid(self, request):
-        # TODO - Add calls to Notify-Gateway API to send SMS to appplicant.
-        # TODO - Insert calls to Identity-Gateway API for checking application's SMS code.
-
-        return HttpResponseRedirect(reverse(self.success_url))
+    def get_form_kwargs(self):
+        kwargs = super(SecurityCodeFormView, self).get_form_kwargs()
+        kwargs['correct_sms_code'] = UserDetails.api.get_record(email=self.request.GET['email_address']).record['magic_link_sms']
+        return kwargs
