@@ -23,6 +23,10 @@ NOTIFY_URL = os.environ.get('APP_NOTIFY_URL')
 
 EXECUTING_AS_TEST = os.environ.get('EXECUTING_AS_TEST')
 
+# Expiry period of Magic Link Emails and Texts in hours
+SMS_EXPIRY = 1
+EMAIL_EXPIRY = 1
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
