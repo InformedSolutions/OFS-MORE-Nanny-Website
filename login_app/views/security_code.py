@@ -20,6 +20,14 @@ class SecurityCodeFormView(BaseFormView):
 
     def get_context_data(self, **kwargs):
         kwargs = super(SecurityCodeFormView, self).get_context_data()
-        kwargs['mobile_number'] = UserDetails.api.get_record(email=self.request.GET['email_address']).record['mobile_number'][-3]
+        kwargs['mobile_number_end'] = UserDetails.api.get_record(email=self.request.GET['email_address']).record['mobile_number'][-3:]
         kwargs['email_address'] = self.request.GET['email_address']  # Pass to context for the hyperlinks.
+
+        # Template requires knowledge of whether or not the SMS was resent.
+        # If they have come from email valdiation link, the request.META.get('HTTP_REFERER') is None.
+        if self.request.META.get('HTTP_REFERER') is not None:
+            kwargs['code_resent'] = True
+        else:
+            kwargs['code_resent'] = False
+
         return kwargs
