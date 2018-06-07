@@ -26,7 +26,10 @@ class SecurityCodeForm(GOVUKForm):
             raise forms.ValidationError('The code must be 5 digits. You have entered fewer than 5 digits')
         if len(sms_code) > 5:
             raise forms.ValidationError('The code must be 5 digits. You have entered more than 5 digits')
-        # if sms_code != correct_sms_code:
-        #     raise forms.ValidationError('Invalid code. Check the code we sent to your mobile.')
-        # TODO: Include above check for valid sms code with Identity-Gateway API call.
+        if sms_code != self.correct_sms_code:
+            raise forms.ValidationError('Invalid code. Check the code we sent to your mobile.')
         return sms_code
+
+    def __init__(self, *args, **kwargs):
+        self.correct_sms_code = kwargs.pop('correct_sms_code')
+        super(SecurityCodeForm, self).__init__(*args, **kwargs)
