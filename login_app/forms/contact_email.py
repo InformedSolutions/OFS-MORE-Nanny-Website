@@ -27,3 +27,11 @@ class ContactEmailForm(GOVUKForm):
         if re.match(utils.REGEX['EMAIL'], email_address) is None:
             raise forms.ValidationError('Please enter a valid email address, like yourname@example.com')
         return email_address
+
+    def __init__(self, *args, **kwargs):
+        super(ContactEmailForm, self).__init__(*args, **kwargs)
+
+        # Remove full stop from error message, if required. N.B. full-stop-stripper won't work here.
+        if len(self.errors):
+            if self.errors['email_address'].data[0].message == 'Enter a valid email address.':
+                self.errors['email_address'].data[0].message = 'Please enter a valid email address, like yourname@example.com'

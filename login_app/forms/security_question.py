@@ -7,7 +7,7 @@ from login_app.utils import DBSNumberField, PhoneNumberField
 
 class BaseSecurityQuestionForm(GOVUKForm):
     """
-
+    Base GOV.UK form from which individual security question forms will inherit.
     """
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'error-summary.html'
@@ -24,23 +24,21 @@ class BaseSecurityQuestionForm(GOVUKForm):
 
         return security_answer
 
-    def __init__(self, *args, **kwargs):
-        self.correct_answer = None
-        super(BaseSecurityQuestionForm, self).__init__(*args, **kwargs)
-
 
 class DBSSecurityQuestionForm(BaseSecurityQuestionForm):
 
     security_answer = DBSNumberField(label='DBS Number', required=True, error_messages={'required': 'Please give an answer'})
+    help_text = 'Please enter your DBS certificate number.'
 
 
 class DoBSecurityQuestionForm(BaseSecurityQuestionForm):
 
     security_answer = None
+    help_text = None
 
 
 class MobileNumberSecurityQuestionForm(BaseSecurityQuestionForm):
 
     security_answer = PhoneNumberField(label='Your mobile number', number_type='mobile', required=True, error_messages={'required': 'Please give an answer'})
-
+    help_text = 'Please enter your mobile number.'
 
