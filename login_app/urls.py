@@ -20,6 +20,7 @@ urlpatterns = [
     url(r'^sign-in/question/', views.SecurityQuestionFormView.as_view(), name='Security-Question'),
     url(r'^sign-in/check-answers/', views.ContactDetailsSummaryView.as_view(), name='Contact-Details-Summary'),
     url(r'^validate/(?P<id>[\w-]+)/$', views.ValidateMagicLinkView.as_view(), name='Validate-Magic-Link'),
+    url(r'^help-contact/$', views.HelpAndContactsView.as_view(), name='Help-And-Contacts'),
 ]
 
 # Django toolbar settings for development environments

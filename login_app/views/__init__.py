@@ -12,3 +12,4 @@ from .resend_security_code import *
 from .security_question import *
 from .summary import *
 from .validate_magic_link import *
+from .help_and_contacts import *
