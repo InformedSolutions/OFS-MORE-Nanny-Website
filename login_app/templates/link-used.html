@@ -1,0 +1,14 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Link used already{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+<h1 class="form-title heading-large">Link used already</h1>
+
+<p>The link we sent you can only be used once.</p>
+
+<a href="{% url 'Existing-User-Sign-In' %}">Enter your email again</a>
+
+{% endblock %}

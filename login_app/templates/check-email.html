@@ -1,0 +1,24 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Check your email{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+
+{% include "back-button.html" %}
+
+<h1 class="form-title heading-large">
+    Check your email
+</h1>
+<p>We've sent a link to {{ email_address }}.</p>
+<p>This can take a few minutes to arrive.</p>
+<p>If you don't get an email:</p>
+<ul style="list-style-type:disc;padding-left:20px">
+    <li>check your spam or junk folders</li>
+    <li>check you have entered the correct email</li>
+    <li><a href="{% url 'Resend-Email' %}?email_address={{ email_address }}">resend the email</a></li>
+
+</ul>
+
+{% endblock %}

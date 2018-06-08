@@ -1,0 +1,21 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Application saved{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+
+{{ form.error_summary }}
+
+<h1 class="form-title heading-large">Application saved</h1>
+
+<p>We have saved your information.</p>
+
+<p>Please sign back in within 60 days.</p>
+
+<p>After 60 days of no activity, we will delete your information.</p>
+
+<a href="{% url 'Existing-User-Sign-In' %}">Sign in to your application</a>
+
+{% endblock %}

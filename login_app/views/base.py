@@ -1,11 +1,40 @@
-# A generic form-rendering function that renders the correct form based on the request method
-from django.shortcuts import render
+from django.core.exceptions import ImproperlyConfigured
+from django.views.generic import FormView
+
+from login_app.utils import build_url
 
 
-def render_form(request, form):
-    if request.method == 'GET':
-        # Get the blank form
-        return render(request, 'form.html', {'form': form})
-    else:
-        # For now, render a generic success page
-        return render(request, 'success.html')
+class BaseFormView(FormView):
+    """
+    Base class for FormViews which implement or override the methods defined below.
+    """
+    template_name = None
+    form_class = None
+    success_url = None
+
+    def get_success_url(self):
+        """
+        Method to construct a url encoded with the necessary varaibles and navigate to it upone successful submission of
+        a form.
+        :return: a full url for the next page.
+        """
+
+        if self.success_url:
+            # If not none, run the build url util function
+            return build_url(self.success_url, get=self.get_success_parameters())
+        else:
+            raise ImproperlyConfigured("No URL to redirect to. Provide a success_url.")
+
+    def get_success_parameters(self):
+        """
+        Method to return a dictionary of parameters to be included as variables in the success url, e.g. application_id.
+        """
+        # If user was on first sign-in page, email_address won't be stored in GET request QueryDict. In that case, the
+        # email_address will be stored in POST request QueryDict.
+
+        if 'email_address' in self.request.GET.keys():
+            email_address = self.request.GET['email_address']
+        else:
+            email_address = self.request.POST['email_address']
+
+        return {'email_address': email_address}

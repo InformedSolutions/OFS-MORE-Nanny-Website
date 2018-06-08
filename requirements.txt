@@ -51,3 +51,5 @@ urllib3==1.22
 whitenoise==3.3.1
 wrapt==1.10.11
 xmltodict==0.11.0
+git+https://github.com/InformedSolutions/OFS-MORE-Identity-Gateway.git@feat/pip_install_models#subdirectory=application/models
+

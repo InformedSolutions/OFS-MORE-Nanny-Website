@@ -1,0 +1,37 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Security code{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+
+{{ form.error_summary }}
+
+<h1 class="form-title heading-large">Enter security code</h1>
+
+{% if code_resent %}
+    <p>We have resent a 5 digit security code by text to *********{{ mobile_number_end }}.</p>
+{% else %}
+    <p>We have sent a 5 digit security code by text to *********{{ mobile_number_end }}.</p>
+{% endif %}
+
+<p>This can take a minute or so to arrive.</p>
+
+<p>This runs out in 24 hours.</p>
+
+<form method="post" novalidate>
+    {{ form.as_div }}
+    {% csrf_token %}
+    <input type="submit" class="button" value="Continue" alt='Continue'>
+</form>
+
+<br>
+{% if sms_resend_attempts >= 3 %}
+    <a href="{% url 'Resend-Security-Code' %}?email_address={{ email_address }}">Still didn't get a code?</a>
+{% else %}
+    <a href="{% url 'Resend-Security-Code' %}?email_address={{ email_address }}">Didn't get a code?</a>
+    <a href="{% url 'Security-Question' %}?email_address={{ email_address }}"><p>Don't have your phone?</a>
+{% endif %}
+
+{% endblock %}

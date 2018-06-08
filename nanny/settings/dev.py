@@ -2,8 +2,11 @@ import socket
 
 from .base import *
 
-
 DEBUG = True
+
+TEST_NOTIFY_CONNECTION = False
+
+PUBLIC_APPLICATION_URL = 'http://localhost:8000/'
 
 DEV_APPS = [
   'debug_toolbar',
