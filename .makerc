@@ -1,0 +1,4 @@
+PROJECT_SETTINGS=nanny.settings.dev
+PROJECT_PORT=8010
+PROJECT_IP=127.0.0.1
+APP=app-nanny

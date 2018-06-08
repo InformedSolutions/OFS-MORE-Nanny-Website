@@ -22,5 +22,4 @@ staticfiles/*
 .settings/
 .idea/
 .vscode/
-.makerc
 .venv
