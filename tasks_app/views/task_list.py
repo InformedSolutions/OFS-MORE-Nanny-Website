@@ -24,6 +24,7 @@ class TaskListView(View):
 
         context = {
             'id': application_id,
+            'email_address': email_address,
             'all_complete': False,
             'application_status': application.application_status,
             'tasks': [
