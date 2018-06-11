@@ -15,7 +15,6 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # URL prefix for the identity-gateway API.
 IDENTITY_URL_PREFIX = ""
 
@@ -48,12 +47,13 @@ BUILTIN_APPS = [
 THIRD_PARTY_APPS = [
     'govuk_template_base',
     'govuk_template',
-    'govuk_forms'
+    'govuk_forms',
 ]
 
 PROJECT_APPS = [
     'identity_models',
-    'login_app.apps.LoginAppConfig'
+    'login_app.apps.LoginAppConfig',
+    'tasks_app.apps.TasksAppConfig'
 ]
 
 MIDDLEWARE = [
@@ -80,7 +80,7 @@ GOVUK_SERVICE_SETTINGS = {
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -95,18 +95,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'nanny.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/2.0/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
@@ -144,7 +132,20 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
-STATIC_URL = '/static/'
+SECURE_BROWSER_XSS_FILTER = True
+CSRF_COOKIE_HTTPONLY = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+]
+
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Test outputs
 TEST_RUNNER = 'xmlrunner.extra.djangotestrunner.XMLTestRunner'
@@ -180,3 +181,8 @@ LOGGING = {
         },
     },
 }
+
+# Export Settings variables DEBUG to templates context
+SETTINGS_EXPORT = [
+    'DEBUG'
+]
