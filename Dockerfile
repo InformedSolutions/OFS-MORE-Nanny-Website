@@ -18,6 +18,11 @@ RUN mkdir /source
 WORKDIR /source
 ADD . /source/
 RUN pip install -r requirements.txt
+
+# Get identity-models package from OFS-MORE-Identity-Gateway repo.
+RUN pip install git+https://github.com/InformedSolutions/OFS-MORE-Identity-Gateway.git#subdirectory=application/models
+
+
 RUN chmod +x /source/docker-entrypoint.sh
 EXPOSE 8000
 CMD ["/source/docker-entrypoint.sh"]
