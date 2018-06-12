@@ -5,8 +5,9 @@ from tasks_app import views
 
 
 urlpatterns = [
-    url(r'task-list/', views.TaskListView.as_view(), name='Task-List'),
-    url(r'personal-details/', views.PersonalDetailsIntroView.as_view(), name='Personal-Details-Intro')
+    url(r'^task-list/', views.TaskListView.as_view(), name='Task-List'),
+    url(r'^personal-details/', views.PersonalDetailsGuidanceView.as_view(), name='Personal-Details-Guidance'),
+    url(r'^childcare-addres/', views.ChildcareAddressGuidanceView.as_view(), name='Childcare-Address-Guidance'),
 ]
 
 # Django toolbar settings for development environments
