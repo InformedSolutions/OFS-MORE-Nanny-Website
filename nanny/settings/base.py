@@ -15,6 +15,9 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# URL_PREFIX = '/nanny'
+URL_PREFIX = ''
+
 # URL prefix for the identity-gateway API.
 IDENTITY_URL_PREFIX = ""
 
@@ -56,6 +59,8 @@ PROJECT_APPS = [
     'tasks_app.apps.TasksAppConfig'
 ]
 
+SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -64,6 +69,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'middleware.CustomAuthenticationHandler',
 ]
 
 ROOT_URLCONF = 'nanny.urls'
@@ -186,3 +192,29 @@ LOGGING = {
 SETTINGS_EXPORT = [
     'DEBUG'
 ]
+
+AUTHENTICATION_URL = URL_PREFIX + '/sign-in/'
+
+AUTHENTICATION_EXEMPT_URLS = (
+    r'^' + URL_PREFIX + '/$',
+    r'^' + URL_PREFIX + '/account/account/$',
+    r'^' + URL_PREFIX + '/account/email/$',
+    r'^' + URL_PREFIX + '/security-question/$',
+    r'^' + URL_PREFIX + '/email-sent/$',
+    r'^' + URL_PREFIX + '/validate/.*$',
+    r'^' + URL_PREFIX + '/code-resent/.*$',
+    r'^' + URL_PREFIX + '/security-code/.*$',
+    r'^' + URL_PREFIX + '/link-used/$',
+    r'^' + URL_PREFIX + '/new-code/.*$',
+    r'^' + URL_PREFIX + '/djga/+',
+    r'^' + URL_PREFIX + '/sign-in/',
+    r'^' + URL_PREFIX + '/sign-in/check-email/',
+    r'^' + URL_PREFIX + '/email-resent/',
+    r'^' + URL_PREFIX + '/sign-in/new-application/',
+    r'^' + URL_PREFIX + '/new-application/',
+    r'^' + URL_PREFIX + '/new-application/check-email/',
+    r'^' + URL_PREFIX + '/service-unavailable/',
+    r'^' + URL_PREFIX + '/help-contact/',
+    r'^' + URL_PREFIX + '/costs/',
+    r'^' + URL_PREFIX + '/application-saved/$',
+)
