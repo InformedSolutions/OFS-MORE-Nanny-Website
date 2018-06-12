@@ -12,10 +12,10 @@ from identity_models.user_details import UserDetails
 # @never_cache
 class TaskListView(View):
     def get(self, request):
-        email_address = request.GET["email_address"]
-        api_response = UserDetails.api.get_record(email=email_address)
+        application_id = request.GET["id"]
+        api_response = UserDetails.api.get_record(application_id=application_id)
         record = api_response.record
-        application_id = record['application_id']
+        email_address = record['email']
 
         try:
             application = Application.objects.get(pk=application_id)
