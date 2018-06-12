@@ -15,6 +15,7 @@ class LoginTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
 
+    '''
     def test_can_render_accout_selection_page(self):
         """
         Test to assert that the 'Account-Selection' page can be rendered.
@@ -334,3 +335,4 @@ class LoginTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(found.func.view_class, views.SecurityCodeFormView)
         # TODO: Make API call before and after to check that the account's security code has changed.
+'''

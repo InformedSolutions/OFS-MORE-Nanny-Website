@@ -1,5 +1,8 @@
 from identity_models.user_details import UserDetails
 
+from middleware import CustomAuthenticationHandler
+import login_redirect_helper
+
 from login_app.forms import SecurityCodeForm
 
 from .base import BaseFormView
@@ -17,7 +20,10 @@ class SecurityCodeFormView(BaseFormView):
         record = UserDetails.api.get_record(email=self.request.GET['email_address']).record
         record['sms_resend_attempts'] = 0
         UserDetails.api.put(record)
-        return super(SecurityCodeFormView, self).form_valid(form)
+        record = UserDetails.api.get_record(email=self.request.GET['email_address']).record
+        response = login_redirect_helper.redirect_by_status(record['application_id'])
+        CustomAuthenticationHandler.create_session(response, record['email'])
+        return response
 
     def get_form_kwargs(self):
         kwargs = super(SecurityCodeFormView, self).get_form_kwargs()
