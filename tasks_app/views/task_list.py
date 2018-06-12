@@ -123,7 +123,7 @@ class TaskListView(View):
                     'status_url': None,
                     'status_urls': [
                         {'status': 'COMPLETED', 'url': 'Declaration-Declaration-View'},
-                        {'status': 'OTHER', 'url': 'Declaration-Summary-View'}
+                        {'status': 'OTHER', 'url': 'Declaration-Summary'}
                     ],
                 },
             ]
