@@ -20,7 +20,7 @@ def build_url(*args, **kwargs):
 
 def generate_email_validation_link(email_address):
     link = ''.join([random.choice(string.ascii_letters + string.digits) for n in range(12)]).upper()
-    full_link = str(settings.PUBLIC_APPLICATION_URL) + 'validate/' + link  # + '?email_address=' + email_address
+    full_link = str(settings.PUBLIC_APPLICATION_URL) + '/validate/' + link  # + '?email_address=' + email_address
 
     return full_link, int(time.time())
 

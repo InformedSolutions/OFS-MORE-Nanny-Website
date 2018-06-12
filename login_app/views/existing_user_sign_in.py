@@ -25,7 +25,7 @@ class ExistingUserSignInFormView(BaseFormView):
         if api_response.status_code == 404:
             # TODO: Make change to API such that create function returns response with a 'record' attribute.
             # That way, can have 2 API calls instead of 3.
-            UserDetails.api.create(email=email_address, application_id=uuid.uuid4())
+            creation_response = UserDetails.api.create(email=email_address, application_id=uuid.uuid4())
             api_response = UserDetails.api.get_record(email=email_address)
 
         record = api_response.record

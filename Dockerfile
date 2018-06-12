@@ -11,6 +11,7 @@ RUN  if [ "`echo $PROJECT_SETTINGS | rev | cut -c -3 | rev`" = "dev" ]; then \
 RUN apt-get update && \
         apt-get install -y \
                 netcat \
+                git \
         && rm -rf /var/lib/apt/lists/*
 
 
@@ -18,6 +19,11 @@ RUN mkdir /source
 WORKDIR /source
 ADD . /source/
 RUN pip install -r requirements.txt
+
+# Get identity-models package from OFS-MORE-Identity-Gateway repo.
+RUN pip install -e 'git+https://github.com/InformedSolutions/OFS-MORE-Identity-Gateway.git#egg=identity_models&subdirectory=application/models'
+
+
 RUN chmod +x /source/docker-entrypoint.sh
 EXPOSE 8000
 CMD ["/source/docker-entrypoint.sh"]

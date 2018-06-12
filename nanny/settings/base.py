@@ -15,8 +15,28 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# URL_PREFIX = '/nanny'
-URL_PREFIX = ''
+URL_PREFIX = '/nanny'
+
+# Server name for showing server that responded to request under load balancing conditions
+SERVER_LABEL = os.environ.get('SERVER_LABEL')
+
+# Visa Validation
+VISA_VALIDATION = os.environ.get('VISA_VALIDATION') == 'True'
+
+# Base URL of notify gateway
+NOTIFY_URL = os.environ.get('APP_NOTIFY_URL')
+
+# Base URL of payment gateway
+PAYMENT_URL = os.environ.get('APP_PAYMENT_URL')
+
+# Base URL of addressing-service gateway
+ADDRESSING_URL = os.environ.get('APP_ADDRESSING_URL')
+
+PUBLIC_APPLICATION_URL = os.environ.get('PUBLIC_APPLICATION_URL')
+
+EXECUTING_AS_TEST = os.environ.get('EXECUTING_AS_TEST')
+
+TEST_NOTIFY_CONNECTION = True
 
 # URL prefix for the identity-gateway API.
 IDENTITY_URL_PREFIX = ""
