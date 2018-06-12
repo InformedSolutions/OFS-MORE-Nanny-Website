@@ -9,8 +9,9 @@ urlpatterns = [
     url(r'^personal-details/', views.PersonalDetailsGuidanceView.as_view(), name='Personal-Details-Guidance'),
     url(r'^childcare-address/', views.ChildcareAddressGuidanceView.as_view(), name='Childcare-Address-Guidance'),
     url(r'^first-aid/', views.FirstAidGuidanceView.as_view(), name='First-Aid-Guidance'),
-    url(r'^childcare-training/', views.ChildcareTrainingGuidanceView.as_view(), name='Childcare-Address-Guidance'),
+    url(r'^childcare-training/', views.ChildcareTrainingGuidanceView.as_view(), name='Childcare-Training-Guidance'),
     url(r'^criminal-record/', views.CriminalRecordGuidanceView.as_view(), name='Criminal-Record-Guidance'),
+    url(r'^insurance-cover/', views.InsuranceCoverGuidanceView.as_view(), name='Insurance-Cover-Guidance'),
 ]
 
 # Django toolbar settings for development environments
