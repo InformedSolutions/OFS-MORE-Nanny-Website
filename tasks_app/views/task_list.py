@@ -49,7 +49,7 @@ class TaskListView(View):
                     'status_urls': [
                         {'status': 'COMPLETED', 'url': 'Personal-Details-Summary'},
                         {'status': 'FLAGGED', 'url': 'Personal-Details-Summary'},
-                        {'status': 'OTHER', 'url': 'Personal-Details-Summary'},  # For all other statuses
+                        {'status': 'OTHER', 'url': 'Personal-Details-Guidance'},  # For all other statuses
                     ]
                 },
                 {
@@ -61,7 +61,7 @@ class TaskListView(View):
                     'status_urls': [
                         {'status': 'COMPLETED', 'url': 'Childcare-Address-Summary'},
                         {'status': 'FLAGGED', 'url': 'Childcare-Address-Summary'},
-                        {'status': 'OTHER', 'url': 'Childcare-Address-Summary'},  # For all other statuses
+                        {'status': 'OTHER', 'url': 'Childcare-Address-Guidance'},  # For all other statuses
                     ]
                 },
                 {
