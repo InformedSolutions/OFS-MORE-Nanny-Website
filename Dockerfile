@@ -11,6 +11,7 @@ RUN  if [ "`echo $PROJECT_SETTINGS | rev | cut -c -3 | rev`" = "dev" ]; then \
 RUN apt-get update && \
         apt-get install -y \
                 netcat \
+                git \
         && rm -rf /var/lib/apt/lists/*
 
 
