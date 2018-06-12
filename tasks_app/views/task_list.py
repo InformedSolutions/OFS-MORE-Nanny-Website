@@ -85,7 +85,7 @@ class TaskListView(View):
                     'status_urls': [
                         {'status': 'COMPLETED', 'url': 'Childcare-Training-Summary'},
                         {'status': 'FLAGGED', 'url': 'Childcare-Training-Summary'},
-                        {'status': 'OTHER', 'url': 'Childcare-Training-Summary'},  # For all other statuses
+                        {'status': 'OTHER', 'url': 'Childcare-Training-Guidance'},  # For all other statuses
                     ]
                 },
                 {

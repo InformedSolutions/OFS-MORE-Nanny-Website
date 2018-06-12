@@ -9,6 +9,7 @@ urlpatterns = [
     url(r'^personal-details/', views.PersonalDetailsGuidanceView.as_view(), name='Personal-Details-Guidance'),
     url(r'^childcare-address/', views.ChildcareAddressGuidanceView.as_view(), name='Childcare-Address-Guidance'),
     url(r'^first-aid/', views.FirstAidGuidanceView.as_view(), name='First-Aid-Guidance'),
+    url(r'^childcare-training/', views.ChildcareTrainingGuidanceView.as_view(), name='Childcare-Address-Guidance'),
 ]
 
 # Django toolbar settings for development environments
