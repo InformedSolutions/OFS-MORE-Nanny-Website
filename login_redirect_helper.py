@@ -16,16 +16,16 @@ def redirect_by_status(application_id):
         application = NannyApplication.objects.get(pk=application_id)
     except ObjectDoesNotExist:
         response = HttpResponseRedirect(
-            reverse('Contact-Details-Summary') + '?id=' + str(application.application_id))
+            reverse('Contact-Details-Summary') + '?id=' + str(application_id))
         return response
 
     if application.application_status == 'DRAFTING':
         if application.login_details_status == 'COMPLETED':
             response = HttpResponseRedirect(
-                reverse('Task-List') + '?id=' + str(application.application_id)
+                reverse('Task-List') + '?id=' + str(application_id)
             )
         else:
             response = HttpResponseRedirect(
-                reverse('Contact-Details-Summary') + '?id=' + str(application.application_id))
+                reverse('Contact-Details-Summary') + '?id=' + str(application_id))
 
     return response
