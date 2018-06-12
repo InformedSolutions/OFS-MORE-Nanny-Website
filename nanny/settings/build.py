@@ -35,7 +35,6 @@ STATIC_URL = URL_PREFIX + '/static/'
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY', 'ezn^k@w45@&zncvn)fzsrnke-e04s#+3$$ol$m=_nfwsfchlvp')
 
-
 # Automatic Django logging at the INFO level (i.e everything the comes to the console when ran locally)
 LOGGING = {
   'version': 1,
