@@ -4,7 +4,7 @@ from django.core.validators import RegexValidator
 from django.db import models
 
 
-class Application(models.Model):
+class NannyApplication(models.Model):
     """
     Model for APPLICATION table
     """
@@ -69,4 +69,4 @@ class Application(models.Model):
         return cls.objects.get(pk=app_id)
 
     class Meta:
-        db_table = 'APPLICATION'
+        db_table = 'NANNY_APPLICATION'

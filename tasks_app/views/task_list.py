@@ -4,7 +4,7 @@ from django.utils import timezone
 from django.views import View
 from django.views.decorators.cache import never_cache
 
-from tasks_app.models import Application
+from tasks_app.models import NannyApplication
 
 from identity_models.user_details import UserDetails
 
@@ -18,7 +18,7 @@ class TaskListView(View):
         email_address = record['email']
 
         try:
-            application = Application.objects.get(pk=application_id)
+            application = NannyApplication.objects.get(pk=application_id)
         except ObjectDoesNotExist:
             application = create_new_app(app_id=application_id)
 
@@ -160,7 +160,7 @@ class TaskListView(View):
 
 
 def create_new_app(app_id):
-    application = Application.objects.create(
+    application = NannyApplication.objects.create(
         application_id=app_id,
         application_type='NANNY',
         application_status='DRAFTING',
