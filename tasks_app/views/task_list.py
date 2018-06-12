@@ -97,7 +97,7 @@ class TaskListView(View):
                     'status_urls': [
                         {'status': 'COMPLETED', 'url': 'Criminal-Record-Summary'},
                         {'status': 'FLAGGED', 'url': 'Criminal-Record-Summary'},
-                        {'status': 'OTHER', 'url': 'Criminal-Record-Summary'},  # For all other statuses
+                        {'status': 'OTHER', 'url': 'Criminal-Record-Guidance'},  # For all other statuses
                     ]
                 },
                 {
