@@ -14,3 +14,8 @@ DATABASES = {
         'PORT': os.environ.get('POSTGRES_PORT', '5462')
     }
 }
+
+MIGRATION_MODULES = {
+    'login_app': 'login_app.tests.test_migrations',
+    'tasks_app': 'tasks_app.tests.test_migrations'
+}
