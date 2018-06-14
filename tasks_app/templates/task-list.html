@@ -25,8 +25,21 @@
             <td class="task" style="padding-right: 10px; word-wrap: break-word;">
                 <a href="{% url task.status_url %}?id={{ id }}">
                     <span class="task-name">{{ task.description }}</span>
+
+                {% if task.status == 'NOT_STARTED' %}
                     <strong class="task-finished task-to-do" alt="{{ task.status_url }}: To do">To do</strong>
+
+                {% elif task.status == 'IN_PROGRESS' %}
+                    <strong class="task-finished task-in-progress" alt="{{ task.name }}: Started">Started</strong>
+
+                {% elif  task.status == 'COMPLETED' %}
+                    <strong class="task-finished" alt="{{ task.name }}: Done">Done</strong>
+
+                 {% else %}
+                    <strong class="task-finished task-do-last">Do last</strong>
+
                 </a>
+                {% endif %}
             </td>
         </tr>
     {% endfor %}
