@@ -165,7 +165,7 @@ def create_new_app(app_id):
         application_type='NANNY',
         application_status='DRAFTING',
         cygnum_urn='',
-        login_details_status='NOT_STARTED',
+        login_details_status='COMPLETED',
         personal_details_status='NOT_STARTED',
         childcare_address_status='NOT_STARTED',
         first_aid_training_status='NOT_STARTED',
