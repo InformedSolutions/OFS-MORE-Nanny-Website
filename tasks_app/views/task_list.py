@@ -9,8 +9,8 @@ from tasks_app.models import NannyApplication
 from identity_models.user_details import UserDetails
 
 
-# @never_cache
 class TaskListView(View):
+    @never_cache
     def get(self, request):
         application_id = request.GET["id"]
         api_response = UserDetails.api.get_record(application_id=application_id)
@@ -165,15 +165,13 @@ def create_new_app(app_id):
         application_type='NANNY',
         application_status='DRAFTING',
         cygnum_urn='',
-        login_details_status='NOT_STARTED',
+        login_details_status='COMPLETED',
         personal_details_status='NOT_STARTED',
-        childcare_type_status='NOT_STARTED',
+        childcare_address_status='NOT_STARTED',
         first_aid_training_status='NOT_STARTED',
-        eyfs_training_status='NOT_STARTED',
+        childcare_training_status='NOT_STARTED',
         criminal_record_check_status='NOT_STARTED',
-        health_status='NOT_STARTED',
-        references_status='NOT_STARTED',
-        people_in_home_status='NOT_STARTED',
+        insurance_cover_status='NOT_STARTED',
         declarations_status='NOT_STARTED',
         date_created=timezone.now(),
         date_updated=timezone.now(),

@@ -1,7 +1,7 @@
 from identity_models.user_details import UserDetails
 
 from middleware import CustomAuthenticationHandler
-import login_redirect_helper
+from login_app import login_redirect_helper
 
 from login_app.forms import DBSSecurityQuestionForm, DoBSecurityQuestionForm, MobileNumberSecurityQuestionForm
 
@@ -42,6 +42,9 @@ class SecurityQuestionFormView(BaseFormView):
         return form
 
     def form_valid(self, form):
+        record = UserDetails.api.get_record(email=self.request.GET['email_address']).record
+        record['sms_resend_attempts'] = 0
+        UserDetails.api.put(record)
         record = UserDetails.api.get_record(email=self.request.GET['email_address']).record
         response = login_redirect_helper.redirect_by_status(record['application_id'])
         CustomAuthenticationHandler.create_session(response, record['email'])

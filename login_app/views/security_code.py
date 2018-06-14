@@ -1,7 +1,7 @@
 from identity_models.user_details import UserDetails
 
 from middleware import CustomAuthenticationHandler
-import login_redirect_helper
+from login_app import login_redirect_helper
 
 from login_app.forms import SecurityCodeForm
 
