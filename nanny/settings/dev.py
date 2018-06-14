@@ -8,7 +8,7 @@ TEST_NOTIFY_CONNECTION = False
 
 STATIC_URL = URL_PREFIX + '/static/'
 
-PUBLIC_APPLICATION_URL = 'http://localhost:8000/'
+PUBLIC_APPLICATION_URL = 'http://localhost:8000' + URL_PREFIX
 
 DEV_APPS = [
   'debug_toolbar',
