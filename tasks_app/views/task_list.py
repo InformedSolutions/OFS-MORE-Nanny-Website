@@ -9,8 +9,8 @@ from tasks_app.models import NannyApplication
 from identity_models.user_details import UserDetails
 
 
-# @never_cache
 class TaskListView(View):
+    @never_cache
     def get(self, request):
         application_id = request.GET["id"]
         api_response = UserDetails.api.get_record(application_id=application_id)
