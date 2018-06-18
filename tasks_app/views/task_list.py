@@ -20,16 +20,16 @@ class TaskListView(View):
         email_address = record['email']
 
         try:
-            response = Application.api.get_record(application_id=application_id)
+            response = Application().api.get_record(application_id=application_id)
             if response.status_code == 404:
                 application = create_new_app(app_id=application_id)
             elif response.status_code == 200:
                 application = Application(response.record)
             else:
-                raise ObjectDoesNotExist('Something went wrong.')
+                raise Exception('Something went wrong.')
 
-        except ObjectDoesNotExist:
-            application = create_new_app(app_id=application_id)
+        except Exception:
+            return render(request, '500.html')
 
         context = {
             'id': application_id,
@@ -170,11 +170,11 @@ class TaskListView(View):
 
 def create_new_app(app_id):
     app_id = uuid.UUID(app_id)
-    api_response_create = Application.api.create(
+    api_response_create = Application().api.create(
         application_id=app_id
     )
     if api_response_create.status_code == 201:
-        response = Application.api.get_record(
+        response = Application().api.get_record(
             application_id=app_id
         )
         return Application(response.record)
