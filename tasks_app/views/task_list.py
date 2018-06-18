@@ -5,7 +5,6 @@ from django.views import View
 from django.views.decorators.cache import never_cache
 import uuid
 
-from tasks_app.models import NannyApplication
 from nanny_models.application import Application
 
 from identity_models.user_details import UserDetails
@@ -20,7 +19,7 @@ class TaskListView(View):
         email_address = record['email']
 
         try:
-            response = Application().api.get_record(application_id=application_id)
+            response = Application.api.get_record(application_id=application_id)
             if response.status_code == 404:
                 application = create_new_app(app_id=application_id)
             elif response.status_code == 200:
@@ -170,11 +169,12 @@ class TaskListView(View):
 
 def create_new_app(app_id):
     app_id = uuid.UUID(app_id)
-    api_response_create = Application().api.create(
-        application_id=app_id
+    api_response_create = Application.api.create(
+        application_id=app_id,
+        model_type=Application
     )
     if api_response_create.status_code == 201:
-        response = Application().api.get_record(
+        response = Application.api.get_record(
             application_id=app_id
         )
         return Application(response.record)
