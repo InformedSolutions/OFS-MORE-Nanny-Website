@@ -1,11 +1,8 @@
-from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
-from django.utils import timezone
 from django.views import View
 from django.views.decorators.cache import never_cache
 import uuid
 
-from tasks_app.models import NannyApplication
 from nanny_models.application import Application
 
 from identity_models.user_details import UserDetails
@@ -15,21 +12,17 @@ class TaskListView(View):
     @never_cache
     def get(self, request):
         application_id = request.GET["id"]
-        api_response = UserDetails.api.get_record(application_id=application_id)
-        record = api_response.record
+        identity_api_response = UserDetails.api.get_record(application_id=application_id)
+        record = identity_api_response.record
         email_address = record['email']
 
-        try:
-            response = Application.api.get_record(application_id=application_id)
-            if response.status_code == 404:
-                application = create_new_app(app_id=application_id)
-            elif response.status_code == 200:
-                application = Application(response.record)
-            else:
-                raise ObjectDoesNotExist('Something went wrong.')
-
-        except ObjectDoesNotExist:
-            application = create_new_app(app_id=application_id)
+        nanny_api_response = Application.api.get_record(application_id=application_id)
+        if nanny_api_response.status_code == 200:
+            application = Application(**nanny_api_response.record)
+        elif nanny_api_response.status_code == 404:
+            application = create_new_app(application_id=application_id)
+        else:
+            raise RuntimeError('The nanny-gateway API did not respond as expected.')
 
         context = {
             'id': application_id,
@@ -168,13 +161,17 @@ class TaskListView(View):
         return render(request, 'task-list.html', context)
 
 
-def create_new_app(app_id):
-    app_id = uuid.UUID(app_id)
+def create_new_app(application_id):
+    appliation_id = uuid.UUID(application_id)
     api_response_create = Application.api.create(
-        application_id=app_id
+        application_id=application_id,
+        login_details_status="COMPLETED",
+        model_type=Application
     )
     if api_response_create.status_code == 201:
         response = Application.api.get_record(
-            application_id=app_id
+            application_id=application_id
         )
         return Application(response.record)
+    else:
+        raise RuntimeError('The nanny-gateway API did not create the requested application.')
