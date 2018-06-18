@@ -162,7 +162,7 @@ class TaskListView(View):
 
 
 def create_new_app(application_id):
-    appliation_id = uuid.UUID(application_id)
+    application_id = uuid.UUID(application_id)
     api_response_create = Application.api.create(
         application_id=application_id,
         login_details_status="COMPLETED",
