@@ -3,8 +3,9 @@ from django.shortcuts import render
 from django.utils import timezone
 from django.views import View
 from django.views.decorators.cache import never_cache
+import uuid
 
-from tasks_app.models import NannyApplication
+from nanny_models.application import Application
 
 from identity_models.user_details import UserDetails
 
@@ -18,9 +19,16 @@ class TaskListView(View):
         email_address = record['email']
 
         try:
-            application = NannyApplication.objects.get(pk=application_id)
-        except ObjectDoesNotExist:
-            application = create_new_app(app_id=application_id)
+            response = Application.api.get_record(application_id=application_id)
+            if response.status_code == 404:
+                application = create_new_app(app_id=application_id)
+            elif response.status_code == 200:
+                application = Application(response.record)
+            else:
+                raise Exception('Something went wrong.')
+
+        except Exception:
+            return render(request, '500.html')
 
         context = {
             'id': application_id,
@@ -160,31 +168,13 @@ class TaskListView(View):
 
 
 def create_new_app(app_id):
-    application = NannyApplication.objects.create(
+    app_id = uuid.UUID(app_id)
+    api_response_create = Application.api.create(
         application_id=app_id,
-        application_type='NANNY',
-        application_status='DRAFTING',
-        cygnum_urn='',
-        login_details_status='COMPLETED',
-        personal_details_status='NOT_STARTED',
-        childcare_address_status='NOT_STARTED',
-        first_aid_training_status='NOT_STARTED',
-        childcare_training_status='NOT_STARTED',
-        criminal_record_check_status='NOT_STARTED',
-        insurance_cover_status='NOT_STARTED',
-        declarations_status='NOT_STARTED',
-        date_created=timezone.now(),
-        date_updated=timezone.now(),
-        date_accepted=None,
-        application_reference=None
+        model_type=Application
     )
-    # user = UserDetails.objects.create(application_id=application)
-
-    # TimelineLog.objects.create(
-    #     content_object=application,
-    #     user=None,
-    #     template='timeline_logger/application_action.txt',
-    #     extra_data={'user_type': 'applicant', 'action': 'created', 'entity': 'application'}
-    # )
-
-    return application
+    if api_response_create.status_code == 201:
+        response = Application.api.get_record(
+            application_id=app_id
+        )
+        return Application(response.record)
