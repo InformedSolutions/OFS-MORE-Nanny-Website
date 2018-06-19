@@ -1,0 +1,19 @@
+{% extends 'govuk_template.html' %}
+{% load static %}
+{% load govuk_template_base %}
+{% block page_title %}Check your answers: childcare training{% endblock %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+<h1 class="form-title heading-large">Childcare training summary</h1>
+
+<em>Summary of submitted answers here.</em>
+
+<form method="post">
+    {% csrf_token %}
+    <input type="submit" class="button" value="Save and continue" alt="continue" id="id_continue">
+</form>
+
+{% endblock %}
