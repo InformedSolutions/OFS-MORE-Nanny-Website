@@ -5,7 +5,8 @@ from childcare_training_task_app import views
 
 
 urlpatterns = [
-    url(r'^childcare-training/', views.ChildcareTrainingGuidanceView.as_view(), name='Childcare-Training-Guidance'),
+    url(r'^childcare-training/$', views.ChildcareTrainingGuidanceView.as_view(), name='Childcare-Training-Guidance'),
+    url(r'^childcare-training/type/', views.TypeOfChildcareTrainingFormView.as_view(), name='Type-Of-Childcare-Training')
 ]
 
 # Django toolbar settings for development environments

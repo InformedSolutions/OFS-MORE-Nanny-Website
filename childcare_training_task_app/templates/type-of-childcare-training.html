@@ -1,0 +1,20 @@
+{% extends 'govuk_template.html' %}
+{% load static %}
+{% load govuk_template_base %}
+{% block page_title %}Type of course{% endblock %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+<h1 class="form-title heading-large">Type of Course</h1>
+
+<h1 class="form-title heading-small">What type of childcare course have you completed?</h1>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_div }}
+    <input type="submit" class="button" value="Save of continue" alt="continue" id="id_continue">
+</form>
+
+{% endblock %}
