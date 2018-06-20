@@ -7,6 +7,7 @@ import re
 urlpatterns = [
     url(r'^', include('login_app.urls')),
     url(r'^', include('tasks_app.urls')),
+    url(r'^', include('first_aid_app.urls')),
 ]
 
 if hasattr(settings, 'URL_PREFIX'):
