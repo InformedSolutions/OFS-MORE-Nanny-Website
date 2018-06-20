@@ -165,13 +165,14 @@ def create_new_app(application_id):
     application_id = uuid.UUID(application_id)
     api_response_create = Application.api.create(
         application_id=application_id,
-        login_details_status="COMPLETED",
+        application_status='DRAFTING',
+        login_details_status='COMPLETED',
         model_type=Application
     )
     if api_response_create.status_code == 201:
         response = Application.api.get_record(
             application_id=application_id
         )
-        return Application(response.record)
+        return Application(**response.record)
     else:
         raise RuntimeError('The nanny-gateway API did not create the requested application.')
