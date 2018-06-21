@@ -34,6 +34,9 @@ class TypeOfChildcareTrainingFormView(FormView):
 
         put_response = ChildcareTraining.api.put(record=record)
 
+        if record['no_training']:  # If they have selected only 'No training' (wouldn't pass validation otherwise)
+            self.success_url = 'Childcare-Training-Course'
+
         if put_response.status_code == 200:
             return super(TypeOfChildcareTrainingFormView, self).form_valid(form)
         else:
