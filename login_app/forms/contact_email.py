@@ -1,4 +1,5 @@
 from django import forms
+from django.conf import settings
 
 import re
 
@@ -30,7 +31,7 @@ class ContactEmailForm(GOVUKForm):
         """
         email_address = self.cleaned_data['email_address']
         # RegEx for valid e-mail addresses
-        if re.match(utils.REGEX['EMAIL'], email_address) is None:
+        if re.match(settings.REGEX['EMAIL'], email_address) is None:
             raise forms.ValidationError('Please enter a valid email address, like yourname@example.com')
         return email_address
 
