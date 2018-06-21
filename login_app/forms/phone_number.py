@@ -1,6 +1,13 @@
+from django import forms
+
 from govuk_forms.forms import GOVUKForm
+from govuk_forms.widgets import Widget
 
 from login_app.utils import PhoneNumberField
+
+
+class NannyFormInput(forms.widgets.NumberInput, Widget):
+    input_classes = "nanny-form form-control"
 
 
 class PhoneNumbersForm(GOVUKForm):
@@ -10,13 +17,15 @@ class PhoneNumbersForm(GOVUKForm):
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
-    error_summary_title = 'There was a problem with your phone number'
+    error_summary_title = 'There was a problem'
 
     mobile_number = PhoneNumberField(number_type='mobile',
                                      label='Your mobile number',
                                      required=True,
-                                     error_messages={'required': "Please enter a mobile number"})
+                                     error_messages={'required': "Please enter a mobile number"},
+                                     widget=NannyFormInput)
 
     other_phone_number = PhoneNumberField(number_type='other_phone',
                                           label='Other phone number (optional)',
-                                          required=False)
+                                          required=False,
+                                          widget=NannyFormInput)

@@ -1,8 +1,13 @@
-from govuk_forms.forms import GOVUKForm
-
 from django.forms import forms
 
+from govuk_forms.forms import GOVUKForm
+from govuk_forms.widgets import Widget
+
 from login_app.utils import DBSNumberField, PhoneNumberField
+
+
+class NannyFormInput(forms.widgets.TextInput, Widget):
+    input_classes = "nanny-form form-control"
 
 
 class BaseSecurityQuestionForm(GOVUKForm):
@@ -12,7 +17,7 @@ class BaseSecurityQuestionForm(GOVUKForm):
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
-    error_summary_title = 'There was a problem on this page'
+    error_summary_title = 'There was a problem'
 
     security_answer = None
 
@@ -27,7 +32,9 @@ class BaseSecurityQuestionForm(GOVUKForm):
 
 class DBSSecurityQuestionForm(BaseSecurityQuestionForm):
 
-    security_answer = DBSNumberField(label='DBS Number', required=True, error_messages={'required': 'Please give an answer'})
+    security_answer = DBSNumberField(label='DBS Number', required=True,
+                                     error_messages={'required': 'Please give an answer'},
+                                     widget=NannyFormInput)
     help_text = 'Please enter your DBS certificate number.'
 
 
@@ -39,6 +46,10 @@ class DoBSecurityQuestionForm(BaseSecurityQuestionForm):
 
 class MobileNumberSecurityQuestionForm(BaseSecurityQuestionForm):
 
-    security_answer = PhoneNumberField(label='Your mobile number', number_type='mobile', required=True, error_messages={'required': 'Please give an answer'})
+    security_answer = PhoneNumberField(label='Your mobile number',
+                                       number_type='mobile',
+                                       required=True,
+                                       error_messages={'required': 'Please give an answer'},
+                                       widget=NannyFormInput)
     help_text = 'Please enter your mobile number.'
 
