@@ -35,8 +35,10 @@ class TypeOfChildcareTrainingForm(GOVUKForm):
         super(TypeOfChildcareTrainingForm, self).__init__(*args, **kwargs)
         initial_vals = []
 
-        for option in self.options:
-            if kwargs['initial'][option[0]]:
-                initial_vals.append(option[0])
-
-        self.fields['childcare_training'].initial = initial_vals
+        try:
+            for option in self.options:
+                if kwargs['initial'][option[0]]:
+                    initial_vals.append(option[0])
+            self.fields['childcare_training'].initial = initial_vals
+        except KeyError:  # If they're loading the form for the first time, supply no initial values.
+            pass
