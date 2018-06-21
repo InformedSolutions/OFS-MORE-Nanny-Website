@@ -2,7 +2,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, reverse
 from django.views import View
 
-from nanny_models.application import Application
+from nanny_models.application import NannyApplication
 from nanny_models.childcare_training import ChildcareTraining
 
 
@@ -15,7 +15,7 @@ class ChildcareTrainingSummaryView(View):
 
     def post(self, request):
         application_id = request.GET['id']
-        record = Application.api.get_record(application_id=application_id).record
+        record = NannyApplication.api.get_record(application_id=application_id).record
         record['childcare_training_status'] = "COMPLETED"
-        Application.api.put(record)
+        NannyApplication.api.put(record)
         return HttpResponseRedirect(reverse('Task-List') + '?id=' + application_id)

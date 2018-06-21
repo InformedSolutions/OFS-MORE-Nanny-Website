@@ -3,7 +3,7 @@ from django.views import View
 from django.views.decorators.cache import never_cache
 import uuid
 
-from nanny_models.application import Application
+from nanny_models.application import NannyApplication
 
 from identity_models.user_details import UserDetails
 
@@ -16,9 +16,9 @@ class TaskListView(View):
         record = identity_api_response.record
         email_address = record['email']
 
-        nanny_api_response = Application.api.get_record(application_id=application_id)
+        nanny_api_response = NannyApplication.api.get_record(application_id=application_id)
         if nanny_api_response.status_code == 200:
-            application = Application(**nanny_api_response.record)
+            application = NannyApplication(**nanny_api_response.record)
         elif nanny_api_response.status_code == 404:
             application = create_new_app(application_id=application_id)
         else:
@@ -163,16 +163,16 @@ class TaskListView(View):
 
 def create_new_app(application_id):
     application_id = uuid.UUID(application_id)
-    api_response_create = Application.api.create(
+    api_response_create = NannyApplication.api.create(
         application_id=application_id,
         application_status='DRAFTING',
         login_details_status='COMPLETED',
-        model_type=Application
+        model_type=NannyApplication
     )
     if api_response_create.status_code == 201:
-        response = Application.api.get_record(
+        response = NannyApplication.api.get_record(
             application_id=application_id
         )
-        return Application(**response.record)
+        return NannyApplication(**response.record)
     else:
         raise RuntimeError('The nanny-gateway API did not create the requested application.')
