@@ -75,3 +75,7 @@ class TypeOfChildcareTrainingFormView(FormView):
             return build_url(self.success_url, get=self.get_success_parameters())
         else:
             raise ImproperlyConfigured("No URL to redirect to. Provide a success_url.")
+
+    def get_context_data(self, **kwargs):
+        kwargs['id'] = self.request.GET['id']
+        return super(TypeOfChildcareTrainingFormView, self).get_context_data(**kwargs)

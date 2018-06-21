@@ -8,7 +8,8 @@ from nanny_models.application import Application
 
 class ChildcareTrainingGuidanceView(View):
     def get(self, request):
-        return render(request, template_name='childcare-training-guidance.html')
+        context = {'id': request.GET['id']}
+        return render(request, template_name='childcare-training-guidance.html', context=context)
 
     def post(self, request):
         application_id = request.GET['id']
