@@ -3,7 +3,7 @@ from django.shortcuts import render, reverse
 from django.views import View
 
 
-from nanny_models.application import NannyApplication
+from nanny_models.nanny_application import NannyApplication
 
 
 class ChildcareTrainingGuidanceView(View):
