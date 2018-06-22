@@ -2,7 +2,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
-from nanny_models.application import NannyApplication
+from nanny_models.nanny_application import NannyApplication
 
 
 def redirect_by_status(application_id):

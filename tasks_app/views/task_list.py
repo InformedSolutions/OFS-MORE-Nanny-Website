@@ -3,7 +3,7 @@ from django.views import View
 from django.views.decorators.cache import never_cache
 import uuid
 
-from nanny_models.application import NannyApplication
+from nanny_models.nanny_application import NannyApplication
 
 from identity_models.user_details import UserDetails
 
