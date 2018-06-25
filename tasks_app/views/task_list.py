@@ -78,9 +78,9 @@ class TaskListView(View):
                     'description': 'First aid training',
                     'status_url': None,
                     'status_urls': [
-                        {'status': 'COMPLETED', 'url': 'First-Aid-Summary'},
-                        {'status': 'FLAGGED', 'url': 'First-Aid-Summary'},
-                        {'status': 'OTHER', 'url': 'First-Aid-Guidance'},  # For all other statuses
+                        {'status': 'COMPLETED', 'url': 'first-aid:First-Aid-Summary'},
+                        {'status': 'FLAGGED', 'url': 'first-aid:First-Aid-Summary'},
+                        {'status': 'OTHER', 'url': 'first-aid:First-Aid-Guidance'},  # For all other statuses
                     ]
                 },
                 {
@@ -168,6 +168,7 @@ class TaskListView(View):
 
 def create_new_app(application_id):
     application_id = uuid.UUID(application_id)
+    # TODO: Fix below in API creating four separate database records.
     api_response_create = NannyApplication.api.create(
         application_id=application_id,
         application_status='DRAFTING',

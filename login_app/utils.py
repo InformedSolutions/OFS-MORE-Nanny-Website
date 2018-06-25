@@ -1,5 +1,7 @@
+import json
 import random
 import re
+import requests
 import string
 import time
 
@@ -8,6 +10,55 @@ from urllib.parse import urlencode
 from django import forms
 from django.conf import settings
 from django.shortcuts import reverse
+
+
+def test_notify():
+    # If running exclusively as a test return true to avoid overuse of the notify API
+    if settings.EXECUTING_AS_TEST:
+        return True
+
+    if test_notify_connection():
+        return True
+    else:
+        return False
+
+
+def test_notify_settings():
+    """
+    Function to check if url for notify app is defined.
+    return; Bool
+    """
+    url = settings.NOTIFY_URL
+    if 'url' in locals():
+        return True
+    else:
+        return False
+
+
+def test_notify_connection():
+    """
+    Function to test connection with Notify API.
+    :return: Bool
+    """
+    try:
+        # Test Sending Email
+        header = {'content-type': 'application/json'}
+        req = requests.Session()
+        notification_request = {
+            'email': 'simulate-delivered@notifications.service.gov.uk',
+            'personalisation': {
+                'link': 'test'
+            },
+            'templateId': 'ecd2a788-257b-4bb9-8784-5aed82bcbb92'
+        }
+        r = req.post(settings.NOTIFY_URL + '/api/v1/notifications/email/',
+                     json.dumps(notification_request),
+                     headers=header, timeout=10)
+        if r.status_code == 201:
+            return True
+    except Exception as ex:
+        print(ex)
+        return False
 
 
 def build_url(*args, **kwargs):
@@ -54,7 +105,7 @@ class PhoneNumberField(forms.CharField):
         if not len(no_space_number):
             raise forms.ValidationError('Please enter a {} number'.format(self.regex_type.lower()))
 
-        if re.match(REGEX[self.regex_type], no_space_number) is None:
+        if re.match(settings.REGEX[self.regex_type], no_space_number) is None:
             raise forms.ValidationError('Please enter a valid {} number'.format(self.regex_type.lower()))
 
         return number
@@ -75,22 +126,3 @@ class DBSNumberField(forms.CharField):
         if len(dbs_number) < 12:
             raise forms.ValidationError('The certificate number should be 12 digits long')
         return dbs_number
-
-
-# Regex Validation Strings
-REGEX = {
-    "EMAIL": "^([a-zA-Z0-9_\-\.']+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$",
-    "MOBILE": "^(07\d{8,12}|447\d{7,11}|00447\d{7,11}|\+447\d{7,11})$",
-    "PHONE": "^(0\d{8,12}|44\d{7,11}|0044\d{7,11}|\+44\d{7,11})$",
-    "POSTCODE_UPPERCASE": "^[A-Z]{1,2}[0-9]{1,2}[A-Z]?[0-9][A-Z][A-Z]$",
-    "LAST_NAME": "^[A-zÀ-ÿ- ']+$",
-    "MIDDLE_NAME": "^[A-zÀ-ÿ- ']+$",
-    "FIRST_NAME": "^[A-zÀ-ÿ- ']+$",
-    "TOWN": "^[A-Za-z- ]+$",
-    "COUNTY": "^[A-Za-z- ]+$",
-    "COUNTRY": "^[A-Za-z- ]+$",
-    "VISA": "^4[0-9]{12}(?:[0-9]{3})?$",
-    "MASTERCARD": "^(?:5[1-5][0-9]{2}|222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720)[0-9]{12}$",
-    "MAESTRO": "^(?:5[0678]\d\d|6304|6390|67\d\d)\d{8,15}$",
-    "CARD_SECURITY_NUMBER": "^[0-9]{3,4}$"
-}

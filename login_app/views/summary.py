@@ -1,7 +1,6 @@
 from django.http import HttpResponseRedirect
 from django.views import View
 from django.shortcuts import render
-from django.utils.datastructures import MultiValueDictKeyError
 
 from identity_models.user_details import UserDetails
 
@@ -25,10 +24,4 @@ class ContactDetailsSummaryView(View):
         return response
 
     def get_user_details_record(self, request):
-        # Depending if the user is coming from task-list or sign-in page.
-        try:
-            user_details_record = UserDetails.api.get_record(application_id=request.GET['id']).record
-        except MultiValueDictKeyError:
-            user_details_record = UserDetails.api.get_record(email=request.GET['email_address']).record
-
-        return user_details_record
+        return UserDetails.api.get_record(application_id=request.GET['id']).record
