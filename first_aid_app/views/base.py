@@ -25,7 +25,7 @@ class BaseFormView(FormView):
         """
 
         context = super(BaseFormView, self).get_context_data()
-        context['application_id'] = app_id_finder(self.request)
+        context['id'] = app_id_finder(self.request)
 
         return context
 
@@ -72,7 +72,7 @@ class BaseTemplateView(TemplateView):
         context = super(BaseTemplateView, self).get_context_data(**kwargs)
         application_id = app_id_finder(self.request)
         context['link_url'] = build_url(self.success_url_name, get={'id': application_id})
-        context['application_id'] = app_id_finder(self.request)
+        context['id'] = app_id_finder(self.request)
 
         return context
 
