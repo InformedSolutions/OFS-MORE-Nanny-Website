@@ -4,7 +4,7 @@ from django.conf import settings  # import the settings file
 from django.http import HttpResponseRedirect
 
 from identity_models.user_details import UserDetails
-from tasks_app.models import NannyApplication
+#from tasks_app.models import NannyApplication
 
 
 COOKIE_IDENTIFIER = '_ofs'
