@@ -181,11 +181,6 @@ TEST_OUTPUT_VERBOSE = True
 TEST_OUTPUT_DESCRIPTIONS = True
 TEST_OUTPUT_DIR = 'xmlrunner'
 
-# Include migrations for test databse to find.
-MIGRATION_MODULES = {
-    'childcare_training_task_app': 'childcare_training_task_app.tests.test_migrations'
-}
-
 # Output all logs to /logs directory
 LOGGING = {
     'version': 1,
