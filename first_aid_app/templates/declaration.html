@@ -1,0 +1,25 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}First aid training certificate{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+<h1 class="form-title heading-large">
+    First aid certificate
+</h1>
+
+<p>You do not need to send the certificate to Ofsted.</p>
+
+<p>An inspector will ask to see your certificate if they inspect you.</p>
+
+<p>You must show your first aid certificate to the inspector.</p>
+
+<a href="{{ link_url }}" class="button">Continue</a>
+<br>
+<br>
+{% include 'return-to-list.html' %}
+
+{% endblock %}

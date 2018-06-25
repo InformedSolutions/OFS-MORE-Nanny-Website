@@ -11,6 +11,7 @@ def redirect_by_status(application_id):
     :param application_id:
     :return: an HttpResponseRedirect to a landing page based on an application's current status
     """
+
     app_record = NannyApplication.api.get_record(application_id=application_id).record
 
     if app_record is None:

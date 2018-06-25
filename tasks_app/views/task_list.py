@@ -5,6 +5,7 @@ import uuid
 
 from nanny_models.nanny_application import NannyApplication
 
+
 from identity_models.user_details import UserDetails
 
 
@@ -23,6 +24,7 @@ class TaskListView(View):
             application = create_new_app(application_id=application_id)
         else:
             raise RuntimeError('The nanny-gateway API did not respond as expected.')
+
 
         context = {
             'id': application_id,
@@ -73,9 +75,9 @@ class TaskListView(View):
                     'description': 'First aid training',
                     'status_url': None,
                     'status_urls': [
-                        {'status': 'COMPLETED', 'url': 'First-Aid-Summary'},
-                        {'status': 'FLAGGED', 'url': 'First-Aid-Summary'},
-                        {'status': 'OTHER', 'url': 'First-Aid-Guidance'},  # For all other statuses
+                        {'status': 'COMPLETED', 'url': 'first-aid:First-Aid-Summary'},
+                        {'status': 'FLAGGED', 'url': 'first-aid:First-Aid-Summary'},
+                        {'status': 'OTHER', 'url': 'first-aid:First-Aid-Guidance'},  # For all other statuses
                     ]
                 },
                 {
