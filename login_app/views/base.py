@@ -29,12 +29,4 @@ class BaseFormView(FormView):
         """
         Method to return a dictionary of parameters to be included as variables in the success url, e.g. application_id.
         """
-        # If user was on first sign-in page, email_address won't be stored in GET request QueryDict. In that case, the
-        # email_address will be stored in POST request QueryDict.
-
-        if 'id' in self.request.GET.keys():
-            application_id = self.request.GET['id']
-        else:
-            application_id = self.request.POST['id']
-
-        return {'id': application_id}
+        return {'id': self.request.GET['id']}
