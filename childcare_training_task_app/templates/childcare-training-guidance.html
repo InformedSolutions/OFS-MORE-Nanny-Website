@@ -1,0 +1,32 @@
+{% extends 'govuk_template.html' %}
+{% load static %}
+{% load govuk_template_base %}
+{% block page_title %}Childcare training{% endblock %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+<h1 class="form-title heading-large">Childcare training</h1>
+
+<p>We need to check that you have the skills to look after children.</p>
+
+<p>You must have one of the following:</p>
+
+<ul class="list list-bullet">
+    <li>a childcare qualification (level 2 or higher)</li>
+    <li>a training in <a href="http://www.foundationyears.org.uk/2015/02/republication-of-common-core-of-skills-and-knowledge-for-the-childrens-and-young-peoples-workforce/">common core skills</a></li>
+</ul>
+
+Ask your council for details of courses in your area.
+
+<form method="post">
+    {% csrf_token %}
+    <input type="submit" class="button" value="Continue" alt="continue" id="id_continue">
+</form>
+
+<br>
+
+<a href="{% url 'Task-List' %}?id={{ id }}">Return to list</a>
+
+{% endblock %}

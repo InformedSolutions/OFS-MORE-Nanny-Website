@@ -79,6 +79,7 @@ PROJECT_APPS = [
     'login_app.apps.LoginAppConfig',
     'tasks_app.apps.TasksAppConfig',
     'first_aid_app.apps.FirstAidAppConfig',
+    'childcare_training_task_app.apps.ChildcareTrainingTaskAppConfig'
 ]
 
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
