@@ -59,11 +59,10 @@
                     Your home address
                 </td>
                 <td style="word-wrap: break-word" class=summary-column>
-                    {{personal_address_record.street_line_1}}, {{personal_address_record.street_line_2|default_if_none:""}} {{personal_address_record.town }} {{personal_address_record.county|default_if_none:""}}
-                    {{personal_address_record.country}} {{personal_address_record.postcode}}
+                    {{personal_address_record}}
                 </td>
                 <td class="change-answer">
-                    <a href=""
+                    <a href="{% url 'personal-details:Personal-Details-Manual-Address' %}?id={{application_id}}"
                        alt='Change your home address'>
                         Change <span class="visuallyhidden">your home address</span>
                     </a>

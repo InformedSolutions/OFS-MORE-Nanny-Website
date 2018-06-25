@@ -3,8 +3,10 @@ from django.shortcuts import render
 from django.views import View
 from nanny_models.nanny_application import NannyApplication
 from nanny_models.applicant_personal_details import ApplicantPersonalDetails
+from nanny_models.applicant_home_address import ApplicantHomeAddress
+from ..address_helper import AddressHelper
 
-from first_aid_app.views.base import BaseTemplateView, build_url
+from ..utils import build_url
 
 
 class Summary(View):
@@ -34,5 +36,7 @@ class Summary(View):
         context['personal_details_record'] = ApplicantPersonalDetails.api.get_record(application_id=application_id).record
 
         # ADD PERSONAL ADDRESS RECORD HERE
-        context['personal_address_record'] = None
+        address = ApplicantHomeAddress.api.get_record(application_id=application_id).record
+        context['personal_address_record'] = AddressHelper.format_address(address, ", ")
         return context
+

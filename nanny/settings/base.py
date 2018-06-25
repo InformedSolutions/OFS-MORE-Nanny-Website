@@ -77,7 +77,8 @@ PROJECT_APPS = [
     'identity_models',
     'nanny_models',
     'login_app.apps.LoginAppConfig',
-    'tasks_app.apps.TasksAppConfig'
+    'tasks_app.apps.TasksAppConfig',
+    'personal_details_app.apps.PersonalDetailsAppConfig'
 ]
 
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"

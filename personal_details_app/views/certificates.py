@@ -1,4 +1,4 @@
-from first_aid_app.views.base import BaseTemplateView
+from .BASE import BaseTemplateView
 
 
 class PersonalDetailCertificateView(BaseTemplateView):

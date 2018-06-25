@@ -2,19 +2,19 @@ import datetime
 
 from nanny_models.nanny_application import NannyApplication
 
-from first_aid_app.views.base import BaseFormView
-from personal_details_app.forms.date_of_birth import PersonalDetailsDOBForm
+from .BASE import BaseFormView
+from ..forms.date_of_birth import PersonalDetailsDOBForm
 
 from nanny_models.applicant_personal_details import ApplicantPersonalDetails
 
-from utils import app_id_finder
+from ..utils import app_id_finder
 
 
 class PersonalDetailDOBView(BaseFormView):
 
     template_name = 'dob.html'
     form_class = PersonalDetailsDOBForm
-    success_url = 'personal-details:Personal-Details-Lived-Abroad'
+    success_url = 'personal-details:Personal-Details-Home-Address'
 
     def get_initial(self):
         """
