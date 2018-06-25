@@ -1,4 +1,5 @@
 from identity_models.user_details import UserDetails
+from nanny_models.nanny_application import NannyApplication
 
 from middleware import CustomAuthenticationHandler
 from login_app import login_redirect_helper
@@ -18,8 +19,7 @@ class SecurityQuestionFormView(BaseFormView):
 
     def get_security_question_form(self, application):
         """
-        Pseudo-code for getting the security question for a given applicant, depending upon the status of their
-        application.
+        Grab the security question for a given applicant, depending upon the status of their application.
         """
 
         # TODO: Add API calls to execute the below once Application API built.
@@ -34,7 +34,7 @@ class SecurityQuestionFormView(BaseFormView):
         return form
 
     def get_security_question_answer(self):
-        return UserDetails.api.get_record(email=self.request.GET['email_address']).record['mobile_number']
+        return UserDetails.api.get_record(application_id=self.request.GET['id']).record['mobile_number']
 
     def get_form(self, form_class=None):
         form = super(SecurityQuestionFormView, self).get_form()

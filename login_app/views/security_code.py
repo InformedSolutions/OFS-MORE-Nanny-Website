@@ -17,24 +17,26 @@ class SecurityCodeFormView(BaseFormView):
     success_url = 'Contact-Details-Summary'  # TODO: Replace this with Task List once that view is built.
 
     def form_valid(self, form):
-        record = UserDetails.api.get_record(email=self.request.GET['email_address']).record
+        application_id = self.request.GET['id']
+        record = UserDetails.api.get_record(application_id=application_id).record
         record['sms_resend_attempts'] = 0
         UserDetails.api.put(record)
-        record = UserDetails.api.get_record(email=self.request.GET['email_address']).record
+        record = UserDetails.api.get_record(application_id=application_id).record
         response = login_redirect_helper.redirect_by_status(record['application_id'])
         CustomAuthenticationHandler.create_session(response, record['email'])
         return response
 
     def get_form_kwargs(self):
         kwargs = super(SecurityCodeFormView, self).get_form_kwargs()
-        kwargs['correct_sms_code'] = UserDetails.api.get_record(email=self.request.GET['email_address']).record['magic_link_sms']
+        kwargs['correct_sms_code'] = UserDetails.api.get_record(application_id=self.request.GET['id']).record['magic_link_sms']
         return kwargs
 
     def get_context_data(self, **kwargs):
         kwargs = super(SecurityCodeFormView, self).get_context_data()
-        record = UserDetails.api.get_record(email=self.request.GET['email_address']).record
+        application_id = self.request.GET['id']
+        record = UserDetails.api.get_record(application_id=application_id).record
         kwargs['mobile_number_end'] = record['mobile_number'][-3:]
-        kwargs['email_address'] = self.request.GET['email_address']  # Pass to context for the hyperlinks.
+        kwargs['application_id'] = application_id  # Pass to context for the hyperlinks.
         kwargs['sms_resend_attempts'] = record['sms_resend_attempts']
 
         # Template requires knowledge of whether or not the SMS was resent.

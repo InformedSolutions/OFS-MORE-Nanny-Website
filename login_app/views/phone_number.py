@@ -14,8 +14,8 @@ class PhoneNumbersFormView(BaseFormView):
     success_url = 'Contact-Details-Summary'
 
     def form_valid(self, form):
-        email_address = self.request.GET['email_address']
-        api_response = UserDetails.api.get_record(email=email_address)
+        application_id = self.request.GET['id']
+        api_response = UserDetails.api.get_record(application_id=application_id)
 
         record = api_response.record
         record['mobile_number'] = form.cleaned_data['mobile_number']

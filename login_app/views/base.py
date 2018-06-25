@@ -32,9 +32,9 @@ class BaseFormView(FormView):
         # If user was on first sign-in page, email_address won't be stored in GET request QueryDict. In that case, the
         # email_address will be stored in POST request QueryDict.
 
-        if 'email_address' in self.request.GET.keys():
-            email_address = self.request.GET['email_address']
+        if 'id' in self.request.GET.keys():
+            application_id = self.request.GET['id']
         else:
-            email_address = self.request.POST['email_address']
+            application_id = self.request.POST['id']
 
-        return {'email_address': email_address}
+        return {'id': application_id}

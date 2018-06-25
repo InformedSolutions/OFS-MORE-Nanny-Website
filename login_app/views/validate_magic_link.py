@@ -42,7 +42,7 @@ class ValidateMagicLinkView(View):
 
         self.record['email_expiry_date'] = 0
         UserDetails.api.put(self.record)
-        return build_url(success_template, get={'email_address': self.record['email']})
+        return build_url(success_template, get={'id': self.record['application_id']})
 
     @staticmethod
     def sms_magic_link(record):
