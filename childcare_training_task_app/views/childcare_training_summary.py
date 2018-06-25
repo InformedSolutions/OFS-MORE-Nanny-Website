@@ -7,6 +7,9 @@ from nanny_models.childcare_training import ChildcareTraining
 
 
 class ChildcareTrainingSummaryView(View):
+    """
+    Class containing the methods for handling requests to the 'Childcare-Training-Summary' page.
+    """
     def get(self, request):
         application_id = request.GET['id']
         nanny_api_response = ChildcareTraining.api.get_record(application_id=application_id)

@@ -7,6 +7,9 @@ from nanny_models.nanny_application import NannyApplication
 
 
 class ChildcareTrainingGuidanceView(View):
+    """
+    Class containing the methods for handling requests to the 'Childcare-Training-Guidance' page.
+    """
     def get(self, request):
         context = {'id': request.GET['id']}
         return render(request, template_name='childcare-training-guidance.html', context=context)

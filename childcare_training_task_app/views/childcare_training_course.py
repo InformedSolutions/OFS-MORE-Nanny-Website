@@ -6,6 +6,9 @@ from nanny_models.nanny_application import NannyApplication
 
 
 class ChildcareTrainingCourseView(View):
+    """
+    Class containing the methods for handling requests to the 'Childcare-Training-Course' page.
+    """
     def get(self, request):
         application_id = request.GET['id']
         context = {'id': application_id}
