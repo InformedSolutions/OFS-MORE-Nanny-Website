@@ -30,7 +30,6 @@ class FirstAidDetailsView(BaseFormView):
                 first_aid_record = FirstAidTraining.api.get_record(application_id=application_id).record
             elif response.status_code == 404:
                 return initial
-            print(response.status_code)
         except TypeError:
             return initial
         initial['first_aid_training_organisation'] = first_aid_record['training_organisation']
