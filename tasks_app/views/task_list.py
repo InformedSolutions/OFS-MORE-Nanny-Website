@@ -1,4 +1,6 @@
-from django.shortcuts import render
+from django.conf import settings
+from django.http import HttpResponseRedirect
+from django.shortcuts import render, reverse
 from django.views import View
 from django.views.decorators.cache import never_cache
 import uuid
@@ -22,7 +24,10 @@ class TaskListView(View):
         elif nanny_api_response.status_code == 404:
             application = create_new_app(application_id=application_id)
         else:
-            raise RuntimeError('The nanny-gateway API did not respond as expected.')
+            if settings.DEBUG:
+                raise RuntimeError('The nanny-gateway API did not respond as expected.')
+            else:
+                HttpResponseRedirect(reverse('Service-Down'))
 
         context = {
             'id': application_id,
@@ -175,4 +180,7 @@ def create_new_app(application_id):
         )
         return NannyApplication(**response.record)
     else:
-        raise RuntimeError('The nanny-gateway API did not create the requested application.')
+        if settings.DEBUG:
+            raise RuntimeError('The nanny-gateway API did not respond as expected.')
+        else:
+            HttpResponseRedirect(reverse('Service-Down'))
