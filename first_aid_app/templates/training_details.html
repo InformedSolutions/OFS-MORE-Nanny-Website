@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Your phone number{% endblock %}
+{% block page_title %}First aid training details{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -15,8 +15,8 @@
 <h1 class="form-title heading-large">First aid training details</h1>
 
 <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-    <p>We need to check that you can keep children safe</p>
-    <p>Please give details of your first aid training</p>
+    <p>We need to check that you can keep children safe.</p>
+    <p>Please give details of your first aid training.</p>
 
     {% csrf_token %}
     {{ form }}
