@@ -1,0 +1,29 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Email resent{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+<h1 class="form-title heading-large">
+    First aid qualification
+</h1>
+
+<p>You will need to go on a first aid course that:</p>
+
+<ul>
+    <li>covers the age groups you will look after</li>
+    <li>is dated within the past 3 years.</li>
+</ul>
+
+<p>Lots of organisation provide courses, such as the <a href="https://www.redcrossfirstaidtraining.co.uk/Courses.aspx">Red Cross</a> and <a href="https://www.redcrossfirstaidtraining.co.uk/Courses.aspx">St John Ambulance</a>.</p>
+
+<p><a href="https://www.gov.uk/find-local-council">Ask your local council</a> for details of first aid courses in your area.</p>
+
+<a href="{{ link_url }}" class="button">Continue</a>
+<br>
+<a href="{% url 'Task-List' %}?id={{ id }}">Return to list</a>
+
+{% endblock %}

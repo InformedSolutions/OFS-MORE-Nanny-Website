@@ -1,0 +1,84 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Your phone number{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+
+{% include "back-button.html" %}
+
+<div class="two-thirds">
+    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <table class="check-your-answers" style="table-layout: fixed; width: 100%">
+        <colgroup>
+            <col class="summary-column">
+            <col class="summary-column">
+            <col class="change-answer">
+        </colgroup>
+        <thead>
+            <tr>
+                <th colspan="3">
+                    <div class="heading-medium">
+                        Check your answers: first aid training
+                    </div>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="word-wrap: break-word" class=summary-column>
+                    Training orgnaisation
+                </td>
+                <td style="word-wrap: break-word" class=summary-column>
+                    {{first_aid_record.training_organisation}}
+                </td>
+                <td class="change-answer">
+                    <a href="{% url 'first-aid:Training-Details' %}?id={{application_id}}"
+                       alt='Change training organisation'>
+                        Change <span class="visuallyhidden">training organisation</span>
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td style="word-wrap: break-word" class=summary-column>
+                    Title of training course
+                </td>
+                <td style="word-wrap: break-word" class=summary-column>
+                    {{first_aid_record.course_title}}
+                </td>
+                <td class="change-answer">
+                    <a href="{% url 'first-aid:Training-Details' %}?id={{application_id}}"
+                       alt='Change title of training course'>
+                        Change <span class="visuallyhidden">title of training course</span>
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td style="word-wrap: break-word" class=summary-column>
+                    Date you completed the course
+                </td>
+                <td style="word-wrap: break-word" class=summary-column>
+                    {{first_aid_record.course_date}}
+                </td>
+                <td class="change-answer">
+                    <a href="{% url 'first-aid:Training-Details' %}?id={{application_id}}"
+                       alt='Change course date'>
+                        Change <span class="visuallyhidden">course date</span>
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+        {% csrf_token %}
+        <input type="hidden" value="{{application_id}}" name="id"/>
+        <input type="submit" class="button" value="Continue">
+
+    </form>
+    <br>
+    <a href="{% url 'Task-List' %}?id={{ id }}">Return to list</a>
+
+</div>
+
+
+{% endblock %}
