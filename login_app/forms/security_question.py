@@ -1,12 +1,12 @@
 from django.forms import forms
 
 from govuk_forms.forms import GOVUKForm
-from govuk_forms.widgets import Widget
+from govuk_forms.widgets import Widget, TextInput
 
 from login_app.utils import DBSNumberField, PhoneNumberField
 
 
-class NannyFormInput(forms.widgets.TextInput, Widget):
+class NannyFormInput(TextInput, Widget):
     input_classes = "nanny-form form-control"
 
 
