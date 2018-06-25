@@ -1,4 +1,3 @@
-from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
@@ -13,23 +12,20 @@ def redirect_by_status(application_id):
     :return: an HttpResponseRedirect to a landing page based on an application's current status
     """
 
-    api_response = Application.api.get_record(application_id=application_id)
+    app_record = NannyApplication.api.get_record(application_id=application_id).record
 
-    if api_response.status_code != 200:
+    if app_record is None:
         response = HttpResponseRedirect(
-            reverse('Contact-Details-Summary') + '?id=' + str(application_id))
-        return response
-
-    application = api_response.record
-
-    if application['application_status'] == 'DRAFTING':
-        if application['login_details_status'] == 'COMPLETED':
-            response = HttpResponseRedirect(
-                reverse('Task-List') + '?id=' + str(application_id)
-            )
-        else:
-            response = HttpResponseRedirect(
-                reverse('Contact-Details-Summary') + '?id=' + str(application_id)
-            )
+            reverse('Contact-Details-Summary') + '?id=' + str(application_id)
+        )
+    else:
+        if app_record['application_status'] == 'DRAFTING':
+            if app_record['login_details_status'] == 'COMPLETED':
+                response = HttpResponseRedirect(
+                    reverse('Task-List') + '?id=' + str(application_id)
+                )
+            else:
+                response = HttpResponseRedirect(
+                    reverse('Contact-Details-Summary') + '?id=' + str(application_id))
 
     return response
