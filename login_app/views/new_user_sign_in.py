@@ -1,6 +1,7 @@
 import uuid
 
 from django.http import HttpResponseRedirect
+from django.shortcuts import reverse
 
 from identity_models.user_details import UserDetails
 
@@ -17,9 +18,14 @@ class NewUserSignInFormView(BaseFormView):
     template_name = 'new-user-sign-in.html'
     form_class = ContactEmailForm
     success_url = 'Check-New-Email'
+    email_address = None
 
     def form_valid(self, email_form):
+        if not utils.test_notify():
+            return HttpResponseRedirect(reverse('Service-Down'))
+
         email_address = email_form.cleaned_data['email_address']
+        self.email_address = email_address  # Set such that success parameters can find value later.
         api_response = UserDetails.api.get_record(email=email_address)
 
         if api_response.status_code == 404:
@@ -41,3 +47,6 @@ class NewUserSignInFormView(BaseFormView):
                           template_id='ecd2a788-257b-4bb9-8784-5aed82bcbb92')
 
         return HttpResponseRedirect(self.get_success_url())
+
+    def get_success_parameters(self):
+        return {'email_address': self.email_address}
