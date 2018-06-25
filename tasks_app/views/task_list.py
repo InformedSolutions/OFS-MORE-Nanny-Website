@@ -5,7 +5,7 @@ from django.views import View
 from django.views.decorators.cache import never_cache
 import uuid
 
-from nanny_models.application import Application
+from nanny_models.nanny_application import NannyApplication as Application
 
 from identity_models.user_details import UserDetails
 
@@ -23,7 +23,7 @@ class TaskListView(View):
             if response.status_code == 404:
                 application = create_new_app(app_id=application_id)
             elif response.status_code == 200:
-                application = Application(response.record)
+                application = Application(**response.record)
             else:
                 raise Exception('Something went wrong.')
 
@@ -79,9 +79,9 @@ class TaskListView(View):
                     'description': 'First aid training',
                     'status_url': None,
                     'status_urls': [
-                        {'status': 'COMPLETED', 'url': 'First-Aid-Summary'},
-                        {'status': 'FLAGGED', 'url': 'First-Aid-Summary'},
-                        {'status': 'OTHER', 'url': 'First-Aid-Guidance'},  # For all other statuses
+                        {'status': 'COMPLETED', 'url': 'first-aid:First-Aid-Summary'},
+                        {'status': 'FLAGGED', 'url': 'first-aid:First-Aid-Summary'},
+                        {'status': 'OTHER', 'url': 'first-aid:First-Aid-Guidance'},  # For all other statuses
                     ]
                 },
                 {
