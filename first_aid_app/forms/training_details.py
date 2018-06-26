@@ -16,6 +16,7 @@ class FirstAidTrainingDetailsForm(GOVUKForm):
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
+    error_summary_title = 'There was a problem'
 
     first_aid_training_organisation = forms.CharField(
         label='Training organisation',
