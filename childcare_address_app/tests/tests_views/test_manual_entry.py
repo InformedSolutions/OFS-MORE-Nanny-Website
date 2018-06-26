@@ -18,9 +18,11 @@ class ManualEntryTests(ChildcareAddressTests):
         Test to assert that the 'manual entry' page can be rendered.
         """
 
-        with mock.patch('nanny_models.childcare_address.ChildcareAddress.api.get_record') as nanny_api_get:
+        with mock.patch('nanny_models.childcare_address.ChildcareAddress.api.get_record') as nanny_api_get, \
+                mock.patch('nanny_models.childcare_address.ChildcareAddress.api.get_records') as nanny_api_get_multiple:
             nanny_api_get.return_value.status_code = 200
             nanny_api_get.return_value.record = self.sample_address
+            nanny_api_get_multiple.return_value.status_code = 404
 
             response = self.client.get(build_url('Childcare-Address-Manual-Entry', get={
                 'id': uuid.UUID,
@@ -34,11 +36,13 @@ class ManualEntryTests(ChildcareAddressTests):
         Test submission of a valid address for a new address.
         """
 
-        with mock.patch('nanny_models.childcare_address.ChildcareAddress.api.create') as nanny_api_create_address:
+        with mock.patch('nanny_models.childcare_address.ChildcareAddress.api.create') as nanny_api_create_address, \
+                mock.patch('nanny_models.childcare_address.ChildcareAddress.api.get_records') as nanny_api_get_addresses:
             nanny_api_create_address.return_value.status_code = 201
             nanny_api_create_address.return_value.record = {
                 'childcare_address_id': uuid.UUID
             }
+            nanny_api_get_addresses.return_value.status_code = 404
 
             response = self.client.post(build_url('Childcare-Address-Manual-Entry',
                                                   get={'id': uuid.UUID}),
@@ -57,7 +61,8 @@ class ManualEntryTests(ChildcareAddressTests):
         """
         childcare_address_id = uuid.UUID
         with mock.patch('nanny_models.childcare_address.ChildcareAddress.api.put'), \
-                mock.patch('nanny_models.childcare_address.ChildcareAddress.api.get_record') as nanny_api_get_address:
+                mock.patch('nanny_models.childcare_address.ChildcareAddress.api.get_record') as nanny_api_get_address, \
+                mock.patch('nanny_models.childcare_address.ChildcareAddress.api.get_records') as nanny_api_get_addresses:
 
             nanny_api_get_address.return_value.status_code = 200
             nanny_api_get_address.return_value.record = {
@@ -67,6 +72,7 @@ class ManualEntryTests(ChildcareAddressTests):
                 'county': None,
                 'postcode': 'WA14 4PA'
             }
+            nanny_api_get_addresses.return_value.status_code = 404
 
             response = self.client.post(build_url('Childcare-Address-Manual-Entry',
                                                   get={'id': uuid.UUID,
@@ -85,11 +91,13 @@ class ManualEntryTests(ChildcareAddressTests):
         Test submission of an invalid address for a new address.
         """
 
-        with mock.patch('nanny_models.childcare_address.ChildcareAddress.api.create') as nanny_api_create_address:
+        with mock.patch('nanny_models.childcare_address.ChildcareAddress.api.create') as nanny_api_create_address, \
+                mock.patch('nanny_models.childcare_address.ChildcareAddress.api.get_records') as nanny_api_get_multiple:
             nanny_api_create_address.return_value.status_code = 201
             nanny_api_create_address.return_value.record = {
                 'childcare_address_id': uuid.UUID
             }
+            nanny_api_get_multiple.return_value.status_code = 404
 
             response = self.client.post(build_url('Childcare-Address-Manual-Entry',
                                                   get={'id': uuid.UUID}),
