@@ -37,7 +37,7 @@ class Summary(View):
         context['application_id'] = application_id
         context['id'] = application_id
         temp_record = ApplicantPersonalDetails.api.get_record(application_id=application_id).record
-        temp_record.date_of_birth = datetime.datetime.strptime(temp_record.date_of_birth, '%Y-%m-%d')
+        temp_record["date_of_birth"] = datetime.datetime.strptime(temp_record["date_of_birth"], '%Y-%m-%d')
         context['personal_details_record'] = temp_record
 
         # ADD PERSONAL ADDRESS RECORD HERE

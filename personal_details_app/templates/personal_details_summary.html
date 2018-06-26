@@ -42,7 +42,7 @@
                 Date of birth
             </td>
             <td style="word-wrap: break-word" class=summary-column>
-                {{personal_details_record.date_of_birth|date: '%d %b %Y'}}
+                {{personal_details_record.date_of_birth|date:"d M Y"}}
             </td>
             <td class="change-answer">
                 <a href="{% url 'personal-details:Personal-Details-Date-Of-Birth' %}?id={{application_id}}"
