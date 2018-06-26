@@ -166,6 +166,10 @@ class TaskListView(View):
 
 
 def create_new_app(application_id):
+    """
+    Create a new NannyApplication model in the db with the application_id argument as specified.
+    :return; NannyApplication model if nanny-gateway created record successfully, else redirect to 'Service-Down' page.
+    """
     application_id = uuid.UUID(application_id)
     api_response_create = NannyApplication.api.create(
         application_id=application_id,

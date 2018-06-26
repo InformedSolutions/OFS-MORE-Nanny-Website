@@ -12,7 +12,12 @@ from login_app.utils import build_url
 
 
 class ContactDetailsSummaryView(View):
+    """
+    Class for handling requests to the 'Contact-Details-Summary' page.
+    """
     def get(self, request):
+        """ Handle GET request. Pass user details record, app_id and Bool for including change links to template
+            as context."""
         application_id = request.GET['id']
         context = self.get_user_details_record(application_id)
         context['include_change_links'] = self.include_change_links(application_id)
@@ -20,6 +25,7 @@ class ContactDetailsSummaryView(View):
         return render(request, template_name='contact-details-summary.html', context=context)
 
     def post(self, request):
+        """ Handle POST request. Create session for user if one not currently existing."""
         application_id = request.GET['id']
         user_details_record = self.get_user_details_record(application_id)
         response = HttpResponseRedirect(build_url('Task-List', get={'id': application_id}))
@@ -36,5 +42,4 @@ class ContactDetailsSummaryView(View):
     def include_change_links(self, application_id):
         """ If the applicant is coming from task list, an application object will exist => get_record gives 200 code."""
         nanny_api_response = NannyApplication.api.get_record(application_id=application_id)
-        # return True if nanny_api_response.status_code == 200 else False
         return nanny_api_response.status_code == 200
