@@ -45,7 +45,8 @@ class SecurityQuestionFormView(BaseFormView):
         return UserDetails.api.get_record(application_id=self.request.GET['id']).record['mobile_number']
 
     def get_form(self, form_class=None):
-        form = self.get_security_question_form()
+        # form = self.get_security_question_form()
+        form = super(SecurityQuestionFormView, self).get_form()
         form.correct_answer = self.get_security_question_answer()
         return form
 
@@ -57,3 +58,9 @@ class SecurityQuestionFormView(BaseFormView):
         response = login_redirect_helper.redirect_by_status(record['application_id'])
         CustomAuthenticationHandler.create_session(response, record['email'])
         return response
+
+    def __init__(self, *args, **kwargs):
+        # self.form_class = self.get_security_question_form()
+        # TODO: Uncomment above once the Application API functional
+        self.form_class = MobileNumberSecurityQuestionForm
+        super(SecurityQuestionFormView, self).__init__(*args, **kwargs)
