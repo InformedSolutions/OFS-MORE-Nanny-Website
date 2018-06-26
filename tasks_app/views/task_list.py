@@ -79,7 +79,7 @@ class TaskListView(View):
                     'status_urls': [
                         {'status': 'COMPLETED', 'url': 'first-aid:First-Aid-Summary'},
                         {'status': 'FLAGGED', 'url': 'first-aid:First-Aid-Summary'},
-                        {'status': 'OTHER', 'url': 'first-aid:First-Aid-Guidance'},  # For all other statuses
+                        {'status': 'OTHER', 'url': 'First-Aid-Guidance'},  # For all other statuses
                     ]
                 },
                 {
