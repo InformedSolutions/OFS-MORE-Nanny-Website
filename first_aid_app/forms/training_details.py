@@ -19,20 +19,16 @@ class FirstAidTrainingDetailsForm(GOVUKForm):
     error_summary_title = 'There was a problem'
 
     first_aid_training_organisation = forms.CharField(
-        label='First Aid training organisation',
-        max_length=50,
+        label='First aid training organisation',
         error_messages={
-            'required': 'Please enter the title of your course',
-            'max_length': 'The name of the training organisation must be under 50 characters'
+            'required': 'Please enter the name of the training organisation',
         }
     )
 
     title_of_training_course = forms.CharField(
         label='Title of training course',
-        max_length=50,
         error_messages={
             'required': 'Please enter the title of the course',
-            'max_length': 'The title of the course must be under 50 characters'
         }
     )
 
@@ -42,3 +38,17 @@ class FirstAidTrainingDetailsForm(GOVUKForm):
         error_messages={'required': 'Please enter the full date, including the day, month and year'},
         
     )
+
+    def clean_first_aid_training_organisation(self):
+        organisation = self.cleaned_data['first_aid_training_organisation']
+        if len(organisation) > 50:
+            raise forms.ValidationError('The name of the training organisation must be under 50 characters')
+
+        return organisation
+
+    def clean_title_of_training_course(self):
+        title = self.cleaned_data['title_of_training_course']
+        if len(title) > 50:
+            raise forms.ValidationError('The title of the course must be under 50 characters long')
+
+        return title
