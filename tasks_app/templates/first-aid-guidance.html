@@ -1,10 +1,30 @@
 {% extends 'govuk_template.html' %}
+{% block page_title %}First aid training{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
-{% block page_title %}First Aid Placeholder{% endblock %}
 
 {% block inner_content %}
 
-<h1 class="form-title heading-large">First Aid Placeholder</h1>
+{% include "back-button.html" %}
+
+<h1 class="form-title heading-large">
+    First aid qualification
+</h1>
+
+<p>You will need to go on a first aid course that:</p>
+
+<ul class="list list-bullet">
+    <li>covers the age groups you will look after</li>
+    <li>is dated within the past 3 years.</li>
+</ul>
+
+<p>Lots of organisation provide courses, such as the <a href="https://www.redcrossfirstaidtraining.co.uk/Courses.aspx">Red Cross</a> and <a href="http://www.sja.org.uk/sja/training-courses/first-aid-courses.aspx">St John Ambulance</a>.</p>
+
+<p><a href="https://www.gov.uk/find-local-council">Ask your local council</a> for details of first aid courses in your area.</p>
+
+<a href="{{ link_url }}" class="button">Continue</a>
+<br>
+<br>
+{% include 'return-to-list.html' %}
 
 {% endblock %}
