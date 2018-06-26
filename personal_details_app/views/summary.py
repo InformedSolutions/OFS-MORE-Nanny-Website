@@ -32,7 +32,8 @@ class Summary(View):
         context = {}
         application_id = self.request.GET['id']
         context['link_url'] = build_url(self.success_url_name, get={'id': application_id})
-        context['application_id'] = self.request.GET['id']
+        context['application_id'] = application_id
+        context['id'] = application_id
         context['personal_details_record'] = ApplicantPersonalDetails.api.get_record(application_id=application_id).record
 
         # ADD PERSONAL ADDRESS RECORD HERE
