@@ -27,7 +27,9 @@ class SecurityQuestionFormView(BaseFormView):
         app_record = NannyApplication.api.get_record(application_id=application_id).record
         personal_details_record = UserDetails.api.get_record(application_id=application_id).record
 
-        if app_record['criminal_record_check_status'] == 'COMPLETED':
+        if app_record is None:
+            form = MobileNumberSecurityQuestionForm
+        elif app_record['criminal_record_check_status'] == 'COMPLETED':
             form = DBSSecurityQuestionForm
         elif app_record['personal_details_status'] == 'COMPLETED':
             form = DoBSecurityQuestionForm
