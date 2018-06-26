@@ -35,3 +35,12 @@ class PhoneNumbersFormView(BaseFormView):
         kwargs['fields'] = [kwargs['form'].render_field(name, field) for name, field in kwargs['form'].fields.items()]
 
         return super(PhoneNumbersFormView, self).get_context_data(**kwargs)
+
+    def get_initial(self):
+        application_id = self.request.GET['id']
+        record = UserDetails.api.get_record(application_id=application_id).record
+        initial_values = {
+            'mobile_number': record['mobile_number'],
+            'other_phone_number': record['add_phone_number']
+        }
+        return initial_values

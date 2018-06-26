@@ -14,3 +14,4 @@ from .summary import *
 from .validate_magic_link import *
 from .help_and_contacts import *
 from .start_page import *
+from .change_email import *
