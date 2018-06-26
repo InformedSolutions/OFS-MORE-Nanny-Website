@@ -43,9 +43,11 @@
             {{ email }}
         </td>
         <td class="change-answer">
-            <!--<a href="" alt='Change email address'>-->
-                <!--Change <span class="visuallyhidden">email address</span>-->
-            <!--</a>-->
+            {% if include_change_links %}
+                <a href="{% url 'Change-Email' %}/id={{ application_id }}" alt='Change email address'>
+                    Change <span class="visuallyhidden">email address</span>
+                </a>
+            {% endif %}
         </td>
     </tr>
     <tr>
@@ -56,9 +58,11 @@
             {{ mobile_number }}
         </td>
         <td class="change-answer">
-            <!--<a href="" alt='Change mobile number'>-->
-                <!--Change <span class="visuallyhidden">mobile number</span>-->
-            <!--</a>-->
+            {% if include_change_links %}
+                <a href="{% url 'Phone-Number' %}?id={{ application_id }}" alt='Change mobile number'>
+                    Change <span class="visuallyhidden">mobile number</span>
+                </a>
+            {% endif %}
         </td>
     </tr>
     <tr>
@@ -69,9 +73,11 @@
             {{ add_phone_number }}
         </td>
         <td class="change-answer">
-            <!--<a href="" alt='Change other number'>-->
-                <!--Change <span class="visuallyhidden">landline number</span>-->
-            <!--</a>-->
+            {% if include_change_links %}
+                <a href="{% url 'Phone-Number' %}?id={{ application_id }}" alt='Change other number'>
+                    Change <span class="visuallyhidden">landline number</span>
+                </a>
+            {% endif %}
         </td>
     </tr>
     </tbody>
