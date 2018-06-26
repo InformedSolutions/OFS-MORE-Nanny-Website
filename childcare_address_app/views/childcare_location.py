@@ -45,6 +45,11 @@ class ChildcareLocationView(BaseFormView):
                         postcode=home_address_record['postcode']
                     )
 
+                    # update home address to reflect that it is also a childcare address
+                    home_address_record['childcare_address'] = True
+                    ApplicantHomeAddress.api.put(home_address_record)
+
+
             self.success_url = 'Childcare-Address-Details'
 
         elif form.cleaned_data['home_address'] == 'False':
@@ -52,10 +57,23 @@ class ChildcareLocationView(BaseFormView):
 
         return super(ChildcareLocationView, self).form_valid(form)
 
+
+    def get_initial(self):
+        initial = super().get_initial()
+        app_id = self.request.GET['id']
+        api_response = ApplicantHomeAddress.api.get_record(application_id=app_id)
+        if api_response.status_code == 200:
+            record = api_response.record
+            initial['home_address'] = record['childcare_address']
+            initial['home_address_id'] = record['home_address_id']
+            initial['id'] = app_id
+        return initial
+
     def get_context_data(self, **kwargs):
         """
         Override base BaseFormView method to add 'fields' key to context for rendering in template.
         """
+
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
 

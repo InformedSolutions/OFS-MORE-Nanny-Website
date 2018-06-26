@@ -16,7 +16,12 @@
     <h1 class="form-title heading-large">
         Enter childcare address
     </h1>
+    {% if ordinal == 'First' %}
     <p>Where will you be looking after the children?</p>
+    {% else %}
+    <p>Please give details of the {{ ordinal | lower }} address.</p>
+    {% endif %}
+
     {{form.as_div}}
     {% csrf_token %}
     <a href="{% url 'Childcare-Address-Postcode-Entry' %}?id={{id}}&childcare_address_id={{childcare_address_id}}" name="manual"

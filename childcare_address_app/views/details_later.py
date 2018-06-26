@@ -12,6 +12,11 @@ class AddressDetailsLaterView(BaseTemplateView):
 
     template_name = 'details-later.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        context['id'] = self.request.GET['id']
+        return context
+
     def post(self, request):
         app_id = request.POST['id']
         # update the task status to be done

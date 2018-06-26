@@ -7,6 +7,28 @@ from ..address_helper import *
 import inflect
 
 
+def get_address_ordinal(app_id, childcare_address_id):
+    """
+    get ordinal value of this childcare address
+    :param app_id: id of the application
+    :param childcare_address_id: id of childcare address
+    :return:
+    """
+    formatter = inflect.engine()
+    api_response = ChildcareAddress.api.get_records(application_id=app_id)
+    if api_response.status_code == 404:
+        return 'First'
+    else:
+        if childcare_address_id:
+            # get index of the address id in the list of records returned
+            index = next((i for (i, record) in enumerate(api_response.record)
+                          if record["childcare_address_id"] == childcare_address_id), None)
+            index = index + 1
+        else:
+            index = len(api_response.record) + 1
+        return formatter.number_to_words(formatter.ordinal(index)).title()
+
+
 class ChildcareAddressPostcodeView(BaseFormView):
     """
     Class containing the view(s) for handling the GET requests to the childcare address guidance page.
@@ -63,19 +85,7 @@ class ChildcareAddressPostcodeView(BaseFormView):
         kwargs['fields'] = [kwargs['form'].render_field(name, field) for name, field in kwargs['form'].fields.items()]
         kwargs['id'] = app_id
 
-        # get ordinal value of this childcare address
-        formatter = inflect.engine()
-        api_response = ChildcareAddress.api.get_records(application_id=app_id)
-        if api_response.status_code == 404:
-            kwargs['ordinal'] = 'First'
-        else:
-            if childcare_address_id:
-                # get index of the address id in the list of records returned
-                index = next((i for (i, record) in enumerate(api_response.record)
-                              if record["childcare_address_id"] == childcare_address_id), None)
-            else:
-                index = len(api_response.record) + 1
-            kwargs['ordinal'] = formatter.number_to_words(formatter.ordinal(index)).title()
+        kwargs['ordinal'] = get_address_ordinal(app_id, childcare_address_id)
 
         return super(ChildcareAddressPostcodeView, self).get_context_data(**kwargs)
 
@@ -222,6 +232,8 @@ class ChildcareAddressManualView(BaseFormView):
             kwargs['form'] = self.get_form()
 
         kwargs['fields'] = [kwargs['form'].render_field(name, field) for name, field in kwargs['form'].fields.items()]
+
+        kwargs['ordinal'] = get_address_ordinal(app_id, childcare_address_id)
 
         return super(ChildcareAddressManualView, self).get_context_data(**kwargs)
 

@@ -2,6 +2,7 @@ from django.http import HttpResponseRedirect
 from django.views import View
 from django.shortcuts import render
 from nanny_models.childcare_address import *
+from nanny_models.applicant_home_address import *
 from ..utils import build_url
 import inflect
 from ..address_helper import *
@@ -52,6 +53,15 @@ class ChildcareAddressSummaryView(View):
                     data.append(record)
 
                 context['records'] = data
+
+        # get home address
+        home_address_resp = ApplicantHomeAddress.api.get_record(application_id=app_id)
+        if home_address_resp.status_code == 200:
+            home_address = home_address_resp.record['childcare_address']
+            if home_address:
+                context['home_address'] = 'Yes'
+            else:
+                context['home_address'] = 'No'
 
         return render(request, template_name='childcare-address-summary.html', context=context)
 

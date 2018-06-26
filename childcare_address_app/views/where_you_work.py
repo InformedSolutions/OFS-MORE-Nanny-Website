@@ -33,6 +33,7 @@ class WhereYouWorkView(BaseFormView):
             else:
                 record['address_to_be_provided'] = None
 
+            api_response.record['childcare_address_status'] = 'IN_PROGRESS'
             NannyApplication.api.put(record)  # Update entire record.
 
             if address_response.status_code != 404 and len(address_response.record) > 0:
