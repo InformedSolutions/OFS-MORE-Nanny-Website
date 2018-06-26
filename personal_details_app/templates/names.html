@@ -1,0 +1,31 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Your name{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+
+{% include "back-button.html" %}
+
+<div class="two-thirds">
+{{ form.error_summary }}
+
+
+<h1 class="form-title heading-large">Your name</h1>
+
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <p>Please give us your full name, including any middle names</p>
+    <p>The details must match what is in your criminal record (DBS) check</p>
+
+    {% csrf_token %}
+    {{ form }}
+
+    <input type="submit" name="action" class="button" value="Save and continue">
+</form>
+<br>
+{% include 'return-to-list.html' %}
+
+</div>
+
+{% endblock %}

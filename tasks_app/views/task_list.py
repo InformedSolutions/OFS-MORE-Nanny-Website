@@ -53,9 +53,9 @@ class TaskListView(View):
                     'description': 'Your personal details',
                     'status_url': None,
                     'status_urls': [
-                        {'status': 'COMPLETED', 'url': 'Personal-Details-Summary'},
-                        {'status': 'FLAGGED', 'url': 'Personal-Details-Summary'},
-                        {'status': 'OTHER', 'url': 'Personal-Details-Guidance'},  # For all other statuses
+                        {'status': 'COMPLETED', 'url': 'personal-details:Personal-Details-Summary'},
+                        {'status': 'FLAGGED', 'url': 'personal-details:Personal-Details-Summary'},
+                        {'status': 'OTHER', 'url': 'personal-details:Personal-Details-Name'},  # For all other statuses
                     ]
                 },
                 {

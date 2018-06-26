@@ -78,6 +78,7 @@ PROJECT_APPS = [
     'nanny_models',
     'login_app.apps.LoginAppConfig',
     'tasks_app.apps.TasksAppConfig',
+    'personal_details_app.apps.PersonalDetailsAppConfig',
     'childcare_address_app.apps.ChildcareAddressAppConfig',
     'first_aid_app.apps.FirstAidAppConfig',
     'childcare_training_task_app.apps.ChildcareTrainingTaskAppConfig'
