@@ -23,5 +23,5 @@ class PersonalDetailsLivedAbroadForm(GOVUKForm):
         choices=options,
         widget=InlineRadioSelect,
         required=True,
-        error_messages={'required': 'Please select one'}
+        error_messages={'required': 'Please select if you have lived outside of the UK in the last 5 years'}
     )

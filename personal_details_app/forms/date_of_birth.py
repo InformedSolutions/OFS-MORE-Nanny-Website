@@ -32,7 +32,7 @@ class PersonalDetailsDOBForm(GOVUKForm):
         today = date.today()
         age = today.year - applicant_dob.year - ((today.month, today.day) < (applicant_dob.month, applicant_dob.day))
         if age < 18:
-            raise forms.ValidationError('You must be 18 or older to be a childminder')
+            raise forms.ValidationError('You must be 18 or older to be a nanny')
         date_today_diff = today.year - applicant_dob.year - (
                 (today.month, today.day) < (applicant_dob.month, applicant_dob.day))
         if len(str(birth_year)) < 4:

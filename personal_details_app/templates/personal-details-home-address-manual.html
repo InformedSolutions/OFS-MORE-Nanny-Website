@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Your home address{% endblock %}
+{% block page_title %}Enter your home address{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -31,8 +31,6 @@
 </form>
 <br>
 
-{% if personal_details_status == 'COMPLETED' %}
 {% include 'return-to-list.html' %}
-{% endif %}
 
 {% endblock %}

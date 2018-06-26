@@ -7,17 +7,17 @@ from .views import PersonalDetailNameView, PersonalDetailDOBView, PersonalDetail
     PersonalDetailLivedAbroadView, PersonalDetailCertificateView, PersonalDetailsPostCertificateView, Summary
 
 urlpatterns = [
-    url(r'^your-name/', PersonalDetailNameView.as_view(), name='Personal-Details-Name'),
-    url(r'^your-date-of-birth/', PersonalDetailDOBView.as_view(), name='Personal-Details-Date-Of-Birth'),
-    url(r'^your-home-address/', PersonalDetailHomeAddressView.as_view(), name='Personal-Details-Home-Address'),
-    url(r'^select-home-address/', PersonalDetailSelectAddressView.as_view(), name='Personal-Details-Select-Address'),
-    url(r'^enter-home-address/', PersonalDetailManualAddressView.as_view(), name='Personal-Details-Manual-Address'),
-    url(r'^home-address-details/', PersonalDetailSummaryAddressView.as_view(), name='Personal-Details-Address-Summary'),
-    url(r'^lived-abroad/', PersonalDetailLivedAbroadView.as_view(), name='Personal-Details-Lived-Abroad'),
-    url(r'^good-conduct-certificates/', PersonalDetailCertificateView.as_view(),
+    url(r'^personal-details/your-name/', PersonalDetailNameView.as_view(), name='Personal-Details-Name'),
+    url(r'^personal-details/your-date-of-birth/', PersonalDetailDOBView.as_view(), name='Personal-Details-Date-Of-Birth'),
+    url(r'^personal-details/your-home-address/', PersonalDetailHomeAddressView.as_view(), name='Personal-Details-Home-Address'),
+    url(r'^personal-details/select-home-address/', PersonalDetailSelectAddressView.as_view(), name='Personal-Details-Select-Address'),
+    url(r'^personal-details/enter-home-address/', PersonalDetailManualAddressView.as_view(), name='Personal-Details-Manual-Address'),
+    url(r'^personal-details/home-address-details/', PersonalDetailSummaryAddressView.as_view(), name='Personal-Details-Address-Summary'),
+    url(r'^personal-details/lived-abroad/', PersonalDetailLivedAbroadView.as_view(), name='Personal-Details-Lived-Abroad'),
+    url(r'^personal-details/good-conduct-certificates/', PersonalDetailCertificateView.as_view(),
         name='Personal-Details-Certificates-Of-Good-Conduct'),
-    url(r'^post-certificates/', PersonalDetailsPostCertificateView.as_view(), name='Personal-Details-Post-Certificates'),
-    url(r'^check-answers/', Summary.as_view(), name='Personal-Details-Summary')
+    url(r'^personal-details/post-certificates/', PersonalDetailsPostCertificateView.as_view(), name='Personal-Details-Post-Certificates'),
+    url(r'^personal-details/check-answers/', Summary.as_view(), name='Personal-Details-Summary')
 ]
 
 # Django toolbar settings for development environments

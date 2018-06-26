@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Certificates of Good Conduct{% endblock %}
+{% block page_title %}Certificates of good conduct{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -12,14 +12,14 @@
 {{ form.error_summary }}
 
 
-<h1 class="form-title heading-large">Certificated of good conduct</h1>
+<h1 class="form-title heading-large">Certificates of good conduct</h1>
 
 <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
 
     {% csrf_token %}
-    <p>You need to have certificates of good conduct from your time living abroad in the last 5 years</p>
+    <p>You need to have certificates of good conduct from your time living abroad in the last 5 years.</p>
     <p>Certificated of good conduct prove that you don't have a criminal record.</p>
-    <p>Contact the countries' embassies to get original certificates</p>
+    <p>Contact the countries' embassies to get original certificates.</p>
 
     <a href="{{ link_url }}" class="button">Continue</a>
 </form>

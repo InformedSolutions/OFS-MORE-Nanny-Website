@@ -55,6 +55,8 @@ class BaseTemplateView(TemplateView):
         context = super(BaseTemplateView, self).get_context_data(**kwargs)
         app_id = self.request.GET.get('id')
         context['application_id'] = app_id
+        if hasattr(self, 'success_url_name'):
+            context['link_url'] = build_url(self.success_url_name, get={'id': app_id})
         return context
 
 

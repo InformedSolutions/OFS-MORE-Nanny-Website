@@ -38,6 +38,11 @@ class PersonalDetailNameView(BaseFormView):
 
         return initial
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        context['id'] = app_id_finder(self.request)
+        return context
+
     def form_valid(self, form):
 
         application_id = app_id_finder(self.request)

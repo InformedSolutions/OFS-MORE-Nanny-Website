@@ -5,7 +5,8 @@ from ..address_helper import *
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
-from nanny_models.applicant_home_address import ApplicantHomeAddress
+from nanny_models.applicant_home_address import *
+from nanny_models.applicant_personal_details import *
 
 
 class PersonalDetailHomeAddressView(BaseFormView):
@@ -29,6 +30,14 @@ class PersonalDetailHomeAddressView(BaseFormView):
             address_record = api_response.record
             address_record['postcode'] = postcode
             ApplicantHomeAddress.api.put(address_record)
+        else:
+            personal_details = ApplicantPersonalDetails.api.get_record(application_id=application_id).record
+            ApplicantHomeAddress.api.create(
+                application_id=application_id,
+                personal_detail_id=personal_details['personal_detail_id'],
+                postcode=postcode,
+                model_type=ApplicantHomeAddress
+            )
 
         return super().form_valid(form)
 
@@ -64,14 +73,15 @@ class PersonalDetailSelectAddressView(BaseFormView):
         if api_response.status_code == 200:
             postcode = api_response.record['postcode']
             context['postcode'] = postcode
+            self.initial['choices'] = AddressHelper.create_address_lookup_list(postcode)
 
-        self.initial['choices'] = AddressHelper.create_address_lookup_list(postcode)
         return context
 
 
 class PersonalDetailManualAddressView(BaseFormView):
 
     template_name = 'personal-details-home-address-manual.html'
+    success_url = 'personal-details:Personal-Details-Address-Summary'
     form_class = HomeAddressManualForm
 
     def get_initial(self):
@@ -101,7 +111,7 @@ class PersonalDetailManualAddressView(BaseFormView):
 class PersonalDetailSummaryAddressView(BaseTemplateView):
 
     template_name = 'address-details.html'
-    success_url = ''
+    success_url = 'personal-details:Personal-Details-Lived-Abroad'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
