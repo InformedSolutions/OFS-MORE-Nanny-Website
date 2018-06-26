@@ -21,7 +21,7 @@ class TypeOfChildcareTrainingForm(GOVUKForm):
 
     childcare_training = forms.MultipleChoiceField(label='', choices=options,
                                                   widget=CheckboxSelectMultiple, required=True,
-                                                  error_messages={'required': 'Please select the type of childcare course you have completed'},
+                                                  error_messages={'required': 'Please select the types of childcare courses you have completed'},
                                                   help_text="Select all that apply")
 
     def clean_childcare_training(self):
