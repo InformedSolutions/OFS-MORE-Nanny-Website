@@ -21,3 +21,13 @@ class ChildcareLocationForm(GOVUKForm):
                                                required=True,
                                                widget=InlineRadioSelect,
                                                error_messages={'required': 'Please answer yes or no'})
+
+    def __init__(self, *args, **kwargs):
+
+        super(ChildcareLocationForm, self).__init__(*args, **kwargs)
+
+        if 'home_address' in kwargs['initial'] and 'home_address_id' in kwargs['initial']:
+            self.fields['home_address'].initial = kwargs['initial']['home_address']
+            self.pk = kwargs['initial']['home_address_id']
+        self.field_list = ['home_address']
+

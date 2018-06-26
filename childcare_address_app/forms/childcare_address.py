@@ -12,6 +12,7 @@ class ChildcareAddressForm(GOVUKForm):
     """
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'standard-error-summary.html'
+    error_summary_title = 'There was a problem'
     auto_replace_widgets = True
 
     postcode = forms.CharField(label='Postcode', error_messages={'required': 'Please enter your postcode'})
@@ -172,6 +173,7 @@ class ChildcareAddressLookupForm(GOVUKForm):
     """
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'standard-error-summary.html'
+    error_summary_title = 'There was a problem'
     auto_replace_widgets = True
 
     address = forms.ChoiceField(label='Select address', required=True,
