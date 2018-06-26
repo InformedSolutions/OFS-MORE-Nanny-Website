@@ -1,3 +1,5 @@
+import datetime
+
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views import View
@@ -34,7 +36,9 @@ class Summary(View):
         context['link_url'] = build_url(self.success_url_name, get={'id': application_id})
         context['application_id'] = application_id
         context['id'] = application_id
-        context['personal_details_record'] = ApplicantPersonalDetails.api.get_record(application_id=application_id).record
+        temp_record = ApplicantPersonalDetails.api.get_record(application_id=application_id).record
+        temp_record.date_of_birth = datetime.datetime.strptime(temp_record.date_of_birth, '%Y-%m-%d')
+        context['personal_details_record'] = temp_record
 
         # ADD PERSONAL ADDRESS RECORD HERE
         address = ApplicantHomeAddress.api.get_record(application_id=application_id).record
