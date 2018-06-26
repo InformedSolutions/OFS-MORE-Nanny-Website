@@ -19,7 +19,7 @@ class FirstAidTrainingDetailsForm(GOVUKForm):
     error_summary_title = 'There was a problem'
 
     first_aid_training_organisation = forms.CharField(
-        label='Training organisation',
+        label='First Aid training organisation',
         max_length=50,
         error_messages={
             'required': 'Please enter the title of your course',
