@@ -254,9 +254,10 @@ class ChildcareAddressDetailsView(BaseTemplateView):
         )
         addresses = {}
         count = 1
-        for address in api_response.record:
-            addresses[str(count)] = AddressHelper.format_address(address, ", ")
-            count += 1
+        if api_response.status_code == 200:
+            for address in api_response.record:
+                addresses[str(count)] = AddressHelper.format_address(address, ", ")
+                count += 1
         kwargs['childcare_addresses'] = addresses
 
         return super(ChildcareAddressDetailsView, self).get_context_data(**kwargs)
