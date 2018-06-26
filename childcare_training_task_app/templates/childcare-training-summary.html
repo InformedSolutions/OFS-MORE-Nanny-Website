@@ -1,0 +1,55 @@
+{% extends 'govuk_template.html' %}
+{% load static %}
+{% load govuk_template_base %}
+{% block page_title %}Check your answers: childcare training{% endblock %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+<h1 class="form-title heading-large">Check your answers: childcare training</h1>
+
+<table class="check-your-answers" style="table-layout: fixed; width: 100%">
+    <colgroup>
+        <col class="summary-column">
+        <col class="summary-column">
+        <col class="change-answer">
+    </colgroup>
+
+    <!--Blank row below to get hrule atop of table.-->
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+        </td>
+        <td class="change-answer">
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            What type of childcare course have you completed?
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {% if record.level_2_training and record.common_core_training %}
+                Childcare qualification (level 2 or higher) and training in common core skills
+            {% elif record.level_2_training %}
+                Childcare qualification (level 2 or higher)
+            {% elif record.common_core_training %}
+                Training in common core skills
+            {% endif %}
+        </td>
+        <td class="change-answer">
+            <a href="{% url 'Type-Of-Childcare-Training' %}?id={{ id }}" alt='Change answer on type of childcare course you have completed'>
+                Change <span class="visuallyhidden">email address</span>
+            </a>
+        </td>
+    </tr>
+</table>
+
+
+<form method="post">
+    {% csrf_token %}
+    <input type="submit" class="button" value="Confirm and continue" alt="continue" id="id_continue">
+</form>
+
+{% endblock %}

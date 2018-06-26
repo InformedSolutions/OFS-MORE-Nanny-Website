@@ -1,7 +1,9 @@
-from django.shortcuts import render
-from django.views import View
+from first_aid_app.views.base import BaseTemplateView
 
 
-class FirstAidGuidanceView(View):
-    def get(self, request):
-        return render(request, template_name='first-aid-guidance.html')
+class FirstAidGuidanceView(BaseTemplateView):
+    """
+    Template view to  render the guidance page from first access of task from task list
+    """
+    template_name = "first-aid-guidance.html"
+    success_url_name = 'first-aid:Training-Details'

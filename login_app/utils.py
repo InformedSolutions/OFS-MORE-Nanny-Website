@@ -1,5 +1,7 @@
+import json
 import random
 import re
+import requests
 import string
 import time
 
@@ -8,6 +10,55 @@ from urllib.parse import urlencode
 from django import forms
 from django.conf import settings
 from django.shortcuts import reverse
+
+
+def test_notify():
+    # If running exclusively as a test return true to avoid overuse of the notify API
+    if settings.EXECUTING_AS_TEST:
+        return True
+
+    if test_notify_connection():
+        return True
+    else:
+        return False
+
+
+def test_notify_settings():
+    """
+    Function to check if url for notify app is defined.
+    return; Bool
+    """
+    url = settings.NOTIFY_URL
+    if 'url' in locals():
+        return True
+    else:
+        return False
+
+
+def test_notify_connection():
+    """
+    Function to test connection with Notify API.
+    :return: Bool
+    """
+    try:
+        # Test Sending Email
+        header = {'content-type': 'application/json'}
+        req = requests.Session()
+        notification_request = {
+            'email': 'simulate-delivered@notifications.service.gov.uk',
+            'personalisation': {
+                'link': 'test'
+            },
+            'templateId': 'ecd2a788-257b-4bb9-8784-5aed82bcbb92'
+        }
+        r = req.post(settings.NOTIFY_URL + '/api/v1/notifications/email/',
+                     json.dumps(notification_request),
+                     headers=header, timeout=10)
+        if r.status_code == 201:
+            return True
+    except Exception as ex:
+        print(ex)
+        return False
 
 
 def build_url(*args, **kwargs):

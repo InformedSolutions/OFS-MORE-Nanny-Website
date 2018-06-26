@@ -1,6 +1,6 @@
-from django.core.exceptions import ObjectDoesNotExist
-from django.shortcuts import render
-from django.utils import timezone
+from django.conf import settings
+from django.http import HttpResponseRedirect
+from django.shortcuts import render, reverse
 from django.views import View
 from django.views.decorators.cache import never_cache
 import uuid
@@ -14,9 +14,10 @@ class TaskListView(View):
     @never_cache
     def get(self, request):
         application_id = request.GET["id"]
-        api_response = UserDetails.api.get_record(application_id=application_id)
-        record = api_response.record
+        identity_api_response = UserDetails.api.get_record(application_id=application_id)
+        record = identity_api_response.record
         email_address = record['email']
+<<<<<<< HEAD
 
         try:
             response = NannyApplication.api.get_record(application_id=application_id)
@@ -24,11 +25,18 @@ class TaskListView(View):
                 application = create_new_app(app_id=application_id)
             elif response.status_code == 200:
                 application = NannyApplication(response.record)
+=======
+        nanny_api_response = NannyApplication.api.get_record(application_id=application_id)
+        if nanny_api_response.status_code == 200:
+            application = NannyApplication(**nanny_api_response.record)
+        elif nanny_api_response.status_code == 404:
+            application = create_new_app(application_id=application_id)
+        else:
+            if settings.DEBUG:
+                raise RuntimeError('The nanny-gateway API did not respond as expected.')
+>>>>>>> develop
             else:
-                raise Exception('Something went wrong.')
-
-        except Exception:
-            return render(request, '500.html')
+                HttpResponseRedirect(reverse('Service-Down'))
 
         context = {
             'id': application_id,
@@ -79,8 +87,8 @@ class TaskListView(View):
                     'description': 'First aid training',
                     'status_url': None,
                     'status_urls': [
-                        {'status': 'COMPLETED', 'url': 'First-Aid-Summary'},
-                        {'status': 'FLAGGED', 'url': 'First-Aid-Summary'},
+                        {'status': 'COMPLETED', 'url': 'first-aid:First-Aid-Summary'},
+                        {'status': 'FLAGGED', 'url': 'first-aid:First-Aid-Summary'},
                         {'status': 'OTHER', 'url': 'First-Aid-Guidance'},  # For all other statuses
                     ]
                 },
@@ -167,14 +175,38 @@ class TaskListView(View):
         return render(request, 'task-list.html', context)
 
 
+<<<<<<< HEAD
 def create_new_app(app_id):
     app_id = uuid.UUID(app_id)
     api_response_create = NannyApplication.api.create(
         application_id=app_id,
+=======
+def create_new_app(application_id):
+    """
+    Create a new NannyApplication model in the db with the application_id argument as specified.
+    :return; NannyApplication model if nanny-gateway created record successfully, else redirect to 'Service-Down' page.
+    """
+    application_id = uuid.UUID(application_id)
+    api_response_create = NannyApplication.api.create(
+        application_id=application_id,
+        application_status='DRAFTING',
+        login_details_status='COMPLETED',
+>>>>>>> develop
         model_type=NannyApplication
     )
     if api_response_create.status_code == 201:
         response = NannyApplication.api.get_record(
+<<<<<<< HEAD
             application_id=app_id
         )
         return NannyApplication(response.record)
+=======
+            application_id=application_id
+        )
+        return NannyApplication(**response.record)
+    else:
+        if settings.DEBUG:
+            raise RuntimeError('The nanny-gateway API did not respond as expected.')
+        else:
+            HttpResponseRedirect(reverse('Service-Down'))
+>>>>>>> develop

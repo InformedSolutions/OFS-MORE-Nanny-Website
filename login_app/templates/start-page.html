@@ -1,0 +1,19 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Register as a nanny{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <h1 class="heading-xlarge">
+            Register as a nanny
+        </h1>
+        <form action="{% url 'Account-Selection' %}" method="get">
+            <input type=submit class="button button-start" value="Sign in">
+        </form>
+    </div>
+</div>
+
+{% endblock %}

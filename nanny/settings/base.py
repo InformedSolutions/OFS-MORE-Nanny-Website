@@ -79,6 +79,10 @@ PROJECT_APPS = [
     'login_app.apps.LoginAppConfig',
     'tasks_app.apps.TasksAppConfig',
     'personal_details_app.apps.PersonalDetailsAppConfig'
+    'tasks_app.apps.TasksAppConfig',
+    'childcare_address_app.apps.ChildcareAddressAppConfig',
+    'first_aid_app.apps.FirstAidAppConfig',
+    'childcare_training_task_app.apps.ChildcareTrainingTaskAppConfig'
 ]
 
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
@@ -218,6 +222,7 @@ SETTINGS_EXPORT = [
 AUTHENTICATION_URL = URL_PREFIX + '/sign-in/'
 
 AUTHENTICATION_EXEMPT_URLS = (
+    r'^' + URL_PREFIX + '$',
     r'^' + URL_PREFIX + '/$',
     r'^' + URL_PREFIX + '/account/account/$',
     r'^' + URL_PREFIX + '/account/email/$',

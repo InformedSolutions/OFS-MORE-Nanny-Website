@@ -1,0 +1,80 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Check your answers: your sign in details{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+{% include "back-button.html" %}
+
+<h1 class="form-title heading-large">
+    Check your answers: your sign in details
+</h1>
+
+<table class="check-your-answers" style="table-layout: fixed; width: 100%">
+    <colgroup>
+        <col class="summary-column">
+        <col class="summary-column">
+        <col class="change-answer">
+    </colgroup>
+    <!--<thead>-->
+    <!--<tr>-->
+        <!--<th colspan="3">-->
+            <!--<div class="heading-medium">-->
+                <!--Your sign in details-->
+            <!--</div>-->
+        <!--</th>-->
+    <!--</tr>-->
+    <!--</thead>-->
+
+    <!--Blank row below to get hrule atop of table.-->
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+        </td>
+        <td class="change-answer">
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Do you know where you will be working?
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{ address_to_be_provided }}
+        </td>
+        <td class="change-answer">
+            <a href="{% url 'Childcare-Address-Where-You-Work' %}?id={{id}}" alt='Change answer to where you will work'>
+                Change <span class="visuallyhidden">answer to where you will work</span>
+            </a>
+        </td>
+    </tr>
+
+    {% for record in records %}
+        <tr>
+            <td style="word-wrap: break-word" class=summary-column>
+                {{ record.title }}
+            </td>
+            <td style="word-wrap: break-word" class=summary-column>
+                {{ record.address | safe }}
+            </td>
+            <td class="change-answer">
+                <a href="{{ record.change_link }}" alt='Change childcare address'>
+                    Change <span class="visuallyhidden">childcare address</span>
+                </a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<br>
+
+<form method="post" novalidate>
+    <input type="hidden" id="id" value="{{ id }}" name="id"/>
+    <input type="submit" class="button" value="Continue" alt='Continue'>
+    {% csrf_token %}
+</form>
+<br>
+{% include 'return-to-list.html' %}
+
+{% endblock %}

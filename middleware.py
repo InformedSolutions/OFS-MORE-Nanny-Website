@@ -4,8 +4,6 @@ from django.conf import settings  # import the settings file
 from django.http import HttpResponseRedirect
 
 from identity_models.user_details import UserDetails
-from tasks_app.models import NannyApplication
-
 
 COOKIE_IDENTIFIER = '_ofs'
 
@@ -48,7 +46,7 @@ class CustomAuthenticationHandler(object):
             application_id = request.POST.get('id')
 
         # If an application id is present fetch application from store
-        if application_id is not None:
+        if application_id is not None and application_id != '':
             record = UserDetails.api.get_record(application_id=application_id).record
             # Check the email address stored in the session matches that found on the application
             # and if not raise generic exception

@@ -1,4 +1,5 @@
 from django.core.exceptions import ImproperlyConfigured
+from django.shortcuts import render
 from django.views.generic import FormView
 
 from login_app.utils import build_url
@@ -29,12 +30,4 @@ class BaseFormView(FormView):
         """
         Method to return a dictionary of parameters to be included as variables in the success url, e.g. application_id.
         """
-        # If user was on first sign-in page, email_address won't be stored in GET request QueryDict. In that case, the
-        # email_address will be stored in POST request QueryDict.
-
-        if 'email_address' in self.request.GET.keys():
-            email_address = self.request.GET['email_address']
-        else:
-            email_address = self.request.POST['email_address']
-
-        return {'email_address': email_address}
+        return {'id': self.request.GET['id']}
