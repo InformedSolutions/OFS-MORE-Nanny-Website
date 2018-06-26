@@ -8,91 +8,83 @@
 
 {% include "back-button.html" %}
 
-<div class="two-thirds">
-    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-    <table class="check-your-answers" style="table-layout: fixed; width: 100%">
-        <colgroup>
-            <col class="summary-column">
-            <col class="summary-column">
-            <col class="change-answer">
-        </colgroup>
-        <thead>
-            <tr>
-                <th colspan="3">
-                    <div class="heading-medium">
-                        Check your answers: your personal details
-                    </div>
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td style="word-wrap: break-word" class=summary-column>
-                    Your name
-                </td>
-                <td style="word-wrap: break-word" class=summary-column>
-                    {{personal_details_record.first_name}} {{personal_details_record.middle_names|default_if_none:""}} {{personal_details_record.last_name}}
-                </td>
-                <td class="change-answer">
-                    <a href="{% url 'personal-details:Personal-Details-Name' %}?id={{application_id}}"
-                       alt='Change your name'>
-                        Change <span class="visuallyhidden">your name</span>
-                    </a>
-                </td>
-            </tr>
-            <tr>
-                <td style="word-wrap: break-word" class=summary-column>
-                    Date of birth
-                </td>
-                <td style="word-wrap: break-word" class=summary-column>
-                    {{personal_details_record.date_of_birth}}
-                </td>
-                <td class="change-answer">
-                    <a href="{% url 'personal-details:Personal-Details-Date-Of-Birth' %}?id={{application_id}}"
-                       alt='Change your date of birth'>
-                        Change <span class="visuallyhidden">your date of birth</span>
-                    </a>
-                </td>
-            </tr>
-            <tr>
-                <td style="word-wrap: break-word" class=summary-column>
-                    Your home address
-                </td>
-                <td style="word-wrap: break-word" class=summary-column>
-                    {{personal_address_record}}
-                </td>
-                <td class="change-answer">
-                    <a href="{% url 'personal-details:Personal-Details-Manual-Address' %}?id={{application_id}}"
-                       alt='Change your home address'>
-                        Change <span class="visuallyhidden">your home address</span>
-                    </a>
-                </td>
-            </tr>
-            <tr>
-                <td style="word-wrap: break-word" class=summary-column>
-                    Have you live abroad in the last 5 years?
-                </td>
-                <td style="word-wrap: break-word" class=summary-column>
-                    {{personal_details_record.lived_abroad|yesno:"Yes,No"}}
-                </td>
-                <td class="change-answer">
-                    <a href="{% url 'personal-details:Personal-Details-Lived-Abroad' %}?id={{application_id}}"
-                       alt='Change answer on living abroad in the last 5 years'>
-                        Change <span class="visuallyhidden">answer on living abroad in the last 5 years</span>
-                    </a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-        {% csrf_token %}
-        <input type="hidden" value="{{application_id}}" name="id"/>
-        <input type="submit" class="button" value="Continue">
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+<h1 class="form-title heading-large">
+    Check your answers: your personal details
+</h1>
+<table class="check-your-answers" style="table-layout: fixed; width: 100%">
+    <colgroup>
+        <col class="summary-column">
+        <col class="summary-column">
+        <col class="change-answer">
+    </colgroup>
+    <thead>
+        <tr>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="word-wrap: break-word" class=summary-column>
+                Your name
+            </td>
+            <td style="word-wrap: break-word" class=summary-column>
+                {{personal_details_record.first_name}} {{personal_details_record.middle_names|default_if_none:""}} {{personal_details_record.last_name}}
+            </td>
+            <td class="change-answer">
+                <a href="{% url 'personal-details:Personal-Details-Name' %}?id={{application_id}}"
+                   alt='Change your name'>
+                    Change <span class="visuallyhidden">your name</span>
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <td style="word-wrap: break-word" class=summary-column>
+                Date of birth
+            </td>
+            <td style="word-wrap: break-word" class=summary-column>
+                {{personal_details_record.date_of_birth|date:"d M Y"}}
+            </td>
+            <td class="change-answer">
+                <a href="{% url 'personal-details:Personal-Details-Date-Of-Birth' %}?id={{application_id}}"
+                   alt='Change your date of birth'>
+                    Change <span class="visuallyhidden">your date of birth</span>
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <td style="word-wrap: break-word" class=summary-column>
+                Your home address
+            </td>
+            <td style="word-wrap: break-word" class=summary-column>
+                {{personal_address_record}}
+            </td>
+            <td class="change-answer">
+                <a href="{% url 'personal-details:Personal-Details-Manual-Address' %}?id={{application_id}}"
+                   alt='Change your home address'>
+                    Change <span class="visuallyhidden">your home address</span>
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <td style="word-wrap: break-word" class=summary-column>
+                Have you live abroad in the last 5 years?
+            </td>
+            <td style="word-wrap: break-word" class=summary-column>
+                {{personal_details_record.lived_abroad|yesno:"Yes,No"}}
+            </td>
+            <td class="change-answer">
+                <a href="{% url 'personal-details:Personal-Details-Lived-Abroad' %}?id={{application_id}}"
+                   alt='Change answer on living abroad in the last 5 years'>
+                    Change <span class="visuallyhidden">answer on living abroad in the last 5 years</span>
+                </a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+    {% csrf_token %}
+    <input type="hidden" value="{{application_id}}" name="id"/>
+    <input type="submit" class="button" value="Confirm and continue">
 
-    </form>
-    <br>
-    {% include 'return-to-list.html' %}
-
-</div>
-
+</form>
 
 {% endblock %}

@@ -24,10 +24,10 @@ class PersonalDetailsNameForm(GOVUKForm):
     )
 
     middle_names = forms.CharField(
-        label='Middle names',
+        label='Middle names (if you have any on yor DBS check)',
         required=False,
         error_messages={
-            'max_length': 'Middles names must be under 100 characters long'
+            'max_length': 'Middle names must be under 100 characters long'
         }
     )
 
