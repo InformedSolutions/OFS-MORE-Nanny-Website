@@ -220,6 +220,7 @@ SETTINGS_EXPORT = [
 AUTHENTICATION_URL = URL_PREFIX + '/sign-in/'
 
 AUTHENTICATION_EXEMPT_URLS = (
+    r'^' + URL_PREFIX + '$',
     r'^' + URL_PREFIX + '/$',
     r'^' + URL_PREFIX + '/account/account/$',
     r'^' + URL_PREFIX + '/account/email/$',

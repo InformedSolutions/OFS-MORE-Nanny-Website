@@ -29,7 +29,7 @@
         <a href="#proposition-links" class="js-header-toggle menu">{% trans 'Menu' %}</a>
       {% endif %}
       <nav id="proposition-menu">
-        <a href="{{ service_settings.header_link_url|default:'/' }}" id="proposition-name">
+        <a href="{{ URL_PREFIX }}" id="proposition-name">
           {% block proposition %}Register as a nanny{% endblock %}
         </a>
         {% block proposition_menu %}
