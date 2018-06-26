@@ -12,11 +12,9 @@
 <!-- Form -->
 <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
     <!-- Content -->
-    <div class="two-thirds">
         <h1 class="form-title heading-large">
             Your home address
         </h1>
-    </div>
     {% if not form.errors %}
     <div id="id_postcode-group" class="form-group-required form-group">
         <div class="text-before-button">
