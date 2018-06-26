@@ -466,6 +466,10 @@ div.error-summary ul.error-summary-list {
   margin-left: 20px !important;
 }
 
+.inline-radios {
+  display: inline-block;
+}
+
 .next-steps {
     color: #b5babe;
 }

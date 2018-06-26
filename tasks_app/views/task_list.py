@@ -17,7 +17,6 @@ class TaskListView(View):
         identity_api_response = UserDetails.api.get_record(application_id=application_id)
         record = identity_api_response.record
         email_address = record['email']
-
         nanny_api_response = NannyApplication.api.get_record(application_id=application_id)
         if nanny_api_response.status_code == 200:
             application = NannyApplication(**nanny_api_response.record)
@@ -164,7 +163,6 @@ class TaskListView(View):
                         task['status_url'] = url['url']
 
         return render(request, 'task-list.html', context)
-
 
 def create_new_app(application_id):
     application_id = uuid.UUID(application_id)

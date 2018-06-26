@@ -1,0 +1,30 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Childcare address{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+{{ form.error_summary }}
+
+<!--<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>-->
+<form method="post" novalidate>
+
+    <h1 class="form-title heading-large">Childcare address</h1>
+
+    <p>Let us know where you will be caring for the children.</p>
+
+    <p>We will need to know these details before you start work as an Ofsted-registered nanny.</p>
+
+    <p>You can add extra addresses if you will be working in more than one home.</p>
+
+    {% csrf_token %}
+    <input type="hidden" id="id" value="{{application_id}}" name="id"/>
+    <input type="submit" class="button" value="Continue" alt='Continue'>
+
+</form>
+<br>
+
+{% endblock %}

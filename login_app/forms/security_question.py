@@ -1,4 +1,4 @@
-from django.forms import forms
+from django import forms
 
 from govuk_forms.forms import GOVUKForm
 from govuk_forms.widgets import Widget, TextInput
