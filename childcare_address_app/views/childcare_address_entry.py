@@ -247,10 +247,10 @@ class ChildcareAddressDetailsView(BaseTemplateView):
         """
         Override base BaseTemplateView method to add 'fields' key to context for rendering in template.
         """
-
-        kwargs['id'] = self.request.GET['id']
+        app_id = self.request.GET['id']
+        kwargs['id'] = app_id
         api_response = ChildcareAddress.api.get_records(
-            application_id=id
+            application_id=app_id
         )
         addresses = {}
         count = 1
