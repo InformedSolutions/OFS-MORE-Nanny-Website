@@ -29,6 +29,8 @@
 <br>
 {% if sms_resend_attempts >= 3 %}
     <a href="{% url 'Resend-Security-Code' %}?id={{ application_id }}">Still didn't get a code?</a>
+{% elif sms_resend_attempts != 0 %}
+    <a href="{% url 'Resend-Security-Code' %}?id={{ application_id }}">Didn't get a code?</a>
 {% else %}
     <a href="{% url 'Resend-Security-Code' %}?id={{ application_id }}">Didn't get a code?</a>
     <a href="{% url 'Security-Question' %}?id={{ application_id }}"><p>Don't have your phone?</a>

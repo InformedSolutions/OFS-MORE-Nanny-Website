@@ -105,6 +105,9 @@ class PhoneNumberField(forms.CharField):
         if not len(no_space_number):
             raise forms.ValidationError('Please enter a {} number'.format(self.regex_type.lower()))
 
+        if len(no_space_number) != 11:
+            raise forms.ValidationError('Please enter a valid {} number'.format(self.regex_type.lower()))
+
         if re.match(settings.REGEX[self.regex_type], no_space_number) is None:
             raise forms.ValidationError('Please enter a valid {} number'.format(self.regex_type.lower()))
 
