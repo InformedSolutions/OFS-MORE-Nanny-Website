@@ -1,3 +1,4 @@
+import os
 from unittest import mock
 
 from django.test import TestCase
@@ -12,6 +13,10 @@ class LoginTests(TestCase):
         self.user_details_record = {
             'email': 'dave@grohl.com',
             'application_id': 'a4e6633f-5339-4de5-ae03-69c71fd008b3',
+            'magic_link_sms': 12345,
+            'sms_resend_attempts': 0,
+            'mobile_number': '000000000012',
+            'magic_link_email': 'ABCDEFGHIJKL',
         }
 
     def test_can_render_service_unavailable(self):
@@ -171,18 +176,26 @@ class LoginTests(TestCase):
             self.assertEqual(found.func.view_class, views.ExistingUserSignInFormView)
             self.assertFormError(response, 'form', 'email_address', error)
 
-    # def test_valid_existing_email_address_loads_account_and_redirects(self):
-    #     """
-    #     Test that entering a valid email address on the 'New-User-Sign-In' page creates an account with that email and
-    #     redirects to the appropriate page.
-    #     """
-    #     response = self.client.post(reverse('Existing-User-Sign-In'), {'email_address': 'eva@walle.com'})
-    #     found = resolve(response.url)
-    #
-    #     self.assertEqual(response.status_code, 302)
-    #     self.assertEqual(found.func.view_class, views.CheckEmailView)
-    #
-    #     # TODO - Assert response codes from Identity API for queries before and after POST request with valid email.
+    def test_valid_existing_email_address_loads_account_and_redirects(self):
+        """
+        Test that entering a valid email address on the 'New-User-Sign-In' page creates an account with that email and
+        redirects to the appropriate page.
+        """
+        with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get, \
+                mock.patch('identity_models.user_details.UserDetails.api.put') as identity_api_put, \
+                mock.patch('login_app.notify.send_email') as notify_email:
+
+            identity_api_get.return_value.status_code = 200
+            identity_api_get.return_value.record = self.user_details_record
+            identity_api_put.return_value.status_code = 200
+
+            response = self.client.post(reverse('Existing-User-Sign-In'), {'email_address': 'eva@walle.com'})
+            found = resolve(response.url)
+
+            self.assertEqual(response.status_code, 302)
+            self.assertEqual(found.func.view_class, views.CheckEmailView)
+
+        # TODO - Assert response codes from Identity API for queries before and after POST request with valid email.
 
     def test_email_sent_with_with_valid_email_upon_sign_in(self):
         """
@@ -204,29 +217,113 @@ class LoginTests(TestCase):
 
                 notify_email.assert_called()
 
-    # def test_resend_email_page_can_be_rendered(self):
-    #     """
-    #     Test that the 'Resend-Email' page can be rendered and that it contains a link to the 'Help-And-Contacts' page.
-    #     """
-    #     response = self.client.post(reverse('Existing-User-Sign-In'))
-    #
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertContains(response, '<a href="{}">contact Ofsted</a>'.format(reverse('Help-And-Contacts')), html=True)
-    #
-    #     # TODO - Assert response codes from Identity API before and after choosing to resend email validation link.
-    #
-    # def test_security_code_page_can_be_rendered(self):
-    #     """
-    #     Test that the 'Security-Code' page can be rendered.
-    #     """
-    #     response = self.client.get(reverse('Security-Code'))
-    #     found = resolve(response.request.get('PATH_INFO'))
-    #
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertEqual(found.func.view_class, views.SecurityCodeFormView)
-    #
-    #     # TODO: Test that the user details sms_expiry is updated.
-    #
+    def test_resend_email_page_can_be_rendered(self):
+        """
+        Test that the 'Resend-Email' page can be rendered and that it contains a link to the 'Help-And-Contacts' page.
+        """
+        with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get, \
+                mock.patch('identity_models.user_details.UserDetails.api.put') as identity_api_put:
+
+            identity_api_get.return_value.status_code = 200
+            identity_api_get.return_value.record = self.user_details_record
+            identity_api_put.return_value.status_code = 200
+
+            response = self.client.get(reverse('Resend-Email') + '?email_address=' + self.user_details_record['email'])
+
+            self.assertEqual(response.status_code, 200)
+            self.assertContains(
+                response,
+                '<a href="{}">contact Ofsted</a>'.format(reverse('Help-And-Contacts')),
+                html=True
+            )
+
+    def test_email_sent_when_rendering_resend_email_page(self):
+        """
+        Test that notify.send_email() is called during rendering of the 'Resend-Email' page.
+        """
+        with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get, \
+                mock.patch('identity_models.user_details.UserDetails.api.put') as identity_api_put, \
+                mock.patch('login_app.notify.send_email') as notify_email:
+
+            identity_api_get.return_value.status_code = 200
+            identity_api_get.return_value.record = self.user_details_record
+            identity_api_put.return_value.status_code = 200
+
+            self.client.get(reverse('Resend-Email'), {'email_address': 'eva@walle.com'})
+
+            notify_email.assert_called()
+
+    def test_validating_email_magic_link_redirects_to_phone_number_page_for_new_applicant(self):
+        """
+        Test that the new user who navigates to the link sent via email is then redirected to the Phone number page.
+        """
+        with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get, \
+                mock.patch('identity_models.user_details.UserDetails.api.put') as identity_api_put, \
+                mock.patch('login_app.notify.send_text') as notify_send_text, \
+                mock.patch('login_app.views.ValidateMagicLinkView.link_has_expired') as link_expired:
+
+            identity_api_get.return_value.status_code = 200
+            link_expired.return_value = False
+
+            response = self.client.get(os.environ.get('PUBLIC_APPLICATION_URL') + '/validate/' + self.user_details_record['magic_link_email'] + '/')
+            found = resolve(response.url)
+
+            self.assertEqual(302, response.status_code)
+            self.assertEqual(found.func.view_class, views.PhoneNumbersFormView)
+
+    def test_validating_email_magic_link_redirects_to_sms_page_for_existing_applicant(self):
+        """
+        Test that the returning user who navigates to the link sent via email is then redirected to the SMS page.
+        """
+        with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get, \
+                mock.patch('identity_models.user_details.UserDetails.api.put') as identity_api_put, \
+                mock.patch('login_app.notify.send_text') as notify_send_text, \
+                mock.patch('login_app.views.ValidateMagicLinkView.link_has_expired') as link_expired:
+
+            identity_api_get.return_value.status_code = 200
+            identity_api_get.return_value.record = self.user_details_record
+            link_expired.return_value = False
+
+            response = self.client.get(os.environ.get('PUBLIC_APPLICATION_URL') + '/validate/' + self.user_details_record['magic_link_email'] + '/')
+            found = resolve(response.url)
+
+            self.assertEqual(302, response.status_code)
+            self.assertEqual(found.func.view_class, views.SecurityCodeFormView)
+
+    def test_validating_email_magic_link_sends_sms(self):
+        """
+        Test that the returning user who navigates to the link sent via email is then sent an SMS.
+        """
+        with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get, \
+                mock.patch('identity_models.user_details.UserDetails.api.put') as identity_api_put, \
+                mock.patch('login_app.notify.send_text') as notify_send_text, \
+                mock.patch('login_app.views.ValidateMagicLinkView.link_has_expired') as link_expired:
+
+            identity_api_get.return_value.status_code = 200
+            identity_api_get.return_value.record = self.user_details_record
+            link_expired.return_value = False
+
+            self.client.get(os.environ.get('PUBLIC_APPLICATION_URL') + '/validate/' + self.user_details_record['magic_link_email'] + '/')
+
+            notify_send_text.assert_called()
+
+    def test_security_code_page_can_be_rendered(self):
+        """
+        Test that the 'Security-Code' page can be rendered.
+        """
+        with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get, \
+                mock.patch('identity_models.user_details.UserDetails.api.put') as identity_api_put:
+
+            identity_api_get.return_value.status_code = 200
+            identity_api_get.return_value.record = self.user_details_record
+            identity_api_put.return_value.status_code = 200
+
+            response = self.client.get(reverse('Security-Code') + '?id=' + self.user_details_record['application_id'])
+            found = resolve(response.request.get('PATH_INFO'))
+
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(found.func.view_class, views.SecurityCodeFormView)
+
     # def test_invalid_sms_code_form_error_messages(self):
     #     """
     #     Test that invalid security codes reload same page with appropriate error messages raised.
