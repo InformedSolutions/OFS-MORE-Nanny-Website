@@ -110,65 +110,67 @@ class LoginTests(TestCase):
                 self.assertEqual(response.status_code, 302)
                 self.assertEqual(found.func.view_class, views.ServiceUnavailableView)
 
-    # def test_valid_new_email_address_creates_account_and_redirects(self):
-    #     """
-    #     Test that entering a valid email address on the 'New-User-Sign-In' page creates an account with that email and
-    #     redirects to the appropriate page.
-    #     """
-    #     with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get, \
-    #             mock.patch('identity_models.user_details.UserDetails.api.put') as identity_api_put:
-    #         identity_api_get.return_value.status_code = 200
-    #         identity_api_get.return_value.record = self.user_details_record
-    #         identity_api_put.return_value.status_code = 200
-    #
-    #         response = self.client.post(reverse('New-User-Sign-In'), {'email_address': 'eva@walle.com'})
-    #         found = resolve(response.url)
-    #
-    #         self.assertEqual(response.status_code, 302)
-    #         self.assertEqual(found.func.view_class, views.CheckEmailView)
-    #
-    #         # TODO: Check exactly WHAT this is testing.
+    def test_valid_new_email_address_creates_account_and_redirects(self):
+        """
+        Test that entering a valid email address on the 'New-User-Sign-In' page creates an account with that email and
+        redirects to the appropriate page.
+        """
+        with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get, \
+                mock.patch('identity_models.user_details.UserDetails.api.put') as identity_api_put:
+            identity_api_get.return_value.status_code = 200
+            identity_api_get.return_value.record = self.user_details_record
+            identity_api_put.return_value.status_code = 200
 
-    # def test_check_email_page_can_be_rendered(self):
-    #     """
-    #     Test that the check email pages can be rendered and that it contains a link to the 'Resend-Email' page.
-    #     """
-    #     check_email_pages = ('Check-New-Email', 'Check-Existing-Email')  # Check both the 'Check-Email' pages.
-    #     for page in check_email_pages:
-    #         response = self.client.get(reverse(page))
-    #         found = resolve(response.request.get('PATH_INFO'))
-    #
-    #         self.assertEqual(response.status_code, 200)
-    #         self.assertEqual(found.func.view_class, views.CheckEmailView)
-    #         self.assertContains(response, '<a href="{}">resend the email</a>'.format(reverse('Resend-Email')), html=True)
-    #
-    # def test_can_render_existing_user_sign_in_page(self):
-    #     """
-    #     Test to assert that the 'New-User-Sign-In' page can be rendered.
-    #     """
-    #     response = self.client.get(reverse('Existing-User-Sign-In'))
-    #
-    #     self.assertEqual(response.status_code, 200)
-    #
-    # def test_invalid_existing_user_email_redirects_to_self(self):
-    #     """
-    #     Test that entering an invalid email on the 'New-User-Sign-In' page redirects back to the same page.
-    #     """
-    #     test_invalid_emails = (
-    #         ('', 'Please enter an email address'),
-    #         ('t', 'Please enter a valid email address, like yourname@example.com'),
-    #         ('123', 'Please enter a valid email address, like yourname@example.com'),
-    #         ('knights@ni', 'Please enter a valid email address, like yourname@example.com'),
-    #     )
-    #
-    #     for email, error in test_invalid_emails:
-    #         response = self.client.post(reverse('Existing-User-Sign-In'), {'email_address': email})
-    #         found = resolve(response.request.get('PATH_INFO'))
-    #
-    #         self.assertEqual(response.status_code, 200)
-    #         self.assertEqual(found.func.view_class, views.ExistingUserSignInFormView)
-    #         self.assertFormError(response, 'form', 'email_address', error)
-    #
+            response = self.client.post(reverse('New-User-Sign-In'), {'email_address': 'eva@walle.com'})
+            found = resolve(response.url)
+
+            self.assertEqual(response.status_code, 302)
+            self.assertEqual(found.func.view_class, views.CheckEmailView)
+
+    def test_check_email_page_can_be_rendered(self):
+        """
+        Test that the check email pages can be rendered and that it contains a link to the 'Resend-Email' page.
+        """
+        check_email_pages = ('Check-New-Email', 'Check-Existing-Email')  # Check both the 'Check-Email' pages.
+        for page in check_email_pages:
+            response = self.client.get(reverse(page) + '?email_address=' + self.user_details_record['email'])
+            found = resolve(response.request.get('PATH_INFO'))
+
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(found.func.view_class, views.CheckEmailView)
+            self.assertContains(
+                response,
+                '<a href="{}">resend the email</a>'.format(reverse('Resend-Email') + '?email_address=' + self.user_details_record['email']),
+                html=True
+            )
+
+    def test_can_render_existing_user_sign_in_page(self):
+        """
+        Test to assert that the 'New-User-Sign-In' page can be rendered.
+        """
+        response = self.client.get(reverse('Existing-User-Sign-In'))
+
+        self.assertEqual(response.status_code, 200)
+
+    def test_invalid_existing_user_email_redirects_to_self(self):
+        """
+        Test that entering an invalid email on the 'New-User-Sign-In' page redirects back to the same page.
+        """
+        test_invalid_emails = (
+            ('', 'Please enter an email address'),
+            ('t', 'Please enter a valid email address, like yourname@example.com'),
+            ('123', 'Please enter a valid email address, like yourname@example.com'),
+            ('knights@ni', 'Please enter a valid email address, like yourname@example.com'),
+        )
+
+        for email, error in test_invalid_emails:
+            response = self.client.post(reverse('Existing-User-Sign-In'), {'email_address': email})
+            found = resolve(response.request.get('PATH_INFO'))
+
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(found.func.view_class, views.ExistingUserSignInFormView)
+            self.assertFormError(response, 'form', 'email_address', error)
+
     # def test_valid_existing_email_address_loads_account_and_redirects(self):
     #     """
     #     Test that entering a valid email address on the 'New-User-Sign-In' page creates an account with that email and
@@ -181,7 +183,27 @@ class LoginTests(TestCase):
     #     self.assertEqual(found.func.view_class, views.CheckEmailView)
     #
     #     # TODO - Assert response codes from Identity API for queries before and after POST request with valid email.
-    #
+
+    def test_email_sent_with_with_valid_email_upon_sign_in(self):
+        """
+        Check that notify-gateway send_email function us called when valid email entered on both the 'New-User-Sign-In'
+        and 'Existing-User-Sign-In' pages.
+        """
+        with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get, \
+                mock.patch('identity_models.user_details.UserDetails.api.put') as identity_api_put, \
+                mock.patch('login_app.notify.send_email') as notify_email:
+
+            identity_api_get.return_value.status_code = 200
+            identity_api_get.return_value.record = self.user_details_record
+            identity_api_put.return_value.status_code = 200
+
+            check_email_pages = ('New-User-Sign-In', 'Existing-User-Sign-In')  # Check both the 'Check-Email' pages.
+
+            for page in check_email_pages:
+                self.client.post(reverse(page), {'email_address': 'eva@walle.com'})
+
+                notify_email.assert_called()
+
     # def test_resend_email_page_can_be_rendered(self):
     #     """
     #     Test that the 'Resend-Email' page can be rendered and that it contains a link to the 'Help-And-Contacts' page.
