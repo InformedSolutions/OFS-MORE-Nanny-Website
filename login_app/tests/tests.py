@@ -1,19 +1,25 @@
 import os
 from unittest import mock
 
-from django.test import TestCase
+from django.test import modify_settings, TestCase
 from django.urls import resolve, reverse
 
 from login_app import views
+from tasks_app.views import TaskListView
 
 
+# @modify_settings(MIDDLEWARE={
+#         'remove': [
+#             'middleware.CustomAuthenticationHandler',
+#         ]
+#     })
 class LoginTests(TestCase):
 
     def setUp(self):
         self.user_details_record = {
             'email': 'dave@grohl.com',
             'application_id': 'a4e6633f-5339-4de5-ae03-69c71fd008b3',
-            'magic_link_sms': 12345,
+            'magic_link_sms': '12345',
             'sms_resend_attempts': 0,
             'mobile_number': '000000000012',
             'magic_link_email': 'ABCDEFGHIJKL',
@@ -324,36 +330,57 @@ class LoginTests(TestCase):
             self.assertEqual(response.status_code, 200)
             self.assertEqual(found.func.view_class, views.SecurityCodeFormView)
 
-    # def test_invalid_sms_code_form_error_messages(self):
-    #     """
-    #     Test that invalid security codes reload same page with appropriate error messages raised.
-    #     """
-    #     codes_errors = (
-    #         ('', 'Please enter the 5 digit code we sent to your mobile'),
-    #         ('1', 'The code must be 5 digits. You have entered fewer than 5 digits'),
-    #         ('123456', 'The code must be 5 digits. You have entered more than 5 digits'),
-    #         # ('', ''),  # TODO: Add incorrect security code test.
-    #     )
-    #
-    #     for code, error in codes_errors:
-    #         response = self.client.post(reverse('Security-Code'), {'sms_code': code})
-    #         found = resolve(response.request.get('PATH_INFO'))
-    #
-    #         self.assertEqual(response.status_code, 200)
-    #         self.assertEqual(found.func.view_class, views.SecurityCodeFormView)
-    #         self.assertFormError(response, 'form', 'sms_code', error)
-    #
-    # def test_valid_sms_code_redirects_correctly(self):
-    #     """
-    #     Test that entering a correct SMS code redirects the user to the appropriate page.
-    #     """
-    #     # code = Identity-Gateway API call
-    #     response = self.client.post(reverse('Security-Code'), {'sms_code': code})
-    #     found = resolve(response.url)
-    #
-    #     self.assertEqual(response.status_code, 302)
-    #     # self.assertEqual(found.func.view_class, views.TaskListView)
-    #
+    def test_invalid_sms_code_form_error_messages(self):
+        """
+        Test that invalid security codes reload same page with appropriate error messages raised.
+        """
+        with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get:
+            codes_errors = (
+                ('', 'Please enter the 5 digit code we sent to your mobile'),
+                ('1', 'The code must be 5 digits. You have entered fewer than 5 digits'),
+                ('123456', 'The code must be 5 digits. You have entered more than 5 digits'),
+                ('23456', 'Invalid code. Check the code we sent to your mobile.'),  # Incorrect security code test.
+            )
+
+            for code, error in codes_errors:
+                response = self.client.post(
+                    reverse('Security-Code') + '?id=' + self.user_details_record['application_id'],
+                    {'sms_code': code},
+                )
+                found = resolve(response.request.get('PATH_INFO'))
+
+                self.assertEqual(response.status_code, 200)
+                self.assertEqual(found.func.view_class, views.SecurityCodeFormView)
+                self.assertFormError(response, 'form', 'sms_code', error)
+
+    def test_valid_sms_code_redirects_correctly(self):
+        """
+        Test that entering a correct SMS code redirects the user to the appropriate page.
+        """
+        with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get, \
+                mock.patch('identity_models.user_details.UserDetails.api.put') as identity_api_put, \
+                mock.patch('nanny_models.nanny_application.NannyApplication.api.get_record') as nanny_api_get, \
+                mock.patch('login_app.views.ValidateMagicLinkView.link_has_expired') as link_expired:
+
+            identity_api_get.return_value.response_code = 200
+            nanny_api_get.return_value.record = {
+                'application_status': 'DRAFTING',
+                'login_details_status': 'COMPLETED',
+            }
+            identity_api_get.return_value.record = self.user_details_record
+            link_expired.return_value = False
+
+            response = self.client.post(
+                reverse('Security-Code') + '?id=' + self.user_details_record['application_id'],
+                {'sms_code': self.user_details_record['magic_link_sms']},
+            )
+
+            found = resolve(response.url)
+
+            self.assertEqual(response.status_code, 302)
+            self.assertEqual(found.func.view_class, TaskListView)
+
+
     # def test_can_render_link_used_page(self):
     #     """
     #     Test that the 'Link-Used' page can be rendered.
