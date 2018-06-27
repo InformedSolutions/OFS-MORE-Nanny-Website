@@ -5,7 +5,7 @@ from django import forms
 import re
 
 
-from personal_details_app.customfields import CustomSplitDateFieldDOB
+from ..customfields import CustomSplitDateFieldDOB
 from govuk_forms.forms import GOVUKForm
 
 
