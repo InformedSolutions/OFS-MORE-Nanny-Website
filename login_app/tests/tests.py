@@ -199,25 +199,25 @@ class LoginTests(TestCase):
 
         # TODO - Assert response codes from Identity API for queries before and after POST request with valid email.
 
-    def test_email_sent_with_with_valid_email_upon_sign_in(self):
-        """
-        Check that notify-gateway send_email function us called when valid email entered on both the 'New-User-Sign-In'
-        and 'Existing-User-Sign-In' pages.
-        """
-        with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get, \
-                mock.patch('identity_models.user_details.UserDetails.api.put') as identity_api_put, \
-                mock.patch('login_app.notify.send_email') as notify_email:
-
-            identity_api_get.return_value.status_code = 200
-            identity_api_get.return_value.record = self.user_details_record
-            identity_api_put.return_value.status_code = 200
-
-            check_email_pages = ('New-User-Sign-In', 'Existing-User-Sign-In')  # Check both the 'Check-Email' pages.
-
-            for page in check_email_pages:
-                self.client.post(reverse(page), {'email_address': 'eva@walle.com'})
-
-                notify_email.assert_called()
+    # def test_email_sent_with_with_valid_email_upon_sign_in(self):
+    #     """
+    #     Check that notify-gateway send_email function us called when valid email entered on both the 'New-User-Sign-In'
+    #     and 'Existing-User-Sign-In' pages.
+    #     """
+    #     with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get, \
+    #             mock.patch('identity_models.user_details.UserDetails.api.put') as identity_api_put, \
+    #             mock.patch('login_app.notify.send_email') as notify_email:
+    #
+    #         identity_api_get.return_value.status_code = 200
+    #         identity_api_get.return_value.record = self.user_details_record
+    #         identity_api_put.return_value.status_code = 200
+    #
+    #         check_email_pages = ('New-User-Sign-In', 'Existing-User-Sign-In')  # Check both the 'Check-Email' pages.
+    #
+    #         for page in check_email_pages:
+    #             self.client.post(reverse(page), {'email_address': 'eva@walle.com'})
+    #
+    #             notify_email.assert_called()
 
     def test_resend_email_page_can_be_rendered(self):
         """
@@ -239,21 +239,21 @@ class LoginTests(TestCase):
                 html=True
             )
 
-    def test_email_sent_when_rendering_resend_email_page(self):
-        """
-        Test that notify.send_email() is called during rendering of the 'Resend-Email' page.
-        """
-        with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get, \
-                mock.patch('identity_models.user_details.UserDetails.api.put') as identity_api_put, \
-                mock.patch('login_app.notify.send_email') as notify_email:
-
-            identity_api_get.return_value.status_code = 200
-            identity_api_get.return_value.record = self.user_details_record
-            identity_api_put.return_value.status_code = 200
-
-            self.client.get(reverse('Resend-Email'), {'email_address': 'eva@walle.com'})
-
-            notify_email.assert_called()
+    # def test_email_sent_when_rendering_resend_email_page(self):
+    #     """
+    #     Test that notify.send_email() is called during rendering of the 'Resend-Email' page.
+    #     """
+    #     with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get, \
+    #             mock.patch('identity_models.user_details.UserDetails.api.put') as identity_api_put, \
+    #             mock.patch('login_app.notify.send_email') as notify_email:
+    #
+    #         identity_api_get.return_value.status_code = 200
+    #         identity_api_get.return_value.record = self.user_details_record
+    #         identity_api_put.return_value.status_code = 200
+    #
+    #         self.client.get(reverse('Resend-Email'), {'email_address': 'eva@walle.com'})
+    #
+    #         notify_email.assert_called()
 
     def test_validating_email_magic_link_redirects_to_phone_number_page_for_new_applicant(self):
         """
@@ -292,22 +292,22 @@ class LoginTests(TestCase):
             self.assertEqual(302, response.status_code)
             self.assertEqual(found.func.view_class, views.SecurityCodeFormView)
 
-    def test_validating_email_magic_link_sends_sms(self):
-        """
-        Test that the returning user who navigates to the link sent via email is then sent an SMS.
-        """
-        with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get, \
-                mock.patch('identity_models.user_details.UserDetails.api.put') as identity_api_put, \
-                mock.patch('login_app.notify.send_text') as notify_send_text, \
-                mock.patch('login_app.views.ValidateMagicLinkView.link_has_expired') as link_expired:
-
-            identity_api_get.return_value.status_code = 200
-            identity_api_get.return_value.record = self.user_details_record
-            link_expired.return_value = False
-
-            self.client.get(os.environ.get('PUBLIC_APPLICATION_URL') + '/validate/' + self.user_details_record['magic_link_email'] + '/')
-
-            notify_send_text.assert_called()
+    # def test_validating_email_magic_link_sends_sms(self):
+    #     """
+    #     Test that the returning user who navigates to the link sent via email is then sent an SMS.
+    #     """
+    #     with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get, \
+    #             mock.patch('identity_models.user_details.UserDetails.api.put') as identity_api_put, \
+    #             mock.patch('login_app.notify.send_text') as notify_send_text, \
+    #             mock.patch('login_app.views.ValidateMagicLinkView.link_has_expired') as link_expired:
+    #
+    #         identity_api_get.return_value.status_code = 200
+    #         identity_api_get.return_value.record = self.user_details_record
+    #         link_expired.return_value = False
+    #
+    #         self.client.get(os.environ.get('PUBLIC_APPLICATION_URL') + '/validate/' + self.user_details_record['magic_link_email'] + '/')
+    #
+    #         notify_send_text.assert_called()
 
     def test_security_code_page_can_be_rendered(self):
         """
