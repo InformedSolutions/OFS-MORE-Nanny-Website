@@ -156,10 +156,10 @@ STATICFILES_FINDERS = [
 ]
 
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'nanny', 'static'),
 )
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, 'nanny', 'staticfiles')
 
 # Test outputs
 TEST_RUNNER = 'xmlrunner.extra.djangotestrunner.XMLTestRunner'
