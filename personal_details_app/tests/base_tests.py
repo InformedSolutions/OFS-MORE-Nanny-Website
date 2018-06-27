@@ -1,6 +1,7 @@
 from django.test import TestCase
 from unittest import mock
 from http.cookies import SimpleCookie
+import uuid
 
 
 class CustomResponse:
@@ -26,11 +27,16 @@ class PersonalDetailsTests(TestCase):
     }
 
     sample_pd = {
+        'personal_detail_id': uuid.UUID,
         'first_name': 'TestFirst',
         'middle_names': None,
         'last_name': 'TestLast',
         'date_of_birth': None
             }
+
+    sample_addr = {
+        'postcode': 'WA14 4PA'
+    }
 
     def setUp(self):
         self.client.cookies = SimpleCookie({'_ofs': 'test@informed.com'})

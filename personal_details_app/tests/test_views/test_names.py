@@ -46,7 +46,7 @@ class NameTests(PersonalDetailsTests):
             nanny_api_get_app.return_value.record = self.sample_app
 
             nanny_api_put_app.return_value.status_code = 200
-            nanny_api_get_pd.return_value.status_code = 200
+            nanny_api_put_pd.return_value.status_code = 200
 
             response = self.client.post(build_url('personal-details:Personal-Details-Name', get={
                 'id': uuid.UUID
@@ -76,7 +76,7 @@ class NameTests(PersonalDetailsTests):
             nanny_api_get_app.return_value.record = self.sample_app
 
             nanny_api_put_app.return_value.status_code = 200
-            nanny_api_get_pd.return_value.status_code = 200
+            nanny_api_put_pd.return_value.status_code = 200
 
             response = self.client.post(build_url('personal-details:Personal-Details-Name', get={
                 'id': uuid.UUID
