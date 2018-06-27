@@ -22,7 +22,7 @@ class NewUserSignInFormView(BaseFormView):
 
     def form_valid(self, email_form):
         if not utils.test_notify():
-            return HttpResponseRedirect(reverse('Service-Down'))
+            return HttpResponseRedirect(reverse('Service-Unavailable'))
 
         email_address = email_form.cleaned_data['email_address']
         self.email_address = email_address  # Set such that success parameters can find value later.
