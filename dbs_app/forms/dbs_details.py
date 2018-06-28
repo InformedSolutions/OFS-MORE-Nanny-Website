@@ -9,14 +9,13 @@ from govuk_forms.widgets import NumberInput, InlineRadioSelect
 
 class DBSDetailsForm(GOVUKForm):
     """
-    GOV.UK form for the First aid training: details page
+    GOV.UK form for the DBS Details Page
     """
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
 
     # Overrides standard NumberInput widget too give wider field
-
     widget_instance = NumberInput()
     widget_instance.input_classes = 'form-control form-control-1-4'
 
@@ -29,7 +28,6 @@ class DBSDetailsForm(GOVUKForm):
         help_text='12-digit number on your certificate',
         error_messages={
             'required': 'Please enter your DBS certificate number',
-            'max_length': 'The name of the training organisation must be under 50 characters'
         },
         widget=widget_instance,
     )

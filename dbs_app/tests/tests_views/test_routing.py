@@ -1,8 +1,9 @@
+from unittest import mock
+
+from django.urls import resolve
+
 from ..tests import DBSTests, authenticate
 from ...views import *
-from django.urls import resolve
-from unittest import mock
-import uuid
 
 
 @mock.patch("identity_models.user_details.UserDetails.api.get_record", authenticate)
