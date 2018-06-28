@@ -14,6 +14,7 @@ class DBSDetailsForm(GOVUKForm):
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
+    error_summary_title = 'There was a problem'
 
     # Overrides standard NumberInput widget too give wider field
     widget_instance = NumberInput()
