@@ -119,8 +119,10 @@ TEMPLATES = [
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
+                "middleware.globalise_authentication_flag",
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                "middleware.globalise_url_prefix",
                 'govuk_template_base.context_processors.govuk_template_base'
             ],
         },
@@ -223,7 +225,7 @@ AUTHENTICATION_EXEMPT_URLS = (
     r'^' + URL_PREFIX + '/new-application/',
     r'^' + URL_PREFIX + '/new-application/check-email/',
     r'^' + URL_PREFIX + '/service-unavailable/',
-    r'^' + URL_PREFIX + '/help-contact/',
+    r'^' + URL_PREFIX + '/help-contacts/',
     r'^' + URL_PREFIX + '/costs/',
     r'^' + URL_PREFIX + '/application-saved/$',
     r'^' + URL_PREFIX + '/resend-code/',
