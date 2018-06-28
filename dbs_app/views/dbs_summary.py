@@ -1,13 +1,13 @@
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
-from django.views import View
+
 from nanny_models.nanny_application import NannyApplication
 from nanny_models.dbs_check import DbsCheck
 
 from first_aid_app.views.base import BaseTemplateView, build_url
+from utils import app_id_finder
 
 
-class DBSSummary(View):
+class DBSSummary(BaseTemplateView):
     """
     View to render the DBS summary page and act on post requests accordingly
     """
@@ -15,16 +15,9 @@ class DBSSummary(View):
     template_name = 'dbs-summary.html'
     success_url_name = 'Task-List'
 
-    def get(self, request):
-
-        # Grab the record for rendering on the template and render the page
-        context = self.get_context_data()
-        return render(request, self.template_name, context)
-
-    def post(self, request):
+    def post(self):
         """
         On a post request, set the task status to completed and redirect the user to the task list
-        :param request:
         :return:
         """
 
@@ -43,8 +36,8 @@ class DBSSummary(View):
         :return:
         """
         context = {}
-        application_id = self.request.GET['id']
+        application_id = app_id_finder(self.request)
         context['link_url'] = build_url(self.success_url_name, get={'id': application_id})
-        context['id'] = self.request.GET['id']
+        context['id'] = application_id
         context['dbs_record'] = DbsCheck.api.get_record(application_id=application_id).record
         return context
