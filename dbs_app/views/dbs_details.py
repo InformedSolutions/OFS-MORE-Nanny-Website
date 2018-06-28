@@ -50,19 +50,16 @@ class DBSDetailsView(BaseFormView):
 
         # Define a dictionary of the data that will potentially be sent to the api
         data_dict = {
-            'application_id': application_id,
             'dbs_number': form.cleaned_data['dbs_number'],
             'convictions': form.cleaned_data['convictions'],
         }
 
         existing_record = DbsCheck.api.get_record(application_id=application_id)
         if existing_record.status_code == 200:
-            # Should the record exist, remove application id from the data to be sent (as we don't want any mismatch)
-            # and put the record onto the database
-            del data_dict['application_id']
             DbsCheck.api.put({**existing_record.record, **data_dict})
         elif existing_record.status_code == 404:
-            # Should the record not exist, create it
+            # Should the record not exist, create it, adding the application id to the data dict
+            data_dict['application_id'] = application_id
             DbsCheck.api.create(**data_dict, model_type=DbsCheck)
 
         # If application has previous cautions or convictions, they must be prompted to send Ofsted their certificate
