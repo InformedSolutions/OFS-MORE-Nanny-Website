@@ -31,10 +31,15 @@ class PersonalDetailsTests(TestCase):
         'first_name': 'TestFirst',
         'middle_names': None,
         'last_name': 'TestLast',
-        'date_of_birth': None
+        'date_of_birth': '1997-08-23',
+        'lived_abroad': False
             }
 
     sample_addr = {
+        'street_line1': 'Test',
+        'street_line2': None,
+        'town': 'Test Town',
+        'county': None,
         'postcode': 'WA14 4PA'
     }
 

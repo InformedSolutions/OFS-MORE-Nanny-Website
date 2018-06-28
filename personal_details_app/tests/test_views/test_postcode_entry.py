@@ -51,7 +51,7 @@ class PostcodeEntryTests(PersonalDetailsTests):
             self.assertEqual(response.status_code, 302)
             self.assertTrue('/select-home-address/' in response.url)
 
-    def test_can_update_address_valid_postcode_entry_page(self):
+    def test_can_create_address_valid_postcode_entry_page(self):
         """
         Test to assert that the 'name' page can be rendered.
         """
