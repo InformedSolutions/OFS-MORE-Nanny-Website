@@ -1,6 +1,6 @@
 from unittest import mock
 
-from django.urls import resolve
+from django.urls import resolve, reverse
 
 from ..tests import DBSTests, authenticate
 from ...views import *
