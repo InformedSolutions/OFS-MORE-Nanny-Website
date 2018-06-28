@@ -305,7 +305,7 @@ class LoginTests(TestCase):
 
             self.client.get(os.environ.get('PUBLIC_APPLICATION_URL') + '/validate/' + self.user_details_record['magic_link_email'] + '/')
 
-            self.assertTrue(notify_send_text.caled)
+            self.assertTrue(notify_send_text.called)
 
     def test_security_code_page_can_be_rendered(self):
         """
