@@ -101,9 +101,9 @@ class TaskListView(View):
                     'description': 'Criminal record (DBS) check',
                     'status_url': None,
                     'status_urls': [
-                        {'status': 'COMPLETED', 'url': 'Criminal-Record-Summary'},
-                        {'status': 'FLAGGED', 'url': 'Criminal-Record-Summary'},
-                        {'status': 'OTHER', 'url': 'Criminal-Record-Guidance'},  # For all other statuses
+                        {'status': 'COMPLETED', 'url': 'dbs:Summary'},
+                        {'status': 'FLAGGED', 'url': 'dbs:Summary'},
+                        {'status': 'OTHER', 'url': 'dbs:Guidance'},  # For all other statuses
                     ]
                 },
                 {
