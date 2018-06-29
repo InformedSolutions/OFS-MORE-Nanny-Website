@@ -38,7 +38,7 @@ class DBSSecurityQuestionForm(BaseSecurityQuestionForm):
     help_text = 'Please enter your DBS certificate number.'
 
 
-class DoBSecurityQuestionForm(BaseSecurityQuestionForm):
+class PersonalDetailsSecurityQuestionForm(BaseSecurityQuestionForm):
 
     security_answer = None
     help_text = None

@@ -6,7 +6,7 @@ from nanny_models.nanny_application import NannyApplication
 from middleware import CustomAuthenticationHandler
 from login_app import login_redirect_helper
 
-from login_app.forms import DBSSecurityQuestionForm, DoBSecurityQuestionForm, MobileNumberSecurityQuestionForm
+from login_app.forms import DBSSecurityQuestionForm, PersonalDetailsSecurityQuestionForm, MobileNumberSecurityQuestionForm
 
 from .base import BaseFormView
 
@@ -32,7 +32,7 @@ class SecurityQuestionFormView(BaseFormView):
         elif app_record['criminal_record_check_status'] == 'COMPLETED':
             form = DBSSecurityQuestionForm
         elif app_record['personal_details_status'] == 'COMPLETED':
-            form = DoBSecurityQuestionForm
+            form = PersonalDetailsSecurityQuestionForm
         elif len(personal_details_record['mobile_number']) != 0:
             form = MobileNumberSecurityQuestionForm
 
