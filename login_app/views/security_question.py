@@ -1,7 +1,8 @@
 from identity_models.user_details import UserDetails
 from nanny_models.nanny_application import NannyApplication
-# from nanny_models.applicant_personal_details import ApplicantPersonalDetails
-# from nanny_models.aaplicant_criminal_record import ApplicantCriminalRecord
+from nanny_models.applicant_personal_details import ApplicantPersonalDetails
+from nanny_models.applicant_home_address import ApplicantHomeAddress
+# from nanny_models.applicant_criminal_record import ApplicantCriminalRecord
 
 from middleware import CustomAuthenticationHandler
 from login_app import login_redirect_helper
@@ -41,11 +42,26 @@ class SecurityQuestionFormView(BaseFormView):
         return form
 
     def get_security_question_answer(self):
-        # TODO: Fix below to grab correct answer based on type of form.
-        return UserDetails.api.get_record(application_id=self.request.GET['id']).record['mobile_number']
+        application_id = self.request.GET['id']
+
+        if self.form_class == MobileNumberSecurityQuestionForm:
+            return {'mobile_number': UserDetails.api.get_record(application_id=application_id).record['mobile_number']}
+        elif self.form_class == PersonalDetailsSecurityQuestionForm:
+            personal_details_record = ApplicantPersonalDetails.api.get_record(application_id=application_id).record
+            childcare_address_record = ApplicantHomeAddress.api.get_record(application_id=application_id).record
+            return {
+                'date_of_birth': personal_details_record['date_of_birth'],
+                'postcode': childcare_address_record['postcode'],
+            }
+        # TODO: Uncomment below once DBS task complete.
+        #
+        # elif self.form_class == PersonalDetailsSecurityQuestionForm:
+        #     return {
+        #         'dbs_number': ApplicantCriminalRecord.api.get_record(application_id=application_id).record['dbs_number']
+        #     }
 
     def get_form(self, form_class=None):
-        # form = self.get_security_question_form()
+        self.get_security_question_form()
         form = super(SecurityQuestionFormView, self).get_form()
         form.correct_answer = self.get_security_question_answer()
         return form
@@ -58,9 +74,3 @@ class SecurityQuestionFormView(BaseFormView):
         response = login_redirect_helper.redirect_by_status(record['application_id'])
         CustomAuthenticationHandler.create_session(response, record['email'])
         return response
-
-    def __init__(self, *args, **kwargs):
-        # self.form_class = self.get_security_question_form()
-        # TODO: Uncomment above once the Application API functional
-        self.form_class = MobileNumberSecurityQuestionForm
-        super(SecurityQuestionFormView, self).__init__(*args, **kwargs)
