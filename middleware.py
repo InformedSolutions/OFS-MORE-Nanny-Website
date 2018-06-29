@@ -4,6 +4,7 @@ from django.conf import settings  # import the settings file
 from django.http import HttpResponseRedirect
 
 from identity_models.user_details import UserDetails
+from nanny_models.nanny_application import NannyApplication, NannyApplicationSerializer
 
 COOKIE_IDENTIFIER = '_ofs'
 
@@ -82,3 +83,24 @@ class CustomAuthenticationHandler(object):
     @staticmethod
     def destroy_session(response):
         response.delete_cookie(COOKIE_IDENTIFIER)
+
+
+def globalise_url_prefix(request):
+    """
+    Middleware function to support Django applications being hosted on a
+    URL prefixed path (e.g. for use with reverse proxies such as NGINX) rather
+    than assuming application available on root index.
+    """
+    # return URL_PREFIX value defined in django settings.py for use by global view template
+    if hasattr(settings, 'URL_PREFIX'):
+        return {'URL_PREFIX': settings.URL_PREFIX}
+    else:
+        return {'URL_PREFIX': ''}
+
+
+def globalise_authentication_flag(request):
+    """
+    Middleware function to expose a flag to all templates to determine whether a user is authenticated.
+    """
+    user_is_authenticated = CustomAuthenticationHandler.get_session_user(request) is not None
+    return {'AUTHENTICATED': user_is_authenticated}

@@ -2,7 +2,10 @@ from identity_models.user_details import UserDetails
 
 from login_app.forms import PhoneNumbersForm
 
+from middleware import CustomAuthenticationHandler
+from django.http import HttpResponseRedirect
 from .base import BaseFormView
+from ..utils import app_id_finder, build_url
 
 
 class PhoneNumbersFormView(BaseFormView):
@@ -23,6 +26,12 @@ class PhoneNumbersFormView(BaseFormView):
 
         UserDetails.api.put(record)  # Update entire record.
 
+        response = HttpResponseRedirect(build_url('Contact-Details-Summary', get={'id': application_id}))
+        COOKIE_IDENTIFIER = CustomAuthenticationHandler.get_cookie_identifier()
+        if COOKIE_IDENTIFIER not in self.request.COOKIES:
+            CustomAuthenticationHandler.create_session(response, record['email'])
+            return response
+
         return super(PhoneNumbersFormView, self).form_valid(form)
 
     def get_context_data(self, **kwargs):
@@ -34,7 +43,9 @@ class PhoneNumbersFormView(BaseFormView):
 
         kwargs['fields'] = [kwargs['form'].render_field(name, field) for name, field in kwargs['form'].fields.items()]
 
-        return super(PhoneNumbersFormView, self).get_context_data(**kwargs)
+        context = super(PhoneNumbersFormView, self).get_context_data(**kwargs)
+        context['id'] = app_id_finder(self.request)
+        return context
 
     def get_initial(self):
         application_id = self.request.GET['id']

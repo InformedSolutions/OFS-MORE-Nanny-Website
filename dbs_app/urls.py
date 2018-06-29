@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.conf.urls import url, include
 
-from dbs_app.views import  DBSDetailsView, DBSUpload, DBSGuidance, DBSSummary
+from dbs_app.views import DBSDetailsView, DBSUpload, DBSGuidance, DBSSummary
 
 urlpatterns = [
     url(r'^your-details/', DBSDetailsView.as_view(), name='Details'),

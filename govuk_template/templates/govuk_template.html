@@ -29,17 +29,38 @@
         <a href="#proposition-links" class="js-header-toggle menu">{% trans 'Menu' %}</a>
       {% endif %}
       <nav id="proposition-menu">
-        <a href="{{ URL_PREFIX }}" id="proposition-name">
-          {% block proposition %}Register as a nanny{% endblock %}
-        </a>
+          {% block proposition %}
+              {% if id and AUTHENTICATED %}
+                <a href="{% url 'Task-List' %}?id={{ id }}" id="proposition-name">
+                     Register as a nanny
+                </a>
+              {% else %}
+                <a href="{{ URL_PREFIX }}" id="proposition-name">
+                   Register as a nanny
+                </a>
+              {% endif %}
+          {% endblock %}
         {% block proposition_menu %}
-          {% if service_settings.has_header_links %}
             <ul id="proposition-links">
-              {% for link in service_settings.header_links.all %}
-                <li><a href="{{ link.url }}" class="{% if link.link_is_view_name and link.link == request.resolver_match.view_name %}active{% endif %}">{{ link.localised_name }}</a></li>
-              {% endfor %}
+               {% if id and AUTHENTICATED %}
+                   <li>
+                       <a href="{% url 'Costs' %}?id={{ id }}">Costs</a>
+                   </li>
+                   <li>
+                      <a href="{% url 'Help-And-Contact' %}?id={{ id }}">Help and contacts</a>
+                   </li>
+                   <li>
+                      <a href="{% url 'Application-Saved' %}">Sign out</a>
+                   </li>
+               {% else %}
+                    <li>
+                      <a href="{% url 'Costs' %}">Costs</a>
+                    </li>
+                   <li>
+                      <a href="{% url 'Help-And-Contact' %}">Help and contacts</a>
+                   </li>
+               {% endif %}
             </ul>
-          {% endif %}
         {% endblock %}
       </nav>
     </div>
@@ -48,6 +69,7 @@
 
 {% block content %}
   <main role="main" id="content" tabindex="-1">
+    <div class="two-thirds">
     {% block phase_banner %}
       {% get_service_settings as service_settings %}
       {% if service_settings.phase != 'live' %}
@@ -60,7 +82,8 @@
       {% endif %}
     {% endblock %}
 
-    <div class="two-thirds">{% block inner_content %}{% endblock %}</div>
+      {% block inner_content %}{% endblock %}
+    </div>
   </main>
 {% endblock %}
 

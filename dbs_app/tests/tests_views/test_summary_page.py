@@ -25,7 +25,7 @@ class DBSSummaryTests(DBSTests):
 
     def test_post_request_updates_status(self):
         """
-        Test to assert that the update taks to complete method is called, and a redirect is successfully issued upon
+        Test to assert that the update tasks to complete method is called, and a redirect is successfully issued upon
         a post request
         """
 
@@ -37,7 +37,7 @@ class DBSSummaryTests(DBSTests):
             nanny_api_get.return_value.status_code = 200
             nanny_api_get.return_value.record = self.sample_dbs
 
-            response = self.client.post(build_url('dbs:Summary'), data = {
+            response = self.client.post(build_url('dbs:Summary'), data={
                 'id': self.sample_app['application_id']
             })
 

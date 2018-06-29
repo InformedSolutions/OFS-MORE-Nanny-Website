@@ -5,7 +5,7 @@ from django import forms
 import re
 
 
-from personal_details_app.customfields import CustomSplitDateFieldDOB
+from ..customfields import CustomSplitDateFieldDOB
 from govuk_forms.forms import GOVUKForm
 
 
@@ -15,6 +15,7 @@ class PersonalDetailsDOBForm(GOVUKForm):
     """
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'standard-error-summary.html'
+    error_summary_title = 'There was a problem'
     auto_replace_widgets = True
 
     date_of_birth = CustomSplitDateFieldDOB(label='Date of birth', help_text='For example, 31 03 1980', error_messages={

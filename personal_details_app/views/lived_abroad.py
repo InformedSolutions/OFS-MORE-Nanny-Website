@@ -26,7 +26,7 @@ class PersonalDetailLivedAbroadView(BaseFormView):
         try:
             response = ApplicantPersonalDetails.api.get_record(application_id=application_id)
             if response.status_code == 200:
-                personal_details_record = ApplicantPersonalDetails.api.get_record(application_id=application_id).record
+                personal_details_record = response.record
             elif response.status_code == 404:
                 return initial
             print(response.status_code)

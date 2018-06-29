@@ -6,9 +6,7 @@ from identity_models.user_details import UserDetails
 
 from nanny_models.nanny_application import NannyApplication
 
-from middleware import CustomAuthenticationHandler
-
-from login_app.utils import build_url
+from ..utils import build_url
 
 
 class ContactDetailsSummaryView(View):
@@ -21,18 +19,13 @@ class ContactDetailsSummaryView(View):
         application_id = request.GET['id']
         context = self.get_user_details_record(application_id)
         context['include_change_links'] = self.include_change_links(application_id)
-        context['application_id'] = application_id
+        context['id'] = application_id
         return render(request, template_name='contact-details-summary.html', context=context)
 
     def post(self, request):
         """ Handle POST request. Create session for user if one not currently existing."""
         application_id = request.GET['id']
-        user_details_record = self.get_user_details_record(application_id)
         response = HttpResponseRedirect(build_url('Task-List', get={'id': application_id}))
-
-        COOKIE_IDENTIFIER = CustomAuthenticationHandler.get_cookie_identifier()
-        if COOKIE_IDENTIFIER not in request.COOKIES:
-            CustomAuthenticationHandler.create_session(response, user_details_record['email'])
 
         return response
 

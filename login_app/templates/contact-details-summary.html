@@ -44,7 +44,7 @@
         </td>
         <td class="change-answer">
             {% if include_change_links %}
-                <a href="{% url 'Change-Email' %}/id={{ application_id }}" alt='Change email address'>
+                <a href="{% url 'Change-Email' %}/id={{ id }}" alt='Change email address'>
                     Change <span class="visuallyhidden">email address</span>
                 </a>
             {% endif %}
@@ -59,7 +59,7 @@
         </td>
         <td class="change-answer">
             {% if include_change_links %}
-                <a href="{% url 'Phone-Number' %}?id={{ application_id }}" alt='Change mobile number'>
+                <a href="{% url 'Phone-Number' %}?id={{ id }}" alt='Change mobile number'>
                     Change <span class="visuallyhidden">mobile number</span>
                 </a>
             {% endif %}
@@ -74,7 +74,7 @@
         </td>
         <td class="change-answer">
             {% if include_change_links %}
-                <a href="{% url 'Phone-Number' %}?id={{ application_id }}" alt='Change other number'>
+                <a href="{% url 'Phone-Number' %}?id={{ id }}" alt='Change other number'>
                     Change <span class="visuallyhidden">landline number</span>
                 </a>
             {% endif %}

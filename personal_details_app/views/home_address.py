@@ -96,7 +96,6 @@ class PersonalDetailManualAddressView(BaseFormView):
             initial['county'] = api_response.record['county']
             initial['postcode'] = api_response.record['postcode']
 
-        self.initial['choices'] = AddressHelper.create_address_lookup_list(api_response.record['postcode'])
         return initial
 
     def get_context_data(self, **kwargs):
@@ -106,6 +105,43 @@ class PersonalDetailManualAddressView(BaseFormView):
         context['id'] = app_id
 
         return context
+
+    def form_valid(self, form):
+        app_id = app_id_finder(self.request)
+        api_response = ApplicantHomeAddress.api.get_record(application_id=app_id)
+        street_line1 = form.cleaned_data['street_line1']
+        street_line2 = form.cleaned_data['street_line2']
+        town = form.cleaned_data['town']
+        county = form.cleaned_data['county']
+        postcode = form.cleaned_data['postcode']
+
+        # update the address record if it already existed
+        if api_response.status_code == 200:
+            record = api_response.record
+            record['street_line1'] = street_line1
+            record['street_line2'] = street_line2
+            record['town'] = town
+            record['county'] = county
+            record['postcode'] = postcode
+            ApplicantHomeAddress.api.put(record)
+
+        # create the address record if it didn't exist
+        elif api_response.status_code == 404:
+            apd_response = ApplicantPersonalDetails.api.get_record(application_id=app_id)
+            if apd_response.status_code == 200:
+                pd_id = apd_response.record['personal_detail_id']
+                ApplicantHomeAddress.api.create(
+                    application_id=app_id,
+                    personal_detail_id=pd_id,
+                    street_line1=street_line1,
+                    street_line2=street_line2,
+                    town=town,
+                    county=county,
+                    postcode=postcode,
+                    model_type=ApplicantHomeAddress
+                )
+
+        return super().form_valid(form)
 
 
 class PersonalDetailSummaryAddressView(BaseTemplateView):
@@ -126,5 +162,5 @@ class PersonalDetailSummaryAddressView(BaseTemplateView):
         """
         Handle post requests to the guidance page.
         """
-        app_id = app_id_finder(self.request)
+        app_id = app_id_finder(request)
         return HttpResponseRedirect(reverse('personal-details:Personal-Details-Lived-Abroad') + "?id=" + app_id)

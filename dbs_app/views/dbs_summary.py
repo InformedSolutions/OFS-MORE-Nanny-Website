@@ -15,13 +15,13 @@ class DBSSummary(BaseTemplateView):
     template_name = 'dbs-summary.html'
     success_url_name = 'Task-List'
 
-    def post(self):
+    def post(self, request):
         """
         On a post request, set the task status to completed and redirect the user to the task list
         :return:
         """
 
-        application_id = self.request.POST['id']
+        application_id = request.POST['id']
         application_record = NannyApplication.api.get_record(application_id=application_id).record
         application_record['criminal_record_check_status'] = 'COMPLETED'
         NannyApplication.api.put(application_record)

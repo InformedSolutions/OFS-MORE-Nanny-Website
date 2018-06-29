@@ -1,0 +1,115 @@
+{% extends 'govuk_template.html' %}
+{% load static %}
+{% load govuk_template_base %}
+{% block page_title %}Costs{% endblock %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+<h1 class="form-title heading-large">Costs of becoming a nanny</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th colspan="2">
+                <div class="heading-medium">
+                    Register as a nanny
+                </div>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td class="two-thirds">
+            Application fee (not refundable)
+        </td>
+        <td class="one-third">
+            £103
+        </td>
+    </tr>
+</table>
+
+<p class="top-padded">The annual renewal fee is £103.</p>
+
+<table>
+    <thead>
+        <tr>
+            <th colspan="2">
+                <div class="heading-medium">
+                    Criminal record (DBS) checks
+                </div>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td class="two-thirds">
+            Your criminal record (DBS) check
+        </td>
+        <td class="one-third">
+            £52.10
+        </td>
+    </tr>
+</table>
+
+<table>
+    <thead>
+        <tr>
+            <th colspan="2">
+                <div class="heading-medium">
+                    Training
+                </div>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td class="two-thirds">
+            First aid course that covers the age groups you will look after
+        </td>
+        <td class="one-third">
+            £60 to £200 (approx)
+        </td>
+    </tr>
+     <tr>
+        <td class="two-thirds">
+            Common core skills training (if you need it)
+        </td>
+        <td class="one-third">
+            £50 to £140 (approx)
+        </td>
+    </tr>
+</table>
+
+
+<table>
+    <thead>
+        <tr>
+            <th colspan="2">
+                <div class="heading-medium">
+                    Insurance
+                </div>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td class="two-thirds">
+            Public liability insurance
+        </td>
+        <td class="one-third">
+            £25 to £100 (approx)
+        </td>
+    </tr>
+</table>
+
+<p class="top-padded text-before-button">
+    Your house and car insurance also need to be up to date.
+</p>
+
+{% if id and AUTHENTICATED %}
+   <a href="{{ return_url }}" class="button">Return to application</a>
+{% endif %}
+
+{% endblock %}
