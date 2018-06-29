@@ -35,7 +35,7 @@ class DBSSummary(BaseTemplateView):
         :param kwargs:
         :return:
         """
-        context = {}
+        context = super().get_context_data()
         application_id = app_id_finder(self.request)
         context['link_url'] = build_url(self.success_url_name, get={'id': application_id})
         context['id'] = application_id
