@@ -18,11 +18,13 @@ class LookupViewTests(ChildcareAddressTests):
         Test to assert that the 'address lookup' page can be rendered.
         """
 
-        with mock.patch('nanny_models.childcare_address.ChildcareAddress.api.get_record') as nanny_api_get:
-            nanny_api_get.return_value.status_code = 200
-            nanny_api_get.return_value.record = {
+        with mock.patch('nanny_models.childcare_address.ChildcareAddress.api.get_record') as nanny_api_get_one, \
+                mock.patch('nanny_models.childcare_address.ChildcareAddress.api.get_records') as nanny_api_get_many:
+            nanny_api_get_one.return_value.status_code = 200
+            nanny_api_get_one.return_value.record = {
                 'postcode': 'WA14 4PA'
             }
+            nanny_api_get_many.return_value.status_code = 404
 
             response = self.client.get(build_url('Childcare-Address-Lookup', get={
                 'id': uuid.UUID,
@@ -37,11 +39,14 @@ class LookupViewTests(ChildcareAddressTests):
         """
 
         with mock.patch('nanny_models.childcare_address.ChildcareAddress.api.get_record') as nanny_api_get_address, \
-        mock.patch('nanny_models.childcare_address.ChildcareAddress.api.put') as nanny_api_put:
+        mock.patch('nanny_models.childcare_address.ChildcareAddress.api.put') as nanny_api_put, \
+                mock.patch('nanny_models.childcare_address.ChildcareAddress.api.get_records') as nanny_api_get_many:
             nanny_api_get_address.return_value.status_code = 200
             nanny_api_get_address.return_value.record = {
                 'postcode': 'WA14 4PA'
             }
+
+            nanny_api_get_many.return_value.status_code = 404
 
             response = self.client.post(build_url('Childcare-Address-Lookup', get={
                 'id': uuid.UUID,
@@ -57,11 +62,13 @@ class LookupViewTests(ChildcareAddressTests):
         """
 
         with mock.patch('nanny_models.childcare_address.ChildcareAddress.api.get_record') as nanny_api_get_address, \
-        mock.patch('nanny_models.childcare_address.ChildcareAddress.api.put') as nanny_api_put:
+            mock.patch('nanny_models.childcare_address.ChildcareAddress.api.put') as nanny_api_put, \
+                mock.patch('nanny_models.childcare_address.ChildcareAddress.api.get_records') as nanny_api_get_many:
             nanny_api_get_address.return_value.status_code = 200
             nanny_api_get_address.return_value.record = {
                 'postcode': 'WA14 4PA'
             }
+            nanny_api_get_many.return_value.status_code = 404
 
             response = self.client.post(build_url('Childcare-Address-Lookup', get={
                 'id': uuid.UUID,
