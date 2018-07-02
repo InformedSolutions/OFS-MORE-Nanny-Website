@@ -4,7 +4,9 @@ import uuid
 from django.urls import resolve
 
 from ..tests import DBSTests, authenticate
-from ...views import *
+# from ...views import D
+from dbs_app import views
+from dbs_app.views import build_url
 
 
 @mock.patch("identity_models.user_details.UserDetails.api.get_record", authenticate)
@@ -53,8 +55,7 @@ class DBSDetailEntryTests(DBSTests):
 
         with mock.patch('nanny_models.dbs_check.DbsCheck.api.get_record') as nanny_api_get, \
                 mock.patch('nanny_models.dbs_check.DbsCheck.api.put'), \
-                mock.patch('nanny_models.nanny_application.NannyApplication.api.get_record') as nanny_api_get_app, \
-                mock.patch('nanny_models.nanny_application.NannyApplication.api.put'):
+                mock.patch('nanny_models.nanny_application.NannyApplication.api.get_record') as nanny_api_get_app:
             nanny_api_get_app.return_value.status_code = 200
             self.sample_dbs['convictions'] = 'True'
             nanny_api_get_app.return_value.record = self.sample_app
@@ -67,7 +68,7 @@ class DBSDetailEntryTests(DBSTests):
 
             # As this response can redirect to multiple places, the view which is rendered on redirect is checked below
             found = resolve(response.url)
-            self.assertEqual(found.func.view_class, DBSUpload)
+            self.assertEqual(found.func.view_class, views.DBSUpload)
             self.assertEqual(response.status_code, 302)
 
     def test_can_reject_incorrect_submission_without_convictions(self):
