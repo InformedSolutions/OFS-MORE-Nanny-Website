@@ -84,10 +84,10 @@ class MobileNumberSecurityQuestionForm(GOVUKForm):
     correct_answer = {}
 
     mobile_number = PhoneNumberField(label='Your mobile number',
-                                    number_type='mobile',
-                                    required=True,
-                                    error_messages={'required': 'Please give an answer'},
-                                    widget=NannyFormInput)
+                                     number_type='mobile',
+                                     required=True,
+                                     error_messages={'required': 'Please give an answer'},
+                                     widget=NannyFormInput)
 
     def clean_mobile_number(self):
         mobile_number = str(self.cleaned_data['mobile_number'])
