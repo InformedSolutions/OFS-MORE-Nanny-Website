@@ -2,7 +2,7 @@ from identity_models.user_details import UserDetails
 from nanny_models.nanny_application import NannyApplication
 from nanny_models.applicant_personal_details import ApplicantPersonalDetails
 from nanny_models.applicant_home_address import ApplicantHomeAddress
-# from nanny_models.applicant_criminal_record import ApplicantCriminalRecord
+from nanny_models.dbs_check import DbsCheck
 
 from middleware import CustomAuthenticationHandler
 from login_app import login_redirect_helper
@@ -53,12 +53,10 @@ class SecurityQuestionFormView(BaseFormView):
                 'date_of_birth': personal_details_record['date_of_birth'],
                 'postcode': childcare_address_record['postcode'],
             }
-        # TODO: Uncomment below once DBS task complete.
-        #
-        # elif self.form_class == PersonalDetailsSecurityQuestionForm:
-        #     return {
-        #         'dbs_number': ApplicantCriminalRecord.api.get_record(application_id=application_id).record['dbs_number']
-        #     }
+        elif self.form_class == PersonalDetailsSecurityQuestionForm:
+            return {
+                'dbs_number': DbsCheck.api.get_record(application_id=application_id).record['dbs_number']
+            }
 
     def get_form(self, form_class=None):
         self.get_security_question_form()
