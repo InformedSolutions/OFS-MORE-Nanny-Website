@@ -1,0 +1,72 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Check your answers: criminal record (DBS) check{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+
+{% include "back-button.html" %}
+<h1 class="form-title heading-large">
+    Check your answers: criminal record (DBS) check
+</h1>
+
+
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <table class="check-your-answers" style="table-layout: fixed; width: 100%">
+        <colgroup>
+            <col class="summary-column">
+            <col class="summary-column">
+            <col class="change-answer">
+        </colgroup>
+        <thead>
+            <tr>
+                <th colspan="3">
+                    <div class="heading-medium">
+                    </div>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="word-wrap: break-word" class=summary-column>
+                    DBS Certificate number
+                </td>
+                <td style="word-wrap: break-word" class=summary-column>
+                    {{dbs_record.dbs_number}}
+                </td>
+                <td class="change-answer">
+                    <a href="{% url 'dbs:Details' %}?id={{id}}"
+                       alt='Change DBS certificate number'>
+                        Change <span class="visuallyhidden">DBS certificate number</span>
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td style="word-wrap: break-word" class=summary-column>
+                    Do you have any criminal cautions or convictions
+                </td>
+                <td style="word-wrap: break-word" class=summary-column>
+                    {{dbs_record.convictions}}
+                </td>
+                <td class="change-answer">
+                    <a href="{% url 'dbs:Details' %}?id={{id}}"
+                       alt='Change answer on cautions or convictions'>
+                        Change <span class="visuallyhidden">answer on cautions or convictions</span>
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    {% csrf_token %}
+        <input type="hidden" value="{{id}}" name="id"/>
+        <input type="submit" class="button" value="Confirm and continue">
+
+</form>
+    <br>
+    {% include 'return-to-list.html' %}
+
+</div>
+
+
+{% endblock %}

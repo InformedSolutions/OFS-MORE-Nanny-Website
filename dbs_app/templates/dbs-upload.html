@@ -1,0 +1,23 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Post your DBS certificate{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+<h1 class="form-title heading-large">
+    Post your DBS certificate
+</h1>
+
+<p>We need your certificate to check details of any criminal cautions or convictions.</p>
+<p>Please send your original certificate (not a photocopy) to Ofsted.</p>
+<p>We will check your certificate and send it back to you.</p>
+
+<a href="{{ link_url }}" class="button">Save and continue</a>
+<br>
+<br>
+{% include 'return-to-list.html' %}
+
+{% endblock %}

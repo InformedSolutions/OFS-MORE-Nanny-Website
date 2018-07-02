@@ -5,5 +5,7 @@ from .criminal_record_guidance import *
 from .insurance_cover_guidance import *
 from .declaration_summary import *
 from .first_aid_guidance import *
+from .dbs_guidance import *
+
 from .costs import *
 from .help_contact import *
