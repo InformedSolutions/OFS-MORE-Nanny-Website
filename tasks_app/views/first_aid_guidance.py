@@ -1,4 +1,4 @@
-from .base import BaseTemplateView
+from first_aid_app.views import BaseTemplateView
 
 
 class FirstAidGuidanceView(BaseTemplateView):
