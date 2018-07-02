@@ -45,7 +45,10 @@ class SecurityQuestionFormView(BaseFormView):
         application_id = self.request.GET['id']
 
         if self.form_class == MobileNumberSecurityQuestionForm:
-            return {'mobile_number': UserDetails.api.get_record(application_id=application_id).record['mobile_number']}
+            return {
+                'mobile_number': UserDetails.api.get_record(application_id=application_id).record['mobile_number']
+            }
+
         elif self.form_class == PersonalDetailsSecurityQuestionForm:
             personal_details_record = ApplicantPersonalDetails.api.get_record(application_id=application_id).record
             childcare_address_record = ApplicantHomeAddress.api.get_record(application_id=application_id).record
@@ -53,6 +56,7 @@ class SecurityQuestionFormView(BaseFormView):
                 'date_of_birth': personal_details_record['date_of_birth'],
                 'postcode': childcare_address_record['postcode'],
             }
+
         elif self.form_class == DBSSecurityQuestionForm:
             return {
                 'dbs_number': DbsCheck.api.get_record(application_id=application_id).record['dbs_number']
