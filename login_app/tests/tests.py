@@ -27,6 +27,11 @@ class LoginTests(TestCase):
             'criminal_record_check_status': 'NOT_STARTED',
         }
 
+        self.personal_details_record = {
+            'postcode': 'SW1A 1AA',
+            'date_of_birth': '1997-06-26',
+        }
+
     def test_can_render_service_unavailable(self):
         """
         Test to assert that the 'service unavailable' page can be rendered.
@@ -562,7 +567,9 @@ class LoginTests(TestCase):
         """
         Test to assert that the 'Security-Question' page can be rendered.
         """
-        with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get:
+        with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get, \
+                mock.patch('nanny_models.nanny_application.NannyApplication.api.get_record') as nanny_api_get:
+
             identity_api_get.return_value.record = self.user_details_record
 
             response = self.client.get(reverse('Security-Question') + '?id=' + self.user_details_record['application_id'])
@@ -594,12 +601,16 @@ class LoginTests(TestCase):
         as a security question.
         """
         with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get, \
-                mock.patch('nanny_models.nanny_application.NannyApplication.api.get_record') as nanny_api_get:
+                mock.patch('nanny_models.nanny_application.NannyApplication.api.get_record') as nanny_api_get, \
+                mock.patch('nanny_models.applicant_personal_details.ApplicantPersonalDetails.api.get_record') as personal_api_get, \
+                mock.patch('nanny_models.applicant_home_address.ApplicantHomeAddress.api.get_record') as address_api_get:
 
             identity_api_get.return_value.record = self.user_details_record
             nanny_application_record = self.nanny_application_record
             nanny_application_record['personal_details_status'] = 'COMPLETED'
             nanny_api_get.return_value.record = nanny_application_record
+            personal_api_get.return_value.record = self.personal_details_record
+            address_api_get.return_value.record = self.personal_details_record
 
             security_question_view = views.SecurityQuestionFormView()
             r = self.client.get(reverse('Security-Question') + '?id=' + self.user_details_record['application_id'])
