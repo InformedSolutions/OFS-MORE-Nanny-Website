@@ -624,16 +624,17 @@ class LoginTests(TestCase):
         number as a security question.
         """
         with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get, \
-                mock.patch('nanny_models.nanny_application.NannyApplication.api.get_record') as nanny_api_get:
+                mock.patch('nanny_models.nanny_application.NannyApplication.api.get_record') as nanny_api_get, \
+                mock.patch('nanny_models.dbs_check.DbsCheck.api.get_record') as dbs_api_get:
 
             identity_api_get.return_value.record = self.user_details_record
             nanny_application_record = self.nanny_application_record
             nanny_application_record['criminal_record_check_status'] = 'COMPLETED'
             nanny_api_get.return_value.record = nanny_application_record
+            dbs_api_get.return_value.record = {'dbs_number': '123456789012'}
 
             security_question_view = views.SecurityQuestionFormView()
             r = self.client.get(reverse('Security-Question') + '?id=' + self.user_details_record['application_id'])
             security_question_view.request = r.wsgi_request
 
             self.assertEqual(security_question_view.get_security_question_form(), forms.DBSSecurityQuestionForm)
-
