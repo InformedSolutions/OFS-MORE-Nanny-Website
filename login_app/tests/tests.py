@@ -4,7 +4,7 @@ from unittest import mock
 from django.test import TestCase
 from django.urls import resolve, reverse
 
-from login_app import views
+from login_app import views, forms
 from tasks_app.views import TaskListView
 
 
@@ -19,6 +19,17 @@ class LoginTests(TestCase):
             'mobile_number': '000000000012',
             'magic_link_email': 'ABCDEFGHIJKL',
             'add_phone_number': '',
+        }
+
+        self.nanny_application_record = {
+            'login_details_status': 'COMPLETED',
+            'personal_details_status': 'NOT_STARTED',
+            'criminal_record_check_status': 'NOT_STARTED',
+        }
+
+        self.personal_details_record = {
+            'postcode': 'SW1A 1AA',
+            'date_of_birth': '1997-06-26',
         }
 
     def test_can_render_service_unavailable(self):
@@ -551,3 +562,79 @@ class LoginTests(TestCase):
 
             self.assertEqual(response.status_code, 302)
             self.assertEqual(found.func.view_class, views.SecurityCodeFormView)
+
+    def test_security_question_page_can_be_rendered(self):
+        """
+        Test to assert that the 'Security-Question' page can be rendered.
+        """
+        with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get, \
+                mock.patch('nanny_models.nanny_application.NannyApplication.api.get_record') as nanny_api_get:
+
+            identity_api_get.return_value.record = self.user_details_record
+
+            response = self.client.get(reverse('Security-Question') + '?id=' + self.user_details_record['application_id'])
+            found = resolve(response.request.get('PATH_INFO'))
+
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(found.func.view_class, views.SecurityQuestionFormView)
+
+    def test_mobile_security_question_returned_if_login_details_done(self):
+        """
+        Test to assert that an applicant who has completed the login details task is asked for their mobile
+        number as a security question.
+        """
+        with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get, \
+                mock.patch('nanny_models.nanny_application.NannyApplication.api.get_record') as nanny_api_get:
+
+            identity_api_get.return_value.record = self.user_details_record
+            nanny_api_get.return_value.record = self.nanny_application_record
+
+            security_question_view = views.SecurityQuestionFormView()
+            r = self.client.get(reverse('Security-Question') + '?id=' + self.user_details_record['application_id'])
+            security_question_view.request = r.wsgi_request
+
+            self.assertEqual(security_question_view.get_security_question_form(), forms.MobileNumberSecurityQuestionForm)
+
+    def test_DoB_and_postcode_security_question_returned_if_personal_details_done(self):
+        """
+        Test to assert that an applicant who has completed the personal details task is asked for their postcode and DoB
+        as a security question.
+        """
+        with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get, \
+                mock.patch('nanny_models.nanny_application.NannyApplication.api.get_record') as nanny_api_get, \
+                mock.patch('nanny_models.applicant_personal_details.ApplicantPersonalDetails.api.get_record') as personal_api_get, \
+                mock.patch('nanny_models.applicant_home_address.ApplicantHomeAddress.api.get_record') as address_api_get:
+
+            identity_api_get.return_value.record = self.user_details_record
+            nanny_application_record = self.nanny_application_record
+            nanny_application_record['personal_details_status'] = 'COMPLETED'
+            nanny_api_get.return_value.record = nanny_application_record
+            personal_api_get.return_value.record = self.personal_details_record
+            address_api_get.return_value.record = self.personal_details_record
+
+            security_question_view = views.SecurityQuestionFormView()
+            r = self.client.get(reverse('Security-Question') + '?id=' + self.user_details_record['application_id'])
+            security_question_view.request = r.wsgi_request
+
+            self.assertEqual(security_question_view.get_security_question_form(), forms.PersonalDetailsSecurityQuestionForm)
+
+    def test_DBS_security_question_returned_if_criminal_record_check_done(self):
+        """
+        Test to assert that an applicant who has completed the criminal record check task is asked for their DBS
+        number as a security question.
+        """
+        with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get, \
+                mock.patch('nanny_models.nanny_application.NannyApplication.api.get_record') as nanny_api_get, \
+                mock.patch('nanny_models.dbs_check.DbsCheck.api.get_record') as dbs_api_get:
+
+            identity_api_get.return_value.record = self.user_details_record
+            nanny_application_record = self.nanny_application_record
+            nanny_application_record['criminal_record_check_status'] = 'COMPLETED'
+            nanny_api_get.return_value.record = nanny_application_record
+            dbs_api_get.return_value.record = {'dbs_number': '123456789012'}
+
+            security_question_view = views.SecurityQuestionFormView()
+            r = self.client.get(reverse('Security-Question') + '?id=' + self.user_details_record['application_id'])
+            security_question_view.request = r.wsgi_request
+
+            self.assertEqual(security_question_view.get_security_question_form(), forms.DBSSecurityQuestionForm)
