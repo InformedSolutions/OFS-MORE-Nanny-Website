@@ -30,7 +30,7 @@
         <tbody>
             <tr>
                 <td style="word-wrap: break-word" class=summary-column>
-                    DBS Certificate number
+                    DBS certificate number
                 </td>
                 <td style="word-wrap: break-word" class=summary-column>
                     {{dbs_record.dbs_number}}
@@ -44,10 +44,10 @@
             </tr>
             <tr>
                 <td style="word-wrap: break-word" class=summary-column>
-                    Do you have any criminal cautions or convictions
+                    Do you have any criminal cautions or convictions?
                 </td>
                 <td style="word-wrap: break-word" class=summary-column>
-                    {{dbs_record.convictions}}
+                    {{dbs_record.convictions|yesno:"Yes,No"}}
                 </td>
                 <td class="change-answer">
                     <a href="{% url 'dbs:Details' %}?id={{id}}"
