@@ -5,12 +5,61 @@
 
 {% block inner_content %}
 
-<h1 class="heading-xlarge">
-    Register as a nanny
-</h1>
+<div class="grid-row">
+    <div class="column-two-thirds">
 
-<form action="{% url 'Account-Selection' %}" method="get">
-    <input type=submit class="button button-start" value="Sign in">
-</form>
+        <h1 class="heading-xlarge">
+            Register as a nanny (England)
+        </h1>
+
+        <p>Register with Ofsted as a nanny or au pair to look after children in their own home.</p>
+
+
+        <h2 class="heading-medium">
+            Before you start
+        </h2>
+
+        <p>You will need the following:</p>
+        <ul class="list list-bullet" style="margin-left: 30px;">
+            <li>criminal record (DBS) certificate</li>
+            <li>first aid training</li>
+            <li>childcare training</li>
+            <li>public liability insurance</li>
+        </ul>
+
+        <p>If you've lived abroad in the last 5 years, you'll need certificates of good conduct from those countries.</p>
+
+
+        <h2 class="heading-medium">
+            How long it takes
+        </h2>
+
+        <p>It should take 15 minutes to fill in this form.</p>
+        <p>It usually takes up to 12 weeks to register with Ofsted.</p>
+
+
+        <h2 class="heading-medium">
+            How much it costs
+        </h2>
+
+        <p>It costs £103 to register with Ofsted.</p>
+        <p>It costs the same to renew every year.</p>
+        <p>Find out about <a href="{% url 'Costs' %}">other costs</a>.</p>
+
+
+        <form action="{% url 'Account-Selection' %}" method="get">
+            <input type=submit class="button button-start" value="Sign in">
+        </form>
+
+    </div>
+
+    <div class="column-one-third">
+        <h2 class="heading-medium">
+            Related content
+        </h2>
+        <p><a href="https://www.gov.uk/guidance/register-as-a-nanny-quick-guide">Register as a nanny: quick guide</a></p>
+    </div>
+
+</div>
 
 {% endblock %}
