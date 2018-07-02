@@ -5,9 +5,10 @@ from django.shortcuts import render
 from ..utils import *
 from ..address_helper import *
 import inflect
+from datetime import datetime
 
 
-def get_address_ordinal(app_id, childcare_address_id):
+def get_address_number(app_id, childcare_address_id, ord):
     """
     get ordinal value of this childcare address
     :param app_id: id of the application
@@ -26,12 +27,15 @@ def get_address_ordinal(app_id, childcare_address_id):
             index = index + 1
         else:
             index = len(api_response.record) + 1
-        return formatter.number_to_words(formatter.ordinal(index)).title()
+        if ord:
+            return formatter.number_to_words(formatter.ordinal(index)).title()
+        else:
+            return str(index)
 
 
 class ChildcareAddressPostcodeView(BaseFormView):
     """
-    Class containing the view(s) for handling the GET requests to the childcare address guidance page.
+    Class containing the view(s) for handling the GET requests to the childcare address postcode page.
     """
 
     template_name = 'childcare-address-postcode.html'
@@ -55,6 +59,7 @@ class ChildcareAddressPostcodeView(BaseFormView):
         else:
             api_response = ChildcareAddress.api.create(
                 model_type=ChildcareAddress,
+                date_created=datetime.today(),
                 application_id=app_id,
                 postcode=postcode
             )
@@ -85,7 +90,8 @@ class ChildcareAddressPostcodeView(BaseFormView):
         kwargs['fields'] = [kwargs['form'].render_field(name, field) for name, field in kwargs['form'].fields.items()]
         kwargs['id'] = app_id
 
-        kwargs['ordinal'] = get_address_ordinal(app_id, childcare_address_id)
+        kwargs['ordinal'] = get_address_number(app_id, childcare_address_id, True)
+        kwargs['addr_num'] = get_address_number(app_id, childcare_address_id, False)
 
         return super(ChildcareAddressPostcodeView, self).get_context_data(**kwargs)
 
@@ -145,6 +151,9 @@ class ChildcareAddressLookupView(BaseFormView):
 
             self.initial['choices'] = addresses
 
+            kwargs['ordinal'] = get_address_number(app_id, childcare_address_id, True)
+            kwargs['addr_num'] = get_address_number(app_id, childcare_address_id, False)
+
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
 
@@ -199,6 +208,7 @@ class ChildcareAddressManualView(BaseFormView):
         else:
             ChildcareAddress.api.create(
                 model_type=ChildcareAddress,
+                date_created=datetime.today(),
                 application_id=app_id,
                 street_line1=street_line1,
                 street_line2=street_line2,
@@ -233,7 +243,8 @@ class ChildcareAddressManualView(BaseFormView):
 
         kwargs['fields'] = [kwargs['form'].render_field(name, field) for name, field in kwargs['form'].fields.items()]
 
-        kwargs['ordinal'] = get_address_ordinal(app_id, childcare_address_id)
+        kwargs['ordinal'] = get_address_number(app_id, childcare_address_id, True)
+        kwargs['addr_num'] = get_address_number(app_id, childcare_address_id, False)
 
         return super(ChildcareAddressManualView, self).get_context_data(**kwargs)
 
@@ -270,7 +281,7 @@ class ChildcareAddressDetailsView(BaseTemplateView):
             for address in api_response.record:
                 addresses[str(count)] = AddressHelper.format_address(address, ", ")
                 count += 1
-        kwargs['childcare_addresses'] = addresses
+        kwargs['childcare_addresses'] = sorted(addresses.items())
 
         return super(ChildcareAddressDetailsView, self).get_context_data(**kwargs)
 

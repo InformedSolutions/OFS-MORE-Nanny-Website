@@ -1,5 +1,11 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Select childcare address{% endblock %}
+{% block page_title %}
+    {% if ordinal == 'First' %}
+        Select childcare address
+    {% else %}
+       Select {{ordinal | lower}} childcare address
+    {% endif %}
+{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -12,7 +18,11 @@
 <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
     <!-- Content -->
     <h1 class="form-title heading-large">
-        Select childcare address
+        {% if addr_num == '1' %}
+            Select childcare address
+        {% else %}
+           Select childcare address {{ addr_num }}
+        {% endif %}
     </h1>
     <p>Where will you be looking after the children?</p>
     <h2 class="form-title heading-small">Postcode</h2>

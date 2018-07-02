@@ -14,7 +14,11 @@
 <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
     <!-- Content -->
     <h1 class="form-title heading-large">
-        {{ ordinal }} childcare address
+        {% if ordinal == 'First' %}
+            Childcare address
+        {% else %}
+            Childcare address {{ addr_num }}
+        {% endif %}
     </h1>
     <p>Where will you be looking after the children?</p>
     {% if not form.errors %}

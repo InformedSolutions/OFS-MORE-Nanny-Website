@@ -1,6 +1,6 @@
 from .base import BaseFormView
 from ..forms.childcare_location import ChildcareLocationForm
-from nanny_models.applicant_personal_details import *
+from datetime import datetime
 from nanny_models.applicant_home_address import *
 from nanny_models.childcare_address import *
 
@@ -37,6 +37,7 @@ class ChildcareLocationView(BaseFormView):
                     ChildcareAddress.api.create(
                         model_type=ChildcareAddress,
                         application_id=app_id,
+                        date_created=datetime.today(),
                         street_line1=home_address_record['street_line1'],
                         street_line2=home_address_record['street_line2'],
                         town=home_address_record['town'],

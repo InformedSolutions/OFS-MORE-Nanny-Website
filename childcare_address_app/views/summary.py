@@ -4,7 +4,6 @@ from django.shortcuts import render
 from nanny_models.childcare_address import *
 from nanny_models.applicant_home_address import *
 from ..utils import build_url
-import inflect
 from ..address_helper import *
 
 
@@ -34,15 +33,11 @@ class ChildcareAddressSummaryView(View):
             if address_response.status_code == 200:
                 address_records = address_response.record
 
-                formatter = inflect.engine()
                 data = []
 
                 for i in range(1, len(address_records) + 1):
                     record = {}
-                    if i > 1:
-                        record['title'] = formatter.number_to_words(formatter.ordinal(i)).title() + " childcare address"
-                    else:
-                        record['title'] = 'Childcare address'
+                    record['title'] = "Childcare address " + str(i)
 
                     record['address'] = AddressHelper.format_address(address_records[i - 1], "</br>")
                     record['change_link'] = build_url('Childcare-Address-Manual-Entry',

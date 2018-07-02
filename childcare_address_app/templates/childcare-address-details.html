@@ -14,12 +14,12 @@
 <form method="post" novalidate>
 
     <h1 class="form-title heading-large">Childcare address details</h1>
-    {% for key, value in childcare_addresses.items %}
+    {% for address in childcare_addresses %}
     <p>
         <label class="form-label-bold">
-            Address {{ key }}
+            Address {{ address.0 }}
         </label>
-        {{ value }}
+        {{ address.1 }}
     </p>
     {% endfor %}
 
