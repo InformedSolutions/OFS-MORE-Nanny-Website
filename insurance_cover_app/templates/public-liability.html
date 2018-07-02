@@ -1,0 +1,28 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Public liability insurance{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+{{ form.error_summary }}
+
+<!--<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>-->
+<form method="post" novalidate>
+
+    <h1 class="form-title heading-large">Public liability insurance</h1>
+
+    <!-- manually render inline radio buttons (not supported by django auto rendering) -->
+
+    {{ form.as_div }}
+
+    {% csrf_token %}
+    <input type="submit" class="button" value="Save and continue" alt='Continue'>
+
+</form>
+<br>
+{% include 'return-to-list.html' %}
+
+{% endblock %}

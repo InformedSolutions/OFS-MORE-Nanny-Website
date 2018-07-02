@@ -1,0 +1,25 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Insurance cover{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+<!--<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>-->
+<form method="post" novalidate>
+
+    <h1 class="form-title heading-large">Insurance cover</h1>
+    <p>You will need to have public liability insurance.</p>
+    <p>This must be in your name.</p>
+    <p>The insurance will cover you if anything goes wrong.</p>
+    <p>It must be in place before you start work.</p>
+    {% csrf_token %}
+    <input type="hidden" id="id" value="{{application_id}}" name="id"/>
+    <a href="{{link_url}}" class="button">Continue</a>
+
+</form>
+<br>
+
+{% endblock %}

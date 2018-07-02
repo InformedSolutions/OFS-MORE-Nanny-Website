@@ -79,7 +79,8 @@ class DBSDetailEntryTests(DBSTests):
 
         with mock.patch('nanny_models.dbs_check.DbsCheck.api.get_record') as nanny_api_get, \
                 mock.patch('nanny_models.dbs_check.DbsCheck.api.put'), \
-                mock.patch('nanny_models.nanny_application.NannyApplication.api.get_record') as nanny_api_get_app:
+                mock.patch('nanny_models.nanny_application.NannyApplication.api.get_record') as nanny_api_get_app, \
+                mock.patch('nanny_models.nanny_application.NannyApplication.api.put') as nanny_api_put_app:
             nanny_api_get_app.return_value.status_code = 200
             nanny_api_get_app.return_value.record = self.sample_app
             self.sample_dbs['dbs_number'] = 12

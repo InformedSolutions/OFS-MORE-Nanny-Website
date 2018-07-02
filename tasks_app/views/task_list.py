@@ -113,9 +113,9 @@ class TaskListView(View):
                     'description': 'Insurance cover',
                     'status_url': None,
                     'status_urls': [
-                        {'status': 'COMPLETED', 'url': 'Insurance-Cover-Summary'},
-                        {'status': 'FLAGGED', 'url': 'Insurance-Cover-Summary'},
-                        {'status': 'OTHER', 'url': 'Insurance-Cover-Guidance'},  # For all other statuses
+                        {'status': 'COMPLETED', 'url': 'insurance:Summary'},
+                        {'status': 'FLAGGED', 'url': 'insurance:Summary'},
+                        {'status': 'OTHER', 'url': 'insurance:Guidance'},  # For all other statuses
                     ]
                 },
                 {

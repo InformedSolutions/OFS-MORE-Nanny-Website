@@ -83,6 +83,7 @@ PROJECT_APPS = [
     'childcare_address_app.apps.ChildcareAddressAppConfig',
     'first_aid_app.apps.FirstAidAppConfig',
     'childcare_training_task_app.apps.ChildcareTrainingTaskAppConfig',
+    'insurance_cover_app.apps.InsuranceCoverAppConfig',
     'dbs_app.apps.DbsAppConfig',
 ]
 

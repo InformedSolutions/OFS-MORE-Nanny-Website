@@ -1,0 +1,49 @@
+{% extends 'govuk_template.html' %}
+{% load static %}
+{% load govuk_template_base %}
+{% block page_title %}Check your answers: insurance cover{% endblock %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+<h1 class="form-title heading-large">Check your answers: insurance cover</h1>
+
+<table class="check-your-answers" style="table-layout: fixed; width: 100%">
+    <colgroup>
+        <col class="summary-column">
+        <col class="summary-column">
+        <col class="change-answer">
+    </colgroup>
+
+    <!--Blank row below to get hrule atop of table.-->
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+        </td>
+        <td class="change-answer">
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Do you have public liability insurance?
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{ public_liability }}
+        </td>
+        <td class="change-answer">
+            <a href="{% url 'insurance:Public-Liability' %}?id={{ id }}" alt='Change answer on having public liability insurance'>
+                Change <span class="visuallyhidden">answer on having public liability insurance</span>
+            </a>
+        </td>
+    </tr>
+</table>
+
+
+<form method="post">
+    {% csrf_token %}
+    <input type="submit" class="button" value="Confirm and continue" alt="continue" id="id_continue">
+</form>
+
+{% endblock %}

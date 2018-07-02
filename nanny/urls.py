@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'^', include('childcare_address_app.urls')),
     url(r'^', include('childcare_training_task_app.urls')),
     url(r'^first-aid/', include('first_aid_app.urls', namespace='first-aid')),
+    url(r'^insurance/', include('insurance_cover_app.urls', namespace='insurance')),
     url(r'^criminal-record/', include('dbs_app.urls', namespace='dbs')),
 ]
 
