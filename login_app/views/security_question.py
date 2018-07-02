@@ -53,7 +53,7 @@ class SecurityQuestionFormView(BaseFormView):
                 'date_of_birth': personal_details_record['date_of_birth'],
                 'postcode': childcare_address_record['postcode'],
             }
-        elif self.form_class == PersonalDetailsSecurityQuestionForm:
+        elif self.form_class == DBSSecurityQuestionForm:
             return {
                 'dbs_number': DbsCheck.api.get_record(application_id=application_id).record['dbs_number']
             }
