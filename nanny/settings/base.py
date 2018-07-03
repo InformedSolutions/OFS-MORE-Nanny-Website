@@ -210,6 +210,7 @@ AUTHENTICATION_URL = URL_PREFIX + '/sign-in/'
 AUTHENTICATION_EXEMPT_URLS = (
     r'^' + URL_PREFIX + '$',
     r'^' + URL_PREFIX + '/$',
+    r'^' + URL_PREFIX + '/register-as-nanny/$',
     r'^' + URL_PREFIX + '/account/account/$',
     r'^' + URL_PREFIX + '/account/email/$',
     r'^' + URL_PREFIX + '/security-question/$',
