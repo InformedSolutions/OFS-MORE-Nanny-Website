@@ -10,6 +10,7 @@ urlpatterns = [
     url(r'^', include('personal_details_app.urls', namespace="personal-details")),
     url(r'^', include('childcare_address_app.urls')),
     url(r'^', include('childcare_training_task_app.urls')),
+    url(r'^', include('declaration_payment_app.urls', namespace="declaration-payment")),
     url(r'^first-aid/', include('first_aid_app.urls', namespace='first-aid')),
     url(r'^insurance/', include('insurance_cover_app.urls', namespace='insurance')),
     url(r'^criminal-record/', include('dbs_app.urls', namespace='dbs')),

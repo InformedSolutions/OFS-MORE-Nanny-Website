@@ -85,6 +85,7 @@ PROJECT_APPS = [
     'childcare_training_task_app.apps.ChildcareTrainingTaskAppConfig',
     'insurance_cover_app.apps.InsuranceCoverAppConfig',
     'dbs_app.apps.DbsAppConfig',
+    'declaration_payment_app.apps.DeclarationPaymentAppConfig'
 ]
 
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
