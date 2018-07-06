@@ -1,0 +1,30 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Declaration{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+{{ form.error_summary }}
+
+<h1 class="form-title heading-large">
+    Your declaration
+</h1>
+
+<form method="post" novalidate>
+    <h3 class="heading-small">
+        I understand that:
+    </h3>
+    {{ fields.0 }}
+    {{ fields.1 }}
+
+    
+</form>
+
+<br>
+<br>
+{% include 'return-to-list.html' %}
+
+{% endblock %}
