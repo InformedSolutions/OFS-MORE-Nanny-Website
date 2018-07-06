@@ -13,14 +13,34 @@
     Your declaration
 </h1>
 
-<form method="post" novalidate>
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+
     <h3 class="heading-small">
         I understand that:
     </h3>
     {{ fields.0 }}
     {{ fields.1 }}
+    <h3 class="heading-small">
+        By continuing, I confirm that:
+    </h3>
+    {{ fields.2 }}
+    {{ fields.3 }}
 
-    
+    <p>
+        <img src="{% static 'icon-important-2x.png' %}" alt="Important"
+                    style="height: 40px; margin-right: 10px; display: inline-block; vertical-align: middle;"/>
+        <b class="bold">You can be disqualified if you:</b>
+        <div class="bold">
+            <ul class="list-bullet">
+                <li>give us false information</li>
+                <li>hide information</li>
+            </ul>
+        </div>
+    </p>
+
+    {% csrf_token %}
+    <a href="{{link_url}}" class="button">Continue</a>
+
 </form>
 
 <br>
