@@ -1,10 +1,10 @@
 from django.http import HttpResponseRedirect
 
-from nanny_models.nanny_application import NannyApplication
-from nanny_models.dbs_check import DbsCheck
-
 from first_aid_app.views.base import BaseTemplateView, build_url
 from utils import app_id_finder
+
+
+from nanny_gateway import NannyGatewayActions
 
 
 class DBSSummary(BaseTemplateView):
@@ -20,11 +20,10 @@ class DBSSummary(BaseTemplateView):
         On a post request, set the task status to completed and redirect the user to the task list
         :return:
         """
-
         application_id = request.POST['id']
-        application_record = NannyApplication.api.get_record(application_id=application_id).record
+        application_record = NannyGatewayActions().read('application', params={'application_id': application_id})
         application_record['criminal_record_check_status'] = 'COMPLETED'
-        NannyApplication.api.put(application_record)
+        NannyGatewayActions().put('application', params=application_record)
 
         return HttpResponseRedirect(build_url(self.success_url_name, get={'id': application_id}))
 
@@ -39,5 +38,5 @@ class DBSSummary(BaseTemplateView):
         application_id = app_id_finder(self.request)
         context['link_url'] = build_url(self.success_url_name, get={'id': application_id})
         context['id'] = application_id
-        context['dbs_record'] = DbsCheck.api.get_record(application_id=application_id).record
+        context['dbs_record'] = NannyGatewayActions().read('dbs-check', params={'application_id': application_id})
         return context
