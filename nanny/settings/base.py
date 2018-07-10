@@ -38,6 +38,12 @@ PAYMENT_HTTP_REQUEST_TIMEOUT = 60
 # Base URL of addressing-service gateway
 ADDRESSING_URL = os.environ.get('APP_ADDRESSING_URL')
 
+# Base URL of nanny gateway
+APP_NANNY_GATEWAY_URL = os.environ.get('APP_NANNY_GATEWAY_URL')
+
+# Base URL of nanny gateway
+APP_IDENTITY_URL = os.environ.get('APP_IDENTITY_URL')
+
 PUBLIC_APPLICATION_URL = os.environ.get('PUBLIC_APPLICATION_URL')
 
 EXECUTING_AS_TEST = os.environ.get('EXECUTING_AS_TEST')
@@ -57,6 +63,14 @@ EMAIL_EXPIRY = 1
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+PROJECT_PATH = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(PROJECT_PATH, 'database.sqlite'),
+    }
+}
 
 # Application definition
 
@@ -88,6 +102,7 @@ PROJECT_APPS = [
     'insurance_cover_app.apps.InsuranceCoverAppConfig',
     'dbs_app.apps.DbsAppConfig',
     'payment_app.apps.PaymentAppConfig',
+    'declaration_app.apps.DeclarationPaymentAppConfig'
 ]
 
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
@@ -105,15 +120,6 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'nanny.urls'
-
-GOVUK_SERVICE_SETTINGS = {
-    'name': 'GOV.UK Django Template',
-    'phase': 'discovery',
-    'header_link_view_name': 'index',
-    'header_links': [
-        {'name': 'Home', 'link': 'index', 'link_is_view_name': True},
-    ],
-}
 
 TEMPLATES = [
     {

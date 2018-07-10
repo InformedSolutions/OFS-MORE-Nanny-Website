@@ -6,7 +6,7 @@ from .utilities import *
 
 class NannyFormView(FormView):
     """
-    This is the base interface from which the rest of the other people health check views inherit from
+    This is the base interface from which the rest of the Nanny forms inherit from
     It contains a set of base methods to aid in page design/workflow, see the django documentation on GCBVs for details
     """
 

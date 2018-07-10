@@ -128,8 +128,8 @@ class TaskListView(View):
                         "Declaration and payment" if application.application_status == 'DRAFTING' else "Declaration",
                     'status_url': None,
                     'status_urls': [
-                        {'status': 'COMPLETED', 'url': 'Declaration-Declaration-View'},
-                        {'status': 'OTHER', 'url': 'Declaration-Summary'}
+                        {'status': 'COMPLETED', 'url': 'declaration:Declaration-Declaration-View'},
+                        {'status': 'OTHER', 'url': 'declaration:Master-Summary'}
                     ],
                 },
             ]

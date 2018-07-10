@@ -297,7 +297,9 @@ def __handle_authorised_payment(application_id):
     # Dispatch payment confirmation email to user
     __send_payment_confirmation_email(application_record)
 
-    return __redirect_to_payment_confirmation(application_id)
+    application_reference = application_record['application_reference']
+
+    return __redirect_to_payment_confirmation(application_reference, application_id)
 
 
 def __send_payment_confirmation_email(application_record):
@@ -373,15 +375,15 @@ def __rollback_payment_submission_status(application_id):
     )
 
 
-def __redirect_to_payment_confirmation(application):
+def __redirect_to_payment_confirmation(application_reference, application_id):
     """
     Private helper function for redirecting to the payment confirmation page
     :return: payment confirmation page redirect
     """
     return HttpResponseRedirect(
-        reverse('Payment-Confirmation')
-        + '?id=' + str(application.application_id)
-        + '&orderCode=' + application.application_reference
+        reverse('declaration:confirmation')
+        + '?id=' + str(application_id)
+        + '&orderCode=' + application_reference
     )
 
 
