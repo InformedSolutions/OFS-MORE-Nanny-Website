@@ -7,7 +7,7 @@ from first_aid_app.forms.training_details import FirstAidTrainingDetailsForm
 
 from nanny_models.first_aid import FirstAidTraining
 
-from utils import app_id_finder
+from nanny.utilities import app_id_finder
 
 
 class FirstAidDetailsView(BaseFormView):

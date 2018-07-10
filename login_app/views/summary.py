@@ -6,7 +6,7 @@ from identity_models.user_details import UserDetails
 
 from nanny_models.nanny_application import NannyApplication
 
-from ..utils import build_url
+from nanny.utilities import build_url
 
 
 class ContactDetailsSummaryView(View):

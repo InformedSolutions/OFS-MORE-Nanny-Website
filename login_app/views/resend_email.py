@@ -3,7 +3,7 @@ from django.views import View
 
 from identity_models.user_details import UserDetails
 
-from login_app import notify, utils
+from nanny import notify, utilities
 
 
 class ResendEmail(View):
@@ -14,7 +14,7 @@ class ResendEmail(View):
         email_address = request.GET['email_address']
         api_response = UserDetails.api.get_record(email=email_address)
         record = api_response.record
-        validation_link, email_expiry_date = utils.generate_email_validation_link(email_address)
+        validation_link, email_expiry_date = utilities.generate_email_validation_link(email_address)
 
         record['magic_link_email'] = validation_link.split('/')[-1]
         record['email_expiry_date'] = email_expiry_date

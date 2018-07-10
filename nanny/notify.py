@@ -23,7 +23,10 @@ def send_email(email, personalisation, template_id):
         # If executing login function in test mode set env variable for later retrieval by test code
         os.environ['EMAIL_VALIDATION_URL'] = personalisation['link']
     else:
-        print(personalisation['link'])
+        try:
+            print(personalisation['link'])
+        except:
+            pass
 
     notification_request = {
         'email': email,

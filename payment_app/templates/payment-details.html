@@ -1,0 +1,42 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Pay by debit or credit card{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+<div class="two-thirds">
+{{form.error_summary}}
+
+<h1 class="form-title heading-large">
+    Pay by debit or credit card
+</h1>
+
+<p class="form-group">
+    <img src="{% static 'card-types.png' %}" alt="accepted card logos"
+         style="height: 40px;"/>
+</p>
+
+<p>We accept Visa, Maestro and MasterCard cards.</p>
+
+<p>
+    You are paying <span class="bold-small">&#163;103</span> to <span class="bold-small">register as a nanny</span>.
+</p>
+</div>
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    {{form.as_div}}
+    <div class="two-thirds">
+        <p>Ofsted does not keep a record of your card details.</p>
+        {% csrf_token %}
+        <input type="hidden" value="{{application_id}}" name="id"/>
+        <input type="submit" class="button" value="Pay and apply">
+    </div>
+</form>
+
+<br>
+
+<a href="{% url 'Task-List' %}?id={{ id }}">Return to list</a>
+
+{% endblock %}

@@ -4,7 +4,7 @@ from django.views import View
 
 from identity_models.user_details import UserDetails
 
-from login_app.utils import build_url
+from nanny.utilities import build_url
 
 from .validate_magic_link import ValidateMagicLinkView
 

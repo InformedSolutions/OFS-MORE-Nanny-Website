@@ -5,7 +5,6 @@ import re
 
 from govuk_forms.forms import GOVUKForm
 from govuk_forms.widgets import Widget
-from login_app import utils
 
 
 class NannyFormInput(forms.widgets.EmailInput, Widget):

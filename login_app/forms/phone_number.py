@@ -2,8 +2,7 @@ from django import forms
 
 from govuk_forms.forms import GOVUKForm
 from govuk_forms.widgets import Widget
-
-from login_app.utils import PhoneNumberField
+from nanny.utilities import *
 
 
 class NannyFormInput(forms.widgets.NumberInput, Widget):
