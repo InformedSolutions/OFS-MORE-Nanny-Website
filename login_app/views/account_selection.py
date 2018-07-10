@@ -3,7 +3,7 @@ from django.shortcuts import reverse
 from django.http import HttpResponseRedirect
 
 from login_app.forms import AcccountSelectionForm
-from login_app.utils import test_notify
+from nanny.utilities import test_notify
 
 
 class AccountSelectionFormView(FormView):
