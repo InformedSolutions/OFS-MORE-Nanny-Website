@@ -26,7 +26,7 @@ class TaskListView(View):
             if settings.DEBUG:
                 raise RuntimeError('The nanny-gateway API did not respond as expected.')
             else:
-                HttpResponseRedirect(reverse('Service-Down'))
+                HttpResponseRedirect(reverse('Service-Unavailable'))
 
         context = {
             'id': application_id,
@@ -186,4 +186,4 @@ def create_new_app(application_id):
         if settings.DEBUG:
             raise RuntimeError('The nanny-gateway API did not respond as expected.')
         else:
-            HttpResponseRedirect(reverse('Service-Down'))
+            HttpResponseRedirect(reverse('Service-Unavailable'))
