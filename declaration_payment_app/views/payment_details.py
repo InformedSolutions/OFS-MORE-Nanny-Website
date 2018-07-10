@@ -6,4 +6,4 @@ class PaymentDetails(BaseTemplateView):
     Template view to  render the guidance page from first access of task from task list
     """
     template_name = "payment-details.html"
-    success_url_name = 'declaration-payment:payment-details'
+    success_url_name = 'declaration-payment:confirmation'

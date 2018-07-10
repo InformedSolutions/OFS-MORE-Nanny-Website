@@ -1,6 +1,8 @@
 from first_aid_app.views.base import BaseTemplateView
+from django.http import HttpResponseRedirect
 from django.conf import settings
 from django.shortcuts import reverse
+from nanny.utilities import build_url
 import requests
 import simplejson
 
@@ -21,6 +23,9 @@ class MasterSummary(BaseTemplateView):
         context['json'] = json
         context['application_id'] = app_id
         return context
+
+    def post(self, request):
+        return HttpResponseRedirect(build_url(self.success_url_name, get={'id': request.GET['id']}))
 
     def generate_links(self, json, app_id):
         for table in json:
@@ -47,9 +52,9 @@ class MasterSummary(BaseTemplateView):
                 table_list.append(self.load_json(app_id, model, True))
             else:
                 if model == "user_details":
-                    response = requests.get(identity_url + "api/v1/summary/?name=" + str(model) + "&id=" + str(app_id))
+                    response = requests.get(identity_url + "api/v1/summary/" + str(model) + "/" + str(app_id))
                 else:
-                    response = requests.get(nanny_url + "/api/v1/summary/?name=" + str(model) + "&id=" + str(app_id))
+                    response = requests.get(nanny_url + "/api/v1/summary/" + str(model) + "/" + str(app_id))
                 if response.status_code == 200:
                     data = simplejson.loads(response.content)
                     data = self.generate_links(data, app_id)
