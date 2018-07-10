@@ -24,7 +24,7 @@ from django.views.decorators.cache import never_cache
 from ..services import payment_service
 from ..forms.payment import PaymentDetailsForm
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger()
 
 
 @never_cache
@@ -102,12 +102,12 @@ def card_payment_post_handler(request):
 
     application_record = NannyApplication.api.get_record(application_id=application_id).record
 
-    __assign_application_reference(application_record)
+    application_reference = __assign_application_reference(application_record)
 
     # Boolean flag for managing logic gates
     prior_payment_record_exists = payment_service.payment_record_exists(application_id)
 
-    payment_reference = __create_payment_record(application_record)
+    payment_reference = __create_payment_record(application_record, application_reference)
 
     payment_record = payment_service.get_payment_record(application_id)
 
@@ -248,11 +248,12 @@ def __assign_application_reference(application):
         raise Exception
 
 
-def __create_payment_record(application):
+def __create_payment_record(application, application_reference):
     """
     Private helper function for creating a payment record in the event one does not previously exist.
     If a previous record is already present, a payment reference is returned
     :param application: the application for which a new payment record is to be created
+    :param application_reference: the reference number assigned to an application
     :return: a payment reference number for an application (either new or)
     """
     application_id = application['application_id']
@@ -264,7 +265,11 @@ def __create_payment_record(application):
                     'for application with id: ' + application_id)
 
         # Create formatted payment reference for finance reconciliation purposes
-        payment_reference = payment_service.create_formatted_payment_reference(application['application_reference'])
+        payment_reference = payment_service.create_formatted_payment_reference(application_reference)
+
+        logger.info('Updating payment record with generated reference '
+                    'for application with id: ' + application_id)
+
 
         Payment.api.create(
             application_id=application_id,
@@ -274,6 +279,8 @@ def __create_payment_record(application):
 
         return payment_reference
     else:
+        logger.info('Fetching existing payment record '
+                    'for application with id: ' + application_id)
         payment_record = payment_service.get_payment_record(application_id)
         return payment_record['payment_reference']
 

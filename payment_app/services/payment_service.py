@@ -6,17 +6,18 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 """
 
 import json
+import logging
 import time
 from urllib.parse import quote
 from nanny_models.dbs_check import DbsCheck
 from nanny_models.payment import Payment
 from nanny.notify import send_email
-from nanny.utilities import app_id_finder
 
 import requests
 
 from django.conf import settings
 
+logger = logging.getLogger()
 
 def make_payment(amount, name, number, cvc, expiry_m, expiry_y, currency, customer_order_code, desc):
     """
@@ -49,6 +50,9 @@ def make_payment(amount, name, number, cvc, expiry_m, expiry_y, currency, custom
         "customerOrderCode": customer_order_code,
         "orderDescription": desc
     }
+
+    logger.debug('Issuing call to payment gateway for payment reference: ' + customer_order_code)
+
     response = requests.post(base_url + "/api/v1/payments/card/", json.dumps(payload),
                              headers=header, timeout=int(settings.PAYMENT_HTTP_REQUEST_TIMEOUT))
     return response
@@ -77,6 +81,7 @@ def payment_email(email, name, application_reference, application_id):
     :param application_id
     :return: Returns the response object obtained from the PayPal gateway method, as defined in swagger
     """
+    logger.debug('Dispatching payment confirmation email for application with identifier: ' + application_id)
 
     template_id = '2cd5f1c5-4900-4922-a627-a0d1f674136b'
     try:
@@ -97,9 +102,11 @@ def create_formatted_payment_reference(application_reference):
     :param application_reference: a unique applicaiton reference
     :return: a formatted payment reference
     """
+    logger.debug('Generating payment reference for application with reference: ' + application_reference)
     prefix = 'MORE'
     timestamp = time.strftime("%Y%m%d%H%M%S")
     formatted_payment_reference = str(prefix + ':' + application_reference + ':' + timestamp)
+    logger.debug('Generated payment reference: ' + formatted_payment_reference)
     return formatted_payment_reference
 
 
@@ -109,6 +116,7 @@ def payment_record_exists(application_id):
     :param application_id: the UUID of the application
     :return: a boolean indicator detailing whether a payyment record exists or not
     """
+    logger.debug('Testing for presence of payment record for application with identifier: ' + application_id)
     payment_record = Payment.api.get_record(application_id=application_id).record
     return payment_record is not None
 
@@ -119,5 +127,6 @@ def get_payment_record(application_id):
     :param application_id: the UUID of the application
     :return: a payment record instance or a 404 status code if not found
     """
+    logger.debug('Fetching payment record for application with identifier: ' + application_id)
     return Payment.api.get_record(application_id=application_id).record
 
