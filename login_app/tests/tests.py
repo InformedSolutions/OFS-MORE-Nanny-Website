@@ -113,7 +113,7 @@ class LoginTests(TestCase):
         Test that a user is redirected to the 'Service-Unavailable' page if test_notify() returns false during either
         the new user of existing user login.
         """
-        with mock.patch('login_app.utils.test_notify') as test_notify:
+        with mock.patch('nanny.utilities.test_notify') as test_notify:
             test_notify.return_value = False
 
             views_to_test = (
@@ -196,7 +196,7 @@ class LoginTests(TestCase):
         """
         with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get, \
                 mock.patch('identity_models.user_details.UserDetails.api.put') as identity_api_put, \
-                mock.patch('login_app.notify.send_email') as notify_email:
+                mock.patch('nanny.notify.send_email') as notify_email:
 
             identity_api_get.return_value.status_code = 200
             identity_api_get.return_value.record = self.user_details_record
@@ -215,7 +215,7 @@ class LoginTests(TestCase):
         """
         with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get, \
                 mock.patch('identity_models.user_details.UserDetails.api.put') as identity_api_put, \
-                mock.patch('login_app.notify.send_email') as notify_email:
+                mock.patch('nanny.notify.send_email') as notify_email:
 
             identity_api_get.return_value.status_code = 200
             identity_api_get.return_value.record = self.user_details_record
@@ -254,7 +254,7 @@ class LoginTests(TestCase):
         """
         with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get, \
                 mock.patch('identity_models.user_details.UserDetails.api.put') as identity_api_put, \
-                mock.patch('login_app.notify.send_email') as notify_email:
+                mock.patch('nanny.notify.send_email') as notify_email:
 
             identity_api_get.return_value.status_code = 200
             identity_api_get.return_value.record = self.user_details_record
@@ -270,7 +270,7 @@ class LoginTests(TestCase):
         """
         with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get, \
                 mock.patch('identity_models.user_details.UserDetails.api.put') as identity_api_put, \
-                mock.patch('login_app.notify.send_text') as notify_send_text, \
+                mock.patch('nanny.notify.send_text') as notify_send_text, \
                 mock.patch('login_app.views.ValidateMagicLinkView.link_has_expired') as link_expired:
 
             identity_api_get.return_value.status_code = 200
@@ -288,7 +288,7 @@ class LoginTests(TestCase):
         """
         with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get, \
                 mock.patch('identity_models.user_details.UserDetails.api.put') as identity_api_put, \
-                mock.patch('login_app.notify.send_text') as notify_send_text, \
+                mock.patch('nanny.notify.send_text') as notify_send_text, \
                 mock.patch('login_app.views.ValidateMagicLinkView.link_has_expired') as link_expired:
 
             identity_api_get.return_value.status_code = 200
@@ -307,7 +307,7 @@ class LoginTests(TestCase):
         """
         with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get, \
                 mock.patch('identity_models.user_details.UserDetails.api.put') as identity_api_put, \
-                mock.patch('login_app.notify.send_text') as notify_send_text, \
+                mock.patch('nanny.notify.send_text') as notify_send_text, \
                 mock.patch('login_app.views.ValidateMagicLinkView.link_has_expired') as link_expired:
 
             identity_api_get.return_value.status_code = 200
