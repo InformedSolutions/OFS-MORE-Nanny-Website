@@ -3,7 +3,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.shortcuts import HttpResponseRedirect, reverse
 from django.views.generic import FormView
 
-from login_app.utils import build_url
+from nanny.utilities import build_url
 
 from childcare_training_task_app.forms import TypeOfChildcareTrainingForm
 

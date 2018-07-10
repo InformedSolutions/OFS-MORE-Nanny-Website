@@ -29,6 +29,12 @@ NOTIFY_URL = os.environ.get('APP_NOTIFY_URL')
 # Base URL of payment gateway
 PAYMENT_URL = os.environ.get('APP_PAYMENT_URL')
 
+# Payment specific settings
+PAYMENT_PROCESSING_ATTEMPTS = os.environ.get('PAYMENT_PROCESSING_ATTEMPTS', 10)
+PAYMENT_STATUS_QUERY_INTERVAL_IN_SECONDS = os.environ.get('PAYMENT_STATUS_QUERY_INTERVAL_IN_SECONDS', 10)
+
+PAYMENT_HTTP_REQUEST_TIMEOUT = 60
+
 # Base URL of addressing-service gateway
 ADDRESSING_URL = os.environ.get('APP_ADDRESSING_URL')
 
@@ -40,10 +46,6 @@ TEST_NOTIFY_CONNECTION = True
 
 # URL prefix for the identity-gateway API.
 IDENTITY_URL_PREFIX = ""
-
-NOTIFY_URL = os.environ.get('APP_NOTIFY_URL')
-
-EXECUTING_AS_TEST = os.environ.get('EXECUTING_AS_TEST')
 
 # Expiry period of Magic Link Emails and Texts in hours
 SMS_EXPIRY = 1
@@ -85,6 +87,7 @@ PROJECT_APPS = [
     'childcare_training_task_app.apps.ChildcareTrainingTaskAppConfig',
     'insurance_cover_app.apps.InsuranceCoverAppConfig',
     'dbs_app.apps.DbsAppConfig',
+    'payment_app.apps.PaymentAppConfig',
 ]
 
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"

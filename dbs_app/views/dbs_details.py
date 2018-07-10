@@ -3,7 +3,7 @@ from nanny_models.dbs_check import DbsCheck
 
 from first_aid_app.views.base import BaseFormView
 from dbs_app.forms.dbs_details import DBSDetailsForm
-from utils import app_id_finder
+from nanny.utilities import app_id_finder
 
 
 class DBSDetailsView(BaseFormView):

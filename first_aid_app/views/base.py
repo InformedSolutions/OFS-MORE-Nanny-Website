@@ -4,7 +4,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.urls import reverse
 from django.views.generic import FormView, TemplateView
 
-from utils import app_id_finder
+from nanny.utilities import app_id_finder
 
 
 class BaseFormView(FormView):

@@ -6,8 +6,8 @@ from django.shortcuts import reverse
 from identity_models.user_details import UserDetails
 
 from login_app.forms import ContactEmailForm
-from login_app import notify
-from login_app import utils
+from nanny import notify
+from nanny import utilities
 from .base import BaseFormView
 
 
@@ -21,7 +21,7 @@ class ExistingUserSignInFormView(BaseFormView):
     email_address = None
 
     def form_valid(self, email_form):
-        if not utils.test_notify():
+        if not utilities.test_notify():
             return HttpResponseRedirect(reverse('Service-Unavailable'))
 
         email_address = email_form.cleaned_data['email_address']
@@ -35,7 +35,7 @@ class ExistingUserSignInFormView(BaseFormView):
             api_response = UserDetails.api.get_record(email=email_address)
 
         record = api_response.record
-        validation_link, email_expiry_date = utils.generate_email_validation_link(email_address)
+        validation_link, email_expiry_date = utilities.generate_email_validation_link(email_address)
 
         record['magic_link_email'] = validation_link.split('/')[-1]
         record['email_expiry_date'] = email_expiry_date

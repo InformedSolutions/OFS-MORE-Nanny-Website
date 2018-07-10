@@ -3,7 +3,7 @@ from django import forms
 from govuk_forms.forms import GOVUKForm
 from govuk_forms.widgets import Widget, TextInput
 
-from login_app.utils import DBSNumberField, PhoneNumberField
+from nanny.utilities import DBSNumberField, PhoneNumberField
 from personal_details_app.customfields import CustomSplitDateFieldDOB
 
 
