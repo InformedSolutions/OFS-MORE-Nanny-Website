@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Declaration{% endblock %}
+{% block page_title %}Your declaration{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -39,7 +39,7 @@
     </p>
 
     {% csrf_token %}
-    <input type="submit" name="action"  class="button" value="Continue">
+    <input type="submit" name="action"  class="button" value="Confirm and pay your fee">
 
 </form>
 
