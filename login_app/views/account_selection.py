@@ -3,6 +3,7 @@ from django.shortcuts import reverse
 from django.http import HttpResponseRedirect
 
 from login_app.forms import AcccountSelectionForm
+from login_app.utils import test_notify
 
 
 class AccountSelectionFormView(FormView):
@@ -11,6 +12,12 @@ class AccountSelectionFormView(FormView):
     """
     template_name = 'account-selection.html'
     form_class = AcccountSelectionForm
+
+    def get(self, *args, **kwargs):
+        if not test_notify():
+            return HttpResponseRedirect(reverse('Service-Unavailable'))
+        else:
+            return super(AccountSelectionFormView, self).get(*args, **kwargs)
 
     def form_valid(self, request):
 

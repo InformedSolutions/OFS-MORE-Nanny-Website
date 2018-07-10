@@ -45,7 +45,7 @@ class TypeOfChildcareTrainingFormView(FormView):
             if settings.DEBUG:
                 raise RuntimeError('The Nanny-Gateway API did not update the record as expected.')
             else:
-                HttpResponseRedirect(reverse('Service-Down'))
+                HttpResponseRedirect(reverse('Service-Unavailable'))
 
     def get_initial(self):
         """
