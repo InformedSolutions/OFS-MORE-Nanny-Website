@@ -370,9 +370,8 @@ def __rollback_payment_submission_status(application_id):
     logger.info('Rolling payment back in response to REFUSED status for application with id: '
                 + str(application_id))
     payment_record = Payment.api.get_record(application_id=application_id).record
-    payment_record.api.delete(
-        application_id=application_id
-    )
+    payment_record['payment_submitted'] = False
+    Payment.api.put(payment_record)
 
 
 def __redirect_to_payment_confirmation(application_reference, application_id):
