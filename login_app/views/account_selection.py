@@ -13,11 +13,11 @@ class AccountSelectionFormView(FormView):
     template_name = 'account-selection.html'
     form_class = AcccountSelectionForm
 
-    def get(self, request):
-        if test_notify():
+    def get(self, *args, **kwargs):
+        if not test_notify():
             return HttpResponseRedirect(reverse('Service-Unavailable'))
         else:
-            super(AccountSelectionFormView, self).get(self, request)
+            return super(AccountSelectionFormView, self).get(*args, **kwargs)
 
     def form_valid(self, request):
 
