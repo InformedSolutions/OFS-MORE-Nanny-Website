@@ -1,0 +1,36 @@
+<table class="check-your-answers" style="table-layout: fixed; width: 100%">
+    <colgroup>
+        <col class="summary-column">
+        <col class="summary-column">
+        <col class="change-answer">
+    </colgroup>
+    {% for row in section %}
+        {% if row.title %}
+            <thead>
+                <tr>
+                    <th colspan="{{ col }}">
+                        <div class="heading-medium">
+                            {{row.title}}
+                        </div>
+                    </th>
+                </tr>
+            </thead>
+        {% else %}
+                <tr>
+                    <td>
+                        {{row.name}}
+                     </td>
+
+                     <td>
+                        {{row.value}}
+                     </td>
+
+                    {% if row.link %}
+                        <td class="change-answer">
+                            <a href="{{row.link}}">Change</a>
+                        </td>
+                    {% endif %}
+                </tr>
+        {% endif %}
+    {% endfor %}
+</table>

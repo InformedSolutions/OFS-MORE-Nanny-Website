@@ -129,7 +129,7 @@ class TaskListView(View):
                     'status_url': None,
                     'status_urls': [
                         {'status': 'COMPLETED', 'url': 'declaration-payment:Declaration-Declaration-View'},
-                        {'status': 'OTHER', 'url': 'declaration-payment:Declaration-Guidance'}
+                        {'status': 'OTHER', 'url': 'declaration-payment:Master-Summary'}
                     ],
                 },
             ]

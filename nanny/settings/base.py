@@ -32,6 +32,12 @@ PAYMENT_URL = os.environ.get('APP_PAYMENT_URL')
 # Base URL of addressing-service gateway
 ADDRESSING_URL = os.environ.get('APP_ADDRESSING_URL')
 
+# Base URL of nanny gateway
+APP_NANNY_GATEWAY_URL = os.environ.get('APP_NANNY_GATEWAY_URL')
+
+# Base URL of nanny gateway
+APP_IDENTITY_URL = os.environ.get('APP_IDENTITY_URL')
+
 PUBLIC_APPLICATION_URL = os.environ.get('PUBLIC_APPLICATION_URL')
 
 EXECUTING_AS_TEST = os.environ.get('EXECUTING_AS_TEST')
