@@ -21,17 +21,6 @@ STATIC_URL = URL_PREFIX + '/static/'
 INSTALLED_APPS = BUILTIN_APPS + THIRD_PARTY_APPS + DEV_APPS + PROJECT_APPS
 MIDDLEWARE = MIDDLEWARE + MIDDLEWARE_DEV
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ.get('POSTGRES_DB', 'postgres'),
-        'USER': os.environ.get('POSTGRES_USER', 'ofsted'),
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'OfstedB3ta'),
-        'HOST': os.environ.get('POSTGRES_HOST', '130.130.52.132'),
-        'PORT': os.environ.get('POSTGRES_PORT', '5462')
-    }
-}
-
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY', 'ezn^k@w45@&zncvn)fzsrnke-e04s#+3$$ol$m=_nfwsfchlvp')
 
@@ -46,8 +35,8 @@ LOGGING = {
         },
         },
   'handlers': {
-    'django.server': {
-        'level': 'INFO',
+    'file': {
+        'level': 'DEBUG',
         'class': 'logging.handlers.RotatingFileHandler',
         'maxBytes': 1 * 1024 * 1024,
         'filename': 'logs/output.log',
@@ -55,12 +44,27 @@ LOGGING = {
         'maxBytes': 1 * 1024 * 1024,
         'backupCount': '30'
     },
+    'console': {
+        'level': 'DEBUG',
+        'class': 'logging.StreamHandler'
+    },
    },
    'loggers': {
-     'django.server': {
-       'handlers': ['django.server'],
+     'django': {
+       'handlers': ['file', 'console'],
          'level': 'INFO',
            'propagate': True,
       },
+      'django.server': {
+       'handlers': ['file', 'console'],
+         'level': 'INFO',
+           'propagate': True,
+      },
+      'payment_app.views.payment': {
+       'handlers': ['file', 'console'],
+         'level': 'DEBUG',
+           'propagate': True,
+      },
     },
+
 }

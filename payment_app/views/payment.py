@@ -237,6 +237,9 @@ def __assign_application_reference(application):
     get_request_endpoint = os.environ.get('APP_NANNY_GATEWAY_URL') + '/api/v1/application/application_reference/' + application_id
     response = requests.get(get_request_endpoint)
 
+    log_message = 'Received response object: ' + str(response.content)
+    logger.info(log_message)
+
     if response.status_code == 200:
         response_body = json.loads(
             response.content
