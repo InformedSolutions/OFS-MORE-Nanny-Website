@@ -138,15 +138,13 @@ def card_payment_post_handler(request):
             __mark_payment_record_as_submitted(application_id)
 
             # Parse JSON response
-            parsed_payment_response = json.loads(create_payment_response.text)
+            parsed_payment_response = create_payment_response.json()
 
             if parsed_payment_response.get('lastEvent') == "AUTHORISED":
-
                 # If payment response is immediately authorised, yield success page
                 return __handle_authorised_payment(application_id)
 
             if parsed_payment_response.get('lastEvent') == "REFUSED":
-
                 # If payment has been marked as a REFUSED by Worldpay then payment has
                 # been attempted but was not successful in which case a new order should be attempted.
                 __rollback_payment_submission_status(application_id)
@@ -185,7 +183,7 @@ def resubmission_handler(request, payment_reference, form, application):
         return __yield_general_processing_error_to_user(request, form, application.application_id)
 
     # Deserialize Payment Gateway API response
-    parsed_payment_response = json.loads(payment_status_response_raw.text)
+    parsed_payment_response = payment_status_response_raw.json()
 
     if parsed_payment_response.get('lastEvent') == "AUTHORISED":
         # If payment has been marked as a AUTHORISED by Worldpay then payment has been captured
@@ -206,7 +204,7 @@ def resubmission_handler(request, payment_reference, form, application):
             # yield error to user
             if processing_attempts >= settings.PAYMENT_PROCESSING_ATTEMPTS:
                 form.add_error(None, 'There has been a problem when trying to process your payment. '
-                                     'Please contact Ofsted for assistance.',)
+                                     'Please contact Ofsted for assistance.', )
                 form.error_summary_template_name = 'error-summary.html'
 
                 variables = {
@@ -234,16 +232,16 @@ def __assign_application_reference(application):
     """
     # Call out to Nanny Gateway method
     application_id = application['application_id']
-    get_request_endpoint = os.environ.get('APP_NANNY_GATEWAY_URL') + '/api/v1/application/application_reference/' + application_id
+
+    get_request_endpoint = os.environ.get('APP_NANNY_GATEWAY_URL') \
+                           + '/api/v1/application/application_reference/' + application_id
+
     response = requests.get(get_request_endpoint)
 
-    log_message = 'Received response object: ' + str(response.content)
-    logger.info(log_message)
+    logger.debug('Received application reference number: ' + str(response.content) + ' from gateway API')
 
     if response.status_code == 200:
-        response_body = json.loads(
-            response.content
-        )
+        response_body = response.json()
         return response_body['reference']
     else:
         # Raise up exception to caller if could not allocate reference

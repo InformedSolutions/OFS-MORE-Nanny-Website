@@ -56,7 +56,7 @@ class MasterSummary(BaseTemplateView):
                 else:
                     response = requests.get(nanny_url + "/api/v1/summary/" + str(model) + "/" + str(app_id))
                 if response.status_code == 200:
-                    data = simplejson.loads(response.content)
+                    data = response.json()
                     data = self.generate_links(data, app_id)
                     if recurse:
                         table_list = table_list + data
