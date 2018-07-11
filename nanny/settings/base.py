@@ -29,8 +29,20 @@ NOTIFY_URL = os.environ.get('APP_NOTIFY_URL')
 # Base URL of payment gateway
 PAYMENT_URL = os.environ.get('APP_PAYMENT_URL')
 
+# Payment specific settings
+PAYMENT_PROCESSING_ATTEMPTS = os.environ.get('PAYMENT_PROCESSING_ATTEMPTS', 10)
+PAYMENT_STATUS_QUERY_INTERVAL_IN_SECONDS = os.environ.get('PAYMENT_STATUS_QUERY_INTERVAL_IN_SECONDS', 10)
+
+PAYMENT_HTTP_REQUEST_TIMEOUT = 60
+
 # Base URL of addressing-service gateway
 ADDRESSING_URL = os.environ.get('APP_ADDRESSING_URL')
+
+# Base URL of nanny gateway
+APP_NANNY_GATEWAY_URL = os.environ.get('APP_NANNY_GATEWAY_URL')
+
+# Base URL of nanny gateway
+APP_IDENTITY_URL = os.environ.get('APP_IDENTITY_URL')
 
 PUBLIC_APPLICATION_URL = os.environ.get('PUBLIC_APPLICATION_URL')
 
@@ -40,10 +52,6 @@ TEST_NOTIFY_CONNECTION = True
 
 # URL prefix for the identity-gateway API.
 IDENTITY_URL_PREFIX = ""
-
-NOTIFY_URL = os.environ.get('APP_NOTIFY_URL')
-
-EXECUTING_AS_TEST = os.environ.get('EXECUTING_AS_TEST')
 
 # Expiry period of Magic Link Emails and Texts in hours
 SMS_EXPIRY = 1
@@ -55,6 +63,14 @@ EMAIL_EXPIRY = 1
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+PROJECT_PATH = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(PROJECT_PATH, 'database.sqlite'),
+    }
+}
 
 # Application definition
 
@@ -85,6 +101,8 @@ PROJECT_APPS = [
     'childcare_training_task_app.apps.ChildcareTrainingTaskAppConfig',
     'insurance_cover_app.apps.InsuranceCoverAppConfig',
     'dbs_app.apps.DbsAppConfig',
+    'payment_app.apps.PaymentAppConfig',
+    'declaration_app.apps.DeclarationPaymentAppConfig'
 ]
 
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
@@ -102,15 +120,6 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'nanny.urls'
-
-GOVUK_SERVICE_SETTINGS = {
-    'name': 'GOV.UK Django Template',
-    'phase': 'discovery',
-    'header_link_view_name': 'index',
-    'header_links': [
-        {'name': 'Home', 'link': 'index', 'link_is_view_name': True},
-    ],
-}
 
 TEMPLATES = [
     {
@@ -254,4 +263,44 @@ REGEX = {
     "MASTERCARD": "^(?:5[1-5][0-9]{2}|222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720)[0-9]{12}$",
     "MAESTRO": "^(?:5[0678]\d\d|6304|6390|67\d\d)\d{8,15}$",
     "CARD_SECURITY_NUMBER": "^[0-9]{3,4}$"
+}
+
+# Django logging configuration
+LOGGING = {
+  'version': 1,
+  'disable_existing_loggers': False,
+  'formatters': {
+    'console': {
+            # exact format is not important, this is the minimum information
+            'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
+        },
+        },
+  'handlers': {
+    'file': {
+        'level': 'DEBUG',
+        'class': 'logging.handlers.RotatingFileHandler',
+        'maxBytes': 1 * 1024 * 1024,
+        'filename': 'logs/output.log',
+        'formatter': 'console',
+        'maxBytes': 1 * 1024 * 1024,
+        'backupCount': '30'
+    },
+    'console': {
+        'level': 'DEBUG',
+        'class': 'logging.StreamHandler'
+    },
+   },
+   'loggers': {
+     '': {
+       'handlers': ['file', 'console'],
+         'level': 'DEBUG',
+           'propagate': True,
+      },
+      'django.server': {
+       'handlers': ['file', 'console'],
+         'level': 'INFO',
+           'propagate': True,
+      },
+    },
+
 }

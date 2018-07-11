@@ -1,9 +1,5 @@
 #!/bin/sh
 
-# Create database migration files
-echo "Create database migration files"
-python manage.py makemigrations --settings=$PROJECT_SETTINGS
-
 # Apply database migrations
 echo "Apply database migrations"
 python manage.py migrate --settings=$PROJECT_SETTINGS

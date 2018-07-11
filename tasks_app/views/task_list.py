@@ -26,7 +26,7 @@ class TaskListView(View):
             if settings.DEBUG:
                 raise RuntimeError('The nanny-gateway API did not respond as expected.')
             else:
-                HttpResponseRedirect(reverse('Service-Down'))
+                HttpResponseRedirect(reverse('Service-Unavailable'))
 
         context = {
             'id': application_id,
@@ -128,8 +128,8 @@ class TaskListView(View):
                         "Declaration and payment" if application.application_status == 'DRAFTING' else "Declaration",
                     'status_url': None,
                     'status_urls': [
-                        {'status': 'COMPLETED', 'url': 'Declaration-Declaration-View'},
-                        {'status': 'OTHER', 'url': 'Declaration-Summary'}
+                        {'status': 'COMPLETED', 'url': 'declaration:Declaration-Declaration-View'},
+                        {'status': 'OTHER', 'url': 'declaration:Master-Summary'}
                     ],
                 },
             ]
@@ -186,4 +186,4 @@ def create_new_app(application_id):
         if settings.DEBUG:
             raise RuntimeError('The nanny-gateway API did not respond as expected.')
         else:
-            HttpResponseRedirect(reverse('Service-Down'))
+            HttpResponseRedirect(reverse('Service-Unavailable'))

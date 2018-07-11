@@ -7,9 +7,8 @@ from django.shortcuts import reverse
 
 from identity_models.user_details import UserDetails
 
-from login_app.utils import build_url
-from login_app import notify
-from login_app import utils
+from nanny import notify
+from nanny import utilities
 
 
 class ValidateMagicLinkView(View):
@@ -42,11 +41,11 @@ class ValidateMagicLinkView(View):
 
         self.record['email_expiry_date'] = 0
         UserDetails.api.put(self.record)
-        return build_url(success_template, get={'id': self.record['application_id']})
+        return utilities.build_url(success_template, get={'id': self.record['application_id']})
 
     @staticmethod
     def sms_magic_link(record):
-        magic_link_sms, sms_expiry_date = utils.generate_sms_code()
+        magic_link_sms, sms_expiry_date = utilities.generate_sms_code()
 
         record['magic_link_sms'] = magic_link_sms
         record['sms_expiry_date'] = sms_expiry_date

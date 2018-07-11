@@ -1,3 +1,5 @@
+from django.views.decorators.cache import never_cache
+
 from .BASE import *
 from ..forms.home_address import HomeAddressForm, HomeAddressLookupForm, HomeAddressManualForm
 from ..utils import app_id_finder, build_url
@@ -64,18 +66,16 @@ class PersonalDetailSelectAddressView(BaseFormView):
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data()
         app_id = app_id_finder(self.request)
-
-        context['id'] = app_id
-
         api_response = ApplicantHomeAddress.api.get_record(application_id=app_id)
         if api_response.status_code == 200:
             postcode = api_response.record['postcode']
-            context['postcode'] = postcode
-            self.initial['choices'] = AddressHelper.create_address_lookup_list(postcode)
+            kwargs['postcode'] = postcode
+            kwargs['id'] = app_id
+            address_choices = AddressHelper.create_address_lookup_list(postcode)
+            self.initial['choices'] = address_choices
 
-        return context
+        return super(PersonalDetailSelectAddressView, self).get_context_data(**kwargs)
 
 
 class PersonalDetailManualAddressView(BaseFormView):

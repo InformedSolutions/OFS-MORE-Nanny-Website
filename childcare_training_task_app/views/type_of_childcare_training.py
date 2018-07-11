@@ -3,7 +3,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.shortcuts import HttpResponseRedirect, reverse
 from django.views.generic import FormView
 
-from login_app.utils import build_url
+from nanny.utilities import build_url
 
 from childcare_training_task_app.forms import TypeOfChildcareTrainingForm
 
@@ -45,7 +45,7 @@ class TypeOfChildcareTrainingFormView(FormView):
             if settings.DEBUG:
                 raise RuntimeError('The Nanny-Gateway API did not update the record as expected.')
             else:
-                HttpResponseRedirect(reverse('Service-Down'))
+                HttpResponseRedirect(reverse('Service-Unavailable'))
 
     def get_initial(self):
         """

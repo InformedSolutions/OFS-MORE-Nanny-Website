@@ -1,7 +1,7 @@
 from django.http import HttpResponseRedirect
 
 from first_aid_app.views.base import BaseTemplateView, build_url
-from utils import app_id_finder
+from nanny.utilities import app_id_finder
 
 
 from nanny_gateway import NannyGatewayActions

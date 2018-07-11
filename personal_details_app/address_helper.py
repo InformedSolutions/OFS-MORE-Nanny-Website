@@ -26,7 +26,7 @@ class AddressHelper:
         response = requests.get(settings.ADDRESSING_URL + '/api/v1/addresses/' + postcode + '/', headers=headers,
                                 verify=False)
         if response.status_code == 200:
-            address_matches = json.loads(response.text)
+            address_matches = response.json()
             results = address_matches['results']
             count = address_matches['count']
             results_no = str(count) + ' addresses found'
@@ -51,7 +51,7 @@ class AddressHelper:
         response = requests.get(settings.ADDRESSING_URL + '/api/v1/addresses/' + postcode + '/', headers=headers,
                                 verify=False)
         if response.status_code == 200:
-            address_matches = json.loads(response.text)
+            address_matches = response.json()
             results = address_matches['results']
             addresses = []
             for address in results:
