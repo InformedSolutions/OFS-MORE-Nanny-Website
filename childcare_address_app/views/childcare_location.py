@@ -17,22 +17,31 @@ class ChildcareLocationView(BaseFormView):
     def form_valid(self, form):
         # pull the applicant's home address from their personal details
         app_id = self.request.GET['id']
+
+        home_address = None
+        if form.cleaned_data['home_address'] == 'True':
+            home_address = True
+            self.success_url = 'Childcare-Address-Details'
+        elif form.cleaned_data['home_address'] == 'False':
+            home_address = False
+            self.success_url = 'Childcare-Address-Postcode-Entry'
+
         apd_api_response = ApplicantPersonalDetails.api.get_record(application_id=app_id)
+
         if apd_api_response.status_code == 200:
             personal_detail_id = apd_api_response.record['personal_detail_id']
             aha_api_response = ApplicantHomeAddress.api.get_record(
-                personal_detail_id=personal_detail_id,
-                current_address=True
+                personal_detail_id=personal_detail_id
             )
 
             if aha_api_response.status_code == 200:
 
-                # current assumption is that the personal details task will have to be filled out before
-                # the user can complete any other task
                 home_address_record = aha_api_response.record
+                home_address_record['childcare_address'] = home_address
+                ApplicantHomeAddress.api.put(home_address_record)
 
-                # update home address
-                if form.cleaned_data['home_address'] == 'True':
+                # add new childcare address
+                if home_address:
 
                     ChildcareAddress.api.create(
                         model_type=ChildcareAddress,
@@ -45,21 +54,36 @@ class ChildcareLocationView(BaseFormView):
                         country=home_address_record['country'],
                         postcode=home_address_record['postcode']
                     )
-                    home_address_record['childcare_address'] = True
 
-                elif form.cleaned_data['home_address'] == 'False':
-                    home_address_record['childcare_address'] = False
+            # if applicant home address has not been created, do so for purposes of storing childcare location
+            else:
+                ApplicantHomeAddress.api.create(
+                    application_id=app_id,
+                    personal_detail_id=personal_detail_id,
+                    childcare_location=home_address,
+                    model_type=ApplicantHomeAddress
+                )
 
-                ApplicantHomeAddress.api.put(home_address_record)
-
-        if form.cleaned_data['home_address'] == 'True':
-            self.success_url = 'Childcare-Address-Details'
-
-        elif form.cleaned_data['home_address'] == 'False':
-            self.success_url = 'Childcare-Address-Postcode-Entry'
+        # if personal details has not been created, do so for purposes of storing childcare location
+        else:
+            apd_api_response_create = ApplicantPersonalDetails.api.create(
+                application_id=app_id,
+                model_type = ApplicantPersonalDetails
+            )
+            if apd_api_response_create.status_code == 201:
+                apd_api_response_get = ApplicantPersonalDetails.api.get_record(
+                    application_id=app_id
+                )
+                if apd_api_response_get.status_code == 200:
+                    record = apd_api_response_get.record
+                    ApplicantHomeAddress.api.create(
+                        application_id=app_id,
+                        personal_detail_id=record['personal_detail_id'],
+                        childcare_location=home_address,
+                        model_type=ApplicantHomeAddress
+                    )
 
         return super(ChildcareLocationView, self).form_valid(form)
-
 
     def get_initial(self):
         initial = super().get_initial()
