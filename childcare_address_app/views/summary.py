@@ -53,10 +53,11 @@ class ChildcareAddressSummaryView(View):
         home_address_resp = ApplicantHomeAddress.api.get_record(application_id=app_id)
         if home_address_resp.status_code == 200:
             home_address = home_address_resp.record['childcare_address']
-            if home_address:
-                context['home_address'] = 'Yes'
-            else:
-                context['home_address'] = 'No'
+            if home_address is not None:
+                if home_address:
+                    context['home_address'] = 'Yes'
+                else:
+                    context['home_address'] = 'No'
 
         return render(request, template_name='childcare-address-summary.html', context=context)
 
