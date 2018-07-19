@@ -44,7 +44,7 @@ class NewUserSignInFormView(BaseFormView):
         # Send an example email from the CM application login journey.
         notify.send_email(email=email_address,
                           personalisation={"link": validation_link},
-                          template_id='ecd2a788-257b-4bb9-8784-5aed82bcbb92')
+                          template_id='45c6b63e-1973-45e5-99d7-25f2877bebd9')
 
         return HttpResponseRedirect(self.get_success_url())
 
