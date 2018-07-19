@@ -4,6 +4,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import reverse
 
 from identity_models.user_details import UserDetails
+from nanny_models.applicant_personal_details import ApplicantPersonalDetails
 
 from login_app.forms import ContactEmailForm
 from nanny import notify
@@ -44,7 +45,7 @@ class ExistingUserSignInFormView(BaseFormView):
         # Send an example email from the CM application login journey.
         notify.send_email(email=email_address,
                           personalisation={"link": validation_link},
-                          template_id='ecd2a788-257b-4bb9-8784-5aed82bcbb92')
+                          template_id='5d983266-7efa-4978-9d4c-9099ed6ece28')
 
         return HttpResponseRedirect(self.get_success_url())
 
