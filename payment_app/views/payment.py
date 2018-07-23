@@ -126,10 +126,9 @@ def card_payment_post_handler(request):
         expiry_year = '20' + request.POST["expiry_date_1"]
 
         # Invoke Payment Gateway API
-        create_payment_response = payment_service.make_payment(
-            10300, cardholders_name, card_number, card_security_code,
-            expiry_month, expiry_year, 'GBP', payment_reference,
-            'Ofsted Fees')
+        create_payment_response = payment_service.make_payment(10300, cardholders_name, card_number, card_security_code,
+                                                               expiry_month, expiry_year, 'GBP', payment_reference,
+                                                               'Ofsted Fees')
 
         if create_payment_response.status_code == 201:
 
@@ -269,7 +268,6 @@ def __create_payment_record(application, application_reference):
 
         logger.info('Updating payment record with generated reference '
                     'for application with id: ' + application_id)
-
 
         Payment.api.create(
             application_id=application_id,

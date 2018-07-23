@@ -10,6 +10,7 @@ import logging
 import time
 from urllib.parse import quote
 from nanny_models.dbs_check import DbsCheck
+from nanny_models.applicant_personal_details import ApplicantPersonalDetails
 from nanny_models.payment import Payment
 from nanny.notify import send_email
 
@@ -83,14 +84,30 @@ def payment_email(email, name, application_reference, application_id):
     """
     logger.debug('Dispatching payment confirmation email for application with identifier: ' + application_id)
 
-    template_id = '2cd5f1c5-4900-4922-a627-a0d1f674136b'
+    # If the applicant has neither cautions and convictions nor lived abroad
+    template_id = 'beb79a5f-97e8-47d2-afda-ae914f02cdaa'
+
+    # Check for cautions and convictions, and whether the applicant has lived abroad
     try:
         dbs_record = DbsCheck.api.get_record(application_id=application_id).record
         conviction = dbs_record['convictions']
     except DbsCheck.DoesNotExist:
         conviction = False
-    if conviction is True:
-        template_id = 'c7500574-df3c-4df1-b7f7-8755f6b61c7f'
+
+    personal_details_record = ApplicantPersonalDetails.api.get_record(application_id=application_id).record
+    lived_abroad = personal_details_record['lived_abroad']
+
+    # If the applicant has cautions and convictions and has lived abroad
+    if conviction is True and lived_abroad is True:
+        template_id = 'fa1955dd-f252-4edf-85d1-b6ba7a9061c8'
+
+    # If the applicant has cautions and convictions but has not lived abroad
+    if conviction is True and lived_abroad is False:
+        template_id = 'a7fe3279-7589-44e0-81a7-b05931fb2588'
+
+    # If the applicant has no cautions and convictions but has lived abroad
+    if conviction is False and lived_abroad is True:
+        template_id = 'b4b9e666-846b-48de-8e72-9901ab5474f0'
 
     response = send_email(email, {"firstName": name, "ref": application_reference}, template_id)
     return response
