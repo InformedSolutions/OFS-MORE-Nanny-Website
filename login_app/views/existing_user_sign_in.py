@@ -4,7 +4,6 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import reverse
 
 from identity_models.user_details import UserDetails
-from nanny_models.applicant_personal_details import ApplicantPersonalDetails
 
 from login_app.forms import ContactEmailForm
 from nanny import notify
