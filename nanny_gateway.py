@@ -10,7 +10,7 @@ class NannyGatewayActions:
 
     def list(self, endpoint, params):
         action = [endpoint, 'list']
-        return self.client.action(self.document, action, params=params, overrides={'url': self.target_url_prefix + endpoint + '/' + params['application_id'] + '/'})
+        return self.client.action(self.document, action, params=params)
 
     def read(self, endpoint, params):
         action = [endpoint, 'read']
@@ -18,7 +18,7 @@ class NannyGatewayActions:
 
     def create(self, endpoint, params):
         action = [endpoint, 'create']
-        return self.client.action(self.document, action, params=params, overrides={'url': self.target_url_prefix + endpoint + '/' + params['application_id'] + '/'})
+        return self.client.action(self.document, action, params=params)
 
     def patch(self, endpoint, params):
         action = [endpoint, 'partial_update']
