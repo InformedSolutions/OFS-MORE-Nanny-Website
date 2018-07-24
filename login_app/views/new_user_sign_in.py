@@ -42,7 +42,8 @@ class NewUserSignInFormView(BaseFormView):
         UserDetails.api.put(record)
 
         # Send Nanny login email for new users
-        notify.send_email(email=email_address,
+        notify.send_email(service_name='Nannies',
+                          email=email_address,
                           personalisation={"link": validation_link},
                           template_id='45c6b63e-1973-45e5-99d7-25f2877bebd9')
 

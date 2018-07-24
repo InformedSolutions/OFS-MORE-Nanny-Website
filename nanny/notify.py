@@ -5,9 +5,10 @@ import requests
 from django.conf import settings
 
 
-def send_email(email, personalisation, template_id):
+def send_email(service_name, email, personalisation, template_id):
     """
     Method to send an email using the Notify Gateway API
+    :param service_name: string containing the name of the Notify service to use
     :param email: string containing the e-mail address to send the e-mail to
     :param personalisation: object containing the personalisation related to an application
     :param template_id: string containing the templateId of the notification request
@@ -29,6 +30,7 @@ def send_email(email, personalisation, template_id):
             pass
 
     notification_request = {
+        'service_name': service_name,
         'email': email,
         'personalisation': personalisation,
         'templateId': template_id
