@@ -48,19 +48,21 @@
             </a>
         </td>
     </tr>
-    <tr>
-        <td style="word-wrap: break-word" class=summary-column>
-            Do you work and live at the same address?
-        </td>
-        <td style="word-wrap: break-word" class=summary-column>
-            {{ home_address }}
-        </td>
-        <td class="change-answer">
-            <a href="{% url 'Childcare-Address-Location' %}?id={{id}}" alt='Change answer to working and living at the same address'>
-                Change <span class="visuallyhidden">answer to working and living at the same address</span>
-            </a>
-        </td>
-    </tr>
+    {% if home_address %}
+        <tr>
+            <td style="word-wrap: break-word" class=summary-column>
+                Do you work and live at the same address?
+            </td>
+            <td style="word-wrap: break-word" class=summary-column>
+                {{ home_address }}
+            </td>
+            <td class="change-answer">
+                <a href="{% url 'Childcare-Address-Location' %}?id={{id}}" alt='Change answer to working and living at the same address'>
+                    Change <span class="visuallyhidden">answer to working and living at the same address</span>
+                </a>
+            </td>
+        </tr>
+    {% endif %}
     {% for record in records %}
         <tr>
             <td style="word-wrap: break-word" class=summary-column>
@@ -83,7 +85,7 @@
 
 <form method="post" novalidate>
     <input type="hidden" id="id" value="{{ id }}" name="id"/>
-    <input type="submit" class="button" value="Continue" alt='Continue'>
+    <input type="submit" class="button" value="Confirm and continue" alt='Continue'>
     {% csrf_token %}
 </form>
 
