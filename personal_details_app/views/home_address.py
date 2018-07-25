@@ -1,14 +1,13 @@
-from django.views.decorators.cache import never_cache
+from coreapi.exceptions import ErrorMessage
 
 from .BASE import *
 from ..forms.home_address import HomeAddressForm, HomeAddressLookupForm, HomeAddressManualForm
-from ..utils import app_id_finder, build_url
+from ..utils import app_id_finder
 from ..address_helper import *
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
-from nanny_models.applicant_home_address import *
-from nanny_models.applicant_personal_details import *
+from nanny_gateway import NannyGatewayActions
 
 
 class PersonalDetailHomeAddressView(BaseFormView):
@@ -23,23 +22,27 @@ class PersonalDetailHomeAddressView(BaseFormView):
         return context
 
     def form_valid(self, form):
-
         application_id = app_id_finder(self.request)
         postcode = form.cleaned_data['postcode']
 
-        api_response = ApplicantHomeAddress.api.get_record(application_id=application_id)
-        if api_response.status_code == 200:
-            address_record = api_response.record
+        # update the address record if it already existed
+        try:
+            address_record = NannyGatewayActions().read('applicant-home-address', params={'application_id': application_id})
             address_record['postcode'] = postcode
-            ApplicantHomeAddress.api.put(address_record)
-        else:
-            personal_details = ApplicantPersonalDetails.api.get_record(application_id=application_id).record
-            ApplicantHomeAddress.api.create(
-                application_id=application_id,
-                personal_detail_id=personal_details['personal_detail_id'],
-                postcode=postcode,
-                model_type=ApplicantHomeAddress
-            )
+            NannyGatewayActions().patch('applicant-home-address', address_record)
+
+        # create the address record if it didn't exist
+        except ErrorMessage as e:
+            if e.error.title == '404 Not Found':
+                personal_details_record = NannyGatewayActions().read('applicant-personal-details', params={'application_id': application_id})
+                address_record = {
+                    'application_id': application_id,
+                    'personal_detail_id': personal_details_record['personal_detail_id'],
+                    'postcode': postcode
+                }
+                NannyGatewayActions().create('applicant-home-address', params=address_record)
+            else:
+                raise e
 
         return super().form_valid(form)
 
@@ -53,27 +56,27 @@ class PersonalDetailSelectAddressView(BaseFormView):
     def form_valid(self, form):
         app_id = app_id_finder(self.request)
         selected_address_index = form.cleaned_data['address']
-        api_response = ApplicantHomeAddress.api.get_record(application_id=app_id)
-        if api_response.status_code == 200:
-            record = api_response.record
-            selected_address = AddressHelper.get_posted_address(selected_address_index, record['postcode'])
-            record['street_line1'] = selected_address['line1']
-            record['street_line2'] = selected_address['line2']
-            record['town'] = selected_address['townOrCity']
-            record['county'] = None
-            record['postcode'] = selected_address['postcode']
-            ApplicantHomeAddress.api.put(record)  # Update entire record.
+
+        record = NannyGatewayActions().read('applicant-home-addresss', params={'application_id': app_id})
+        selected_address = AddressHelper.get_posted_address(selected_address_index, record['postcode'])
+        record['street_line1'] = selected_address['line1']
+        record['street_line2'] = selected_address['line2']
+        record['town'] = selected_address['townOrCity']
+        record['county'] = None
+        record['postcode'] = selected_address['postcode']
+        NannyGatewayActions().patch('applicant-home-address', params=record)
+
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
         app_id = app_id_finder(self.request)
-        api_response = ApplicantHomeAddress.api.get_record(application_id=app_id)
-        if api_response.status_code == 200:
-            postcode = api_response.record['postcode']
-            kwargs['postcode'] = postcode
-            kwargs['id'] = app_id
-            address_choices = AddressHelper.create_address_lookup_list(postcode)
-            self.initial['choices'] = address_choices
+
+        record = NannyGatewayActions().read('applicant-home-address', params={'application_id': app_id})
+        postcode =record['postcode']
+        kwargs['postcode'] = postcode
+        kwargs['id'] = app_id
+        address_choices = AddressHelper.create_address_lookup_list(postcode)
+        self.initial['choices'] = address_choices
 
         return super(PersonalDetailSelectAddressView, self).get_context_data(**kwargs)
 
@@ -88,27 +91,29 @@ class PersonalDetailManualAddressView(BaseFormView):
         initial = super().get_initial()
         app_id = app_id_finder(self.request)
 
-        api_response = ApplicantHomeAddress.api.get_record(application_id=app_id)
-        if api_response.status_code == 200:
-            initial['street_line1'] = api_response.record['street_line1']
-            initial['street_line2'] = api_response.record['street_line2']
-            initial['town'] = api_response.record['town']
-            initial['county'] = api_response.record['county']
-            initial['postcode'] = api_response.record['postcode']
+        try:
+            record = NannyGatewayActions().read('applicant-home-address', params={'application_id': app_id})
+            initial['street_line1'] = record['street_line1']
+            initial['street_line2'] = record['street_line2']
+            initial['town'] = record['town']
+            initial['county'] = record['county']
+            initial['postcode'] = record['postcode']
+        except ErrorMessage as e:
+            if e.error.title == '404 Not Found':
+                pass
+            else:
+                raise e
 
         return initial
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         app_id = app_id_finder(self.request)
-
         context['id'] = app_id
-
         return context
 
     def form_valid(self, form):
         app_id = app_id_finder(self.request)
-        api_response = ApplicantHomeAddress.api.get_record(application_id=app_id)
         street_line1 = form.cleaned_data['street_line1']
         street_line2 = form.cleaned_data['street_line2']
         town = form.cleaned_data['town']
@@ -116,30 +121,31 @@ class PersonalDetailManualAddressView(BaseFormView):
         postcode = form.cleaned_data['postcode']
 
         # update the address record if it already existed
-        if api_response.status_code == 200:
-            record = api_response.record
-            record['street_line1'] = street_line1
-            record['street_line2'] = street_line2
-            record['town'] = town
-            record['county'] = county
-            record['postcode'] = postcode
-            ApplicantHomeAddress.api.put(record)
+        try:
+            address_record = NannyGatewayActions().read('applicant-home-address', params={'application_id': app_id})
+            address_record['street_line1'] = street_line1
+            address_record['street_line2'] = street_line2
+            address_record['town'] = town
+            address_record['county'] = county
+            address_record['postcode'] = postcode
+            NannyGatewayActions().patch('applicant-home-address', address_record)
 
         # create the address record if it didn't exist
-        elif api_response.status_code == 404:
-            apd_response = ApplicantPersonalDetails.api.get_record(application_id=app_id)
-            if apd_response.status_code == 200:
-                pd_id = apd_response.record['personal_detail_id']
-                ApplicantHomeAddress.api.create(
-                    application_id=app_id,
-                    personal_detail_id=pd_id,
-                    street_line1=street_line1,
-                    street_line2=street_line2,
-                    town=town,
-                    county=county,
-                    postcode=postcode,
-                    model_type=ApplicantHomeAddress
-                )
+        except ErrorMessage as e:
+            if e.error.title == '404 Not Found':
+                personal_details_record = NannyGatewayActions().read('applicant-personal-details', params={'application_id': app_id})
+                address_record = {
+                    'application_id': app_id,
+                    'personal_detail_id': personal_details_record['personal_detail_id'],
+                    'street_line1': street_line1,
+                    'street_line2': street_line2,
+                    'town': town,
+                    'county': county,
+                    'postcode': postcode,
+                }
+                NannyGatewayActions().create('applicant-home-address', params=address_record)
+            else:
+                raise e
 
         return super().form_valid(form)
 
@@ -152,9 +158,8 @@ class PersonalDetailSummaryAddressView(BaseTemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         app_id = app_id_finder(self.request)
-        api_response = ApplicantHomeAddress.api.get_record(application_id=app_id)
-        if api_response.status_code == 200:
-            context['address'] = AddressHelper.format_address(api_response.record, ", ")
+        address_record = NannyGatewayActions().read('applicant-home-address', params={'application_id': app_id})
+        context['address'] = AddressHelper.format_address(address_record, ", ")
         context['id'] = app_id
         return context
 
