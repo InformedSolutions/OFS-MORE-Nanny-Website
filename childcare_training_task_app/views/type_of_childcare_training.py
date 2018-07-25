@@ -7,7 +7,7 @@ from nanny.utilities import build_url
 
 from childcare_training_task_app.forms import TypeOfChildcareTrainingForm
 
-from nanny_models.childcare_training import ChildcareTraining
+from nanny_gateway import NannyGatewayActions
 
 
 class TypeOfChildcareTrainingFormView(FormView):
@@ -20,12 +20,15 @@ class TypeOfChildcareTrainingFormView(FormView):
 
     def form_valid(self, form):
         application_id = self.request.GET['id']
-        nanny_api_response = ChildcareTraining.api.get_record(application_id=application_id)
 
-        if nanny_api_response.status_code == 404:
-            nanny_api_response = self.create_childcare_training_record()
+        try:
+            record = NannyGatewayActions().read('childcare-training', params={'application_id': application_id})
+        except Exception as e:
+            if e.error.title == '404 Not Found':
+                record = NannyGatewayActions().create('childcare-training', params={'application_id': application_id})
+            else:
+               raise e
 
-        record = nanny_api_response.record
         childcare_training = form.cleaned_data['childcare_training']
 
         for option, option_text in TypeOfChildcareTrainingForm.options:
@@ -34,37 +37,28 @@ class TypeOfChildcareTrainingFormView(FormView):
             else:
                 record[option] = False
 
-        put_response = ChildcareTraining.api.put(record=record)
+        NannyGatewayActions().patch('childcare-training', params=record)
 
         if record['no_training']:  # If they have selected only 'No training' (wouldn't pass validation otherwise)
             self.success_url = 'Childcare-Training-Course'
 
-        if put_response.status_code == 200:
-            return super(TypeOfChildcareTrainingFormView, self).form_valid(form)
-        else:
-            if settings.DEBUG:
-                raise RuntimeError('The Nanny-Gateway API did not update the record as expected.')
-            else:
-                HttpResponseRedirect(reverse('Service-Unavailable'))
+        return super(TypeOfChildcareTrainingFormView, self).form_valid(form)
 
     def get_initial(self):
         """
         Method to get initial data with which to populate the form.
         """
         application_id = self.request.GET['id']
-        nanny_api_response = ChildcareTraining.api.get_record(application_id=application_id)
-        if nanny_api_response.status_code == 404:
-            return {}
-        elif nanny_api_response.status_code == 200:
-            kwargs = dict((option, nanny_api_response.record[option]) for option, option_text in TypeOfChildcareTrainingForm.options)
-            return kwargs
-        else:
-            raise RuntimeError('The Nanny-Gateway API did not respond as expected.')
 
-    def create_childcare_training_record(self):
-        application_id = self.request.GET['id']
-        ChildcareTraining.api.create(application_id=application_id, model_type=ChildcareTraining)
-        return ChildcareTraining.api.get_record(application_id=application_id)
+        try:
+            record = NannyGatewayActions().read('childcare-training', params={'application_id': application_id})
+            kwargs = dict((option, record[option]) for option, option_text in TypeOfChildcareTrainingForm.options)
+            return kwargs
+        except Exception as e:
+            if e.error.title == '404 Not Found':
+                return {}
+            else:
+               raise e
 
     def get_success_parameters(self):
         """
