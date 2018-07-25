@@ -95,7 +95,7 @@ def test_notify_connection():
             'personalisation': {
                 'link': 'test'
             },
-            'templateId': 'ecd2a788-257b-4bb9-8784-5aed82bcbb92'
+            'templateId': '45c6b63e-1973-45e5-99d7-25f2877bebd9'
         }
         r = req.post(settings.NOTIFY_URL + '/api/v1/notifications/email/',
                      json.dumps(notification_request),
