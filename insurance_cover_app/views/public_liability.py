@@ -1,7 +1,8 @@
 from nanny.base_views import *
 from nanny.utilities import *
 from ..forms.public_liability import PublicLiabilityForm
-from nanny_models.insurance_cover import *
+
+from nanny_gateway import NannyGatewayActions
 
 
 class PublicLiabilityView(NannyFormView):
@@ -13,28 +14,30 @@ class PublicLiabilityView(NannyFormView):
         initial = super().get_initial()
         app_id = app_id_finder(self.request)
 
-        api_response = InsuranceCover.api.get_record(application_id=app_id)
-        if api_response.status_code == 200:
-            initial['public_liability'] = api_response.record['public_liability']
+        try:
+            record = NannyGatewayActions().read('insurance-cover', params={'application_id': app_id})
+            initial['public_liability'] = record['public_liability']
+        except Exception as e:
+            if e.error.title == '404 Not Found':
+                pass
+            else:
+                raise e
 
         return initial
 
     def form_valid(self, form):
         app_id = app_id_finder(self.request)
         public_liability = form.cleaned_data['public_liability']
-        api_response = InsuranceCover.api.get_record(application_id=app_id)
 
-        if api_response.status_code == 200:
-            record = api_response.record
-            record['public_liability'] = public_liability
-            InsuranceCover.api.put(record)
-
-        elif api_response.status_code == 404:
-            InsuranceCover.api.create(
-                application_id=app_id,
-                public_liability=public_liability,
-                model_type=InsuranceCover
-            )
+        try:
+            NannyGatewayActions().patch('insurance-cover', params={'application_id': app_id,
+                                                                 'public_liability': public_liability})
+        except Exception as e:
+            if e.error.title == '404 Not Found':
+                NannyGatewayActions().create('insurance-cover', params={'application_id': app_id,
+                                                                        'public_liability': public_liability})
+            else:
+                raise e
 
         if public_liability == 'True':
             self.success_url = 'insurance:Summary'
@@ -42,10 +45,8 @@ class PublicLiabilityView(NannyFormView):
             self.success_url = 'insurance:Insurance-Cover'
 
         # set status of insurance cover task to 'in progress'
-        app_api_response = NannyApplication.api.get_record(application_id=app_id)
-        if app_api_response.status_code == 200:
-            record = app_api_response.record
-            record['insurance_cover_status'] = 'IN_PROGRESS'
-            NannyApplication.api.put(record)
+        record = NannyGatewayActions().read('application', params={'application_id': app_id})
+        record['insurance_cover_status'] = 'IN_PROGRESS'
+        NannyGatewayActions().put('application', params=record)
 
         return super(PublicLiabilityView, self).form_valid(form)
