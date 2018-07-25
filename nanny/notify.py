@@ -29,6 +29,7 @@ def send_email(email, personalisation, template_id):
             pass
 
     notification_request = {
+        'service_name': 'Nannies',
         'email': email,
         'personalisation': personalisation,
         'templateId': template_id
