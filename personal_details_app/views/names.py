@@ -1,9 +1,9 @@
-from nanny_models.nanny_application import NannyApplication
-from nanny_models.applicant_personal_details import ApplicantPersonalDetails
+from coreapi.exceptions import ErrorMessage
 
 from .BASE import BaseFormView
 from ..forms.name import PersonalDetailsNameForm
 
+from nanny_gateway import NannyGatewayActions
 
 from ..utils import app_id_finder
 
@@ -20,21 +20,18 @@ class PersonalDetailNameView(BaseFormView):
         :return: a dictionary mapping form field names, to values of the correct type
         """
         initial = super().get_initial()
-
         application_id = app_id_finder(self.request)
+
         try:
-            response = ApplicantPersonalDetails.api.get_record(application_id=application_id)
-            if response.status_code == 200:
-                personal_details_record = response.record
-            elif response.status_code == 404:
-                return initial
-            print(response.status_code)
-        except TypeError:
-            return initial
-        initial['first_name'] = personal_details_record['first_name']
-        initial['middle_names'] = personal_details_record['middle_names']
-        initial['last_name'] = personal_details_record['last_name']
-        # If there has yet to be an entry for the model associated with the form, then no population necessary
+            personal_details_record = NannyGatewayActions().read('applicant-personal-details', params={'application_id': application_id})
+            initial['first_name'] = personal_details_record['first_name']
+            initial['middle_names'] = personal_details_record['middle_names']
+            initial['last_name'] = personal_details_record['last_name']
+        except ErrorMessage as e:
+            if e.error.title == '404 Not Found':
+                pass
+            else:
+                raise e
 
         return initial
 
@@ -44,11 +41,10 @@ class PersonalDetailNameView(BaseFormView):
         return context
 
     def form_valid(self, form):
-
         application_id = app_id_finder(self.request)
-        application_record = NannyApplication.api.get_record(application_id=application_id).record
+        application_record = NannyGatewayActions().read('application', params={'application_id': application_id})
         application_record['personal_details_status'] = 'IN_PROGRESS'
-        NannyApplication.api.put(application_record)
+        NannyGatewayActions().put('application', application_record)
 
         data_dict = {
             'application_id': application_id,
@@ -57,11 +53,12 @@ class PersonalDetailNameView(BaseFormView):
             'last_name': form.cleaned_data['last_name'],
         }
 
-        existing_record = ApplicantPersonalDetails.api.get_record(application_id=application_id)
-        if existing_record.status_code == 200:
-            del data_dict['application_id']
-            ApplicantPersonalDetails.api.put({**existing_record.record, **data_dict})
-        elif existing_record.status_code == 404:
-            ApplicantPersonalDetails.api.create(**data_dict, model_type=ApplicantPersonalDetails)
+        try:
+            NannyGatewayActions().put('applicant-personal-details', params=data_dict)
+        except ErrorMessage as e:
+            if e.error.title == '404 Not Found':
+                NannyGatewayActions().create('applicant-personal-details', params=data_dict)
+            else:
+                raise e
 
         return super().form_valid(form)
