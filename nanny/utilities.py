@@ -91,6 +91,7 @@ def test_notify_connection():
         header = {'content-type': 'application/json'}
         req = requests.Session()
         notification_request = {
+            'service_name': 'Nannies',
             'email': 'simulate-delivered@notifications.service.gov.uk',
             'personalisation': {
                 'link': 'test'
