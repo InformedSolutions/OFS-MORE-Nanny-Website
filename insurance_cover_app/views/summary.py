@@ -26,7 +26,7 @@ class SummaryView(BaseTemplateView):
 
         # update task status to be done
         record = NannyGatewayActions().read('application', params={'application_id': app_id})
-        NannyGatewayActions().put('application', params=record)
         record['insurance_cover_status'] = 'COMPLETED'
+        NannyGatewayActions().put('application', params=record)
 
         return HttpResponseRedirect(build_url('Task-List', get={'id': app_id}))
