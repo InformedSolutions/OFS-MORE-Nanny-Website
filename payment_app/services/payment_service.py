@@ -84,9 +84,6 @@ def payment_email(email, name, application_reference, application_id):
     """
     logger.debug('Dispatching payment confirmation email for application with identifier: ' + application_id)
 
-    # Set service name to use Nannies Notify API key
-    service_name = 'Nannies'
-
     # If the applicant has neither cautions and convictions nor lived abroad
     template_id = 'beb79a5f-97e8-47d2-afda-ae914f02cdaa'
 
@@ -112,7 +109,7 @@ def payment_email(email, name, application_reference, application_id):
     if conviction is False and lived_abroad is True:
         template_id = 'b4b9e666-846b-48de-8e72-9901ab5474f0'
 
-    response = send_email(service_name, email, {"firstName": name, "ref": application_reference}, template_id)
+    response = send_email(email, {"firstName": name, "ref": application_reference}, template_id)
     return response
 
 
