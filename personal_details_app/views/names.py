@@ -54,7 +54,7 @@ class PersonalDetailNameView(BaseFormView):
         }
 
         try:
-            NannyGatewayActions().put('applicant-personal-details', params=data_dict)
+            NannyGatewayActions().patch('applicant-personal-details', params=data_dict)
         except ErrorMessage as e:
             if e.error.title == '404 Not Found':
                 NannyGatewayActions().create('applicant-personal-details', params=data_dict)
