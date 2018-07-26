@@ -47,7 +47,7 @@ def capture_screenshot(func):
     scr.screenshot('selenium/screenshot-%s-%s.png' % (func.__name__, now))
 
 
-@tag('ragha')
+@tag('smoke')
 @override_settings(ALLOWED_HOSTS=['*'])
 class ApplyAsANanny(LiveServerTestCase):
     port = 8000
@@ -123,7 +123,6 @@ class ApplyAsANanny(LiveServerTestCase):
         Tests that a user is directed toward guidance advising them to contact their local authority if
         the ages of children they are minding does not
         """
-        # time.sleep(1232)
         self.task_executor.navigate_to_base_url()
         self.complete_full_question_set()
 
@@ -165,27 +164,14 @@ class ApplyAsANanny(LiveServerTestCase):
     def complete_childcare_address_task(self):
         driver = self.task_executor.get_driver()
         self.assertEqual("To do", driver.find_element_by_xpath("//tr[@id='childcare_address']/td/a/strong").text)
-        # driver.find_element_by_xpath("//tr[@id='childcare_address']/td/a/span").click()
         self.task_executor.click_element_by_xpath("//tr[@id='childcare_address']/td/a/span")
-        # driver.find_element_by_xpath("//input[@value='Continue']").click()
         self.task_executor.click_element_by_xpath("//input[@value='Continue']")
-        # driver.find_element_by_id("id_address_to_be_provided_0").click()
         self.task_executor.click_element_by_id("id_address_to_be_provided_0")
-        # driver.find_element_by_xpath("//input[@value='Save and continue']").click()
         self.task_executor.click_element_by_xpath("//input[@value='Save and continue']")
-        # driver.find_element_by_id("id_home_address_0").click()
         self.task_executor.click_element_by_id("id_home_address_0")
-        # driver.find_element_by_xpath("//input[@value='Save and continue']").click()
         self.task_executor.click_element_by_xpath("//input[@value='Save and continue']")
-        # driver.find_element_by_xpath("//main[@id='content']/div/form/p").click()
-        # driver.find_element_by_xpath("//main[@id='content']/div/form/p").click()
-        # driver.find_element_by_xpath("//input[@value='Save and continue']").click()
-        # self.task_executor.click_element_by_xpath("//input[@value='Save and continue']")
-        # self.waitUntilPageLoad("Check your answers: childcare address")
-        self.assertPageTitleAtTaskSummaryPage("Check your answers: childcare address")
-        # self.assertEqual("Check your answers: childcare address", driver.title)
-        # driver.find_element_by_xpath("//input[@value='Confirm and continue']").click()
-        self.task_executor.click_element_by_xpath("//input[@value='Confirm and continue']")
+        self.task_executor.click_element_by_xpath("//input[@value='Save and continue']")
+        self.task_executor.click_element_by_xpath("//input[@value='Continue']")
         self.assertEqual("Done", driver.find_element_by_xpath("//tr[@id='childcare_address']/td/a/strong").text)
 
     def complete_your_personal_details(self):
@@ -214,8 +200,8 @@ class ApplyAsANanny(LiveServerTestCase):
         driver.find_element_by_name("action").click()
         driver.find_element_by_id("id_lived_abroad_1").click()
         driver.find_element_by_name("action").click()
-        time.sleep(3)
-        self.assertEqual("Check your answers: your personal details", driver.title)
+        self.assertPageTitleAtTaskSummaryPage("Check your answers: your personal details")
+        # self.assertEqual("Check your answers: your personal details", driver.title)
         self.task_executor.click_element_by_xpath("//input[@value='Confirm and continue']")
         # driver.find_element_by_xpath("//input[@value='Confirm and continue']").click()
         self.waitUntilPageLoad(page_title)
@@ -255,10 +241,8 @@ class ApplyAsANanny(LiveServerTestCase):
         driver.find_element_by_id("id_childcare_training_0").click()
         driver.find_element_by_id("id_childcare_training_1").click()
         driver.find_element_by_id("id_continue").click()
-        time.sleep(3)
         self.assertEqual("Check your answers: childcare training", driver.title)
         driver.find_element_by_id("id_continue").click()
-        time.sleep(2)
         self.assertEqual("Done", driver.find_element_by_xpath("//tr[@id='childcare_training']/td/a/strong").text)
 
     def complete_criminal_record_check_task(self):
@@ -276,7 +260,6 @@ class ApplyAsANanny(LiveServerTestCase):
 
     def complete_insurance_cover_task(self):
         driver = self.task_executor.get_driver()
-        time.sleep(5)
         self.assertEqual("To do", driver.find_element_by_xpath("//tr[@id='insurance_cover']/td/a/strong").text)
         driver.find_element_by_xpath("//tr[@id='insurance_cover']/td/a/span").click()
         driver.find_element_by_link_text("Continue").click()
@@ -285,9 +268,6 @@ class ApplyAsANanny(LiveServerTestCase):
         self.waitUntilPageLoad("Check your answers: insurance cover")
         self.assertEqual("Check your answers: insurance cover", driver.title)
         driver.find_element_by_id("id_continue").click()
-        driver.find_element_by_id("content").click()
-        # self.waitUntilPageLoad("Register as a nanny")
-        time.sleep(5)
         self.assertEqual("Done", driver.find_element_by_xpath("//tr[@id='insurance_cover']/td/a/strong").text)
 
     def complete_declaration_and_payment_task(self):
