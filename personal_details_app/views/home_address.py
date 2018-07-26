@@ -57,7 +57,7 @@ class PersonalDetailSelectAddressView(BaseFormView):
         app_id = app_id_finder(self.request)
         selected_address_index = form.cleaned_data['address']
 
-        record = NannyGatewayActions().read('applicant-home-addresss', params={'application_id': app_id})
+        record = NannyGatewayActions().read('applicant-home-address', params={'application_id': app_id})
         selected_address = AddressHelper.get_posted_address(selected_address_index, record['postcode'])
         record['street_line1'] = selected_address['line1']
         record['street_line2'] = selected_address['line2']
