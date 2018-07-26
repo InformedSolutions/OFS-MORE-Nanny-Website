@@ -1,8 +1,8 @@
-from django.shortcuts import render
 from .base import BaseTemplateView
 from django.urls import reverse
 from django.http import HttpResponseRedirect
-from nanny_models.nanny_application import *
+
+from nanny_gateway import NannyGatewayActions
 
 
 class AddressDetailsLaterView(BaseTemplateView):
@@ -20,10 +20,7 @@ class AddressDetailsLaterView(BaseTemplateView):
     def post(self, request):
         app_id = request.POST['id']
         # update the task status to be done
-        api_response = NannyApplication.api.get_record(
-            application_id=app_id
-        )
-        api_response.record['childcare_address_status'] = 'COMPLETED'
-        NannyApplication.api.put(api_response.record)
+        record = NannyGatewayActions().read('application', params={'application_id': app_id})
+        record['childcare_address_status'] = 'COMPLETED'
+        NannyGatewayActions().put('application', params=record)
         return HttpResponseRedirect(reverse('Task-List') + "?id=" + app_id)
-
