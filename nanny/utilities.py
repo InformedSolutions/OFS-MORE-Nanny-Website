@@ -60,7 +60,7 @@ def authenticate(application_id):
 
 def test_notify():
     # If running exclusively as a test return true to avoid overuse of the notify API
-    if settings.EXECUTING_AS_TEST:
+    if settings.EXECUTING_AS_TEST == 'True':
         return True
 
     if test_notify_connection():
@@ -101,7 +101,8 @@ def test_notify_connection():
         r = req.post(settings.NOTIFY_URL + '/api/v1/notifications/email/',
                      json.dumps(notification_request),
                      headers=header, timeout=10)
-        if r.status_code == 201:
+        # both potentially legitimate status codes, depending on which api key is being used
+        if r.status_code == 201 or r.status_code == 400:
             return True
     except Exception as ex:
         print(ex)
