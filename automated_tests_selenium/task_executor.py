@@ -4,13 +4,14 @@ import random
 import time
 from unittest import mock
 
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
 
 
-class SeleniumTaskExecutor:
+class TaskExecutor:
     """
     Helper class for executing reusable selenium steps
     """
@@ -68,17 +69,6 @@ class SeleniumTaskExecutor:
         driver = self.get_driver()
         driver.get(self.__base_url)
 
-    def register_email_address(self, email_address):
-        """
-        Selenium steps for registering an email address against an application
-        """
-        driver = self.get_driver()
-        driver.find_element_by_xpath("//input[@value='Sign in']").click()
-        driver.find_element_by_id("id_acc_selection_0-label").click()
-        driver.find_element_by_xpath("//input[@value='Continue']").click()
-
-        driver.find_element_by_id("id_email_address").send_keys(email_address)
-        driver.find_element_by_xpath("//input[@value='Continue']").click()
 
     def sign_back_in(self, email_address):
         """
@@ -142,7 +132,62 @@ class SeleniumTaskExecutor:
     def complete_mandatory_registration(self):
         pass
 
+    def complete_your_login_details(self, email_address, phone_number, additional_phone_number):
+        """
+        Selenium steps to create a new application by completing the login details task
+        :param email_address: the email address to be registered
+        :param phone_number: the phone number to be registered
+        :param additional_phone_number: an optional additional phone number to be registered
+        """
+        self.register_email_address(email_address)
+        self.navigate_to_email_validation_url()
 
+        driver = self.get_driver()
+
+        # driver.find_element_by_id("id_mobile_number").send_keys(phone_number)
+        self.type_into_field_by_id("id_mobile_number", phone_number)
+
+        if additional_phone_number is not None:
+            driver.find_element_by_id("id_other_phone_number").send_keys(additional_phone_number)
+
+        driver.find_element_by_xpath("//input[@value='Continue']").click()
+
+        # Summary page
+        driver.find_element_by_xpath("//input[@value='Continue']").click()
+
+    def register_email_address(self, email_address):
+        """
+        Selenium steps for registering an email address against an application
+        """
+        driver = self.get_driver()
+        time.sleep(200)
+        driver.find_element_by_xpath("//input[@value='Sign in']").click()
+        driver.find_element_by_id("id_account_selection_0-label").click()
+        driver.find_element_by_xpath("//input[@value='Continue']").click()
+        time.sleep(3)
+        driver.find_element_by_id("id_email_address").click()
+        driver.find_element_by_id("id_email_address").send_keys(email_address)
+        driver.find_element_by_xpath("//input[@value='Continue']").click()
+
+    def click_element_by_id(self, element_id):
+        try:
+            expected_conditions.element_to_be_clickable(self.get_driver().find_element_by_id(element_id).click())
+        except TimeoutException:
+            print("Element is not clickable")
+
+    def click_element_by_xpath(self, xpath):
+        try:
+            expected_conditions.element_to_be_clickable(self.get_driver().find_element_by_xpath(xpath).click())
+        except TimeoutException:
+            print("Element is not clickable ")
+
+    def type_into_field_by_id(self, element_id, text):
+
+        try:
+            expected_conditions.element_to_be_clickable(
+                    self.get_driver().find_element_by_id(element_id).send_keys(text))
+        except TimeoutException:
+            print("Element is not in expected state to type")
 
     @staticmethod
     def generate_random_mobile_number():
