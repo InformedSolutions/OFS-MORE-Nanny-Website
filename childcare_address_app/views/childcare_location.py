@@ -1,8 +1,10 @@
+from coreapi.exceptions import ErrorMessage
+
 from .base import BaseFormView
 from ..forms.childcare_location import ChildcareLocationForm
 from datetime import datetime
-from nanny_models.applicant_home_address import *
-from nanny_models.childcare_address import *
+
+from nanny_gateway import NannyGatewayActions
 
 
 class ChildcareLocationView(BaseFormView):
@@ -17,40 +19,46 @@ class ChildcareLocationView(BaseFormView):
     def form_valid(self, form):
         # pull the applicant's home address from their personal details
         app_id = self.request.GET['id']
-        apd_api_response = ApplicantPersonalDetails.api.get_record(application_id=app_id)
-        if apd_api_response.status_code == 200:
-            personal_detail_id = apd_api_response.record['personal_detail_id']
-            aha_api_response = ApplicantHomeAddress.api.get_record(
-                personal_detail_id=personal_detail_id,
-                current_address=True
-            )
 
-            if aha_api_response.status_code == 200:
+        try:
+            apd_api_response_record = NannyGatewayActions().read('applicant-personal-details', params={'application_id': app_id})
+            apd_api_response = 200
+        except ErrorMessage as e:
+            if e.error.title == '404 Not Found':
+                apd_api_response = 404
+            else:
+                raise e
 
-                # current assumption is that the personal details task will have to be filled out before
-                # the user can complete any other task
-                home_address_record = aha_api_response.record
+        if apd_api_response == 200:
+            personal_detail_id = apd_api_response_record['personal_detail_id']
 
+            # current assumption is that the personal details task will have to be filled out before
+            # the user can complete any other task
+            home_address_record = NannyGatewayActions().read('applicant-home-address',
+                                                             params={
+                                                                 'personal_detail_id': personal_detail_id,
+                                                                 'current_address': True,
+                                                             })
+
+            if form.cleaned_data['home_address'] == 'True':
                 # update home address
-                if form.cleaned_data['home_address'] == 'True':
+                NannyGatewayActions().create('childcare-address',
+                                             params={
+                                                 'application_id': app_id,
+                                                 'date_created': str(datetime.today()),
+                                                 'street_line1': home_address_record['street_line1'],
+                                                 'street_line2': home_address_record['street_line2'],
+                                                 'town': home_address_record['town'],
+                                                 'county': home_address_record['county'],
+                                                 'country': home_address_record['country'],
+                                                 'postcode': home_address_record['postcode']
+                                             })
+                home_address_record['childcare_address'] = True
 
-                    ChildcareAddress.api.create(
-                        model_type=ChildcareAddress,
-                        application_id=app_id,
-                        date_created=datetime.today(),
-                        street_line1=home_address_record['street_line1'],
-                        street_line2=home_address_record['street_line2'],
-                        town=home_address_record['town'],
-                        county=home_address_record['county'],
-                        country=home_address_record['country'],
-                        postcode=home_address_record['postcode']
-                    )
-                    home_address_record['childcare_address'] = True
+            elif form.cleaned_data['home_address'] == 'False':
+                home_address_record['childcare_address'] = False
 
-                elif form.cleaned_data['home_address'] == 'False':
-                    home_address_record['childcare_address'] = False
-
-                ApplicantHomeAddress.api.put(home_address_record)
+            NannyGatewayActions().put('applicant-home-address', params=home_address_record)
 
         if form.cleaned_data['home_address'] == 'True':
             self.success_url = 'Childcare-Address-Details'
@@ -64,12 +72,18 @@ class ChildcareLocationView(BaseFormView):
     def get_initial(self):
         initial = super().get_initial()
         app_id = self.request.GET['id']
-        api_response = ApplicantHomeAddress.api.get_record(application_id=app_id)
-        if api_response.status_code == 200:
-            record = api_response.record
+        initial['id'] = app_id
+
+        try:
+            record = NannyGatewayActions().read('applicant-home-address', params={'application_id': app_id})
             initial['home_address'] = record['childcare_address']
             initial['home_address_id'] = record['home_address_id']
-            initial['id'] = app_id
+        except ErrorMessage as e:
+            if e.error.title == '404 Not Found':
+                pass
+            else:
+                raise e
+
         return initial
 
     def get_context_data(self, **kwargs):
