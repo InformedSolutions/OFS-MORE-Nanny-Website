@@ -160,7 +160,6 @@ class TaskExecutor:
         Selenium steps for registering an email address against an application
         """
         driver = self.get_driver()
-        time.sleep(200)
         driver.find_element_by_xpath("//input[@value='Sign in']").click()
         driver.find_element_by_id("id_account_selection_0-label").click()
         driver.find_element_by_xpath("//input[@value='Continue']").click()
