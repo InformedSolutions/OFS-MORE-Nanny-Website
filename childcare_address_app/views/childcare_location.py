@@ -36,8 +36,9 @@ class ChildcareLocationView(BaseFormView):
             # the user can complete any other task
             home_address_record = NannyGatewayActions().read('applicant-home-address',
                                                              params={
+                                                                 'application_id': app_id,
                                                                  'personal_detail_id': personal_detail_id,
-                                                                 'current_address': True,
+                                                                 # 'current_address': 'True',
                                                              })
 
             if form.cleaned_data['home_address'] == 'True':
@@ -58,7 +59,7 @@ class ChildcareLocationView(BaseFormView):
             elif form.cleaned_data['home_address'] == 'False':
                 home_address_record['childcare_address'] = False
 
-            NannyGatewayActions().put('applicant-home-address', params=home_address_record)
+            NannyGatewayActions().patch('applicant-home-address', params=home_address_record)
 
         if form.cleaned_data['home_address'] == 'True':
             self.success_url = 'Childcare-Address-Details'
