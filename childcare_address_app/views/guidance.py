@@ -24,7 +24,7 @@ class GuidanceView(BaseTemplateView):
         # if there are any existing childcare address records, reroute the user to the address details page
         # to prevent them from being able to add more than five addresses.
         try:
-            NannyGatewayActions().read('childcare-address', params={'application_id': app_id})
+            NannyGatewayActions().list('childcare-address', params={'application_id': app_id})
             return HttpResponseRedirect(reverse('Childcare-Address-Details') + "?id=" + app_id)
         except ErrorMessage as e:
             if e.error.title == '404 Not Found':
