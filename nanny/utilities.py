@@ -60,7 +60,7 @@ def authenticate(application_id):
 
 def test_notify():
     # If running exclusively as a test return true to avoid overuse of the notify API
-    if settings.EXECUTING_AS_TEST:
+    if settings.EXECUTING_AS_TEST == 'True':
         return True
 
     if test_notify_connection():
@@ -91,16 +91,18 @@ def test_notify_connection():
         header = {'content-type': 'application/json'}
         req = requests.Session()
         notification_request = {
+            'service_name': 'Nannies',
             'email': 'simulate-delivered@notifications.service.gov.uk',
             'personalisation': {
                 'link': 'test'
             },
-            'templateId': 'ecd2a788-257b-4bb9-8784-5aed82bcbb92'
+            'templateId': '45c6b63e-1973-45e5-99d7-25f2877bebd9'
         }
         r = req.post(settings.NOTIFY_URL + '/api/v1/notifications/email/',
                      json.dumps(notification_request),
                      headers=header, timeout=10)
-        if r.status_code == 201:
+        # both potentially legitimate status codes, depending on which api key is being used
+        if r.status_code == 201 or r.status_code == 400:
             return True
     except Exception as ex:
         print(ex)

@@ -462,6 +462,16 @@ div.error-summary ul.error-summary-list {
     }
 }
 
+.start-page-width {
+    width: 150%;
+}
+
+@media (max-width: 640px) {
+    .start-page-width {
+      width: 100%;
+    }
+}
+
 .list-bullet {
   margin-left: 20px !important;
 }
