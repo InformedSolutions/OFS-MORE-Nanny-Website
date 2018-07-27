@@ -7,6 +7,7 @@ class NannyGatewayActions:
     client = coreapi.Client()
     document = client.get(os.environ.get('APP_NANNY_GATEWAY_URL') + '/schema/')
     target_url_prefix = os.environ.get('APP_NANNY_GATEWAY_URL') + '/api/v1/'
+    endpoints = list(document.data.keys())
 
     def list(self, endpoint, params):
         action = [endpoint, 'list']
