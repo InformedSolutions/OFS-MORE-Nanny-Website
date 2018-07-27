@@ -3,12 +3,13 @@ import uuid
 from django.http import HttpResponseRedirect
 from django.shortcuts import reverse
 
-from identity_models.user_details import UserDetails
+from coreapi.exceptions import ErrorMessage
 
 from nanny import notify
 from login_app.forms import ContactEmailForm
 from nanny import utilities
 from .base import BaseFormView
+from identity_gateway import IdentityGatewayActions
 
 
 class NewUserSignInFormView(BaseFormView):
@@ -26,7 +27,15 @@ class NewUserSignInFormView(BaseFormView):
 
         email_address = email_form.cleaned_data['email_address']
         self.email_address = email_address  # Set such that success parameters can find value later.
-        api_response = UserDetails.api.get_record(email=email_address)
+        # api_response = UserDetails.api.get_record(email=email_address)
+
+        try:
+            record = IdentityGatewayActions().read('application', params={'email_address': email_address})
+        except Exception as e:
+            if e.error.title == '404 Not Found':
+                pass
+            else:
+                raise e
 
         if api_response.status_code == 404:
             # TODO: Make change to API such that create function returns response with a 'record' attribute.
