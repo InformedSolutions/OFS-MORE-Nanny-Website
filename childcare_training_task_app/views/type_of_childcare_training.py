@@ -7,7 +7,7 @@ from nanny.utilities import build_url
 
 from childcare_training_task_app.forms import TypeOfChildcareTrainingForm
 
-from nanny_models.childcare_training import ChildcareTraining
+from nanny.db_gateways import NannyGatewayActions
 
 
 class TypeOfChildcareTrainingFormView(FormView):
@@ -20,7 +20,7 @@ class TypeOfChildcareTrainingFormView(FormView):
 
     def form_valid(self, form):
         application_id = self.request.GET['id']
-        nanny_api_response = ChildcareTraining.api.get_record(application_id=application_id)
+        nanny_api_response = NannyGatewayActions().read('childcare-training', params={'application_id': application_id})
 
         if nanny_api_response.status_code == 404:
             nanny_api_response = self.create_childcare_training_record()
@@ -34,7 +34,7 @@ class TypeOfChildcareTrainingFormView(FormView):
             else:
                 record[option] = False
 
-        put_response = ChildcareTraining.api.put(record=record)
+        put_response = NannyGatewayActions().put('childcare-training', params=record)
 
         if record['no_training']:  # If they have selected only 'No training' (wouldn't pass validation otherwise)
             self.success_url = 'Childcare-Training-Course'
@@ -52,7 +52,7 @@ class TypeOfChildcareTrainingFormView(FormView):
         Method to get initial data with which to populate the form.
         """
         application_id = self.request.GET['id']
-        nanny_api_response = ChildcareTraining.api.get_record(application_id=application_id)
+        nanny_api_response = NannyGatewayActions().read('childcare-training', params={'application_id': application_id})
         if nanny_api_response.status_code == 404:
             return {}
         elif nanny_api_response.status_code == 200:
@@ -63,8 +63,7 @@ class TypeOfChildcareTrainingFormView(FormView):
 
     def create_childcare_training_record(self):
         application_id = self.request.GET['id']
-        ChildcareTraining.api.create(application_id=application_id, model_type=ChildcareTraining)
-        return ChildcareTraining.api.get_record(application_id=application_id)
+        return NannyGatewayActions().create('childcare-training', params={'application_id': application_id})
 
     def get_success_parameters(self):
         """
