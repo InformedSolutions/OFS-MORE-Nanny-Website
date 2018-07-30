@@ -3,7 +3,8 @@ import re
 from django import forms
 from django.conf import settings
 from govuk_forms.forms import GOVUKForm
-from nanny_models.applicant_home_address import ApplicantHomeAddress, ApplicantHomeAddressSerializer
+
+from nanny.db_gateways import NannyGatewayActions
 
 
 class HomeAddressForm(GOVUKForm):
@@ -74,9 +75,7 @@ class HomeAddressManualForm(GOVUKForm):
         super(HomeAddressManualForm, self).__init__(*args, **kwargs)
 
         if hasattr(self, 'childcare_address_id'):
-            response = ApplicantHomeAddress.api.get_record(
-                childcare_address_id=self.childcare_address_id
-            )
+            response = NannyGatewayActions().read('childcare-address', params={'childcare_address_id': self.childcare_address_id})
             if response.status_code == 200:
                 record = response.record
                 self.fields['street_line1'].initial = record['street_line1']
