@@ -38,8 +38,6 @@ class ExistingUserSignInFormView(BaseFormView):
             else:
                 raise e
 
-
-
         # record = api_response.record
         validation_link, email_expiry_date = utilities.generate_email_validation_link(email_address)
 

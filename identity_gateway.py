@@ -1,34 +1,31 @@
 import os
+import json
 
-import coreapi
+import requests
 
 
 class IdentityGatewayActions:
-    client = coreapi.Client()
-    document = client.get(os.environ.get('APP_IDENTITY_URL') + 'schema/')
     target_url_prefix = os.environ.get('APP_IDENTITY_URL') + 'api/v1/'
-    endpoints = list(document.data.keys())
 
     def list(self, endpoint, params):
-        action = [endpoint, 'list']
-        return self.client.action(self.document, action, params=params)
+        response = requests.get(self.target_url_prefix + endpoint + '/', data=params)
+
+        if response.status_code == 200:
+            response.record = json.loads(requests.get(self.target_url_prefix + endpoint + '/', data=params).text)
+
+        return response
 
     def read(self, endpoint, params):
-        action = [endpoint, 'read']
-        return self.client.action(self.document, action, params, overrides={'url': self.target_url_prefix + endpoint + '/' + params['email'] + '/'})
+        return json.loads(requests.get(self.target_url_prefix + endpoint + '/' + params['application_id'] + '/', data=params).text)
 
     def create(self, endpoint, params):
-        action = [endpoint, 'create']
-        return self.client.action(self.document, action, params=params)
+        return json.loads(requests.get(self.target_url_prefix + endpoint + '/', data=params).text)
 
     def patch(self, endpoint, params):
-        action = [endpoint, 'partial_update']
-        return self.client.action(self.document, action, params=params, overrides={'url': self.target_url_prefix + endpoint + '/' + params['email'] + '/'})
+        return json.loads(requests.get(self.target_url_prefix + endpoint + '/' + params['application_id'] + '/', data=params).text)
 
     def put(self, endpoint, params):
-        action = [endpoint, 'update']
-        return self.client.action(self.document, action, params=params, overrides={'url': self.target_url_prefix + endpoint + '/' + params['email'] + '/'})
+        return json.loads(requests.get(self.target_url_prefix + endpoint + '/' + params['application_id'] + '/', data=params).text)
 
     def delete(self, endpoint, params):
-        action = [endpoint, 'delete']
-        return self.client.action(self.document, action, params=params, overrides={'url': self.target_url_prefix + endpoint + '/' + params['email'] + '/'})
+        return json.loads(requests.get(self.target_url_prefix + endpoint + '/' + params['application_id'] + '/', data=params).text)
