@@ -3,25 +3,33 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, reverse
 from django.views import View
 from django.views.decorators.cache import never_cache
-import uuid
 
-from nanny_models.nanny_application import NannyApplication
-
-from identity_models.user_details import UserDetails
+from nanny.db_gateways import NannyGatewayActions, IdentityGatewayActions
 
 
 class TaskListView(View):
     @never_cache
     def get(self, request):
         application_id = request.GET["id"]
-        identity_api_response = UserDetails.api.get_record(application_id=application_id)
+        identity_api_response = IdentityGatewayActions().read('user', params={'application_id': application_id})
         record = identity_api_response.record
         email_address = record['email']
-        nanny_api_response = NannyApplication.api.get_record(application_id=application_id)
+        nanny_api_response = NannyGatewayActions().read('application', params={'application_id': application_id})
+
         if nanny_api_response.status_code == 200:
-            application = NannyApplication(**nanny_api_response.record)
+            application = nanny_api_response.record
+
         elif nanny_api_response.status_code == 404:
-            application = create_new_app(application_id=application_id)
+            create_response = NannyGatewayActions().create(
+                'application',
+                params={
+                    'application_id': application_id,
+                    'application_status': 'DRAFTING',
+                    'login_details_status': 'COMPLETED',
+                }
+            )
+            application = create_response.record
+
         else:
             if settings.DEBUG:
                 raise RuntimeError('The nanny-gateway API did not respond as expected.')
@@ -32,12 +40,12 @@ class TaskListView(View):
             'id': application_id,
             'email_address': email_address,
             'all_complete': False,
-            'application_status': application.application_status,
+            'application_status': application['application_status'],
             'tasks': [
                 {
                     'name': 'account_details',  # This is CSS class (Not recommended to store it here)
-                    'status': application.login_details_status,
-                    'arc_flagged': application.login_details_arc_flagged,
+                    'status': application['login_details_status'],
+                    'arc_flagged': application['login_details_arc_flagged'],
                     'description': "Your sign in details",
                     'status_url': None,  # Will be filled later
                     'status_urls': [  # Available urls for each status
@@ -48,8 +56,8 @@ class TaskListView(View):
                 },
                 {
                     'name': 'personal_details',
-                    'status': application.personal_details_status,
-                    'arc_flagged': application.personal_details_arc_flagged,
+                    'status': application['personal_details_status'],
+                    'arc_flagged': application['personal_details_arc_flagged'],
                     'description': 'Your personal details',
                     'status_url': None,
                     'status_urls': [
@@ -60,8 +68,8 @@ class TaskListView(View):
                 },
                 {
                     'name': 'childcare_address',
-                    'status': application.childcare_address_status,
-                    'arc_flagged': application.childcare_address_arc_flagged,
+                    'status': application['childcare_address_status'],
+                    'arc_flagged': application['childcare_address_arc_flagged'],
                     'description': 'Childcare address',
                     'status_url': None,
                     'status_urls': [
@@ -72,8 +80,8 @@ class TaskListView(View):
                 },
                 {
                     'name': 'first_aid_training',
-                    'status': application.first_aid_training_status,
-                    'arc_flagged': application.first_aid_training_arc_flagged,
+                    'status': application['first_aid_training_status'],
+                    'arc_flagged': application['first_aid_training_arc_flagged'],
                     'description': 'First aid training',
                     'status_url': None,
                     'status_urls': [
@@ -84,8 +92,8 @@ class TaskListView(View):
                 },
                 {
                     'name': 'childcare_training',
-                    'status': application.childcare_training_status,
-                    'arc_flagged': application.childcare_training_arc_flagged,
+                    'status': application['childcare_training_status'],
+                    'arc_flagged': application['childcare_training_arc_flagged'],
                     'description': 'Childcare training',
                     'status_url': None,
                     'status_urls': [
@@ -96,8 +104,8 @@ class TaskListView(View):
                 },
                 {
                     'name': 'criminal_record',
-                    'status': application.criminal_record_check_status,
-                    'arc_flagged': application.criminal_record_check_arc_flagged,
+                    'status': application['criminal_record_check_status'],
+                    'arc_flagged': application['criminal_record_check_arc_flagged'],
                     'description': 'Criminal record (DBS) check',
                     'status_url': None,
                     'status_urls': [
@@ -108,8 +116,8 @@ class TaskListView(View):
                 },
                 {
                     'name': 'insurance_cover',
-                    'status': application.insurance_cover_status,
-                    'arc_flagged': application.insurance_cover_arc_flagged,
+                    'status': application['insurance_cover_status'],
+                    'arc_flagged': application['insurance_cover_arc_flagged'],
                     'description': 'Insurance cover',
                     'status_url': None,
                     'status_urls': [
@@ -121,11 +129,11 @@ class TaskListView(View):
                 {
                     'name': 'review',
                     'status': None,
-                    'arc_flagged': application.application_status,
+                    'arc_flagged': application['application_status'],
                     # If application is being resubmitted (i.e. is not drafting,
                     # set declaration task name to read "Declaration" only)
                     'description':
-                        "Declaration and payment" if application.application_status == 'DRAFTING' else "Declaration",
+                        "Declaration and payment" if application['application_status'] == 'DRAFTING' else "Declaration",
                     'status_url': None,
                     'status_urls': [
                         {'status': 'COMPLETED', 'url': 'declaration:Declaration-Declaration-View'},
@@ -145,7 +153,7 @@ class TaskListView(View):
             for task in context['tasks']:
                 if task['name'] == 'review':
                     if task['status'] is None:
-                        task['status'] = application.declarations_status
+                        task['status'] = application['declarations_status']
 
         # Prepare task links
 
@@ -163,27 +171,3 @@ class TaskListView(View):
                         task['status_url'] = url['url']
 
         return render(request, 'task-list.html', context)
-
-
-def create_new_app(application_id):
-    """
-    Create a new NannyApplication model in the db with the application_id argument as specified.
-    :return; NannyApplication model if nanny-gateway created record successfully, else redirect to 'Service-Down' page.
-    """
-    application_id = uuid.UUID(application_id)
-    api_response_create = NannyApplication.api.create(
-        application_id=application_id,
-        application_status='DRAFTING',
-        login_details_status='COMPLETED',
-        model_type=NannyApplication
-    )
-    if api_response_create.status_code == 201:
-        response = NannyApplication.api.get_record(
-            application_id=application_id
-        )
-        return NannyApplication(**response.record)
-    else:
-        if settings.DEBUG:
-            raise RuntimeError('The nanny-gateway API did not respond as expected.')
-        else:
-            HttpResponseRedirect(reverse('Service-Unavailable'))
