@@ -9,14 +9,14 @@ import json
 import logging
 import time
 from urllib.parse import quote
-from nanny_models.dbs_check import DbsCheck
-from nanny_models.applicant_personal_details import ApplicantPersonalDetails
-from nanny_models.payment import Payment
 from nanny.notify import send_email
 
 import requests
 
 from django.conf import settings
+
+from nanny.db_gateways import NannyGatewayActions
+
 
 logger = logging.getLogger()
 
@@ -88,13 +88,11 @@ def payment_email(email, name, application_reference, application_id):
     template_id = 'beb79a5f-97e8-47d2-afda-ae914f02cdaa'
 
     # Check for cautions and convictions, and whether the applicant has lived abroad
-    try:
-        dbs_record = DbsCheck.api.get_record(application_id=application_id).record
-        conviction = dbs_record['convictions']
-    except DbsCheck.DoesNotExist:
-        conviction = False
 
-    personal_details_record = ApplicantPersonalDetails.api.get_record(application_id=application_id).record
+    dbs_record = NannyGatewayActions().read('dbs-check', params={'application_id': application_id}).record
+    conviction = dbs_record['convictions']
+
+    personal_details_record = NannyGatewayActions().read('applicant-personal-details', params={'application_id': application_id}).record
     lived_abroad = personal_details_record['lived_abroad']
 
     # If the applicant has cautions and convictions and has lived abroad
@@ -134,7 +132,7 @@ def payment_record_exists(application_id):
     :return: a boolean indicator detailing whether a payyment record exists or not
     """
     logger.debug('Testing for presence of payment record for application with identifier: ' + application_id)
-    payment_record = Payment.api.get_record(application_id=application_id).record
+    payment_record = NannyGatewayActions().read('payment', params={'application_id': application_id}).record
     return payment_record is not None
 
 
@@ -145,5 +143,5 @@ def get_payment_record(application_id):
     :return: a payment record instance or a 404 status code if not found
     """
     logger.debug('Fetching payment record for application with identifier: ' + application_id)
-    return Payment.api.get_record(application_id=application_id).record
+    return NannyGatewayActions().read('payment', params={'application_id': application_id}).record
 

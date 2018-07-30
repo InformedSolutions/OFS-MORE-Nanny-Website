@@ -1,28 +1,20 @@
+import datetime
 import logging
 import os
-
-import requests
-from django.conf import settings
-
-from nanny_models.nanny_application import NannyApplication
-from nanny_models.applicant_personal_details import ApplicantPersonalDetails
-from nanny_models.dbs_check import DbsCheck
-from nanny_models.payment import Payment
-from nanny import status
-from identity_models.user_details import UserDetails
-
-import datetime
 import re
-import json
+import requests
 import time
 
+from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.core.urlresolvers import reverse
 from django.views.decorators.cache import never_cache
 
-from ..services import payment_service
-from ..forms.payment import PaymentDetailsForm
+from nanny.db_gateways import NannyGatewayActions, IdentityGatewayActions
+
+from payment_app.services import payment_service
+from payment_app.forms.payment import PaymentDetailsForm
 
 logger = logging.getLogger()
 
@@ -47,7 +39,7 @@ def card_payment_get_handler(request):
     :return: A page for capturing card payment details
     """
     application_id = request.GET["id"]
-    application_record = NannyApplication.api.get_record(application_id=application_id).record
+    application_record = NannyGatewayActions().read('application', params={'application_id': application_id}).record
     paid = application_record['application_reference']
 
     # Call out to payment service API
@@ -100,7 +92,7 @@ def card_payment_post_handler(request):
         }
         return render(request, 'payment-details.html', variables)
 
-    application_record = NannyApplication.api.get_record(application_id=application_id).record
+    application_record = NannyGatewayActions().read('application', params={'application_id': application_id}).record
 
     application_reference = __assign_application_reference(application_record)
 
@@ -269,13 +261,15 @@ def __create_payment_record(application, application_reference):
         logger.info('Updating payment record with generated reference '
                     'for application with id: ' + application_id)
 
-        Payment.api.create(
-            application_id=application_id,
-            payment_reference=payment_reference,
-            model_type=Payment
+        NannyGatewayActions().create(
+            'payment',
+            params={
+                'application_id': application_id,
+                'payment_reference': payment_reference,
+            }
         )
-
         return payment_reference
+
     else:
         logger.info('Fetching existing payment record '
                     'for application with id: ' + application_id)
@@ -314,8 +308,8 @@ def __send_payment_confirmation_email(application_record):
     :param application_id: the unique identifier of the application
     """
     application_id = application_record['application_id']
-    user_details = UserDetails.api.get_record(application_id=application_id).record
-    applicant_details = ApplicantPersonalDetails.api.get_record(application_id=application_id).record
+    user_details = IdentityGatewayActions().read('user', params={'application_id': application_id}).record
+    applicant_details = NannyGatewayActions().read('applicant-personal-details', params={'application_id': application_id}).record
 
     payment_service.payment_email(user_details['email'],
                                   applicant_details['first_name'],
@@ -329,9 +323,9 @@ def __mark_payment_record_as_submitted(application_id):
     :param application_id: the unique identifier of the application for which a payment record is to be marked as submitted
     """
     logger.info('Marking payment as SUBMITTED for application with id: ' + str(application_id))
-    payment_record = Payment.api.get_record(application_id=application_id).record
+    payment_record = NannyGatewayActions().read('payment', params={'application_id': application_id}).record
     payment_record['payment_submitted'] = True
-    Payment.api.put(payment_record)
+    NannyGatewayActions().put('payment', params=payment_record)
 
 
 def __mark_payment_record_as_authorised(application_id):
@@ -340,9 +334,9 @@ def __mark_payment_record_as_authorised(application_id):
     :param application_id: the unique identifier of the application for which a payment record is to be marked as authorised
     """
     logger.info('Marking payment as AUTHORISED for application with id: ' + str(application_id))
-    payment_record = Payment.api.get_record(application_id=application_id).record
+    payment_record = NannyGatewayActions().read('payment', params={'application_id': application_id}).record
     payment_record['payment_authorised'] = True
-    Payment.api.put(payment_record)
+    NannyGatewayActions().put('payment', params=payment_record)
 
 
 def __yield_general_processing_error_to_user(request, form, app_id):
@@ -375,9 +369,9 @@ def __rollback_payment_submission_status(application_id):
     """
     logger.info('Rolling payment back in response to REFUSED status for application with id: '
                 + str(application_id))
-    payment_record = Payment.api.get_record(application_id=application_id).record
+    payment_record = NannyGatewayActions().read('payment', params={'application_id': application_id}).record
     payment_record['payment_submitted'] = False
-    Payment.api.put(payment_record)
+    NannyGatewayActions().put('payment', params=payment_record)
 
 
 def __redirect_to_payment_confirmation(application_reference, application_id):
@@ -399,22 +393,18 @@ def payment_confirmation(request):
     :return: an HttpResponse object with the rendered Payment confirmation template
     """
     application_id_local = request.GET['id']
-
-    try:
-        conviction = DbsCheck.objects.get(application_id=application_id_local).cautions_convictions
-    except DbsCheck.DoesNotExist:
-        conviction = False
+    conviction = NannyGatewayActions().read('dbs-check', params={'application_id': application_id_local}).record['cautions_convictions']
+    local_app = NannyGatewayActions().read('application', params={'application_id': application_id_local}).record
 
     variables = {
         'application_id': application_id_local,
         'order_code': request.GET["orderCode"],
         'conviction': conviction,
-        'health_status': NannyApplication.objects.get(application_id=application_id_local).health_status
+        # 'health_status': local_app['health_status']  # Non-existent field in NannyApplication table.
     }
-    local_app = NannyApplication.objects.get(
-        application_id=application_id_local)
-    status.update(application_id_local, 'declarations_status', 'COMPLETED')
+
+    local_app['declarations_status'] = 'COMPLETED'
     local_app.application_status = 'SUBMITTED'
-    local_app.save()
+    NannyGatewayActions().put('application', params=local_app)
 
     return render(request, 'payment-confirmation.html', variables)
