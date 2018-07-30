@@ -5,7 +5,7 @@ from http.cookies import SimpleCookie
 import uuid
 
 
-@mock.patch("identity_models.user_details.UserDetails.api.get_record", authenticate)
+@mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)
 class InsuranceCoverTests(TestCase):
     application_id = None
 

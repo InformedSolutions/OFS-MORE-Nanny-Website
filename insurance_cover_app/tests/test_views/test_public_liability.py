@@ -4,7 +4,7 @@ from ...views.public_liability import *
 from django.template.response import TemplateResponse
 
 
-@mock.patch("identity_models.user_details.UserDetails.api.get_record", authenticate)
+@mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)
 class PublicLiabilityTests(InsuranceCoverTests):
 
     def test_public_liability_url_resolves_to_page(self):
@@ -18,7 +18,7 @@ class PublicLiabilityTests(InsuranceCoverTests):
         """
         Test to assert that the public liability page can be rendered
         """
-        with mock.patch('nanny_models.insurance_cover.InsuranceCover.api.get_record') as nanny_api_get:
+        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_get:
             nanny_api_get.return_value.status_code = 404
             response = self.client.get(build_url('insurance:Public-Liability', get={
                 'id': self.application_id
@@ -31,10 +31,11 @@ class PublicLiabilityTests(InsuranceCoverTests):
         Test to assert that user gets redirected to the insurance cover page
         if they do not have public liability insurance.
         """
-        with mock.patch('nanny_models.insurance_cover.InsuranceCover.api.get_record') as nanny_api_get, \
-            mock.patch('nanny_models.insurance_cover.InsuranceCover.api.put') as nanny_api_put, \
-            mock.patch('nanny_models.nanny_application.NannyApplication.api.get_record') as nanny_api_get_app, \
-                mock.patch('nanny_models.nanny_application.NannyApplication.api.put') as nanny_api_put_app:
+        # FIXME
+        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_get, \
+            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put, \
+            mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_get_app, \
+                mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put_app:
             nanny_api_get.return_value.status_code = 200
             nanny_api_get_app.return_value.status_code = 200
             nanny_api_get_app.return_value.record = self.sample_app
@@ -51,10 +52,10 @@ class PublicLiabilityTests(InsuranceCoverTests):
         Test to assert that user gets redirected to the insurance cover page
         if they do not have public liability insurance.
         """
-        with mock.patch('nanny_models.insurance_cover.InsuranceCover.api.get_record') as nanny_api_get, \
-            mock.patch('nanny_models.insurance_cover.InsuranceCover.api.put') as nanny_api_put, \
-            mock.patch('nanny_models.nanny_application.NannyApplication.api.get_record') as nanny_api_get_app, \
-                mock.patch('nanny_models.nanny_application.NannyApplication.api.put') as nanny_api_put_app:
+        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_get, \
+            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put, \
+            mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_get_app, \
+                mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put_app:
             nanny_api_get.return_value.status_code = 200
             nanny_api_get_app.return_value.status_code = 200
             nanny_api_get_app.return_value.record = self.sample_app
@@ -72,7 +73,7 @@ class PublicLiabilityTests(InsuranceCoverTests):
         Test to assert that user gets redirected to the insurance cover page
         if they do not have public liability insurance.
         """
-        with mock.patch('nanny_models.insurance_cover.InsuranceCover.api.get_record') as nanny_api_get:
+        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_get:
             nanny_api_get.return_value.status_code = 200
             response = self.client.post(build_url('insurance:Public-Liability', get={
                 'id': self.application_id

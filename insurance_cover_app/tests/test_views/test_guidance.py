@@ -3,7 +3,7 @@ from django.urls import resolve
 from ...views.guidance import *
 
 
-@mock.patch("identity_models.user_details.UserDetails.api.get_record", authenticate)
+@mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)
 class GuidanceTests(InsuranceCoverTests):
 
     def test_guidance_url_resolves_to_page(self):
@@ -17,7 +17,6 @@ class GuidanceTests(InsuranceCoverTests):
         """
         Test to assert that the guidance page can be rendered
         """
-
         response = self.client.get(build_url('insurance:Guidance', get={
             'id': self.application_id
         }))
