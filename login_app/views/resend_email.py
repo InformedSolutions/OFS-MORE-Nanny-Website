@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from django.views import View
 
-from identity_models.user_details import UserDetails
-
 from nanny import notify, utilities
+
+from db_gateways import IdentityGatewayActions
 
 
 class ResendEmail(View):
@@ -12,13 +12,13 @@ class ResendEmail(View):
     """
     def get(self, request):
         email_address = request.GET['email_address']
-        api_response = UserDetails.api.get_record(email=email_address)
-        record = api_response.record
+        api_response = IdentityGatewayActions().list('user', params={'email': email_address})
+        record = api_response.record[0]
         validation_link, email_expiry_date = utilities.generate_email_validation_link(email_address)
 
         record['magic_link_email'] = validation_link.split('/')[-1]
         record['email_expiry_date'] = email_expiry_date
-        UserDetails.api.put(record)
+        IdentityGatewayActions().put('user', params=record)
 
         # Send an example email from the CM application login journey.
         notify.send_email(email=email_address,
