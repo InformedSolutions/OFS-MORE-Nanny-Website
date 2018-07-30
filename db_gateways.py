@@ -55,5 +55,5 @@ class IdentityGatewayActions(DBGatewayActions):
     target_url_prefix = os.environ.get('APP_IDENTITY_URL') + 'api/v1/'
 
 
-class NannyGatewayActions:
+class NannyGatewayActions(DBGatewayActions):
     target_url_prefix = os.environ.get('APP_NANNY_GATEWAY_URL') + '/api/v1/'
