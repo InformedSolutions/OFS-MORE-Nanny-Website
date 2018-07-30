@@ -19,9 +19,9 @@ class DBGatewayActions:
 
     def read(self, endpoint, params):
         if endpoint == 'childcare-address':
-            response = requests.read(self.target_url_prefix + endpoint + '/' + params['childcare_address_id'] + '/', data=params)
+            response = requests.get(self.target_url_prefix + endpoint + '/' + params['childcare_address_id'] + '/', data=params)
         else:
-            response = requests.read(self.target_url_prefix + endpoint + '/' + params['application_id'] + '/', data=params)
+            response = requests.get(self.target_url_prefix + endpoint + '/' + params['application_id'] + '/', data=params)
 
         if response.status_code == 200:
             response.record = json.loads(response.text)
