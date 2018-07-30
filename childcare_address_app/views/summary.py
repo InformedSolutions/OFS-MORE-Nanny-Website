@@ -1,10 +1,10 @@
 from django.http import HttpResponseRedirect
 from django.views import View
 from django.shortcuts import render
-from nanny_models.childcare_address import *
-from nanny_models.applicant_home_address import *
 from ..utils import build_url
 from ..address_helper import *
+
+from nanny.db_gateways import NannyGatewayActions
 
 
 class ChildcareAddressSummaryView(View):
@@ -17,7 +17,7 @@ class ChildcareAddressSummaryView(View):
             'id': app_id
         }
 
-        app_response = NannyApplication.api.get_record(application_id=app_id)
+        app_response = NannyGatewayActions().read('application', params={'application_id': app_id})
         if app_response.status_code == 200:
 
             app_record = app_response.record
@@ -28,7 +28,7 @@ class ChildcareAddressSummaryView(View):
 
             context['address_to_be_provided'] = address_to_be_provided
 
-            address_response = ChildcareAddress.api.get_records(application_id=app_id)
+            address_response = NannyGatewayActions().list('childcare-address', params={'application_id': app_id})
 
             if address_response.status_code == 200:
                 address_records = address_response.record
@@ -50,7 +50,7 @@ class ChildcareAddressSummaryView(View):
                 context['records'] = data
 
         # get home address
-        home_address_resp = ApplicantHomeAddress.api.get_record(application_id=app_id)
+        home_address_resp = NannyGatewayActions().read('applicant-home-address', params={'application_id': app_id})
         if home_address_resp.status_code == 200:
             home_address = home_address_resp.record['childcare_address']
             if home_address is not None:
@@ -63,9 +63,10 @@ class ChildcareAddressSummaryView(View):
 
     def post(self, request):
         app_id = request.GET['id']
-        api_response = NannyApplication.api.get_record(
-            application_id=app_id
+        api_response = NannyGatewayActions().read(
+            'application',
+            params={'application_id': app_id}
         )
         api_response.record['childcare_address_status'] = 'COMPLETED'
-        NannyApplication.api.put(api_response.record)
+        NannyGatewayActions().put('application', params=api_response.record)
         return HttpResponseRedirect(build_url('Task-List', get={'id': app_id}))

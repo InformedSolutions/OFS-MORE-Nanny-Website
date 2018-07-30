@@ -3,7 +3,8 @@ import re
 from django import forms
 from django.conf import settings
 from govuk_forms.forms import GOVUKForm
-from nanny_models.childcare_address import *
+
+from nanny.db_gateways import NannyGatewayActions
 
 
 class ChildcareAddressForm(GOVUKForm):
@@ -39,11 +40,9 @@ class ChildcareAddressForm(GOVUKForm):
         # If information was previously entered, display it on the form
         postcode = None
         if 'childcare_address_id' in self:
-            response = ChildcareAddress.api.get_record(
-                childcare_address_id=self.childcare_address_id
-            )
+            response = NannyGatewayActions().list('childcare-address', params={'childcare_address_id': self.childcare_address_id})
             if response.status_code == 200:
-                postcode = response.record['postcode']
+                postcode = response.record[0]['postcode']
             self.pk = self.childcare_address_id
 
         self.fields['postcode'].initial = postcode
@@ -96,11 +95,9 @@ class ChildcareAddressManualForm(GOVUKForm):
         super(ChildcareAddressManualForm, self).__init__(*args, **kwargs)
 
         if hasattr(self, 'childcare_address_id'):
-            response = ChildcareAddress.api.get_record(
-                childcare_address_id=self.childcare_address_id
-            )
+            response = NannyGatewayActions().list('childcare-address', params={'childcare_address_id': self.childcare_address_id})
             if response.status_code == 200:
-                record = response.record
+                record = response.record[0]
                 self.fields['street_line1'].initial = record['street_line1']
                 self.fields['street_line2'].initial = record['street_line2']
                 self.fields['town'].initial = record['town']

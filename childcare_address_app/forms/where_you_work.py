@@ -2,7 +2,8 @@ from django import forms
 
 from govuk_forms.forms import GOVUKForm
 from govuk_forms.widgets import InlineRadioSelect
-from nanny_models.nanny_application import *
+
+from nanny.db_gateways import NannyGatewayActions
 
 
 class WhereYouWorkForm(GOVUKForm):
@@ -32,9 +33,7 @@ class WhereYouWorkForm(GOVUKForm):
         super(WhereYouWorkForm, self).__init__(*args, **kwargs)
 
         if hasattr(self, 'application_id_local'):
-            response = NannyApplication.api.get_record(
-                application_id=self.application_id_local
-            )
+            response = NannyGatewayActions().read('application', params={'application_id': self.application_id_local})
             record = response.record
 
             self.fields['address_to_be_provided'].initial = record['address_to_be_provided']

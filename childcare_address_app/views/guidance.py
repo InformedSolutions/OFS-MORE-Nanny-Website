@@ -1,9 +1,8 @@
-from django.shortcuts import render
 from .base import BaseTemplateView
 from django.urls import reverse
 from django.http import HttpResponseRedirect
-from nanny_models.nanny_application import *
-from nanny_models.childcare_address import *
+
+from nanny.db_gateways import NannyGatewayActions
 
 
 class GuidanceView(BaseTemplateView):
@@ -19,8 +18,11 @@ class GuidanceView(BaseTemplateView):
         Handle get requests to the guidance page.
         """
         app_id = request.GET['id']
-        api_response = ChildcareAddress.api.get_records(
-            application_id=app_id
+        api_response = NannyGatewayActions().list(
+            'childcare-address',
+            params={
+                'application_id': app_id
+            }
         )
 
         # if there are any existing childcare address records, reroute the user to the address details page
@@ -38,11 +40,14 @@ class GuidanceView(BaseTemplateView):
         app_id = request.POST['id']
 
         # update the task status to be in progress
-        api_response = NannyApplication.api.get_record(
-            application_id=app_id
+        api_response = NannyGatewayActions().read(
+            'application',
+            params={
+                'application_id': app_id
+            }
         )
         api_response.record['childcare_address_status'] = 'IN_PROGRESS'
-        NannyApplication.api.put(api_response.record)
+        NannyGatewayActions().put('application', params=api_response.record)
 
         return HttpResponseRedirect(reverse('Childcare-Address-Where-You-Work') + "?id=" + app_id)
 
