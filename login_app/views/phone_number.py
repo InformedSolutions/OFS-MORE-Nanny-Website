@@ -4,7 +4,7 @@ from middleware import CustomAuthenticationHandler
 from django.http import HttpResponseRedirect
 from .base import BaseFormView
 from nanny.utilities import app_id_finder, build_url
-from db_gateways import IdentityGatewayActions
+from nanny.db_gateways import IdentityGatewayActions
 
 
 class PhoneNumbersFormView(BaseFormView):

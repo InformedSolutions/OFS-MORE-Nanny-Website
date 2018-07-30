@@ -4,7 +4,7 @@ from django.shortcuts import render
 
 from nanny.utilities import build_url
 
-from db_gateways import IdentityGatewayActions, NannyGatewayActions
+from nanny.db_gateways import IdentityGatewayActions, NannyGatewayActions
 
 
 class ContactDetailsSummaryView(View):

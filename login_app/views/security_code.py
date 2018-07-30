@@ -5,7 +5,7 @@ from login_app.forms import SecurityCodeForm
 
 from .base import BaseFormView
 
-from db_gateways import IdentityGatewayActions
+from nanny.db_gateways import IdentityGatewayActions
 
 
 class SecurityCodeFormView(BaseFormView):

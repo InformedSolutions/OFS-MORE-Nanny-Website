@@ -8,7 +8,7 @@ from login_app.forms import ContactEmailForm
 from nanny import utilities
 from .base import BaseFormView
 
-from db_gateways import IdentityGatewayActions
+from nanny.db_gateways import IdentityGatewayActions
 
 
 class NewUserSignInFormView(BaseFormView):

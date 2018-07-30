@@ -3,7 +3,7 @@ from django.views import View
 
 from nanny import notify, utilities
 
-from db_gateways import IdentityGatewayActions
+from nanny.db_gateways import IdentityGatewayActions
 
 
 class ResendEmail(View):

@@ -5,7 +5,7 @@ from login_app.forms import DBSSecurityQuestionForm, PersonalDetailsSecurityQues
 
 from .base import BaseFormView
 
-from db_gateways import IdentityGatewayActions, NannyGatewayActions
+from nanny.db_gateways import IdentityGatewayActions, NannyGatewayActions
 
 
 class SecurityQuestionFormView(BaseFormView):

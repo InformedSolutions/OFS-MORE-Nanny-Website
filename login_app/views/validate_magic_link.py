@@ -8,7 +8,7 @@ from django.shortcuts import reverse
 from nanny import notify
 from nanny import utilities
 
-from db_gateways import IdentityGatewayActions
+from nanny.db_gateways import IdentityGatewayActions
 
 
 class ValidateMagicLinkView(View):

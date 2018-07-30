@@ -6,7 +6,7 @@ from nanny.utilities import build_url
 
 from .validate_magic_link import ValidateMagicLinkView
 
-from db_gateways import IdentityGatewayActions
+from nanny.db_gateways import IdentityGatewayActions
 
 
 class ResendSecurityCodeView(View):
