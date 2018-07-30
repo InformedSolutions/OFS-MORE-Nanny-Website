@@ -20,12 +20,6 @@ WORKDIR /source
 ADD . /source/
 RUN pip install -r requirements.txt
 
-# Get identity-models package from OFS-MORE-Identity-Gateway repo.
-RUN pip install -e 'git+https://github.com/InformedSolutions/OFS-MORE-Identity-Gateway.git#egg=identity_models&subdirectory=application/models'
-
-# Get nanny-models package from OFS-MORE-Nanny-Gateway repo.
-RUN pip install -e 'git+https://github.com/InformedSolutions/OFS-MORE-Nanny-Gateway.git#egg=nanny_models&subdirectory=application/models'
-
 RUN chmod +x /source/docker-entrypoint.sh
 EXPOSE 8000
 CMD ["/source/docker-entrypoint.sh"]
