@@ -133,8 +133,8 @@ class LoginTests(TestCase):
         Test that entering a valid email address on the 'New-User-Sign-In' page creates an account with that email and
         redirects to the appropriate page.
         """
-        with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get, \
-                mock.patch('identity_models.user_details.UserDetails.api.put') as identity_api_put:
+        with mock.patch('nanny.db_gateways.IdentityGatewayActions.read') as identity_api_get, \
+                mock.patch('nanny.db_gateways.IdentityGatewayActions.put') as identity_api_put:
             identity_api_get.return_value.status_code = 200
             identity_api_get.return_value.record = self.user_details_record
             identity_api_put.return_value.status_code = 200
@@ -194,8 +194,8 @@ class LoginTests(TestCase):
         Test that entering a valid email address on the 'New-User-Sign-In' page creates an account with that email and
         redirects to the appropriate page.
         """
-        with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get, \
-                mock.patch('identity_models.user_details.UserDetails.api.put') as identity_api_put, \
+        with mock.patch('nanny.db_gateways.IdentityGatewayActions.read') as identity_api_get, \
+                mock.patch('nanny.db_gateways.IdentityGatewayActions.put') as identity_api_put, \
                 mock.patch('nanny.notify.send_email') as notify_email:
 
             identity_api_get.return_value.status_code = 200
@@ -213,8 +213,8 @@ class LoginTests(TestCase):
         Check that notify-gateway send_email function us called when valid email entered on both the 'New-User-Sign-In'
         and 'Existing-User-Sign-In' pages.
         """
-        with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get, \
-                mock.patch('identity_models.user_details.UserDetails.api.put') as identity_api_put, \
+        with mock.patch('nanny.db_gateways.IdentityGatewayActions.read') as identity_api_get, \
+                mock.patch('nanny.db_gateways.IdentityGatewayActions.put') as identity_api_put, \
                 mock.patch('nanny.notify.send_email') as notify_email:
 
             identity_api_get.return_value.status_code = 200
@@ -232,8 +232,8 @@ class LoginTests(TestCase):
         """
         Test that the 'Resend-Email' page can be rendered and that it contains a link to the 'Help-And-Contacts' page.
         """
-        with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get, \
-                mock.patch('identity_models.user_details.UserDetails.api.put') as identity_api_put:
+        with mock.patch('nanny.db_gateways.IdentityGatewayActions.read') as identity_api_get, \
+                mock.patch('nanny.db_gateways.IdentityGatewayActions.put') as identity_api_put:
 
             identity_api_get.return_value.status_code = 200
             identity_api_get.return_value.record = self.user_details_record
@@ -252,8 +252,8 @@ class LoginTests(TestCase):
         """
         Test that notify.send_email() is called during rendering of the 'Resend-Email' page.
         """
-        with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get, \
-                mock.patch('identity_models.user_details.UserDetails.api.put') as identity_api_put, \
+        with mock.patch('nanny.db_gateways.IdentityGatewayActions.read') as identity_api_get, \
+                mock.patch('nanny.db_gateways.IdentityGatewayActions.put') as identity_api_put, \
                 mock.patch('nanny.notify.send_email') as notify_email:
 
             identity_api_get.return_value.status_code = 200
@@ -268,8 +268,8 @@ class LoginTests(TestCase):
         """
         Test that the new user who navigates to the link sent via email is then redirected to the Phone number page.
         """
-        with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get, \
-                mock.patch('identity_models.user_details.UserDetails.api.put') as identity_api_put, \
+        with mock.patch('nanny.db_gateways.IdentityGatewayActions.read') as identity_api_get, \
+                mock.patch('nanny.db_gateways.IdentityGatewayActions.put') as identity_api_put, \
                 mock.patch('nanny.notify.send_text') as notify_send_text, \
                 mock.patch('login_app.views.ValidateMagicLinkView.link_has_expired') as link_expired:
 
@@ -286,8 +286,8 @@ class LoginTests(TestCase):
         """
         Test that the returning user who navigates to the link sent via email is then redirected to the SMS page.
         """
-        with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get, \
-                mock.patch('identity_models.user_details.UserDetails.api.put') as identity_api_put, \
+        with mock.patch('nanny.db_gateways.IdentityGatewayActions.read') as identity_api_get, \
+                mock.patch('nanny.db_gateways.IdentityGatewayActions.put') as identity_api_put, \
                 mock.patch('nanny.notify.send_text') as notify_send_text, \
                 mock.patch('login_app.views.ValidateMagicLinkView.link_has_expired') as link_expired:
 
@@ -305,8 +305,8 @@ class LoginTests(TestCase):
         """
         Test that the returning user who navigates to the link sent via email is then sent an SMS.
         """
-        with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get, \
-                mock.patch('identity_models.user_details.UserDetails.api.put') as identity_api_put, \
+        with mock.patch('nanny.db_gateways.IdentityGatewayActions.read') as identity_api_get, \
+                mock.patch('nanny.db_gateways.IdentityGatewayActions.put') as identity_api_put, \
                 mock.patch('nanny.notify.send_text') as notify_send_text, \
                 mock.patch('login_app.views.ValidateMagicLinkView.link_has_expired') as link_expired:
 
@@ -322,8 +322,8 @@ class LoginTests(TestCase):
         """
         Test that the 'Security-Code' page can be rendered.
         """
-        with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get, \
-                mock.patch('identity_models.user_details.UserDetails.api.put') as identity_api_put:
+        with mock.patch('nanny.db_gateways.IdentityGatewayActions.read') as identity_api_get, \
+                mock.patch('nanny.db_gateways.IdentityGatewayActions.put') as identity_api_put:
 
             identity_api_get.return_value.status_code = 200
             identity_api_get.return_value.record = self.user_details_record
@@ -339,7 +339,7 @@ class LoginTests(TestCase):
         """
         Test that invalid security codes reload same page with appropriate error messages raised.
         """
-        with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get:
+        with mock.patch('nanny.db_gateways.IdentityGatewayActions.read') as identity_api_get:
             codes_errors = (
                 ('', 'Please enter the 5 digit code we sent to your mobile'),
                 ('1', 'The code must be 5 digits. You have entered fewer than 5 digits'),
@@ -362,9 +362,9 @@ class LoginTests(TestCase):
         """
         Test that entering a correct SMS code redirects the user to the appropriate page.
         """
-        with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get, \
-                mock.patch('identity_models.user_details.UserDetails.api.put') as identity_api_put, \
-                mock.patch('nanny_models.nanny_application.NannyApplication.api.get_record') as nanny_api_get, \
+        with mock.patch('nanny.db_gateways.IdentityGatewayActions.read') as identity_api_get, \
+                mock.patch('nanny.db_gateways.IdentityGatewayActions.put') as identity_api_put, \
+                mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_get, \
                 mock.patch('login_app.views.ValidateMagicLinkView.link_has_expired') as link_expired:
 
             identity_api_get.return_value.response_code = 200
@@ -409,7 +409,7 @@ class LoginTests(TestCase):
         """
         Test that the 'Phone-Number' page can be loaded.
         """
-        with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get:
+        with mock.patch('nanny.db_gateways.IdentityGatewayActions.read') as identity_api_get:
             identity_api_get.return_value.record = self.user_details_record
 
             response = self.client.get(reverse('Phone-Number') + '?id=' + self.user_details_record['application_id'])
@@ -422,9 +422,9 @@ class LoginTests(TestCase):
         """
         Test that a valid mobile number entered on the 'Phone-Number' page is saved.
         """
-        with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get, \
-                mock.patch('identity_models.user_details.UserDetails.api.put') as identity_api_put, \
-                mock.patch('nanny_models.nanny_application.NannyApplication.api.get_record') as nanny_api_get, \
+        with mock.patch('nanny.db_gateways.IdentityGatewayActions.read') as identity_api_get, \
+                mock.patch('nanny.db_gateways.IdentityGatewayActions.put') as identity_api_put, \
+                mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_get, \
                 mock.patch('login_app.views.ValidateMagicLinkView.link_has_expired') as link_expired:
 
             identity_api_get.return_value.response_code = 200
@@ -447,9 +447,9 @@ class LoginTests(TestCase):
         """
         Test that entering valid numbers on the 'Phone-Number' page saves both.
         """
-        with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get, \
-                mock.patch('identity_models.user_details.UserDetails.api.put') as identity_api_put, \
-                mock.patch('nanny_models.nanny_application.NannyApplication.api.get_record') as nanny_api_get, \
+        with mock.patch('nanny.db_gateways.IdentityGatewayActions.read') as identity_api_get, \
+                mock.patch('nanny.db_gateways.IdentityGatewayActions.put') as identity_api_put, \
+                mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_get, \
                 mock.patch('login_app.views.ValidateMagicLinkView.link_has_expired') as link_expired:
 
             identity_api_get.return_value.response_code = 200
@@ -472,7 +472,7 @@ class LoginTests(TestCase):
         """
         Test that invalid mobile numbers throw an error with the appropriate message.
         """
-        with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get:
+        with mock.patch('nanny.db_gateways.IdentityGatewayActions.read') as identity_api_get:
             identity_api_get.return_value.record = self.user_details_record
 
             number_errors = (
@@ -497,7 +497,7 @@ class LoginTests(TestCase):
         """
         Test that invalid other phone numbers throw an error with the appropriate message.
         """
-        with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get:
+        with mock.patch('nanny.db_gateways.IdentityGatewayActions.read') as identity_api_get:
             identity_api_get.return_value.record = self.user_details_record
 
             number_errors = (
@@ -521,7 +521,7 @@ class LoginTests(TestCase):
         """
         Test that other number can be blank and won't throw an error during validation.
         """
-        with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get:
+        with mock.patch('nanny.db_gateways.IdentityGatewayActions.read') as identity_api_get:
             identity_api_get.return_value.record = self.user_details_record
 
             response = self.client.post(reverse('Phone-Number') + '?id=' + self.user_details_record['application_id'],
@@ -538,7 +538,7 @@ class LoginTests(TestCase):
         """
         Test that the 'Resend-Security-Code' page can be rendered.
         """
-        with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get:
+        with mock.patch('nanny.db_gateways.IdentityGatewayActions.read') as identity_api_get:
             identity_api_get.return_value.record = self.user_details_record
 
             response = self.client.get(reverse('Resend-Security-Code') + '?id=' + self.user_details_record['application_id'])
@@ -552,8 +552,8 @@ class LoginTests(TestCase):
         Test that clicking 'Send new code' on 'Resend-Security-Code' page updates the user's security code and redirects
         back to the 'Security-Code' page.
         """
-        with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get, \
-                mock.patch('identity_models.user_details.UserDetails.api.put') as identity_api_put:
+        with mock.patch('nanny.db_gateways.IdentityGatewayActions.read') as identity_api_get, \
+                mock.patch('nanny.db_gateways.IdentityGatewayActions.put') as identity_api_put:
 
             identity_api_get.return_value.record = self.user_details_record
 
@@ -567,8 +567,8 @@ class LoginTests(TestCase):
         """
         Test to assert that the 'Security-Question' page can be rendered.
         """
-        with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get, \
-                mock.patch('nanny_models.nanny_application.NannyApplication.api.get_record') as nanny_api_get:
+        with mock.patch('nanny.db_gateways.IdentityGatewayActions.read') as identity_api_get, \
+                mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_get:
 
             identity_api_get.return_value.record = self.user_details_record
 
@@ -583,8 +583,8 @@ class LoginTests(TestCase):
         Test to assert that an applicant who has completed the login details task is asked for their mobile
         number as a security question.
         """
-        with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get, \
-                mock.patch('nanny_models.nanny_application.NannyApplication.api.get_record') as nanny_api_get:
+        with mock.patch('nanny.db_gateways.IdentityGatewayActions.read') as identity_api_get, \
+                mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_get:
 
             identity_api_get.return_value.record = self.user_details_record
             nanny_api_get.return_value.record = self.nanny_application_record
@@ -600,10 +600,11 @@ class LoginTests(TestCase):
         Test to assert that an applicant who has completed the personal details task is asked for their postcode and DoB
         as a security question.
         """
-        with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get, \
-                mock.patch('nanny_models.nanny_application.NannyApplication.api.get_record') as nanny_api_get, \
-                mock.patch('nanny_models.applicant_personal_details.ApplicantPersonalDetails.api.get_record') as personal_api_get, \
-                mock.patch('nanny_models.applicant_home_address.ApplicantHomeAddress.api.get_record') as address_api_get:
+        # FIXME
+        with mock.patch('nanny.db_gateways.IdentityGatewayActions.read') as identity_api_get, \
+                mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_get, \
+                mock.patch('nanny.db_gateways.NannyGatewayActions.read') as personal_api_get, \
+                mock.patch('nanny.db_gateways.NannyGatewayActions.read') as address_api_get:
 
             identity_api_get.return_value.record = self.user_details_record
             nanny_application_record = self.nanny_application_record
@@ -623,9 +624,10 @@ class LoginTests(TestCase):
         Test to assert that an applicant who has completed the criminal record check task is asked for their DBS
         number as a security question.
         """
-        with mock.patch('identity_models.user_details.UserDetails.api.get_record') as identity_api_get, \
-                mock.patch('nanny_models.nanny_application.NannyApplication.api.get_record') as nanny_api_get, \
-                mock.patch('nanny_models.dbs_check.DbsCheck.api.get_record') as dbs_api_get:
+        # FIXME
+        with mock.patch('nanny.db_gateways.IdentityGatewayActions.read') as identity_api_get, \
+                mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_get, \
+                mock.patch('nanny.db_gateways.NannyGatewayActions.read') as dbs_api_get:
 
             identity_api_get.return_value.record = self.user_details_record
             nanny_application_record = self.nanny_application_record
