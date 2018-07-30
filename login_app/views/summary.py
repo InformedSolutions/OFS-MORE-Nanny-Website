@@ -28,5 +28,5 @@ class ContactDetailsSummaryView(View):
 
     def include_change_links(self, application_id):
         """ If the applicant is coming from task list, an application object will exist => get_record gives 200 code."""
-        nanny_api_response = NannyGatewayActions().read('user', params={'application_id': application_id})
+        nanny_api_response = NannyGatewayActions().read('application', params={'application_id': application_id})
         return nanny_api_response.status_code == 200
