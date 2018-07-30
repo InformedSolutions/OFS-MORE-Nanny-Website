@@ -1,7 +1,7 @@
 from django.views import View
 from django.shortcuts import render
 
-from middleware import CustomAuthenticationHandler
+from nanny.middleware import CustomAuthenticationHandler
 
 
 class ApplicationSavedView(View):

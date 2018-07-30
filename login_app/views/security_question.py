@@ -1,4 +1,4 @@
-from middleware import CustomAuthenticationHandler
+from nanny.middleware import CustomAuthenticationHandler
 from login_app import login_redirect_helper
 
 from login_app.forms import DBSSecurityQuestionForm, PersonalDetailsSecurityQuestionForm, MobileNumberSecurityQuestionForm
