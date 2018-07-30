@@ -3,12 +3,12 @@ import uuid
 from django.http import HttpResponseRedirect
 from django.shortcuts import reverse
 
-from identity_models.user_details import UserDetails
-
 from login_app.forms import ContactEmailForm
 from nanny import notify
 from nanny import utilities
 from .base import BaseFormView
+
+from db_gateways import IdentityGatewayActions
 
 
 class ExistingUserSignInFormView(BaseFormView):
@@ -26,20 +26,17 @@ class ExistingUserSignInFormView(BaseFormView):
 
         email_address = email_form.cleaned_data['email_address']
         self.email_address = email_address  # Set such that success parameters can find value later.
-        api_response = UserDetails.api.get_record(email=email_address)
 
+        api_response = IdentityGatewayActions().list('user', params={'email': email_address})
         if api_response.status_code == 404:
-            # TODO: Make change to API such that create function returns response with a 'record' attribute.
-            # That way, can have 2 API calls instead of 3.
-            creation_response = UserDetails.api.create(email=email_address, application_id=uuid.uuid4())
-            api_response = UserDetails.api.get_record(email=email_address)
+            api_response = IdentityGatewayActions().create('user', {'email': email_address, 'application_id': uuid.uuid4()})
 
-        record = api_response.record
+        record = api_response.record[0]
         validation_link, email_expiry_date = utilities.generate_email_validation_link(email_address)
 
         record['magic_link_email'] = validation_link.split('/')[-1]
         record['email_expiry_date'] = email_expiry_date
-        UserDetails.api.put(record)
+        IdentityGatewayActions().put('user', params=record)
 
         # Send Nanny email for existing users
         notify.send_email(email=email_address,
