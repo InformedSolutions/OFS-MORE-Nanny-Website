@@ -18,7 +18,7 @@ def authenticate(application_id):
     return CustomResponse(record)
 
 
-@mock.patch("identity_models.user_details.UserDetails.api.get_record", authenticate)
+@mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)
 class TaskListTestsAuth(TestCase):
     application_id = uuid.UUID
     sample_app = {
