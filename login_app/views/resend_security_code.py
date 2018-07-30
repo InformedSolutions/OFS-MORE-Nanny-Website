@@ -2,11 +2,11 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views import View
 
-from identity_models.user_details import UserDetails
-
 from nanny.utilities import build_url
 
 from .validate_magic_link import ValidateMagicLinkView
+
+from db_gateways import IdentityGatewayActions
 
 
 class ResendSecurityCodeView(View):
@@ -15,7 +15,7 @@ class ResendSecurityCodeView(View):
     """
     def get(self, request):
         application_id = request.GET['id']
-        record = UserDetails.api.get_record(application_id=application_id).record
+        record = IdentityGatewayActions().read('user', params={'application_id': application_id}).record
 
         # If the applicant has attempted more than 3 attempts in the past 24 hours, redirect to security question.
         if record['sms_resend_attempts'] >= 3:
@@ -25,7 +25,7 @@ class ResendSecurityCodeView(View):
 
     def post(self, request):
         application_id = request.GET['id']
-        record = UserDetails.api.get_record(application_id=application_id).record
+        record = IdentityGatewayActions().read('user', params={'application_id': application_id}).record
         record = ValidateMagicLinkView.sms_magic_link(record=record)
 
         if record['sms_resend_attempts'] is not None:
@@ -33,6 +33,6 @@ class ResendSecurityCodeView(View):
         else:
             record['sms_resend_attempts'] = 1
 
-        UserDetails.api.put(record)
+        IdentityGatewayActions().put('user', params=record)
 
         return HttpResponseRedirect(build_url('Security-Code', get={'id': application_id}))
