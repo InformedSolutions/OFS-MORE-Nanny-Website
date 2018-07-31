@@ -132,8 +132,8 @@ def payment_record_exists(application_id):
     :return: a boolean indicator detailing whether a payyment record exists or not
     """
     logger.debug('Testing for presence of payment record for application with identifier: ' + application_id)
-    payment_record = NannyGatewayActions().read('payment', params={'application_id': application_id}).record
-    return payment_record is not None
+    payment_record = NannyGatewayActions().read('payment', params={'application_id': application_id})
+    return payment_record.status_code == 200
 
 
 def get_payment_record(application_id):
