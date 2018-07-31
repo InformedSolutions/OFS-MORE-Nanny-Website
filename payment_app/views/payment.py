@@ -292,7 +292,7 @@ def __handle_authorised_payment(application_id):
 
     application_record = NannyGatewayActions().read('application', params={'application_id': application_id}).record
     application_record['date_submitted'] = datetime.datetime.today()
-    application_record = NannyGatewayActions().put('application', params=application_record)
+    application_record = NannyGatewayActions().put('application', params=application_record).record
 
     # Dispatch payment confirmation email to user
     __send_payment_confirmation_email(application_record)
