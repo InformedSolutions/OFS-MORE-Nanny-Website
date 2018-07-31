@@ -41,10 +41,18 @@ class ExistingUserSignInFormView(BaseFormView):
         record['email_expiry_date'] = email_expiry_date
         UserDetails.api.put(record)
 
-        # Send Nanny email for existing users
+        # Set Nanny email template
+        # If existing user
+        if record['mobile_number'] != '':
+            template_id = '5d983266-7efa-4978-9d4c-9099ed6ece28'
+        # If new user
+        else:
+            template_id = '45c6b63e-1973-45e5-99d7-25f2877bebd9'
+
+        # Send Nanny email
         notify.send_email(email=email_address,
                           personalisation={"link": validation_link},
-                          template_id='5d983266-7efa-4978-9d4c-9099ed6ece28')
+                          template_id=template_id)
 
         return HttpResponseRedirect(self.get_success_url())
 
