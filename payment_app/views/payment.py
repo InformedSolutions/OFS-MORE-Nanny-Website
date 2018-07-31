@@ -290,9 +290,9 @@ def __handle_authorised_payment(application_id):
     # Transition application to submitted
     logger.info('Assigning SUBMITTED state for application with id: ' + str(application_id))
 
-    application_record = NannyApplication.api.get_record(application_id=application_id).record
+    application_record = NannyGatewayActions().read('application', params={'application_id': application_id}).record
     application_record['date_submitted'] = datetime.datetime.today()
-    NannyApplication.api.put(application_record)
+    application_record = NannyGatewayActions().put('application', params=application_record)
 
     # Dispatch payment confirmation email to user
     __send_payment_confirmation_email(application_record)
