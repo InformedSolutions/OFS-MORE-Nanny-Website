@@ -404,7 +404,7 @@ def payment_confirmation(request):
     }
 
     local_app['declarations_status'] = 'COMPLETED'
-    local_app.application_status = 'SUBMITTED'
+    local_app['application_status'] = 'SUBMITTED'
     NannyGatewayActions().put('application', params=local_app)
 
     return render(request, 'payment-confirmation.html', variables)
