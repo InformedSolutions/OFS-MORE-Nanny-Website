@@ -26,12 +26,14 @@ class ExistingUserSignInFormView(BaseFormView):
 
         email_address = email_form.cleaned_data['email_address']
         self.email_address = email_address  # Set such that success parameters can find value later.
-
         api_response = IdentityGatewayActions().list('user', params={'email': email_address})
+
         if api_response.status_code == 404:
             api_response = IdentityGatewayActions().create('user', {'email': email_address, 'application_id': uuid.uuid4()})
+            record = api_response.record
+        else:
+            record = api_response.record[0]
 
-        record = api_response.record[0]
         validation_link, email_expiry_date = utilities.generate_email_validation_link(email_address)
 
         record['magic_link_email'] = validation_link.split('/')[-1]
