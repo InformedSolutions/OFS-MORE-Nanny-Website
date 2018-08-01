@@ -69,51 +69,6 @@ class TaskExecutor:
         driver = self.get_driver()
         driver.get(self.__base_url)
 
-
-    def sign_back_in(self, email_address):
-        """
-        Selenium steps for signing back into an application
-        :param email_address: the email address to be used during the sign in process.
-        """
-        driver = self.get_driver()
-        self.navigate_to_base_url()
-        driver.find_element_by_xpath("//input[@value='Sign in']").click()
-        driver.find_element_by_id("id_acc_selection_1-label").click()
-        driver.find_element_by_xpath("//input[@value='Continue']").click()
-
-        driver.find_element_by_id("id_email_address").send_keys(email_address)
-        driver.find_element_by_xpath("//input[@value='Continue']").click()
-
-        WebDriverWait(driver, 10).until(
-            expected_conditions.title_contains("Check your email"))
-
-        self.navigate_to_email_validation_url()
-        sms_validation_code = os.environ.get('SMS_VALIDATION_CODE')
-        driver.find_element_by_id("id_magic_link_sms").send_keys(sms_validation_code)
-        driver.find_element_by_xpath("//input[@value='Continue']").click()
-
-    def navigate_to_SMS_validation_page(self, email_address):
-        '''
-        Selenium steps for signing back into the application, but stopping at SMS validation page unlike sign_back_in()
-        :param email_address: Email address to be used during the sign in process.
-        '''
-        driver = self.get_driver()
-        # Start sign in process.
-        self.navigate_to_base_url()
-        driver.find_element_by_xpath("//input[@value='Sign in']").click()
-        driver.find_element_by_id("id_acc_selection_1-label").click()
-        driver.find_element_by_xpath("//input[@value='Continue']").click()
-
-        # Generate new validation link (was previously used in standard_eyfs_application).
-        driver.find_element_by_id("id_email_address").send_keys(email_address)
-        driver.find_element_by_xpath("//input[@value='Continue']").click()
-
-        WebDriverWait(driver, 10).until(
-            expected_conditions.title_contains("Check your email"))
-
-        # Reach SMS validation page.
-        self.navigate_to_email_validation_url()
-
     def navigate_to_email_validation_url(self):
         """
         Selenium steps for navigating to the email validation page in the login journey
@@ -128,9 +83,6 @@ class TaskExecutor:
         driver.get(validation_url)
 
         return validation_url
-
-    def complete_mandatory_registration(self):
-        pass
 
     def complete_your_login_details(self, email_address, phone_number, additional_phone_number):
         """
@@ -163,7 +115,7 @@ class TaskExecutor:
         driver.find_element_by_xpath("//input[@value='Sign in']").click()
         driver.find_element_by_id("id_account_selection_0-label").click()
         driver.find_element_by_xpath("//input[@value='Continue']").click()
-        time.sleep(3)
+        time.sleep(1)
         driver.find_element_by_id("id_email_address").click()
         driver.find_element_by_id("id_email_address").send_keys(email_address)
         driver.find_element_by_xpath("//input[@value='Continue']").click()

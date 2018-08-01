@@ -1,10 +1,11 @@
 """
-Selenium test cases for the Childminder service
+Selenium test cases for the nanny service
 """
 
 import os
 import time
 from datetime import datetime
+from unittest import mock
 
 from django.test import LiveServerTestCase, override_settings, tag
 from faker.generator import random
@@ -121,18 +122,12 @@ class ApplyAsANanny(LiveServerTestCase):
     @try_except_method
     def test_can_apply_as_a_nanny_full_question_set(self):
         """
-        Tests that a user is directed toward guidance advising them to contact their local authority if
-        the ages of children they are minding does not
+        Tests that a user can successfully submit a nanny application
         """
         self.task_executor.navigate_to_base_url()
-        self.complete_full_question_set()
+        applicant_email = self.create_standard_application()
 
-    def complete_full_question_set(self):
-        applicant_email = self.create_standard_eyfs_application()
-
-
-
-    def create_standard_eyfs_application(self):
+    def create_standard_application(self):
         """
         Helper method for starting a new application
         :return: email address used to register the application
@@ -142,6 +137,12 @@ class ApplyAsANanny(LiveServerTestCase):
         test_email = faker.email()
         test_phone_number = self.task_executor.generate_random_mobile_number()
         test_alt_phone_number = self.task_executor.generate_random_mobile_number()
+
+        # with mock.patch('nanny.notify.send_email') as notify_mock, \
+        #         mock.patch('nanny.utilities.test_notify_connection') as notify_connection_test_mock:
+        #
+        #     notify_connection_test_mock.return_value.status_code = 201
+        #     notify_mock.return_value.status_code = 201
 
         self.task_executor.complete_your_login_details(test_email, test_phone_number, test_alt_phone_number)
 
@@ -159,7 +160,6 @@ class ApplyAsANanny(LiveServerTestCase):
 
         self.complete_declaration_and_payment_task()
 
-
         return test_email
 
     def complete_childcare_address_task(self):
@@ -172,12 +172,11 @@ class ApplyAsANanny(LiveServerTestCase):
         self.task_executor.click_element_by_id("id_home_address_0")
         self.task_executor.click_element_by_xpath("//input[@value='Save and continue']")
         self.task_executor.click_element_by_xpath("//input[@value='Save and continue']")
-        self.task_executor.click_element_by_xpath("//input[@value='Continue']")
+        self.task_executor.click_element_by_xpath("//input[@value='Confirm and continue']")
         self.assertEqual("Done", driver.find_element_by_xpath("//tr[@id='childcare_address']/td/a/strong").text)
 
     def complete_your_personal_details(self):
-
-        driver=self.task_executor.get_driver()
+        driver = self.task_executor.get_driver()
         page_title = "Register as a nanny"
         self.waitUntilPageLoad(page_title)
         self.assertEqual("To do", driver.find_element_by_xpath("//tr[@id='personal_details']/td/a/strong").text)
@@ -281,13 +280,7 @@ class ApplyAsANanny(LiveServerTestCase):
         driver.find_element_by_id("id_expiry_date_1").send_keys("21")
         driver.find_element_by_id("id_cardholders_name").send_keys("wew")
         driver.find_element_by_id("id_card_security_code").send_keys("121")
-        time.sleep(500)
         self.task_executor.click_element_by_xpath("//input[@value='Pay and apply']")
-        self.waitUntilPageLoad("Thank you for applying")
-        self.task_executor.click_element_by_xpath("//main[@id='content']/div/div[2]/h1")
-        self.assertEqual("Thank you for applying",
-                         driver.find_element_by_xpath("//main[@id='content']/div/div[2]/h1").text)
-        self.assertEqual("Thank you for applying", driver.title)
 
     def waitUntilPageLoad(self, page_title):
         delay = 4  # seconds
@@ -298,7 +291,7 @@ class ApplyAsANanny(LiveServerTestCase):
             print("Page title doesn't match or page took too long to load")
 
     def assertPageTitleAtTaskSummaryPage(self, expected_title):
-        driver=self.task_executor.get_driver()
+        driver = self.task_executor.get_driver()
 
         WebDriverWait(driver, 3).until(
             expected_conditions.element_to_be_clickable(
@@ -306,7 +299,6 @@ class ApplyAsANanny(LiveServerTestCase):
         self.assertEqual(expected_title, driver.title)
 
     def tearDown(self):
-
         self.selenium_driver.quit()
 
         try:
