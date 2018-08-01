@@ -217,10 +217,9 @@ class ApplyAsANanny(LiveServerTestCase):
         driver.find_element_by_id("id_course_date_2").send_keys("2017")
         driver.find_element_by_name("action").click()
         driver.find_element_by_link_text("Continue").click()
-        # self.assertEqual("Check your answers: first aid training", driver.title)
         self.assertPageTitleAtTaskSummaryPage("Check your answers: first aid training")
         self.task_executor.click_element_by_xpath("//input[@value='Confirm and continue']")
-        time.sleep(3)
+        self.waitUntilPageLoad("Register as a nanny")
         self.assertEqual("Done", driver.find_element_by_xpath("//tr[@id='first_aid_training']/td/a/strong").text)
 
     def complete_childcare_training_task(self):
@@ -231,6 +230,7 @@ class ApplyAsANanny(LiveServerTestCase):
         self.task_executor.click_element_by_id("id_childcare_training_0")
         self.task_executor.click_element_by_id("id_childcare_training_1")
         self.task_executor.click_element_by_id("id_continue")
+        self.waitUntilPageLoad("Check your answers: childcare training")
         self.assertEqual("Check your answers: childcare training", driver.title)
         self.task_executor.click_element_by_id("id_continue")
         self.assertEqual("Done", driver.find_element_by_xpath("//tr[@id='childcare_training']/td/a/strong").text)

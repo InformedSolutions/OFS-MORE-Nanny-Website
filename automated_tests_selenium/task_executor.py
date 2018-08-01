@@ -96,7 +96,6 @@ class TaskExecutor:
 
         driver = self.get_driver()
 
-        # driver.find_element_by_id("id_mobile_number").send_keys(phone_number)
         self.type_into_field_by_id("id_mobile_number", phone_number)
 
         if additional_phone_number is not None:
@@ -115,7 +114,6 @@ class TaskExecutor:
         driver.find_element_by_xpath("//input[@value='Sign in']").click()
         driver.find_element_by_id("id_account_selection_0-label").click()
         driver.find_element_by_xpath("//input[@value='Continue']").click()
-        time.sleep(1)
         driver.find_element_by_id("id_email_address").click()
         driver.find_element_by_id("id_email_address").send_keys(email_address)
         driver.find_element_by_xpath("//input[@value='Continue']").click()
