@@ -1,3 +1,5 @@
+import datetime
+
 from nanny.base_views import NannyFormView
 from nanny.utilities import app_id_finder
 from ..forms.declaration import DeclarationForm
@@ -12,6 +14,16 @@ class FinalDeclaration(NannyFormView):
     template_name = "final-declaration.html"
     success_url = 'payment:payment-details'
     form_class = DeclarationForm
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        if form.is_valid():
+            record = NannyGatewayActions().read('application', params={'application_id': request.GET['id']})
+            record['date_updated'] = datetime.datetime.today()
+            NannyGatewayActions().put('application', params=record)
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
