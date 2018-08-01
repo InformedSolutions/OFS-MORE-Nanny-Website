@@ -96,31 +96,43 @@ class TaskExecutor:
 
         driver = self.get_driver()
 
-        self.type_into_field_by_id("id_mobile_number", phone_number)
+        self.send_keys_by_id("id_mobile_number", phone_number)
 
         if additional_phone_number is not None:
-            driver.find_element_by_id("id_other_phone_number").send_keys(additional_phone_number)
+            self.send_keys_by_id("id_other_phone_number", additional_phone_number)
 
-        driver.find_element_by_xpath("//input[@value='Continue']").click()
+        self.click_element_by_xpath("//input[@value='Continue']")
 
         # Summary page
-        driver.find_element_by_xpath("//input[@value='Continue']").click()
+        self.click_element_by_xpath("//input[@value='Continue']")
 
     def register_email_address(self, email_address):
         """
         Selenium steps for registering an email address against an application
         """
         driver = self.get_driver()
-        driver.find_element_by_xpath("//input[@value='Sign in']").click()
-        driver.find_element_by_id("id_account_selection_0-label").click()
-        driver.find_element_by_xpath("//input[@value='Continue']").click()
-        driver.find_element_by_id("id_email_address").click()
-        driver.find_element_by_id("id_email_address").send_keys(email_address)
-        driver.find_element_by_xpath("//input[@value='Continue']").click()
+        self.click_element_by_xpath("//input[@value='Sign in']")
+        self.click_element_by_id("id_account_selection_0-label")
+        self.click_element_by_xpath("//input[@value='Continue']")
+        self.click_element_by_id("id_email_address")
+        self.send_keys_by_id("id_email_address", email_address)
+        self.click_element_by_xpath("//input[@value='Continue']")
 
     def click_element_by_id(self, element_id):
         try:
             expected_conditions.element_to_be_clickable(self.get_driver().find_element_by_id(element_id).click())
+        except TimeoutException:
+            print("Element is not in expected state")
+
+    def send_keys_by_id(self, element_id, text):
+        try:
+            expected_conditions.element_to_be_clickable(self.get_driver().find_element_by_id(element_id).send_keys(text))
+        except TimeoutException:
+            print("Element is not ")
+
+    def click_element_by_name(self, element_name):
+        try:
+            expected_conditions.element_to_be_clickable(self.get_driver().find_element_by_name(element_name).click())
         except TimeoutException:
             print("Element is not clickable")
 
@@ -130,13 +142,13 @@ class TaskExecutor:
         except TimeoutException:
             print("Element is not clickable ")
 
-    def type_into_field_by_id(self, element_id, text):
-
+    def click_element_by_link_text(self, link_text):
         try:
-            expected_conditions.element_to_be_clickable(
-                    self.get_driver().find_element_by_id(element_id).send_keys(text))
+            expected_conditions.element_to_be_clickable(self.get_driver().find_element_by_link_text(link_text).click()
+)
         except TimeoutException:
-            print("Element is not in expected state to type")
+            print("Element is not clickable ")
+
 
     @staticmethod
     def generate_random_mobile_number():
