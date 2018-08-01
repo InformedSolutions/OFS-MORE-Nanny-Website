@@ -18,7 +18,7 @@ class FinalDeclaration(NannyFormView):
     def post(self, request, *args, **kwargs):
         form = self.get_form()
         if form.is_valid():
-            record = NannyGatewayActions().read('application', params={'application_id': request.GET['id']})
+            record = NannyGatewayActions().read('application', params={'application_id': request.GET['id']}).record
             record['date_updated'] = datetime.datetime.today()
             NannyGatewayActions().put('application', params=record)
             return self.form_valid(form)
