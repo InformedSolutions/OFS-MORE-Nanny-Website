@@ -14,10 +14,8 @@ RUN apt-get update && \
                 git \
         && rm -rf /var/lib/apt/lists/*
 
-
-RUN mkdir /source
+ADD requirements.txt /source/
 WORKDIR /source
-ADD . /source/
 RUN pip install -r requirements.txt
 
 # Get identity-models package from OFS-MORE-Identity-Gateway repo.
@@ -25,6 +23,8 @@ RUN pip install -e 'git+https://github.com/InformedSolutions/OFS-MORE-Identity-G
 
 # Get nanny-models package from OFS-MORE-Nanny-Gateway repo.
 RUN pip install -e 'git+https://github.com/InformedSolutions/OFS-MORE-Nanny-Gateway.git#egg=nanny_models&subdirectory=application/models'
+
+ADD . /source/
 
 RUN chmod +x /source/docker-entrypoint.sh
 EXPOSE 8000
