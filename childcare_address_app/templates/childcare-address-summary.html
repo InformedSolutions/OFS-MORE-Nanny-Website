@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Check your answers: childcare address{% endblock %}
+{% block page_title %}Check your answers: childcare location{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -7,7 +7,7 @@
 {% include "back-button.html" %}
 
 <h1 class="form-title heading-large">
-    Check your answers: childcare address
+    Check your answers: childcare location
 </h1>
 
 <table class="check-your-answers" style="table-layout: fixed; width: 100%">
@@ -16,15 +16,6 @@
         <col class="summary-column">
         <col class="change-answer">
     </colgroup>
-    <!--<thead>-->
-    <!--<tr>-->
-        <!--<th colspan="3">-->
-            <!--<div class="heading-medium">-->
-                <!--Your sign in details-->
-            <!--</div>-->
-        <!--</th>-->
-    <!--</tr>-->
-    <!--</thead>-->
 
     <!--Blank row below to get hrule atop of table.-->
     <tr>
@@ -37,7 +28,7 @@
     </tr>
     <tr>
         <td style="word-wrap: break-word" class=summary-column>
-            Do you know where you will be working?
+            Do you know where you'll be working?
         </td>
         <td style="word-wrap: break-word" class=summary-column>
             {{ address_to_be_provided }}
@@ -51,7 +42,7 @@
     {% if home_address %}
         <tr>
             <td style="word-wrap: break-word" class=summary-column>
-                Do you work and live at the same address?
+                Will you work and live at the same address?
             </td>
             <td style="word-wrap: break-word" class=summary-column>
                 {{ home_address }}
@@ -85,7 +76,7 @@
 
 <form method="post" novalidate>
     <input type="hidden" id="id" value="{{ id }}" name="id"/>
-    <input type="submit" class="button" value="Confirm and continue" alt='Continue'>
+    <input type="submit" class="button" value="Confirm and continue" alt='Confirm and continue'>
     {% csrf_token %}
 </form>
 
