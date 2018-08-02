@@ -4,7 +4,6 @@ Selenium test cases for the nanny service
 
 import os
 from datetime import datetime
-from unittest import mock
 
 from django.test import LiveServerTestCase, override_settings, tag
 from faker.generator import random
@@ -136,12 +135,6 @@ class ApplyAsANanny(LiveServerTestCase):
         test_email = faker.email()
         test_phone_number = self.task_executor.generate_random_mobile_number()
         test_alt_phone_number = self.task_executor.generate_random_mobile_number()
-
-        # with mock.patch('nanny.notify.send_email') as notify_mock, \
-        #         mock.patch('nanny.utilities.test_notify_connection') as notify_connection_test_mock:
-        #
-        #     notify_connection_test_mock.return_value.status_code = 201
-        #     notify_mock.return_value.status_code = 201
 
         self.task_executor.complete_your_login_details(test_email, test_phone_number, test_alt_phone_number)
 
@@ -299,11 +292,6 @@ class ApplyAsANanny(LiveServerTestCase):
 
     def tearDown(self):
         self.selenium_driver.quit()
-
-        try:
-            del os.environ['EMAIL_VALIDATION_URL']
-        except:
-            pass
-
+        del os.environ['EMAIL_VALIDATION_URL']
         super(ApplyAsANanny, self).tearDown()
         self.assertEqual([], self.verification_errors)

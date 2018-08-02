@@ -1,7 +1,6 @@
 import os
 import random
 import time
-from unittest import mock
 
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions
@@ -63,7 +62,6 @@ class TaskExecutor:
         Method for navigating to the base url of a site
         """
         driver = self.get_driver()
-        # time.sleep(500)
         driver.get(self.__base_url)
 
     def navigate_to_email_validation_url(self):
@@ -125,7 +123,7 @@ class TaskExecutor:
         try:
             expected_conditions.element_to_be_clickable(self.get_driver().find_element_by_id(element_id).send_keys(text))
         except TimeoutException:
-            print("Element is not ")
+            print("Element is not in an expected state or rendered correctly")
 
     def click_element_by_name(self, element_name):
         try:
