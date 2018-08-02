@@ -45,6 +45,10 @@ mock_first_aid_record = {
     'course_date': '2016-03-31'
 }
 
+mock_insurance_cover_record = {
+    'public_liability': True
+}
+
 mock_identity_record = {
     'email': 'test@informed.com',
     'application_id': 'a4e6633f-5339-4de5-ae03-69c71fd008b3',
@@ -80,6 +84,10 @@ first_aid_response = HttpResponse()
 first_aid_response.status_code = 200
 first_aid_response.record = mock_first_aid_record
 
+insurance_cover_response = HttpResponse()
+insurance_cover_response.status_code = 200
+insurance_cover_response.record = mock_insurance_cover_record
+
 identity_response = HttpResponse()
 identity_response.status_code = 200
 identity_response.record = mock_identity_record
@@ -92,6 +100,7 @@ mock_endpoint_return_values = {
     'applicant-home-address': home_address_response,
     'dbs-check': dbs_check_response,
     'first-aid': first_aid_response,
+    'insurance-cover': insurance_cover_response,
     'user': identity_response,
 }
 

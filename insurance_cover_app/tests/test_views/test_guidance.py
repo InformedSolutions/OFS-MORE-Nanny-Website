@@ -2,6 +2,20 @@ from ..test_base import *
 from django.urls import resolve
 from ...views.guidance import *
 
+class CustomResponse:
+    record = None
+
+    def __init__(self, record):
+        self.record = record
+
+
+def authenticate(application_id, *args, **kwargs):
+    record = {
+            'application_id': application_id,
+            'email': 'test@informed.com'
+        }
+    return CustomResponse(record)
+
 
 @mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)
 class GuidanceTests(InsuranceCoverTests):
