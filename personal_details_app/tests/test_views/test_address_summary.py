@@ -4,8 +4,10 @@ from unittest import mock
 from ...views import *
 import uuid
 
+from nanny.test_utils import side_effect
 
-@mock.patch("identity_models.user_details.UserDetails.api.get_record", authenticate)
+
+@mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)
 class AddressSummaryTests(PersonalDetailsTests):
 
     def test_address_summary_url_resolves_to_page(self):
@@ -16,10 +18,8 @@ class AddressSummaryTests(PersonalDetailsTests):
         """
         Test to assert that the 'manual entry' page can be rendered.
         """
-        with mock.patch('nanny_models.applicant_home_address.ApplicantHomeAddress.api.get_record') \
-                as nanny_api_get_addr:
-            nanny_api_get_addr.return_value.status_code = 200
-            nanny_api_get_addr.return_value.record = self.sample_addr
+        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_get_addr:
+            nanny_api_get_addr.side_effect = side_effect
             response = self.client.get(build_url('personal-details:Personal-Details-Address-Summary', get={
                 'id': uuid.UUID
             }))
@@ -30,12 +30,8 @@ class AddressSummaryTests(PersonalDetailsTests):
         """
         Test to assert that the 'manual entry' page can be rendered.
         """
-
-        with mock.patch('nanny_models.applicant_home_address.ApplicantHomeAddress.api.get_record') \
-                as nanny_api_get_addr:
-
-            nanny_api_get_addr.return_value.status_code = 200
-            nanny_api_get_addr.return_value.record = self.sample_addr
+        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_get_addr:
+            nanny_api_get_addr.side_effect = side_effect
 
             response = self.client.post(build_url('personal-details:Personal-Details-Address-Summary', get={
                 'id': uuid.UUID
