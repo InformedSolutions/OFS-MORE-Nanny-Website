@@ -1,14 +1,10 @@
-import json
 import os
 import random
 import time
 from unittest import mock
 
 from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions
-from selenium.webdriver.support.select import Select
-from selenium.webdriver.support.wait import WebDriverWait
 
 
 class TaskExecutor:
@@ -67,6 +63,7 @@ class TaskExecutor:
         Method for navigating to the base url of a site
         """
         driver = self.get_driver()
+        # time.sleep(500)
         driver.get(self.__base_url)
 
     def navigate_to_email_validation_url(self):

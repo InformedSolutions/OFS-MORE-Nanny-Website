@@ -3,7 +3,6 @@ Selenium test cases for the nanny service
 """
 
 import os
-import time
 from datetime import datetime
 from unittest import mock
 
