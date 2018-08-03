@@ -10,6 +10,7 @@ mock_nanny_application = {
     'login_details_status': 'COMPLETED',
     'personal_details_status': 'NOT_STARTED',
     'criminal_record_check_status': 'NOT_STARTED',
+    'address_to_be_provided': True,
 }
 
 mock_personal_details_record = {
@@ -34,9 +35,19 @@ mock_dbs_record = {
 mock_home_address = {
     'street_line1': 'Test',
     'street_line2': None,
-    'town': 'Test Town',
+    'town': 'Middle Earth',
     'county': None,
-    'postcode': 'WA14 4PA'
+    'postcode': 'WA14 4PA',
+    'childcare_address': False,
+}
+
+mock_childcare_address_record = {
+    'street_line1': 'Test',
+    'street_line2': None,
+    'town': 'New New York',
+    'county': None,
+    'postcode': 'WA14 4PA',
+    'application_id': '998fd8ec-b96b-4a71-a1a1-a7a3ae186729',
 }
 
 mock_first_aid_record = {
@@ -88,6 +99,10 @@ insurance_cover_response = HttpResponse()
 insurance_cover_response.status_code = 200
 insurance_cover_response.record = mock_insurance_cover_record
 
+childcare_address_response = HttpResponse()
+childcare_address_response.status_code = 200
+childcare_address_response.record = mock_childcare_address_record
+
 identity_response = HttpResponse()
 identity_response.status_code = 200
 identity_response.record = mock_identity_record
@@ -97,6 +112,7 @@ mock_endpoint_return_values = {
     'application': nanny_application_response,
     'applicant-personal-details': personal_details_response,
     'childcare-training': childcare_training_response,
+    'childcare-address': childcare_address_response,
     'applicant-home-address': home_address_response,
     'dbs-check': dbs_check_response,
     'first-aid': first_aid_response,

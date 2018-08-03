@@ -4,8 +4,10 @@ from django.urls import resolve
 from unittest import mock
 import uuid
 
+from nanny.test_utils import side_effect
 
-@mock.patch("identity_models.user_details.UserDetails.api.get_record", authenticate)
+
+@mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)
 class ManualEntryTests(ChildcareAddressTests):
     def test_address_details_url_resolves_to_page(self):
         found = resolve(reverse('Childcare-Address-Details'))
@@ -15,10 +17,14 @@ class ManualEntryTests(ChildcareAddressTests):
         """
         Test to assert that the 'address details' page can be rendered.
         """
+        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
+            mock.patch('nanny.db_gateways.NannyGatewayActions.list') as nanny_api_list,\
+            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
 
-        with mock.patch('nanny_models.childcare_address.ChildcareAddress.api.get_records') as nanny_api_get_multiple:
-            nanny_api_get_multiple.return_value.status_code = 200
-            nanny_api_get_multiple.return_value.record = [self.sample_address]
+            nanny_api_read.side_effect = side_effect
+            nanny_api_put.side_effect = side_effect
+
+            # nanny_api_get_multiple.return_value.record = [self.sample_address]
 
             response = self.client.get(build_url('Childcare-Address-Details', get={
                 'id': uuid.UUID,
@@ -31,10 +37,13 @@ class ManualEntryTests(ChildcareAddressTests):
         """
         Test to assert that another address can be added.
         """
+        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
+            mock.patch('nanny.db_gateways.NannyGatewayActions.list') as nanny_api_list,\
+            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
 
-        with mock.patch('nanny_models.childcare_address.ChildcareAddress.api.get_records') as nanny_api_get_multiple:
-            nanny_api_get_multiple.return_value.status_code = 200
-            nanny_api_get_multiple.return_value.record = [self.sample_address]
+            nanny_api_read.side_effect = side_effect
+            nanny_api_put.side_effect = side_effect
+
             response = self.client.post(build_url('Childcare-Address-Details', get={
                 'id': uuid.UUID
             }), {
@@ -48,12 +57,19 @@ class ManualEntryTests(ChildcareAddressTests):
         """
         Test to assert that another address cannot be added if you already have five.
         """
+        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
+            mock.patch('nanny.db_gateways.NannyGatewayActions.list') as nanny_api_list,\
+            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
 
-        with mock.patch('nanny_models.childcare_address.ChildcareAddress.api.get_records') as nanny_api_get_multiple:
-            nanny_api_get_multiple.return_value.status_code = 200
-            nanny_api_get_multiple.return_value.record = [self.sample_address, self.sample_address,
-                                                          self.sample_address, self.sample_address,
-                                                          self.sample_address]
+            nanny_api_read.side_effect = side_effect
+            nanny_api_put.side_effect = side_effect
+
+            # Assert list call returns five records.
+            nanny_api_list.return_value.record = [self.sample_address, self.sample_address,
+                                                  self.sample_address, self.sample_address,
+                                                  self.sample_address]
+            nanny_api_list.return_value.status_code = 200
+
             response = self.client.post(build_url('Childcare-Address-Details', get={
                 'id': uuid.UUID
             }), {
