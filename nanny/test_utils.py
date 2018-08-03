@@ -2,7 +2,7 @@ from django.http import HttpResponse
 
 
 mock_nanny_application = {
-    'application_status': 'SUBMITTED',
+    'application_status': 'DRAFTING',
     'application_id': '998fd8ec-b96b-4a71-a1a1-a7a3ae186729',
     'date_submitted': '2018-07-31 17:20:46.011717+00',
     'date_updated': '2018-07-31 17:20:46.011717+00',

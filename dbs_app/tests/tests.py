@@ -22,7 +22,7 @@ def authenticate(application_id, *args, **kwargs):
     return CustomResponse(record)
 
 
-@mock.patch("identity_models.user_details.UserDetails.api.get_record", authenticate)
+@mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)
 class DBSTests(TestCase):
     """
     Base class from which the remainder of the DBS tests inherit from
