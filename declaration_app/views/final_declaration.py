@@ -33,7 +33,7 @@ class FinalDeclaration(NannyFormView):
     def get_initial(self):
         initial = super().get_initial()
         app_id = app_id_finder(self.request)
-        api_response = NannyGatewayActions().read('application', params={'application_id': app_id})
+        api_response = NannyGatewayActions().read('declaration', params={'application_id': app_id})
         if api_response.status_code == 200:
             record = api_response.record
             initial['follow_rules'] = record['follow_rules']

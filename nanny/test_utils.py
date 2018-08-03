@@ -11,6 +11,16 @@ mock_nanny_application = {
     'personal_details_status': 'NOT_STARTED',
     'criminal_record_check_status': 'NOT_STARTED',
     'address_to_be_provided': True,
+    'login_details_arc_flagged': False,
+    'personal_details_arc_flagged': False,
+    'childcare_address_status': 'COMPLETED',
+    'childcare_address_arc_flagged': False,
+    'first_aid_training_status': 'COMPLETED',
+    'first_aid_training_arc_flagged': False,
+    'childcare_training_arc_flagged': False,
+    'criminal_record_check_arc_flagged': False,
+    'insurance_cover_status': 'COMPLETED',
+    'insurance_cover_arc_flagged': False,
 }
 
 mock_personal_details_record = {
@@ -70,6 +80,13 @@ mock_identity_record = {
     'add_phone_number': '',
 }
 
+mock_declaration_record = {
+    'follow_rules': True,
+    'share_info_declare': True,
+    'information_correct_declare': True,
+    'change_declare': True,
+}
+
 
 nanny_application_response = HttpResponse()
 nanny_application_response.status_code = 200
@@ -103,6 +120,10 @@ childcare_address_response = HttpResponse()
 childcare_address_response.status_code = 200
 childcare_address_response.record = mock_childcare_address_record
 
+declaration_response = HttpResponse()
+declaration_response.status_code = 200
+declaration_response.record = mock_declaration_record
+
 identity_response = HttpResponse()
 identity_response.status_code = 200
 identity_response.record = mock_identity_record
@@ -117,6 +138,7 @@ mock_endpoint_return_values = {
     'dbs-check': dbs_check_response,
     'first-aid': first_aid_response,
     'insurance-cover': insurance_cover_response,
+    'declaration': declaration_response,
     'user': identity_response,
 }
 
