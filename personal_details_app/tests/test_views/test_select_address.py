@@ -19,8 +19,9 @@ class SelectAddressTests(PersonalDetailsTests):
         """
         Test to assert that the 'select address' page can be rendered.
         """
+        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read:
+            nanny_api_read.side_effect = side_effect
 
-        with mock.patch('nanny_models.applicant_home_address.ApplicantHomeAddress.api.get_record') as nanny_api_get_addr:
             response = self.client.get(build_url('personal-details:Personal-Details-Select-Address', get={
                 'id': uuid.UUID
             }))
