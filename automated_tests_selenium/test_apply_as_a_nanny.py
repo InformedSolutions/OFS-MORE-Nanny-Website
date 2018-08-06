@@ -70,7 +70,7 @@ class ApplyAsANanny(LiveServerTestCase):
             # If not using local driver, default requests to a selenium grid server
             self.launch_remote_browser()
 
-        self.selenium_driver.implicitly_wait(30)
+        self.selenium_driver.implicitly_wait(15)
 
         self.verification_errors = []
         self.accept_next_alert = True
@@ -276,11 +276,13 @@ class ApplyAsANanny(LiveServerTestCase):
 
     def waitUntilPageLoad(self, page_title):
         delay = 5  # seconds
+        driver = self.task_executor.get_driver()
         try:
-            WebDriverWait(self.task_executor.get_driver(), delay).until(
+            WebDriverWait(driver, delay).until(
                 expected_conditions.title_contains(page_title))
         except TimeoutException:
-            print("Page title doesn't match or page took too long to load")
+            self.assertEqual(page_title, driver.title)
+
 
     def assertPageTitleAtTaskSummaryPage(self, expected_title):
         driver = self.task_executor.get_driver()
