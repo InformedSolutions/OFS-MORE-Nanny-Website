@@ -1,7 +1,7 @@
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
-from nanny_models.nanny_application import NannyApplication
+from nanny.db_gateways import NannyGatewayActions
 
 
 def redirect_by_status(application_id):
@@ -11,8 +11,7 @@ def redirect_by_status(application_id):
     :param application_id:
     :return: an HttpResponseRedirect to a landing page based on an application's current status
     """
-
-    app_record = NannyApplication.api.get_record(application_id=application_id).record
+    app_record = NannyGatewayActions().read('application', params={'application_id': application_id}).record
 
     if app_record is None:
         response = HttpResponseRedirect(

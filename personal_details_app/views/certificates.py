@@ -1,6 +1,7 @@
 from .BASE import BaseTemplateView
 from ..utils import app_id_finder
 
+
 class PersonalDetailCertificateView(BaseTemplateView):
     """
     Template view to  render the guidance page from first access of task from task list

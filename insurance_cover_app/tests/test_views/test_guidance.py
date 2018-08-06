@@ -2,8 +2,22 @@ from ..test_base import *
 from django.urls import resolve
 from ...views.guidance import *
 
+class CustomResponse:
+    record = None
 
-@mock.patch("identity_models.user_details.UserDetails.api.get_record", authenticate)
+    def __init__(self, record):
+        self.record = record
+
+
+def authenticate(application_id, *args, **kwargs):
+    record = {
+            'application_id': application_id,
+            'email': 'test@informed.com'
+        }
+    return CustomResponse(record)
+
+
+@mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)
 class GuidanceTests(InsuranceCoverTests):
 
     def test_guidance_url_resolves_to_page(self):
@@ -17,7 +31,6 @@ class GuidanceTests(InsuranceCoverTests):
         """
         Test to assert that the guidance page can be rendered
         """
-
         response = self.client.get(build_url('insurance:Guidance', get={
             'id': self.application_id
         }))

@@ -1,15 +1,11 @@
-from identity_models.user_details import UserDetails
-from nanny_models.nanny_application import NannyApplication
-from nanny_models.applicant_personal_details import ApplicantPersonalDetails
-from nanny_models.applicant_home_address import ApplicantHomeAddress
-from nanny_models.dbs_check import DbsCheck
-
-from middleware import CustomAuthenticationHandler
+from nanny.middleware import CustomAuthenticationHandler
 from login_app import login_redirect_helper
 
 from login_app.forms import DBSSecurityQuestionForm, PersonalDetailsSecurityQuestionForm, MobileNumberSecurityQuestionForm
 
 from .base import BaseFormView
+
+from nanny.db_gateways import IdentityGatewayActions, NannyGatewayActions
 
 
 class SecurityQuestionFormView(BaseFormView):
@@ -25,8 +21,8 @@ class SecurityQuestionFormView(BaseFormView):
         Grab the security question for a given applicant, depending upon the status of their application.
         """
         application_id = self.request.GET['id']
-        app_record = NannyApplication.api.get_record(application_id=application_id).record
-        personal_details_record = UserDetails.api.get_record(application_id=application_id).record
+        app_record = NannyGatewayActions().read('application', params={'application_id': application_id}).record
+        personal_details_record = IdentityGatewayActions().read('user', params={'application_id': application_id}).record
 
         if app_record is None:
             form = MobileNumberSecurityQuestionForm
@@ -46,12 +42,12 @@ class SecurityQuestionFormView(BaseFormView):
 
         if self.form_class == MobileNumberSecurityQuestionForm:
             return {
-                'mobile_number': UserDetails.api.get_record(application_id=application_id).record['mobile_number']
+                'mobile_number': IdentityGatewayActions().read('user', params={'application_id': application_id}).record['mobile_number']
             }
 
         elif self.form_class == PersonalDetailsSecurityQuestionForm:
-            personal_details_record = ApplicantPersonalDetails.api.get_record(application_id=application_id).record
-            childcare_address_record = ApplicantHomeAddress.api.get_record(application_id=application_id).record
+            personal_details_record = NannyGatewayActions().read('applicant-personal-details', params={'application_id': application_id}).record
+            childcare_address_record = NannyGatewayActions().read('applicant-home-address', params={'application_id': application_id}).record
             return {
                 'date_of_birth': personal_details_record['date_of_birth'],
                 'postcode': childcare_address_record['postcode'],
@@ -59,7 +55,7 @@ class SecurityQuestionFormView(BaseFormView):
 
         elif self.form_class == DBSSecurityQuestionForm:
             return {
-                'dbs_number': DbsCheck.api.get_record(application_id=application_id).record['dbs_number']
+                'dbs_number': NannyGatewayActions().read('dbs-check', params={'application_id': application_id}).record['dbs_number']
             }
 
     def get_form(self, form_class=None):
@@ -70,9 +66,9 @@ class SecurityQuestionFormView(BaseFormView):
 
     def form_valid(self, form):
         application_id = self.request.GET['id']
-        record = UserDetails.api.get_record(application_id=application_id).record
+        record = IdentityGatewayActions().read('user', params={'application_id': application_id}).record
         record['sms_resend_attempts'] = 0
-        UserDetails.api.put(record)
+        IdentityGatewayActions().put('user', params=record)
         response = login_redirect_helper.redirect_by_status(record['application_id'])
         CustomAuthenticationHandler.create_session(response, record['email'])
         return response

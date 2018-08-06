@@ -11,7 +11,7 @@ class CustomResponse:
         self.record = record
 
 
-def authenticate(application_id):
+def authenticate(application_id, *args, **kwargs):
     record = {
             'application_id': application_id,
             'email': 'test@informed.com'
@@ -19,7 +19,7 @@ def authenticate(application_id):
     return CustomResponse(record)
 
 
-@mock.patch("identity_models.user_details.UserDetails.api.get_record", authenticate)
+@mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)
 class PersonalDetailsTests(TestCase):
 
     sample_app = {

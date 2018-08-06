@@ -1,3 +1,4 @@
+import uuid
 from .base import BaseFormView, BaseTemplateView
 from ..forms.childcare_address import *
 from django.http import HttpResponseRedirect
@@ -6,6 +7,8 @@ from ..utils import *
 from ..address_helper import *
 import inflect
 from datetime import datetime
+
+from nanny.db_gateways import NannyGatewayActions
 
 
 def get_address_number(app_id, childcare_address_id, ord):
@@ -16,7 +19,7 @@ def get_address_number(app_id, childcare_address_id, ord):
     :return:
     """
     formatter = inflect.engine()
-    api_response = ChildcareAddress.api.get_records(application_id=app_id)
+    api_response = NannyGatewayActions().list('childcare-address', params={'application_id': app_id})
     if api_response.status_code == 404:
         return 'First'
     else:
@@ -37,7 +40,6 @@ class ChildcareAddressPostcodeView(BaseFormView):
     """
     Class containing the view(s) for handling the GET requests to the childcare address postcode page.
     """
-
     template_name = 'childcare-address-postcode.html'
     success_url = 'Childcare-Address-Lookup'
     form_class = ChildcareAddressForm
@@ -52,16 +54,19 @@ class ChildcareAddressPostcodeView(BaseFormView):
 
         if childcare_address_id:
             # update postcode of address
-            api_response = ChildcareAddress.api.get_record(childcare_address_id=childcare_address_id)
+            api_response = NannyGatewayActions().read('childcare-address', params={'childcare_address_id': childcare_address_id})
             api_response.record['postcode'] = postcode
-            ChildcareAddress.api.put(api_response.record)  # Update entire record.
+            NannyGatewayActions().put('childcare-address', params=api_response.record)  # Update entire record.
 
         else:
-            api_response = ChildcareAddress.api.create(
-                model_type=ChildcareAddress,
-                date_created=datetime.today(),
-                application_id=app_id,
-                postcode=postcode
+            api_response = NannyGatewayActions().create(
+                'childcare-address',
+                params={
+                    'date_created': datetime.today(),
+                    'application_id': app_id,
+                    'childcare_address_id': uuid.uuid4(),
+                    'postcode': postcode
+                }
             )
             if api_response.status_code == 201:
                 childcare_address_id = api_response.record['childcare_address_id']
@@ -114,14 +119,14 @@ class ChildcareAddressLookupView(BaseFormView):
 
         if childcare_address_id:
             # update postcode of address
-            api_response = ChildcareAddress.api.get_record(childcare_address_id=childcare_address_id)
+            api_response = NannyGatewayActions().read('childcare-address', params={'childcare_address_id': childcare_address_id})
             record = api_response.record
             selected_address = AddressHelper.get_posted_address(selected_address_index, record['postcode'])
             record['street_line1'] = selected_address['line1']
             record['street_line2'] = selected_address['line2']
             record['town'] = selected_address['townOrCity']
             record['postcode'] = selected_address['postcode']
-            ChildcareAddress.api.put(record)  # Update entire record.
+            NannyGatewayActions().put('childcare-address', params=record)
 
         return HttpResponseRedirect(build_url('Childcare-Address-Details', get={
             'id': app_id
@@ -141,10 +146,8 @@ class ChildcareAddressLookupView(BaseFormView):
         kwargs['childcare_address_id'] = childcare_address_id
 
         if childcare_address_id:
-
-            api_response = ChildcareAddress.api.get_record(
-                childcare_address_id=childcare_address_id
-            )
+            api_response = NannyGatewayActions().read('childcare-address',
+                                                      params={'childcare_address_id': childcare_address_id})
             postcode = api_response.record['postcode']
             kwargs['postcode'] = postcode
             addresses = AddressHelper.create_address_lookup_list(postcode)
@@ -196,25 +199,28 @@ class ChildcareAddressManualView(BaseFormView):
 
         if childcare_address_id:
             # update postcode of address
-            api_response = ChildcareAddress.api.get_record(childcare_address_id=childcare_address_id)
+            api_response = NannyGatewayActions().read('childcare-address',
+                                                      params={'childcare_address_id': childcare_address_id})
             record = api_response.record
             record['street_line1'] = street_line1
             record['street_line2'] = street_line2
             record['town'] = town
             record['county'] = county
             record['postcode'] = postcode
-            ChildcareAddress.api.put(record)  # Update entire record.
+            NannyGatewayActions().patch('childcare-address', params=record)
 
         else:
-            ChildcareAddress.api.create(
-                model_type=ChildcareAddress,
-                date_created=datetime.today(),
-                application_id=app_id,
-                street_line1=street_line1,
-                street_line2=street_line2,
-                town=town,
-                county=county,
-                postcode=postcode
+            NannyGatewayActions().create(
+                'childcare-address',
+                params={
+                    'date_created': datetime.today(),
+                    'application_id': app_id,
+                    'street_line1': street_line1,
+                    'street_line2': street_line2,
+                    'town': town,
+                    'county': county,
+                    'postcode': postcode,
+                }
             )
 
         return HttpResponseRedirect(build_url('Childcare-Address-Details', get={
@@ -272,9 +278,8 @@ class ChildcareAddressDetailsView(BaseTemplateView):
         """
         app_id = self.request.GET['id']
         kwargs['id'] = app_id
-        api_response = ChildcareAddress.api.get_records(
-            application_id=app_id
-        )
+        api_response = NannyGatewayActions().list('childcare-address',
+                                                  params={'application_id': app_id})
         addresses = {}
         count = 1
         if api_response.status_code == 200:
@@ -291,10 +296,9 @@ class ChildcareAddressDetailsView(BaseTemplateView):
         """
         app_id = request.GET['id']
         if 'add_another' in request.POST:
-            api_response = ChildcareAddress.api.get_records(
-                application_id=app_id
-            )
-            if len(api_response.record) > 4:
+            api_response = NannyGatewayActions().list('childcare-address',
+                                                  params={'application_id': app_id})
+            if api_response.status_code == 200 and len(api_response.record) > 4:
                 context = self.get_context_data()
                 context['non_field_errors'] = ["You can only enter up to 5 childcare addresses"]
                 context['error_summary_title'] = "There was a problem"

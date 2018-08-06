@@ -4,8 +4,10 @@ from unittest import mock
 from ...views import *
 import uuid
 
+from nanny.test_utils import side_effect
 
-@mock.patch("identity_models.user_details.UserDetails.api.get_record", authenticate)
+
+@mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)
 class SummaryTests(PersonalDetailsTests):
 
     def test_summary_url_resolves_to_page(self):
@@ -16,15 +18,10 @@ class SummaryTests(PersonalDetailsTests):
         """
         Test to assert that the 'summary' page can be rendered.
         """
-        with mock.patch('nanny_models.applicant_personal_details.ApplicantPersonalDetails.api.get_record') \
-                as nanny_api_get_pd, \
-                mock.patch('nanny_models.applicant_home_address.ApplicantHomeAddress.api.get_record') \
-                as nanny_api_get_addr:
-            nanny_api_get_pd.return_value.status_code = 200
-            nanny_api_get_pd.return_value.record = self.sample_pd
-
-            nanny_api_get_addr.return_value.status_code = 200
-            nanny_api_get_addr.return_value.record = self.sample_addr
+        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
+            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
+            nanny_api_read.side_effect = side_effect
+            nanny_api_put.side_effect = side_effect
 
             response = self.client.get(build_url('personal-details:Personal-Details-Summary', get={
                 'id': uuid.UUID

@@ -2,8 +2,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, reverse
 from django.views import View
 
-
-from nanny_models.nanny_application import NannyApplication
+from nanny.db_gateways import NannyGatewayActions
 
 
 class ChildcareTrainingGuidanceView(View):
@@ -16,7 +15,7 @@ class ChildcareTrainingGuidanceView(View):
 
     def post(self, request):
         application_id = request.GET['id']
-        record = NannyApplication.api.get_record(application_id=application_id).record
-        record['childcare_training_status'] = "IN_PROGRESS"
-        NannyApplication.api.put(record=record)
+        record = NannyGatewayActions().read('application', params={'application_id':application_id}).record
+        record['childcare_training_status'] = 'IN_PROGRESS'
+        NannyGatewayActions().put('application', params=record)
         return HttpResponseRedirect(reverse('Type-Of-Childcare-Training') + '?id=' + application_id)

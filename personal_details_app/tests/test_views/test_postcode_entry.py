@@ -5,7 +5,10 @@ from ...views import *
 import uuid
 from django.template.response import TemplateResponse
 
-@mock.patch("identity_models.user_details.UserDetails.api.get_record", authenticate)
+from nanny.test_utils import side_effect
+
+
+@mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)
 class PostcodeEntryTests(PersonalDetailsTests):
 
     def test_postcode_entry_url_resolves_to_page(self):
@@ -26,21 +29,10 @@ class PostcodeEntryTests(PersonalDetailsTests):
         """
         Test to assert that the 'name' page can be rendered.
         """
-
-        with mock.patch('nanny_models.applicant_personal_details.ApplicantPersonalDetails.api.get_record') \
-                as nanny_api_get_pd, \
-            mock.patch('nanny_models.applicant_personal_details.ApplicantPersonalDetails.api.put') \
-                as nanny_api_put_pd, \
-            mock.patch('nanny_models.applicant_home_address.ApplicantHomeAddress.api.get_record') as nanny_api_get_addr, \
-            mock.patch('nanny_models.applicant_home_address.ApplicantHomeAddress.api.put') as nanny_api_put_addr:
-            nanny_api_get_pd.return_value.status_code = 200
-            nanny_api_get_pd.return_value.record = self.sample_pd
-
-            nanny_api_get_addr.return_value.status_code = 200
-            nanny_api_get_addr.return_value.record = self.sample_app
-
-            nanny_api_put_addr.return_value.status_code = 200
-            nanny_api_put_pd.return_value.status_code = 200
+        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
+            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
+            nanny_api_read.side_effect = side_effect
+            nanny_api_put.side_effect = side_effect
 
             response = self.client.post(build_url('personal-details:Personal-Details-Home-Address', get={
                 'id': uuid.UUID
@@ -55,21 +47,10 @@ class PostcodeEntryTests(PersonalDetailsTests):
         """
         Test to assert that the 'name' page can be rendered.
         """
-
-        with mock.patch('nanny_models.applicant_personal_details.ApplicantPersonalDetails.api.get_record') \
-                as nanny_api_get_pd, \
-            mock.patch('nanny_models.applicant_personal_details.ApplicantPersonalDetails.api.put') \
-                as nanny_api_put_pd, \
-            mock.patch('nanny_models.applicant_home_address.ApplicantHomeAddress.api.get_record') as nanny_api_get_addr, \
-            mock.patch('nanny_models.applicant_home_address.ApplicantHomeAddress.api.create') as nanny_api_create_addr:
-            nanny_api_get_pd.return_value.status_code = 200
-            nanny_api_get_pd.return_value.record = self.sample_pd
-
-            nanny_api_get_addr.return_value.status_code = 404
-            nanny_api_get_addr.return_value.record = self.sample_app
-
-            nanny_api_create_addr.return_value.status_code = 201
-            nanny_api_put_pd.return_value.status_code = 200
+        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
+            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
+            nanny_api_read.side_effect = side_effect
+            nanny_api_put.side_effect = side_effect
 
             response = self.client.post(build_url('personal-details:Personal-Details-Home-Address', get={
                 'id': uuid.UUID
@@ -84,21 +65,10 @@ class PostcodeEntryTests(PersonalDetailsTests):
         """
         Test to assert that the 'name' page can be rendered.
         """
-
-        with mock.patch('nanny_models.applicant_personal_details.ApplicantPersonalDetails.api.get_record') \
-                as nanny_api_get_pd, \
-            mock.patch('nanny_models.applicant_personal_details.ApplicantPersonalDetails.api.put') \
-                as nanny_api_put_pd, \
-            mock.patch('nanny_models.nanny_application.NannyApplication.api.get_record') as nanny_api_get_app, \
-            mock.patch('nanny_models.nanny_application.NannyApplication.api.put') as nanny_api_put_app:
-            nanny_api_get_pd.return_value.status_code = 200
-            nanny_api_get_pd.return_value.record = self.sample_pd
-
-            nanny_api_get_app.return_value.status_code = 200
-            nanny_api_get_app.return_value.record = self.sample_app
-
-            nanny_api_put_app.return_value.status_code = 200
-            nanny_api_get_pd.return_value.status_code = 200
+        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
+            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
+            nanny_api_read.side_effect = side_effect
+            nanny_api_put.side_effect = side_effect
 
             response = self.client.post(build_url('personal-details:Personal-Details-Home-Address', get={
                 'id': uuid.UUID

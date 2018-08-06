@@ -5,8 +5,10 @@ from django.template.response import TemplateResponse
 from unittest import mock
 import uuid
 
+from nanny.test_utils import side_effect
 
-@mock.patch("identity_models.user_details.UserDetails.api.get_record", authenticate)
+
+@mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)
 class WhereYouWorkTests(ChildcareAddressTests):
 
     def test_where_you_work_url_resolves_to_page(self):
@@ -20,12 +22,10 @@ class WhereYouWorkTests(ChildcareAddressTests):
         """
         Test to assert that the 'where you work' page can be rendered.
         """
-
-        with mock.patch('nanny_models.nanny_application.NannyApplication.api.get_record') as nanny_api_get:
-            nanny_api_get.return_value.status_code = 200
-            nanny_api_get.return_value.record = {
-                'address_to_be_provided': True
-            }
+        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
+            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
+            nanny_api_read.side_effect = side_effect
+            nanny_api_put.side_effect = side_effect
 
             response = self.client.get(build_url('Childcare-Address-Where-You-Work', get={'id': uuid.UUID}))
 
@@ -38,16 +38,15 @@ class WhereYouWorkTests(ChildcareAddressTests):
         Test that you are directed to the right page with a valid form and no previous addresses
         if you know where you are working.
         """
+        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
+            mock.patch('nanny.db_gateways.NannyGatewayActions.list') as nanny_api_list,\
+            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
 
-        with mock.patch('nanny_models.nanny_application.NannyApplication.api.get_record') as nanny_api_get, \
-                mock.patch('nanny_models.nanny_application.NannyApplication.api.put') as nanny_api_put_app, \
-                mock.patch('nanny_models.childcare_address.ChildcareAddress.api.get_records') as nanny_api_get_addresses:
-            nanny_api_get.return_value.status_code = 200
-            nanny_api_get.return_value.record = {
-                'address_to_be_provided': None
-            }
+            nanny_api_read.side_effect = side_effect
+            nanny_api_put.side_effect = side_effect
 
-            nanny_api_get_addresses.return_value.record = []
+            nanny_api_list.return_value.status_code = 404
+            nanny_api_list.return_value.record = []
 
             response = self.client.post(build_url('Childcare-Address-Where-You-Work', get={'id': uuid.UUID}),
                                         {'address_to_be_provided': 'True'})
@@ -60,16 +59,15 @@ class WhereYouWorkTests(ChildcareAddressTests):
         Test that you are directed to the right page with a valid form and no previous addresses
         if you do not know where you are working.
         """
+        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
+            mock.patch('nanny.db_gateways.NannyGatewayActions.list') as nanny_api_list,\
+            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
 
-        with mock.patch('nanny_models.nanny_application.NannyApplication.api.get_record') as nanny_api_get, \
-                mock.patch('nanny_models.nanny_application.NannyApplication.api.put') as nanny_api_put_app, \
-                mock.patch('nanny_models.childcare_address.ChildcareAddress.api.get_records') as nanny_api_get_addresses:
-            nanny_api_get.return_value.status_code = 200
-            nanny_api_get.return_value.record = {
-                'address_to_be_provided': None
-            }
+            nanny_api_read.side_effect = side_effect
+            nanny_api_put.side_effect = side_effect
 
-            nanny_api_get_addresses.return_value.record = []
+            nanny_api_list.return_value.status_code = 404
+            nanny_api_list.return_value.record = []
 
             response = self.client.post(build_url('Childcare-Address-Where-You-Work', get={'id': uuid.UUID}),
                                         {'address_to_be_provided': 'False'})
@@ -81,17 +79,15 @@ class WhereYouWorkTests(ChildcareAddressTests):
         """
         Test that you are directed to the right page with a valid form but have previous addresses
         """
+        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
+            mock.patch('nanny.db_gateways.NannyGatewayActions.list') as nanny_api_list,\
+            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
 
-        with mock.patch('nanny_models.nanny_application.NannyApplication.api.get_record') as nanny_api_get, \
-                mock.patch('nanny_models.nanny_application.NannyApplication.api.put') as nanny_api_put_app, \
-                mock.patch('nanny_models.childcare_address.ChildcareAddress.api.get_records') as nanny_api_get_addresses:
-            nanny_api_get.return_value.status_code = 200
-            nanny_api_get.return_value.record = {
-                'address_to_be_provided': None
-            }
+            nanny_api_read.side_effect = side_effect
+            nanny_api_put.side_effect = side_effect
 
-            nanny_api_get_addresses.return_value.record = [self.sample_address]
-            nanny_api_get_addresses.return_value.status_code = 200
+            nanny_api_list.return_value.status_code = 200
+            nanny_api_list.return_value.record = [self.sample_address]
 
             response = self.client.post(build_url('Childcare-Address-Where-You-Work', get={'id': uuid.UUID}),
                                         {'address_to_be_provided': 'True'})

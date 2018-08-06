@@ -1,7 +1,8 @@
 from nanny.base_views import *
 from nanny.utilities import *
 from ..forms.public_liability import PublicLiabilityForm
-from nanny_models.insurance_cover import *
+
+from nanny.db_gateways import NannyGatewayActions
 
 
 class PublicLiabilityView(NannyFormView):
@@ -13,7 +14,7 @@ class PublicLiabilityView(NannyFormView):
         initial = super().get_initial()
         app_id = app_id_finder(self.request)
 
-        api_response = InsuranceCover.api.get_record(application_id=app_id)
+        api_response = NannyGatewayActions().read('insurance-cover', params={'application_id': app_id})
         if api_response.status_code == 200:
             initial['public_liability'] = api_response.record['public_liability']
 
@@ -22,18 +23,20 @@ class PublicLiabilityView(NannyFormView):
     def form_valid(self, form):
         app_id = app_id_finder(self.request)
         public_liability = form.cleaned_data['public_liability']
-        api_response = InsuranceCover.api.get_record(application_id=app_id)
+        api_response = NannyGatewayActions().read('insurance-cover', params={'application_id': app_id})
 
         if api_response.status_code == 200:
             record = api_response.record
             record['public_liability'] = public_liability
-            InsuranceCover.api.put(record)
+            NannyGatewayActions().put('insurance-cover', params=record)
 
         elif api_response.status_code == 404:
-            InsuranceCover.api.create(
-                application_id=app_id,
-                public_liability=public_liability,
-                model_type=InsuranceCover
+            NannyGatewayActions().create(
+                'insurance-cover',
+                params={
+                    'application_id': app_id,
+                    'public_liability': public_liability,
+                }
             )
 
         if public_liability == 'True':
@@ -42,10 +45,10 @@ class PublicLiabilityView(NannyFormView):
             self.success_url = 'insurance:Insurance-Cover'
 
         # set status of insurance cover task to 'in progress'
-        app_api_response = NannyApplication.api.get_record(application_id=app_id)
+        app_api_response = NannyGatewayActions().read('application', params={'application_id': app_id})
         if app_api_response.status_code == 200:
             record = app_api_response.record
             record['insurance_cover_status'] = 'IN_PROGRESS'
-            NannyApplication.api.put(record)
+            NannyGatewayActions().put('application', params=record)
 
         return super(PublicLiabilityView, self).form_valid(form)
