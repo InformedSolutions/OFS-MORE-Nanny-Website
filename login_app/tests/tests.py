@@ -239,11 +239,11 @@ class LoginTests(TestCase):
         """
         Test that notify.send_email() is called during rendering of the 'Resend-Email' page.
         """
-        with mock.patch('nanny.db_gateways.IdentityGatewayActions.read') as identity_api_get, \
+        with mock.patch('nanny.db_gateways.IdentityGatewayActions.list') as identity_api_list, \
                 mock.patch('nanny.db_gateways.IdentityGatewayActions.put') as identity_api_put, \
                 mock.patch('nanny.notify.send_email') as notify_email:
 
-            identity_api_get.side_effect = side_effect
+            identity_api_list.return_value.record = [self.user_details_record]
             identity_api_put.side_effect = side_effect
 
             self.client.get(reverse('Resend-Email'), {'email_address': 'eva@walle.com'})
