@@ -91,8 +91,6 @@ THIRD_PARTY_APPS = [
 ]
 
 PROJECT_APPS = [
-    'identity_models',
-    'nanny_models',
     'login_app.apps.LoginAppConfig',
     'tasks_app.apps.TasksAppConfig',
     'personal_details_app.apps.PersonalDetailsAppConfig',
