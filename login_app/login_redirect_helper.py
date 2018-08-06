@@ -11,20 +11,18 @@ def redirect_by_status(application_id):
     :param application_id:
     :return: an HttpResponseRedirect to a landing page based on an application's current status
     """
-    app_record = NannyGatewayActions().read('application', params={'application_id': application_id}).record
+    try:
+        app_record = NannyGatewayActions().read('application', params={'application_id': application_id}).record
+    except AttributeError:
+        return HttpResponseRedirect(reverse('Contact-Details-Summary') + '?id=' + str(application_id))
 
-    if app_record is None:
-        response = HttpResponseRedirect(
-            reverse('Contact-Details-Summary') + '?id=' + str(application_id)
-        )
-    else:
-        if app_record['application_status'] == 'DRAFTING':
-            if app_record['login_details_status'] == 'COMPLETED':
-                response = HttpResponseRedirect(
-                    reverse('Task-List') + '?id=' + str(application_id)
-                )
-            else:
-                response = HttpResponseRedirect(
-                    reverse('Contact-Details-Summary') + '?id=' + str(application_id))
+    if app_record['application_status'] == 'DRAFTING':
+        if app_record['login_details_status'] == 'COMPLETED':
+            response = HttpResponseRedirect(
+                reverse('Task-List') + '?id=' + str(application_id)
+            )
+        else:
+            response = HttpResponseRedirect(
+                reverse('Contact-Details-Summary') + '?id=' + str(application_id))
 
     return response
