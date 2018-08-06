@@ -14,11 +14,11 @@ RUN apt-get update && \
                 git \
         && rm -rf /var/lib/apt/lists/*
 
-
-RUN mkdir /source
+ADD requirements.txt /source/
 WORKDIR /source
-ADD . /source/
 RUN pip install -r requirements.txt
+
+ADD . /source/
 
 RUN chmod +x /source/docker-entrypoint.sh
 EXPOSE 8000
