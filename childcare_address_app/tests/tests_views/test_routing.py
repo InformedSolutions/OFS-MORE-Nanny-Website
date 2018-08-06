@@ -4,8 +4,10 @@ from django.urls import resolve
 from unittest import mock
 import uuid
 
+from nanny.test_utils import side_effect
 
-@mock.patch("identity_models.user_details.UserDetails.api.get_record", authenticate)
+
+@mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)
 class RoutingTests(ChildcareAddressTests):
 
     def test_service_unavailable_resolves_to_page(self):
@@ -25,7 +27,6 @@ class RoutingTests(ChildcareAddressTests):
     def test_childcare_location_url_resolves_to_page(self):
         found = resolve(reverse('Childcare-Address-Location'))
         self.assertEqual(found.func.__name__, ChildcareLocationView.__name__)
-
 
     def test_details_later_url_resolves_to_page(self):
         found = resolve(reverse('Childcare-Address-Details-Later'))

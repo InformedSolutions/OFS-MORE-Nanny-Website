@@ -1,13 +1,11 @@
 import datetime
 
-from nanny_models.nanny_application import NannyApplication
-
 from first_aid_app.views.base import BaseFormView
 from first_aid_app.forms.training_details import FirstAidTrainingDetailsForm
 
-from nanny_models.first_aid import FirstAidTraining
-
 from nanny.utilities import app_id_finder
+
+from nanny.db_gateways import NannyGatewayActions
 
 
 class FirstAidDetailsView(BaseFormView):
@@ -24,14 +22,13 @@ class FirstAidDetailsView(BaseFormView):
         initial = super().get_initial()
 
         application_id = app_id_finder(self.request)
-        try:
-            response = FirstAidTraining.api.get_record(application_id=application_id)
-            if response.status_code == 200:
-                first_aid_record = FirstAidTraining.api.get_record(application_id=application_id).record
-            elif response.status_code == 404:
-                return initial
-        except TypeError:
+
+        response = NannyGatewayActions().read('first-aid', params={'application_id': application_id})
+        if response.status_code == 200:
+            first_aid_record = response.record
+        else:
             return initial
+
         initial['first_aid_training_organisation'] = first_aid_record['training_organisation']
         initial['title_of_training_course'] = first_aid_record['course_title']
         initial['course_date'] = datetime.datetime.strptime(first_aid_record['course_date'], '%Y-%m-%d')
@@ -42,9 +39,9 @@ class FirstAidDetailsView(BaseFormView):
     def form_valid(self, form):
 
         application_id = app_id_finder(self.request)
-        application_record = NannyApplication.api.get_record(application_id=application_id).record
+        application_record = NannyGatewayActions().read('application', params={'application_id': application_id}).record
         application_record['first_aid_training_status'] = 'IN_PROGRESS'
-        NannyApplication.api.put(application_record)
+        NannyGatewayActions().put('application', params=application_record)
 
         data_dict = {
             'application_id': application_id,
@@ -53,11 +50,10 @@ class FirstAidDetailsView(BaseFormView):
             'course_date': form.cleaned_data['course_date'],
         }
 
-        existing_record = FirstAidTraining.api.get_record(application_id=application_id)
+        existing_record = NannyGatewayActions().read('first-aid', params={'application_id': application_id})
         if existing_record.status_code == 200:
-            del data_dict['application_id']
-            FirstAidTraining.api.put({**existing_record.record, **data_dict})
+            NannyGatewayActions().patch('first-aid', params=data_dict)
         elif existing_record.status_code == 404:
-            FirstAidTraining.api.create(**data_dict, model_type=FirstAidTraining)
+            NannyGatewayActions().create('first-aid', params=data_dict)
 
         return super().form_valid(form)

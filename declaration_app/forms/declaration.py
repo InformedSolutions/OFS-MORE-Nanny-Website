@@ -1,6 +1,5 @@
 from django import forms
 from govuk_forms.forms import GOVUKForm
-from nanny_models.nanny_application import *
 
 
 class DeclarationForm(GOVUKForm):

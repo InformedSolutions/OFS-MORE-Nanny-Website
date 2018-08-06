@@ -1,7 +1,10 @@
+import datetime
+
 from nanny.base_views import NannyFormView
 from nanny.utilities import app_id_finder
 from ..forms.declaration import DeclarationForm
-from nanny_models.nanny_application import NannyApplication
+
+from nanny.db_gateways import NannyGatewayActions
 
 
 class FinalDeclaration(NannyFormView):
@@ -12,6 +15,16 @@ class FinalDeclaration(NannyFormView):
     success_url = 'payment:payment-details'
     form_class = DeclarationForm
 
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        if form.is_valid():
+            record = NannyGatewayActions().read('application', params={'application_id': request.GET['id']}).record
+            record['date_updated'] = datetime.datetime.today()
+            NannyGatewayActions().put('application', params=record)
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         context['fields'] = [context['form'].render_field(name, field) for name, field in context['form'].fields.items()]
@@ -20,7 +33,7 @@ class FinalDeclaration(NannyFormView):
     def get_initial(self):
         initial = super().get_initial()
         app_id = app_id_finder(self.request)
-        api_response = NannyApplication.api.get_record(application_id=app_id)
+        api_response = NannyGatewayActions().read('declaration', params={'application_id': app_id})
         if api_response.status_code == 200:
             record = api_response.record
             initial['follow_rules'] = record['follow_rules']

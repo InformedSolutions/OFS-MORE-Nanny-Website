@@ -5,8 +5,10 @@ from unittest import mock
 from django.template.response import TemplateResponse
 import uuid
 
+from nanny.test_utils import side_effect
 
-@mock.patch("identity_models.user_details.UserDetails.api.get_record", authenticate)
+
+@mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)
 class LookupViewTests(ChildcareAddressTests):
 
     def test_select_address_url_resolves_to_page(self):
@@ -17,14 +19,14 @@ class LookupViewTests(ChildcareAddressTests):
         """
         Test to assert that the 'address lookup' page can be rendered.
         """
+        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
+            mock.patch('nanny.db_gateways.NannyGatewayActions.list') as nanny_api_list,\
+            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
 
-        with mock.patch('nanny_models.childcare_address.ChildcareAddress.api.get_record') as nanny_api_get_one, \
-                mock.patch('nanny_models.childcare_address.ChildcareAddress.api.get_records') as nanny_api_get_many:
-            nanny_api_get_one.return_value.status_code = 200
-            nanny_api_get_one.return_value.record = {
-                'postcode': 'WA14 4PA'
-            }
-            nanny_api_get_many.return_value.status_code = 404
+            nanny_api_read.side_effect = side_effect
+            nanny_api_put.side_effect = side_effect
+
+            nanny_api_list.return_value.status_code = 404
 
             response = self.client.get(build_url('Childcare-Address-Lookup', get={
                 'id': uuid.UUID,
@@ -37,16 +39,14 @@ class LookupViewTests(ChildcareAddressTests):
         """
         Test to assert that the 'address lookup' page can be rendered.
         """
+        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
+            mock.patch('nanny.db_gateways.NannyGatewayActions.list') as nanny_api_list,\
+            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
 
-        with mock.patch('nanny_models.childcare_address.ChildcareAddress.api.get_record') as nanny_api_get_address, \
-        mock.patch('nanny_models.childcare_address.ChildcareAddress.api.put') as nanny_api_put, \
-                mock.patch('nanny_models.childcare_address.ChildcareAddress.api.get_records') as nanny_api_get_many:
-            nanny_api_get_address.return_value.status_code = 200
-            nanny_api_get_address.return_value.record = {
-                'postcode': 'WA14 4PA'
-            }
+            nanny_api_read.side_effect = side_effect
+            nanny_api_put.side_effect = side_effect
 
-            nanny_api_get_many.return_value.status_code = 404
+            nanny_api_list.return_value.status_code = 404
 
             response = self.client.post(build_url('Childcare-Address-Lookup', get={
                 'id': uuid.UUID,
@@ -60,15 +60,14 @@ class LookupViewTests(ChildcareAddressTests):
         """
         Test to assert that the 'address lookup' page can be rendered.
         """
+        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
+            mock.patch('nanny.db_gateways.NannyGatewayActions.list') as nanny_api_list,\
+            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
 
-        with mock.patch('nanny_models.childcare_address.ChildcareAddress.api.get_record') as nanny_api_get_address, \
-            mock.patch('nanny_models.childcare_address.ChildcareAddress.api.put') as nanny_api_put, \
-                mock.patch('nanny_models.childcare_address.ChildcareAddress.api.get_records') as nanny_api_get_many:
-            nanny_api_get_address.return_value.status_code = 200
-            nanny_api_get_address.return_value.record = {
-                'postcode': 'WA14 4PA'
-            }
-            nanny_api_get_many.return_value.status_code = 404
+            nanny_api_read.side_effect = side_effect
+            nanny_api_put.side_effect = side_effect
+
+            nanny_api_list.return_value.status_code = 404
 
             response = self.client.post(build_url('Childcare-Address-Lookup', get={
                 'id': uuid.UUID,

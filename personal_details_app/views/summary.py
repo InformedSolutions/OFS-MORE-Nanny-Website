@@ -3,12 +3,11 @@ import datetime
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views import View
-from nanny_models.nanny_application import NannyApplication
-from nanny_models.applicant_personal_details import ApplicantPersonalDetails
-from nanny_models.applicant_home_address import ApplicantHomeAddress
 from ..address_helper import AddressHelper
 
 from ..utils import build_url
+
+from nanny.db_gateways import NannyGatewayActions
 
 
 class Summary(View):
@@ -17,16 +16,14 @@ class Summary(View):
     success_url_name = 'Task-List'
 
     def get(self, request):
-
         context = self.get_context_data()
         return render(request, self.template_name, context)
 
     def post(self, request):
-
         application_id = self.request.POST['id']
-        application_record = NannyApplication.api.get_record(application_id=application_id).record
+        application_record = NannyGatewayActions().read('application', params={'application_id': application_id}).record
         application_record['personal_details_status'] = 'COMPLETED'
-        NannyApplication.api.put(application_record)
+        NannyGatewayActions().put('application', params=application_record)
 
         return HttpResponseRedirect(build_url(self.success_url_name, get={'id': application_id}))
 
@@ -36,12 +33,12 @@ class Summary(View):
         context['link_url'] = build_url(self.success_url_name, get={'id': application_id})
         context['application_id'] = application_id
         context['id'] = application_id
-        temp_record = ApplicantPersonalDetails.api.get_record(application_id=application_id).record
-        temp_record["date_of_birth"] = datetime.datetime.strptime(temp_record["date_of_birth"], '%Y-%m-%d')
+        temp_record = NannyGatewayActions().read('applicant-personal-details', params={'application_id': application_id}).record
+        temp_record['date_of_birth'] = datetime.datetime.strptime(temp_record['date_of_birth'], '%Y-%m-%d')
         context['personal_details_record'] = temp_record
 
         # ADD PERSONAL ADDRESS RECORD HERE
-        address = ApplicantHomeAddress.api.get_record(application_id=application_id).record
+        address = NannyGatewayActions().read('applicant-home-address', params={'application_id': application_id}).record
         context['personal_address_record'] = AddressHelper.format_address(address, ", ")
         return context
 

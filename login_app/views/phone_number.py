@@ -1,11 +1,10 @@
-from identity_models.user_details import UserDetails
-
 from login_app.forms import PhoneNumbersForm
 
-from middleware import CustomAuthenticationHandler
+from nanny.middleware import CustomAuthenticationHandler
 from django.http import HttpResponseRedirect
 from .base import BaseFormView
 from nanny.utilities import app_id_finder, build_url
+from nanny.db_gateways import IdentityGatewayActions
 
 
 class PhoneNumbersFormView(BaseFormView):
@@ -18,16 +17,18 @@ class PhoneNumbersFormView(BaseFormView):
 
     def form_valid(self, form):
         application_id = self.request.GET['id']
-        api_response = UserDetails.api.get_record(application_id=application_id)
+        api_response = IdentityGatewayActions().read('user', params={'application_id': application_id})
 
         record = api_response.record
         record['mobile_number'] = form.cleaned_data['mobile_number']
         record['add_phone_number'] = form.cleaned_data['other_phone_number']
 
-        UserDetails.api.put(record)  # Update entire record.
+        IdentityGatewayActions().put('user', params=record)
 
         response = HttpResponseRedirect(build_url('Contact-Details-Summary', get={'id': application_id}))
+
         COOKIE_IDENTIFIER = CustomAuthenticationHandler.get_cookie_identifier()
+
         if COOKIE_IDENTIFIER not in self.request.COOKIES:
             CustomAuthenticationHandler.create_session(response, record['email'])
             return response
@@ -49,7 +50,7 @@ class PhoneNumbersFormView(BaseFormView):
 
     def get_initial(self):
         application_id = self.request.GET['id']
-        record = UserDetails.api.get_record(application_id=application_id).record
+        record = IdentityGatewayActions().read('user', params={'application_id': application_id}).record
         initial_values = {
             'mobile_number': record['mobile_number'],
             'other_phone_number': record['add_phone_number']

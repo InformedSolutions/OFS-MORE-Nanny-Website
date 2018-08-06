@@ -5,8 +5,10 @@ from django.urls import resolve, reverse
 from ..tests import DBSTests, authenticate
 from ...views import *
 
+from nanny.test_utils import side_effect
 
-@mock.patch("identity_models.user_details.UserDetails.api.get_record", authenticate)
+
+@mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)
 class RoutingTests(DBSTests):
 
     def test_guidance_url_resolves_to_page(self):

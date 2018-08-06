@@ -5,7 +5,7 @@ from ...views import *
 from ...utils import *
 
 
-@mock.patch("identity_models.user_details.UserDetails.api.get_record", authenticate)
+@mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)
 class CostTests(TaskListTestsAuth):
 
     def test_can_resolve_costs_page(self):

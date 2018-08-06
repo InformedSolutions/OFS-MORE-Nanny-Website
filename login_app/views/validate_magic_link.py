@@ -5,16 +5,16 @@ from django.http import HttpResponseRedirect
 from django.views import View
 from django.shortcuts import reverse
 
-from identity_models.user_details import UserDetails
-
 from nanny import notify
 from nanny import utilities
+
+from nanny.db_gateways import IdentityGatewayActions
 
 
 class ValidateMagicLinkView(View):
     def get(self, request, id):
-        api_response = UserDetails.api.get_record(magic_link_email=id)
-        self.record = api_response.record
+        api_response = IdentityGatewayActions().list('user', params={'magic_link_email': id})
+        self.record = api_response.record[0]
 
         if not self.link_has_expired() and api_response.status_code == 200:
             return HttpResponseRedirect(self.get_success_url())
@@ -40,7 +40,7 @@ class ValidateMagicLinkView(View):
             success_template = 'Security-Code'
 
         self.record['email_expiry_date'] = 0
-        UserDetails.api.put(self.record)
+        IdentityGatewayActions().put('user', params=self.record)
         return utilities.build_url(success_template, get={'id': self.record['application_id']})
 
     @staticmethod

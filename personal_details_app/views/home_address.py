@@ -1,14 +1,11 @@
-from django.views.decorators.cache import never_cache
-
 from .BASE import *
 from ..forms.home_address import HomeAddressForm, HomeAddressLookupForm, HomeAddressManualForm
-from ..utils import app_id_finder, build_url
+from ..utils import app_id_finder
 from ..address_helper import *
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
-from nanny_models.applicant_home_address import *
-from nanny_models.applicant_personal_details import *
+from nanny.db_gateways import NannyGatewayActions
 
 
 class PersonalDetailHomeAddressView(BaseFormView):
@@ -23,23 +20,23 @@ class PersonalDetailHomeAddressView(BaseFormView):
         return context
 
     def form_valid(self, form):
-
         application_id = app_id_finder(self.request)
         postcode = form.cleaned_data['postcode']
 
-        api_response = ApplicantHomeAddress.api.get_record(application_id=application_id)
+        api_response = NannyGatewayActions().read('applicant-home-address', params={'application_id': application_id})
         if api_response.status_code == 200:
             address_record = api_response.record
             address_record['postcode'] = postcode
-            ApplicantHomeAddress.api.put(address_record)
+            NannyGatewayActions().put('applicant-home-address', params=address_record)
         else:
-            personal_details = ApplicantPersonalDetails.api.get_record(application_id=application_id).record
-            ApplicantHomeAddress.api.create(
-                application_id=application_id,
-                personal_detail_id=personal_details['personal_detail_id'],
-                postcode=postcode,
-                model_type=ApplicantHomeAddress
-            )
+            personal_details = NannyGatewayActions().read('applicant-personal-details', params={'application_id': application_id}).record
+            NannyGatewayActions().create(
+                'applicant-home-address',
+                params={
+                     'application_id': application_id,
+                     'personal_detail_id': personal_details['personal_detail_id'],
+                     'postcode': postcode,
+                 })
 
         return super().form_valid(form)
 
@@ -53,7 +50,8 @@ class PersonalDetailSelectAddressView(BaseFormView):
     def form_valid(self, form):
         app_id = app_id_finder(self.request)
         selected_address_index = form.cleaned_data['address']
-        api_response = ApplicantHomeAddress.api.get_record(application_id=app_id)
+        api_response = NannyGatewayActions().read('applicant-home-address', params={'application_id': app_id})
+
         if api_response.status_code == 200:
             record = api_response.record
             selected_address = AddressHelper.get_posted_address(selected_address_index, record['postcode'])
@@ -62,12 +60,14 @@ class PersonalDetailSelectAddressView(BaseFormView):
             record['town'] = selected_address['townOrCity']
             record['county'] = None
             record['postcode'] = selected_address['postcode']
-            ApplicantHomeAddress.api.put(record)  # Update entire record.
+            NannyGatewayActions().put('applicant-home-address', params=record)  # Update entire record.
+
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
         app_id = app_id_finder(self.request)
-        api_response = ApplicantHomeAddress.api.get_record(application_id=app_id)
+        api_response = NannyGatewayActions().read('applicant-home-address', params={'application_id': app_id})
+
         if api_response.status_code == 200:
             postcode = api_response.record['postcode']
             kwargs['postcode'] = postcode
@@ -88,7 +88,7 @@ class PersonalDetailManualAddressView(BaseFormView):
         initial = super().get_initial()
         app_id = app_id_finder(self.request)
 
-        api_response = ApplicantHomeAddress.api.get_record(application_id=app_id)
+        api_response = NannyGatewayActions().read('applicant-home-address', params={'application_id': app_id})
         if api_response.status_code == 200:
             initial['street_line1'] = api_response.record['street_line1']
             initial['street_line2'] = api_response.record['street_line2']
@@ -108,7 +108,7 @@ class PersonalDetailManualAddressView(BaseFormView):
 
     def form_valid(self, form):
         app_id = app_id_finder(self.request)
-        api_response = ApplicantHomeAddress.api.get_record(application_id=app_id)
+        api_response = NannyGatewayActions().read('applicant-home-address', params={'application_id': app_id})
         street_line1 = form.cleaned_data['street_line1']
         street_line2 = form.cleaned_data['street_line2']
         town = form.cleaned_data['town']
@@ -123,22 +123,24 @@ class PersonalDetailManualAddressView(BaseFormView):
             record['town'] = town
             record['county'] = county
             record['postcode'] = postcode
-            ApplicantHomeAddress.api.put(record)
+            NannyGatewayActions().put('applicant-home-address', params=record)
 
         # create the address record if it didn't exist
         elif api_response.status_code == 404:
-            apd_response = ApplicantPersonalDetails.api.get_record(application_id=app_id)
+            apd_response = NannyGatewayActions().read('applicant-personal-details', params={'application_id': app_id})
             if apd_response.status_code == 200:
                 pd_id = apd_response.record['personal_detail_id']
-                ApplicantHomeAddress.api.create(
-                    application_id=app_id,
-                    personal_detail_id=pd_id,
-                    street_line1=street_line1,
-                    street_line2=street_line2,
-                    town=town,
-                    county=county,
-                    postcode=postcode,
-                    model_type=ApplicantHomeAddress
+                NannyGatewayActions().create(
+                    'applicant-home-address',
+                    params={
+                        'application_id': app_id,
+                        'personal_detail_id': pd_id,
+                        'street_line1': street_line1,
+                        'street_line2': street_line2,
+                        'town': town,
+                        'county': county,
+                        'postcode': postcode,
+                    }
                 )
 
         return super().form_valid(form)
@@ -152,7 +154,7 @@ class PersonalDetailSummaryAddressView(BaseTemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         app_id = app_id_finder(self.request)
-        api_response = ApplicantHomeAddress.api.get_record(application_id=app_id)
+        api_response = NannyGatewayActions().read('applicant-home-address', params={'application_id': app_id})
         if api_response.status_code == 200:
             context['address'] = AddressHelper.format_address(api_response.record, ", ")
         context['id'] = app_id
