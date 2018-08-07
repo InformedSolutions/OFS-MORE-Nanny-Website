@@ -61,6 +61,7 @@ def send_text(phone, personalisation, template_id):
         print(personalisation['link'])
 
     notification_request = {
+        'service_name': 'Nannies',
         'phoneNumber': phone,
         'personalisation': personalisation,
         'templateId': template_id
