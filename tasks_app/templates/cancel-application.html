@@ -1,0 +1,19 @@
+{% extends 'govuk_template.html' %}
+{% load static %}
+{% load govuk_template_base %}
+{% block page_title %}Cancel Application{% endblock %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+<h1 class="form-title heading-large">Cancel your application</h1>
+
+<p>We will delete all the information you have given us.</p>
+<p>Please confirm that you want to continue.</p>
+
+<a href="" class="button">Cancel application</a>
+
+{% include 'return-to-list.html' %}
+
+{% endblock %}
