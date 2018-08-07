@@ -5,8 +5,7 @@ from django.test import TestCase
 from django.urls import resolve, reverse
 
 from nanny.test_utils import side_effect, mock_nanny_application, mock_personal_details_record, mock_identity_record
-from login_app import views, forms
-from tasks_app.views import TaskListView
+from login_app import views
 
 
 class LoginTests(TestCase):
@@ -240,11 +239,11 @@ class LoginTests(TestCase):
         """
         Test that notify.send_email() is called during rendering of the 'Resend-Email' page.
         """
-        with mock.patch('nanny.db_gateways.IdentityGatewayActions.read') as identity_api_get, \
+        with mock.patch('nanny.db_gateways.IdentityGatewayActions.list') as identity_api_list, \
                 mock.patch('nanny.db_gateways.IdentityGatewayActions.put') as identity_api_put, \
                 mock.patch('nanny.notify.send_email') as notify_email:
 
-            identity_api_get.side_effect = side_effect
+            identity_api_list.return_value.record = [self.user_details_record]
             identity_api_put.side_effect = side_effect
 
             self.client.get(reverse('Resend-Email'), {'email_address': 'eva@walle.com'})
@@ -656,3 +655,23 @@ class LoginTests(TestCase):
     #         security_question_view.request = r.wsgi_request
     #
     #         self.assertEqual(security_question_view.get_security_question_form(), forms.DBSSecurityQuestionForm)
+
+    def test_login_redirect_helper_function_if_application_not_yet_created(self):
+        """
+        Test the behaviour of the login_redirect_helper_function in the case where an applicant has not yet
+        completed their login details => has not created a NannyApplication object.
+        Expect to land on the 'Contact-Details-Summary' page.
+        """
+        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_get, \
+            mock.patch('nanny.db_gateways.IdentityGatewayActions.read') as identity_api_get:
+
+            nanny_api_get.side_effect = AttributeError
+            identity_api_get.side_effect = side_effect
+
+            response = self.client.post(
+                reverse('Security-Code') + '?id=' + self.user_details_record['application_id'],
+                {'sms_code': '12345'}
+            )
+
+            self.assertEqual(response.status_code, 302)
+            self.assertEqual(resolve(response.url).func.view_class, views.ContactDetailsSummaryView)
