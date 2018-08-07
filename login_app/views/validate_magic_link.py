@@ -52,6 +52,6 @@ class ValidateMagicLinkView(View):
 
         notify.send_text(record['mobile_number'],
                          personalisation={'link': magic_link_sms},
-                         template_id='d285f17b-8534-4110-ba6c-e7e788eeafb2')
+                         template_id='6947f254-5033-41b6-8fc5-5fcc6d613b66')
 
         return record
