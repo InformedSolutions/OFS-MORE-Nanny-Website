@@ -12,7 +12,12 @@
 <p>We will delete all the information you have given us.</p>
 <p>Please confirm that you want to continue.</p>
 
-<a href="" class="button">Cancel application</a>
+<form method="post" novalidate>
+    {% csrf_token %}
+    <input type="submit" class="button" value="Cancel application" alt='Cancel application'>
+</form>
+
+<br>
 
 {% include 'return-to-list.html' %}
 
