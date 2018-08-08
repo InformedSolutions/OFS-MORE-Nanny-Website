@@ -247,6 +247,7 @@ AUTHENTICATION_EXEMPT_URLS = (
     r'^' + URL_PREFIX + '/help-contacts/',
     r'^' + URL_PREFIX + '/costs/',
     r'^' + URL_PREFIX + '/application-saved/$',
+    r'^' + URL_PREFIX + '/application-cancelled/$',
     r'^' + URL_PREFIX + '/resend-code/',
     r'^' + URL_PREFIX + '/phone-number/',
 )
