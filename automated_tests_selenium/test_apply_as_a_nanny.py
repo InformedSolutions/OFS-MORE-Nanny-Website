@@ -87,9 +87,10 @@ class ApplyAsANanny(LiveServerTestCase):
         If the HEADLESS_CHROME value in Environment variables is set to true then it will launch chrome headless
         browser, else it will launch firefox.
         """
-
         if os.environ.get('HEADLESS_CHROME') == 'True':
-            path_to_chromedriver = '/usr/lib/chromium-browser/chromedriver'
+            # To install chromedriver on an ubuntu machine:
+            # https://tecadmin.net/setup-selenium-chromedriver-on-ubuntu/
+            path_to_chromedriver = os.popen("which chromedriver").read().rstrip()
             chrome_options = Options()
             chrome_options.add_argument("--headless")
             chrome_options.add_argument("--disable-gpu")
