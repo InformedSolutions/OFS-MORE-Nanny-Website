@@ -106,10 +106,24 @@ class ApplyAsANanny(LiveServerTestCase):
         """
 
         if os.environ.get('HEADLESS_CHROME') == 'True':
+
+            chrome_options = webdriver.ChromeOptions()
+            URL = os.environ['SELENIUM_HOST']
+            chrome_options.add_argument('--headless')
+            chrome_options.add_argument('--disable-gpu')
+            chrome_options.add_argument('--no-sandbox')
+            chrome_options.add_argument('--disable-dev-shm-usage')
+            # chrome_options.add_argument("--log-path=D:\\qc1.log")
+
             self.selenium_driver = webdriver.Remote(
-                command_executor=os.environ['SELENIUM_HOST'],
-                desired_capabilities={'platform': 'ANY', "headless": 'true', 'browserName': 'chrome', 'version': ''}
+                command_executor=URL,
+                desired_capabilities=chrome_options.to_capabilities()
             )
+
+            # self.selenium_driver = webdriver.Remote(
+            #     command_executor=os.environ['SELENIUM_HOST'],
+            #     desired_capabilities={'platform': 'ANY', "headless": 'true', 'browserName': 'chrome', 'version': ''}
+            # )
 
         else:
             self.selenium_driver = webdriver.Remote(
@@ -295,6 +309,11 @@ class ApplyAsANanny(LiveServerTestCase):
 
     def tearDown(self):
         self.selenium_driver.quit()
-        del os.environ['EMAIL_VALIDATION_URL']
+
+        try:
+            del os.environ['EMAIL_VALIDATION_URL']
+        except KeyError:
+            pass
+
         super(ApplyAsANanny, self).tearDown()
         self.assertEqual([], self.verification_errors)
