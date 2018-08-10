@@ -1,4 +1,5 @@
 import datetime
+import json
 import logging
 import os
 import re
@@ -6,6 +7,7 @@ import requests
 import time
 
 from django.conf import settings
+from django.core import serializers
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.core.urlresolvers import reverse
@@ -13,10 +15,12 @@ from django.views.decorators.cache import never_cache
 
 from nanny.db_gateways import NannyGatewayActions, IdentityGatewayActions
 
-from payment_app.services import payment_service
-from payment_app.forms.payment import PaymentDetailsForm
+from ..services import payment_service
+from ..forms.payment import PaymentDetailsForm
+from ..messaging.sqs_handler import SQSHandler
 
 logger = logging.getLogger()
+sqs_handler = SQSHandler()
 
 
 @never_cache
@@ -297,6 +301,9 @@ def __handle_authorised_payment(application_id):
     # Dispatch payment confirmation email to user
     __send_payment_confirmation_email(application_record)
 
+    export = create_full_application_export(application_id)
+    sqs_handler.send_message(export)
+
     application_reference = application_record['application_reference']
 
     return __redirect_to_payment_confirmation(application_reference, application_id)
@@ -309,7 +316,8 @@ def __send_payment_confirmation_email(application_record):
     """
     application_id = application_record['application_id']
     user_details = IdentityGatewayActions().read('user', params={'application_id': application_id}).record
-    applicant_details = NannyGatewayActions().read('applicant-personal-details', params={'application_id': application_id}).record
+    applicant_details = NannyGatewayActions().read('applicant-personal-details',
+                                                   params={'application_id': application_id}).record
 
     payment_service.payment_email(user_details['email'],
                                   applicant_details['first_name'],
@@ -393,7 +401,8 @@ def payment_confirmation(request):
     :return: an HttpResponse object with the rendered Payment confirmation template
     """
     application_id_local = request.GET['id']
-    conviction = NannyGatewayActions().read('dbs-check', params={'application_id': application_id_local}).record['cautions_convictions']
+    conviction = NannyGatewayActions().read('dbs-check', params={'application_id': application_id_local}).record[
+        'cautions_convictions']
     local_app = NannyGatewayActions().read('application', params={'application_id': application_id_local}).record
 
     variables = {
@@ -408,3 +417,50 @@ def payment_confirmation(request):
     NannyGatewayActions().put('application', params=local_app)
 
     return render(request, 'payment-confirmation.html', variables)
+
+
+def create_full_application_export(application_id):
+    """
+    Method for exporting a full application in a dictionary format
+    :param application_id: the identifier of the application to be exported
+    :return: a dictionary export of an application
+    """
+
+    export = {}
+
+    application = NannyGatewayActions().read('application', params={'application_id': application_id}).record
+
+    export['application'] = json.dumps(application)
+
+    childcare_addresses = NannyGatewayActions().list('childcare-address',
+                                                     params={'application_id': application_id}).record
+
+    export['childcare_addresses'] = json.dumps(childcare_addresses)
+
+    applicant_personal_details = NannyGatewayActions().read('applicant-personal-details',
+                                                            params={'application_id': application_id}).record
+    export['applicant_personal_details'] = json.dumps(applicant_personal_details)
+
+    applicant_home_address = NannyGatewayActions().read('applicant-home-address',
+                                                        params={'application_id': application_id}).record
+    export['applicant_home_address'] = json.dumps(applicant_home_address)
+
+    childcare_training = NannyGatewayActions().read('childcare-training',
+                                                    params={'application_id': application_id}).record
+    export['childcare_training'] = json.dumps(childcare_training)
+
+    criminal_record_check = NannyGatewayActions().read('dbs-check',
+                                                       params={'application_id': application_id}).record
+    export['criminal_record_check'] = json.dumps(criminal_record_check)
+
+    first_aid_training = NannyGatewayActions().read('first-aid', params={'application_id': application_id}).record
+    export['first_aid_training'] = json.dumps(first_aid_training)
+
+    insurance_declaration = NannyGatewayActions().read('insurance-cover',
+                                                       params={'application_id': application_id}).record
+    export['insurance_declaration'] = json.dumps(insurance_declaration)
+
+    user_details = IdentityGatewayActions().read('user', params={'application_id': application_id}).record
+    export['user_details'] = json.dumps(user_details)
+
+    return export
