@@ -57,6 +57,11 @@ IDENTITY_URL_PREFIX = ""
 SMS_EXPIRY = 1
 EMAIL_EXPIRY = 1
 
+# Cost of making application
+APP_COST = 10300
+
+PAYMENT_URN_PREFIX = 'CR'
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 

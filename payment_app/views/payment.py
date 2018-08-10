@@ -13,11 +13,12 @@ from django.views.decorators.cache import never_cache
 
 from nanny.db_gateways import NannyGatewayActions, IdentityGatewayActions
 
-from payment_app.services import payment_service
-from payment_app.forms.payment import PaymentDetailsForm
+from ..services import payment_service
+from ..forms.payment import PaymentDetailsForm
+from ..messaging.sqs_handler import SQSHandler
 
 logger = logging.getLogger()
-
+sqs_handler = SQSHandler()
 
 @never_cache
 def card_payment_details(request):
@@ -297,6 +298,11 @@ def __handle_authorised_payment(application_id):
     # Dispatch payment confirmation email to user
     __send_payment_confirmation_email(application_record)
 
+    # Send ad-hoc payment to NOO
+    app_cost_float = float(settings.APP_COST/100)
+    msg_body = __build_message_body(application_record, format(app_cost_float, '.4f'))
+    sqs_handler.send_message(msg_body)
+
     application_reference = application_record['application_reference']
 
     return __redirect_to_payment_confirmation(application_reference, application_id)
@@ -408,3 +414,32 @@ def payment_confirmation(request):
     NannyGatewayActions().put('application', params=local_app)
 
     return render(request, 'payment-confirmation.html', variables)
+
+
+def __build_message_body(application, amount):
+    """
+    Helper method to build an SQS request to be picked up by the Integration Adapter component
+    for relay to NOO
+    :param application: the application for which a payment request is to be generated
+    :param amount: the amount that the payment was for
+    :return: an SQS request that can be consumed up by the Integration Adapter component
+    """
+
+    application_reference = application['application_reference']
+    applicant_personal_details = NannyGatewayActions().read('applicant-personal-details', params={'application_id': application['application_id']}).record
+
+    if len(applicant_personal_details.get('middle_names')):
+        applicant_name = applicant_personal_details['last_name'] + ',' + applicant_personal_details['first_name'] + " " + applicant_personal_details['middle_names']
+    else:
+        applicant_name = applicant_personal_details['last_name'] + ',' + applicant_personal_details['first_name']
+
+    payment_details = NannyGatewayActions().read('payment', params={'application_id': application['application_id']}).record
+    payment_reference = payment_details['payment_reference']
+
+    return {
+        "payment_action": "SC1",
+        "payment_ref": payment_reference,
+        "payment_amount": amount,
+        "urn": str(settings.PAYMENT_URN_PREFIX) + application_reference,
+        "setting_name": applicant_name
+    }
