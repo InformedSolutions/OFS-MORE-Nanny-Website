@@ -3,19 +3,21 @@ Selenium test cases for the nanny service
 """
 
 import os
+import time
 from datetime import datetime
-
 from django.test import LiveServerTestCase, override_settings, tag
-from faker.generator import random
 from selenium import webdriver
-from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions
-from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.support.select import Select
-
-from .task_executor import TaskExecutor
+from automated_tests_selenium.page_objects.task_executor import TaskExecutor
+from automated_tests_selenium.page_objects.personal_details_task import PersonalDetailsTask
+from automated_tests_selenium.page_objects.childcare_address_task import ChildcareAddressTask
+from automated_tests_selenium.page_objects.first_aid_training_task import FirstAidTrainingTask
+from automated_tests_selenium.page_objects.childcare_training_task import ChildcareTrainingTask
+from automated_tests_selenium.page_objects.criminal_record_check_task import CriminalRecordCheckTask
+from automated_tests_selenium.page_objects.insurance_cover_task import InsuranceCoverTask
+from automated_tests_selenium.page_objects.declaration_and_payment_task import DeclarationAndPaymentTask
+from automated_tests_selenium.page_objects.account_registration import Registration
+from automated_tests_selenium.page_objects.login import Login
 
 from faker import Faker
 
@@ -76,6 +78,15 @@ class ApplyAsANanny(LiveServerTestCase):
         self.accept_next_alert = True
 
         self.task_executor = TaskExecutor(self.selenium_driver, base_url)
+        self.registration = Registration(self.task_executor)
+        self.login = Login(self.task_executor)
+        self.personal_details_task = PersonalDetailsTask(self.task_executor)
+        self.childcare_address_task = ChildcareAddressTask(self.task_executor)
+        self.first_aid_training_task = FirstAidTrainingTask(self.task_executor)
+        self.childcare_training_task = ChildcareTrainingTask(self.task_executor)
+        self.criminal_record_check_task = CriminalRecordCheckTask(self.task_executor)
+        self.insurance_cover_task = InsuranceCoverTask(self.task_executor)
+        self.declaration_and_payment_task = DeclarationAndPaymentTask(self.task_executor)
 
         global selenium_driver_out
         selenium_driver_out = self.selenium_driver
@@ -118,179 +129,34 @@ class ApplyAsANanny(LiveServerTestCase):
             self.selenium_driver.maximize_window()
 
     @try_except_method
-    def test_can_apply_as_a_nanny_full_question_set(self):
+    def test_nanny_can_submit_application(self):
         """
         Tests that a user can successfully submit a nanny application
-        """
-        self.task_executor.navigate_to_base_url()
-        applicant_email = self.create_standard_application()
-
-    def create_standard_application(self):
-        """
-        Helper method for starting a new application
-        :return: email address used to register the application
         """
         self.task_executor.navigate_to_base_url()
 
         test_email = faker.email()
         test_phone_number = self.task_executor.generate_random_mobile_number()
         test_alt_phone_number = self.task_executor.generate_random_mobile_number()
+        self.registration.register_email_address(test_email)
 
-        self.task_executor.complete_your_login_details(test_email, test_phone_number, test_alt_phone_number)
+        self.login.login_to_the_application(test_phone_number, test_alt_phone_number)
 
-        self.complete_your_personal_details()
+        self.personal_details_task.complete_details_with_not_lived_abroad_option(faker.first_name(), faker.last_name())
 
-        self.complete_childcare_address_task()
+        self.childcare_address_task.complete_childcare_address()
 
-        self.complete_First_aid_training_task()
+        self.first_aid_training_task.complete_First_aid_training()
 
-        self.complete_childcare_training_task()
+        self.childcare_training_task.complete_childcare_training()
 
-        self.complete_criminal_record_check_task()
+        self.criminal_record_check_task.complete_criminal_record()
 
-        self.complete_insurance_cover_task()
+        self.insurance_cover_task.complete_insurance_cover()
 
-        self.complete_declaration_and_payment_task()
+        self.declaration_and_payment_task.complete_declaration_and_payment()
 
         return test_email
-
-    def complete_childcare_address_task(self):
-        driver = self.task_executor.get_driver()
-        self.assertEqual("To do", driver.find_element_by_xpath("//tr[@id='childcare_address']/td/a/strong").text)
-        self.task_executor.click_element_by_xpath("//tr[@id='childcare_address']/td/a/span")
-        self.task_executor.click_element_by_xpath("//input[@value='Continue']")
-        self.task_executor.click_element_by_id("id_address_to_be_provided_0")
-        self.task_executor.click_element_by_xpath("//input[@value='Save and continue']")
-        self.task_executor.click_element_by_id("id_home_address_0")
-        self.task_executor.click_element_by_xpath("//input[@value='Save and continue']")
-        self.task_executor.click_element_by_xpath("//input[@value='Save and continue']")
-        self.task_executor.click_element_by_xpath("//*[@value='Confirm and continue']")
-        self.assertEqual("Done", driver.find_element_by_xpath("//tr[@id='childcare_address']/td/a/strong").text)
-
-    def complete_your_personal_details(self):
-        driver = self.task_executor.get_driver()
-        page_title = "Register as a nanny"
-        self.waitUntilPageLoad(page_title)
-        self.assertEqual("To do", driver.find_element_by_xpath("//tr[@id='personal_details']/td/a/strong").text)
-        self.task_executor.click_element_by_xpath("//tr[@id='personal_details']/td/a/span")
-        self.task_executor.click_element_by_id("id_first_name")
-        self.task_executor.send_keys_by_id("id_first_name",faker.first_name())
-        self.task_executor.send_keys_by_id("id_middle_names", "MiddleName")
-        self.task_executor.send_keys_by_id("id_last_name", faker.last_name())
-        self.task_executor.click_element_by_name("action")
-        self.task_executor.send_keys_by_id("id_date_of_birth_0", random.randint(1, 28))
-        self.task_executor.send_keys_by_id("id_date_of_birth_1", random.randint(1, 12))
-        self.task_executor.send_keys_by_id("id_date_of_birth_2", random.randint(1950, 1990))
-        self.task_executor.click_element_by_name("action")
-        self.task_executor.click_element_by_id("manual")
-        self.task_executor.send_keys_by_id("id_street_line1", "AddressLine1")
-        self.task_executor.send_keys_by_id("id_street_line2", "Line2")
-        self.task_executor.send_keys_by_id("id_town", "Town")
-        self.task_executor.send_keys_by_id("id_county", "County")
-        self.task_executor.send_keys_by_id("id_postcode", "WA14 4PA")
-        self.task_executor.click_element_by_xpath("//input[@value='Save and continue']")
-        self.task_executor.click_element_by_name("action")
-        self.task_executor.click_element_by_id("id_lived_abroad_1")
-        self.task_executor.click_element_by_name("action")
-        self.assertPageTitleAtTaskSummaryPage("Check your answers: your personal details")
-        self.task_executor.click_element_by_xpath("//input[@value='Confirm and continue']")
-        self.waitUntilPageLoad(page_title)
-        self.assertEqual("Done", driver.find_element_by_xpath("//tr[@id='personal_details']/td/a/strong").text)
-
-    def complete_First_aid_training_task(self):
-        driver = self.task_executor.get_driver()
-        self.assertEqual("To do", driver.find_element_by_xpath("//tr[@id='first_aid_training']/td/a/strong").text)
-        driver.find_element_by_xpath("//tr[@id='first_aid_training']/td/a/span").click()
-        self.task_executor.click_element_by_link_text("Continue")
-        self.task_executor.send_keys_by_id("id_first_aid_training_organisation", "First aid taining organisation")
-        self.task_executor.send_keys_by_id("id_title_of_training_course", "Title of training course")
-        self.task_executor.send_keys_by_id("id_course_date_0", "12")
-        self.task_executor.send_keys_by_id("id_course_date_1", "12")
-        self.task_executor.send_keys_by_id("id_course_date_2", "2017")
-        self.task_executor.click_element_by_name("action")
-        self.task_executor.click_element_by_link_text("Continue")
-        self.assertPageTitleAtTaskSummaryPage("Check your answers: first aid training")
-        self.task_executor.click_element_by_xpath("//input[@value='Confirm and continue']")
-        self.waitUntilPageLoad("Register as a nanny")
-        self.assertEqual("Done", driver.find_element_by_xpath("//tr[@id='first_aid_training']/td/a/strong").text)
-
-    def complete_childcare_training_task(self):
-        driver = self.task_executor.get_driver()
-        self.assertEqual("To do", driver.find_element_by_xpath("//tr[@id='childcare_training']/td/a/strong").text)
-        driver.find_element_by_xpath("//tr[@id='childcare_training']/td/a/span").click()
-        driver.find_element_by_id("id_continue").click()
-        self.task_executor.click_element_by_id("id_childcare_training_0")
-        self.task_executor.click_element_by_id("id_childcare_training_1")
-        self.task_executor.click_element_by_id("id_continue")
-        self.waitUntilPageLoad("Check your answers: childcare training")
-        self.assertEqual("Check your answers: childcare training", driver.title)
-        self.task_executor.click_element_by_id("id_continue")
-        self.assertEqual("Done", driver.find_element_by_xpath("//tr[@id='childcare_training']/td/a/strong").text)
-
-    def complete_criminal_record_check_task(self):
-        driver = self.task_executor.get_driver()
-        self.assertEqual("To do", driver.find_element_by_xpath("//tr[@id='criminal_record']/td/a/strong").text)
-        self.task_executor.click_element_by_xpath("//tr[@id='criminal_record']/td/a/span")
-        self.task_executor.click_element_by_link_text("Continue")
-        self.task_executor.click_element_by_id("id_dbs_number")
-        self.task_executor.send_keys_by_id("id_dbs_number", "123456789098")
-        self.task_executor.click_element_by_id("id_convictions_1")
-        self.task_executor.click_element_by_name("action")
-        self.task_executor.click_element_by_xpath("//input[@value='Confirm and continue']")
-        self.assertEqual("Done", driver.find_element_by_xpath("//tr[@id='criminal_record']/td/a/strong").text)
-
-    def complete_insurance_cover_task(self):
-        driver = self.task_executor.get_driver()
-        self.assertEqual("To do", driver.find_element_by_xpath("//tr[@id='insurance_cover']/td/a/strong").text)
-        self.task_executor.click_element_by_xpath("//tr[@id='insurance_cover']/td/a/span")
-        self.task_executor.click_element_by_link_text("Continue")
-        self.task_executor.click_element_by_id("id_public_liability_0")
-        self.task_executor.click_element_by_xpath("//input[@value='Save and continue']")
-        self.waitUntilPageLoad("Check your answers: insurance cover")
-        self.assertEqual("Check your answers: insurance cover", driver.title)
-        self.task_executor.click_element_by_id("id_continue")
-        self.assertEqual("Done", driver.find_element_by_xpath("//tr[@id='insurance_cover']/td/a/strong").text)
-
-    def complete_declaration_and_payment_task(self):
-        driver = self.task_executor.get_driver()
-        self.assertEqual("To do", driver.find_element_by_xpath("//tr[@id='review']/td/a/strong").text)
-        driver.find_element_by_xpath("//tr[@id='review']/td/a/span").click()
-        self.waitUntilPageLoad("Check all your details")
-        self.assertEqual("Check all your details", driver.title)
-        self.task_executor.click_element_by_xpath("//input[@value='Confirm and continue']")
-        self.task_executor.click_element_by_link_text("Continue")
-        self.task_executor.click_element_by_id("id_follow_rules")
-        self.task_executor.click_element_by_id("id_share_info_declare")
-        self.task_executor.click_element_by_id("id_information_correct_declare")
-        self.task_executor.click_element_by_id("id_change_declare")
-        self.task_executor.click_element_by_name("action")
-        self.task_executor.click_element_by_id("id_card_type")
-        Select(driver.find_element_by_id("id_card_type")).select_by_visible_text("Visa")
-        self.task_executor.click_element_by_id("id_card_type")
-        self.task_executor.send_keys_by_id("id_card_number", "5454545454545454")
-        self.task_executor.send_keys_by_id("id_expiry_date_0", "12")
-        self.task_executor.send_keys_by_id("id_expiry_date_1", "21")
-        self.task_executor.send_keys_by_id("id_cardholders_name", "wew")
-        self.task_executor.send_keys_by_id("id_card_security_code", "121")
-        self.task_executor.click_element_by_xpath("//input[@value='Pay and apply']")
-
-    def waitUntilPageLoad(self, page_title):
-        delay = 5  # seconds
-        driver = self.task_executor.get_driver()
-        try:
-            WebDriverWait(driver, delay).until(
-                expected_conditions.title_contains(page_title))
-        except TimeoutException:
-            self.assertEqual(page_title, driver.title)
-
-
-    def assertPageTitleAtTaskSummaryPage(self, expected_title):
-        driver = self.task_executor.get_driver()
-
-        WebDriverWait(driver, 3).until(
-            expected_conditions.element_to_be_clickable(
-                (By.XPATH, "//input[@value='Confirm and continue']")))
-        self.assertEqual(expected_title, driver.title)
 
     def tearDown(self):
         self.selenium_driver.quit()
