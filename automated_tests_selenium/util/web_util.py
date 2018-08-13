@@ -11,7 +11,7 @@ from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
 
-class TaskExecutor(TestCase):
+class WebUtil(TestCase):
     """
     Helper class for executing reusable selenium steps
     """
@@ -28,7 +28,7 @@ class TaskExecutor(TestCase):
         """
         self.__driver = driver
         self.__base_url = base_url
-        super(TaskExecutor, self).__init__(*args, **kwargs)
+        super(WebUtil, self).__init__(*args, **kwargs)
 
     def set_driver(self, driver):
         """
@@ -89,40 +89,46 @@ class TaskExecutor(TestCase):
     def click_element_by_id(self, element_id):
         try:
             expected_conditions.element_to_be_clickable(self.get_driver().find_element_by_id(element_id).click())
-        except TimeoutException:
+        except TimeoutException as e:
             print("Element is not in expected state")
+            raise e
 
     def send_keys_by_id(self, element_id, text):
         try:
             expected_conditions.element_to_be_clickable(self.get_driver().find_element_by_id(element_id).send_keys(text))
-        except TimeoutException:
+        except TimeoutException as e:
             print("Element is not in an expected state or rendered correctly")
+            raise e
 
     def click_element_by_name(self, element_name):
         try:
             expected_conditions.element_to_be_clickable(self.get_driver().find_element_by_name(element_name).click())
-        except TimeoutException:
+        except TimeoutException as e:
             print("Element is not clickable")
+            raise e
 
     def click_element_by_xpath(self, xpath):
         try:
             expected_conditions.element_to_be_clickable(self.get_driver().find_element_by_xpath(xpath).click())
-        except TimeoutException:
+        except TimeoutException as e:
             print("Element is not clickable ")
+            raise e
 
     def click_element_by_link_text(self, link_text):
         try:
             expected_conditions.element_to_be_clickable(self.get_driver().find_element_by_link_text(link_text).click())
-        except TimeoutException:
+        except TimeoutException as e:
             print("Element is not clickable ")
+            raise e
 
     def wait_until_page_load(self, page_title):
         driver = self.get_driver()
         try:
             WebDriverWait(driver, self.delay).until(
                 expected_conditions.title_contains(page_title))
-        except TimeoutException:
+        except TimeoutException as e:
             self.assertEqual(page_title, driver.title)
+            raise e
 
     def assertPageTitleAtTaskSummaryPage(self, expected_title):
         driver = self.get_driver()

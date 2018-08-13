@@ -3,12 +3,11 @@ Selenium test cases for the nanny service
 """
 
 import os
-import time
 from datetime import datetime
 from django.test import LiveServerTestCase, override_settings, tag
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-from automated_tests_selenium.page_objects.task_executor import TaskExecutor
+from automated_tests_selenium.util.web_util import WebUtil
 from automated_tests_selenium.page_objects.personal_details_task import PersonalDetailsTask
 from automated_tests_selenium.page_objects.childcare_address_task import ChildcareAddressTask
 from automated_tests_selenium.page_objects.first_aid_training_task import FirstAidTrainingTask
@@ -77,16 +76,16 @@ class ApplyAsANanny(LiveServerTestCase):
         self.verification_errors = []
         self.accept_next_alert = True
 
-        self.task_executor = TaskExecutor(self.selenium_driver, base_url)
-        self.registration = Registration(self.task_executor)
-        self.login = Login(self.task_executor)
-        self.personal_details_task = PersonalDetailsTask(self.task_executor)
-        self.childcare_address_task = ChildcareAddressTask(self.task_executor)
-        self.first_aid_training_task = FirstAidTrainingTask(self.task_executor)
-        self.childcare_training_task = ChildcareTrainingTask(self.task_executor)
-        self.criminal_record_check_task = CriminalRecordCheckTask(self.task_executor)
-        self.insurance_cover_task = InsuranceCoverTask(self.task_executor)
-        self.declaration_and_payment_task = DeclarationAndPaymentTask(self.task_executor)
+        self.web_util = WebUtil(self.selenium_driver, base_url)
+        self.registration = Registration(self.web_util)
+        self.login = Login(self.web_util)
+        self.personal_details_task = PersonalDetailsTask(self.web_util)
+        self.childcare_address_task = ChildcareAddressTask(self.web_util)
+        self.first_aid_training_task = FirstAidTrainingTask(self.web_util)
+        self.childcare_training_task = ChildcareTrainingTask(self.web_util)
+        self.criminal_record_check_task = CriminalRecordCheckTask(self.web_util)
+        self.insurance_cover_task = InsuranceCoverTask(self.web_util)
+        self.declaration_and_payment_task = DeclarationAndPaymentTask(self.web_util)
 
         global selenium_driver_out
         selenium_driver_out = self.selenium_driver
@@ -129,15 +128,15 @@ class ApplyAsANanny(LiveServerTestCase):
             self.selenium_driver.maximize_window()
 
     @try_except_method
-    def test_nanny_can_submit_application(self):
+    def test_submit_application_with_not_lived_abroad_option(self):
         """
-        Tests that a user can successfully submit a nanny application
+        Tests that a user can successfully submit a nanny application with
         """
-        self.task_executor.navigate_to_base_url()
+        self.web_util.navigate_to_base_url()
 
         test_email = faker.email()
-        test_phone_number = self.task_executor.generate_random_mobile_number()
-        test_alt_phone_number = self.task_executor.generate_random_mobile_number()
+        test_phone_number = self.web_util.generate_random_mobile_number()
+        test_alt_phone_number = self.web_util.generate_random_mobile_number()
         self.registration.register_email_address(test_email)
 
         self.login.login_to_the_application(test_phone_number, test_alt_phone_number)
@@ -155,8 +154,6 @@ class ApplyAsANanny(LiveServerTestCase):
         self.insurance_cover_task.complete_insurance_cover()
 
         self.declaration_and_payment_task.complete_declaration_and_payment()
-
-        return test_email
 
     def tearDown(self):
         self.selenium_driver.quit()
