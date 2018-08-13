@@ -2,19 +2,25 @@ import os
 import random
 import time
 
+from django.test import TestCase
+import os
+from faker.generator import random
 from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.wait import WebDriverWait
 
 
-class TaskExecutor:
+class TaskExecutor(TestCase):
     """
     Helper class for executing reusable selenium steps
     """
 
     __driver = None
     __base_url = None
+    delay = 10
 
-    def __init__(self, driver, base_url):
+    def __init__(self, driver, base_url, *args, **kwargs):
         """
         Default constructor
         :param driver: the selenium driver to be used for executing steps
@@ -22,6 +28,7 @@ class TaskExecutor:
         """
         self.__driver = driver
         self.__base_url = base_url
+        super(TaskExecutor, self).__init__(*args, **kwargs)
 
     def set_driver(self, driver):
         """
@@ -79,40 +86,6 @@ class TaskExecutor:
 
         return validation_url
 
-    def complete_your_login_details(self, email_address, phone_number, additional_phone_number):
-        """
-        Selenium steps to create a new application by completing the login details task
-        :param email_address: the email address to be registered
-        :param phone_number: the phone number to be registered
-        :param additional_phone_number: an optional additional phone number to be registered
-        """
-        self.register_email_address(email_address)
-        self.navigate_to_email_validation_url()
-
-        driver = self.get_driver()
-
-        self.send_keys_by_id("id_mobile_number", phone_number)
-
-        if additional_phone_number is not None:
-            self.send_keys_by_id("id_other_phone_number", additional_phone_number)
-
-        self.click_element_by_xpath("//input[@value='Continue']")
-
-        # Summary page
-        self.click_element_by_xpath("//input[@value='Continue']")
-
-    def register_email_address(self, email_address):
-        """
-        Selenium steps for registering an email address against an application
-        """
-        driver = self.get_driver()
-        self.click_element_by_xpath("//input[@value='Sign in']")
-        self.click_element_by_id("id_account_selection_0-label")
-        self.click_element_by_xpath("//input[@value='Continue']")
-        self.click_element_by_id("id_email_address")
-        self.send_keys_by_id("id_email_address", email_address)
-        self.click_element_by_xpath("//input[@value='Continue']")
-
     def click_element_by_id(self, element_id):
         try:
             expected_conditions.element_to_be_clickable(self.get_driver().find_element_by_id(element_id).click())
@@ -139,11 +112,34 @@ class TaskExecutor:
 
     def click_element_by_link_text(self, link_text):
         try:
-            expected_conditions.element_to_be_clickable(self.get_driver().find_element_by_link_text(link_text).click()
-)
+            expected_conditions.element_to_be_clickable(self.get_driver().find_element_by_link_text(link_text).click())
         except TimeoutException:
             print("Element is not clickable ")
 
+    def wait_until_page_load(self, page_title):
+        driver = self.get_driver()
+        try:
+            WebDriverWait(driver, self.delay).until(
+                expected_conditions.title_contains(page_title))
+        except TimeoutException:
+            self.assertEqual(page_title, driver.title)
+
+    def assertPageTitleAtTaskSummaryPage(self, expected_title):
+        driver = self.get_driver()
+
+        WebDriverWait(driver, self.delay).until(
+            expected_conditions.element_to_be_clickable(
+                (By.XPATH, "//input[@value='Confirm and continue']")))
+        self.assertEqual(expected_title, driver.title)
+
+    def assert_page_title_at_task_summary_page(self, expected_title):
+        driver = self.get_driver()
+
+        WebDriverWait(driver, self.delay).until(
+            expected_conditions.element_to_be_clickable(
+                (By.XPATH, "//input[@value='Confirm and continue']")))
+
+        self.assertEqual(expected_title, driver.title)
 
     @staticmethod
     def generate_random_mobile_number():
