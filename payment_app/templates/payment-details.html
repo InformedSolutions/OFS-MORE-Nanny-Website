@@ -7,7 +7,6 @@
 
 {% include "back-button.html" %}
 
-<div class="two-thirds">
 {{form.error_summary}}
 
 <h1 class="form-title heading-large">
@@ -24,7 +23,6 @@
 <p>
     You are paying <span class="bold-small">&#163;103</span> to <span class="bold-small">register as a nanny</span>.
 </p>
-</div>
 <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
     {{form.as_div}}
     <div class="two-thirds">

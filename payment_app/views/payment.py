@@ -95,7 +95,11 @@ def card_payment_post_handler(request):
 
     application_record = NannyGatewayActions().read('application', params={'application_id': application_id}).record
 
-    application_reference = __assign_application_reference(application_record)
+    try:
+        application_reference = __assign_application_reference(application_record)
+    except Exception as e:
+        logger.debug(e)
+        return __yield_general_processing_error_to_user(request, form, application_record['application_id'])
 
     # Boolean flag for managing logic gates
     prior_payment_record_exists = payment_service.payment_record_exists(application_id)
@@ -234,10 +238,15 @@ def __assign_application_reference(application):
 
     if response.status_code == 200:
         response_body = response.json()
-        return response_body['reference']
+        if response_body.get('reference'):
+            return response_body['reference']
+        else:
+            raise Exception("A reference could not be generated.")
+    elif response.status_code == 503:
+        raise Exception("The service is unavailable.")
     else:
         # Raise up exception to caller if could not allocate reference
-        raise Exception
+        raise Exception("A reference could not be generated.")
 
 
 def __create_payment_record(application, application_reference):
