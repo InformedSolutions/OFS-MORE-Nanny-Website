@@ -48,6 +48,17 @@ PUBLIC_APPLICATION_URL = os.environ.get('PUBLIC_APPLICATION_URL')
 
 EXECUTING_AS_TEST = os.environ.get('EXECUTING_AS_TEST')
 
+PAYMENT_REFERENCE_PREFIX = 'MO'
+PAYMENT_URN_PREFIX = 'EY'
+APP_COST = 10300
+
+APPLICATION_FORM_QUEUE_NAME = os.environ.get('SQS_QUEUE_PREFIX') + '_NA_APPLICATION_QUEUE'
+PAYMENT_QUEUE_NAME = os.environ.get('SQS_QUEUE_PREFIX') + '_PAYMENT_NOTIFICATIONS'
+
+# AWS SQS keys
+AWS_SQS_ACCESS_KEY_ID = os.environ.get('AWS_SQS_ACCESS_KEY_ID')
+AWS_SQS_SECRET_ACCESS_KEY = os.environ.get('AWS_SQS_SECRET_ACCESS_KEY')
+
 TEST_NOTIFY_CONNECTION = True
 
 # URL prefix for the identity-gateway API.
@@ -56,11 +67,6 @@ IDENTITY_URL_PREFIX = ""
 # Expiry period of Magic Link Emails and Texts in hours
 SMS_EXPIRY = 1
 EMAIL_EXPIRY = 1
-
-# Cost of making application
-APP_COST = 10300
-
-PAYMENT_URN_PREFIX = 'CR'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/

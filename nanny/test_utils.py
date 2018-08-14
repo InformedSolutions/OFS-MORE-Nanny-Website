@@ -1,4 +1,5 @@
 from django.http import HttpResponse
+import requests
 
 
 mock_nanny_application = {
@@ -6,6 +7,7 @@ mock_nanny_application = {
     'application_id': '998fd8ec-b96b-4a71-a1a1-a7a3ae186729',
     'date_submitted': '2018-07-31 17:20:46.011717+00',
     'date_updated': '2018-07-31 17:20:46.011717+00',
+    'application_reference': 'TESTURN',
     'childcare_training_status': 'NOT_STARTED',
     'login_details_status': 'COMPLETED',
     'personal_details_status': 'NOT_STARTED',
@@ -70,6 +72,13 @@ mock_insurance_cover_record = {
     'public_liability': True
 }
 
+mock_payment_record = {
+    'payment_reference': 'MO:EYTESTURN:20180814094228',
+    'payment_submitted': False,
+    'payment_authorised': False,
+    'application_id': '998fd8ec-b96b-4a71-a1a1-a7a3ae186729',
+}
+
 mock_identity_record = {
     'email': 'test@informed.com',
     'application_id': 'a4e6633f-5339-4de5-ae03-69c71fd008b3',
@@ -128,6 +137,13 @@ identity_response = HttpResponse()
 identity_response.status_code = 200
 identity_response.record = mock_identity_record
 
+payment_response = HttpResponse()
+payment_response.status_code = 404
+payment_response.record = mock_payment_record
+
+urn_response = requests.Response()
+urn_response.status_code = 200
+urn_response._content = b'{ "reference" : "TESTURN" }'
 
 mock_endpoint_return_values = {
     'application': nanny_application_response,
@@ -140,6 +156,7 @@ mock_endpoint_return_values = {
     'insurance-cover': insurance_cover_response,
     'declaration': declaration_response,
     'user': identity_response,
+    'payment': payment_response
 }
 
 

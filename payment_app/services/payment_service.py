@@ -9,7 +9,7 @@ import json
 import logging
 import time
 from urllib.parse import quote
-from nanny.notify import send_email
+from nanny import notify
 
 import requests
 
@@ -107,7 +107,7 @@ def payment_email(email, name, application_reference, application_id):
     if conviction is False and lived_abroad is True:
         template_id = 'b4b9e666-846b-48de-8e72-9901ab5474f0'
 
-    response = send_email(email, {"firstName": name, "ref": application_reference}, template_id)
+    response = notify.send_email(email, {"firstName": name, "ref": application_reference}, template_id)
     return response
 
 
@@ -118,9 +118,10 @@ def create_formatted_payment_reference(application_reference):
     :return: a formatted payment reference
     """
     logger.debug('Generating payment reference for application with reference: ' + application_reference)
-    prefix = 'MORE'
+    prefix = settings.PAYMENT_REFERENCE_PREFIX
+    payment_urn_prefix = settings.PAYMENT_URN_PREFIX
     timestamp = time.strftime("%Y%m%d%H%M%S")
-    formatted_payment_reference = str(prefix + ':' + application_reference + ':' + timestamp)
+    formatted_payment_reference = str(prefix + ':' + payment_urn_prefix + application_reference + ':' + timestamp)
     logger.debug('Generated payment reference: ' + formatted_payment_reference)
     return formatted_payment_reference
 

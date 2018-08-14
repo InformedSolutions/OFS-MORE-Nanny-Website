@@ -1,19 +1,37 @@
 import json
+import os
 import uuid
+from http.cookies import SimpleCookie
 from unittest import mock
 
-from django.test import TestCase
+import requests
+from django.test import TestCase, modify_settings
 from django.urls import reverse, resolve
 from nanny.db_gateways import NannyGatewayActions
+from nanny.test_utils import side_effect, mock_nanny_application, mock_identity_record, urn_response
 
-
+#
+# class CustomResponse:
+#     record = None
+#
+#     def __init__(self, record):
+#         self.record = record
+#
+#
+# def authenticate(application_id, *args, **kwargs):
+#     record = mock_identity_record
+#     return CustomResponse(record)
+#
+#
+# @mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)
 class PaymentTests(TestCase):
     """
     Tests for asserting payment functionality
     """
 
     def setUp(self):
-        pass
+        self.application_id = mock_nanny_application['application_id']
+        self.client.cookies = SimpleCookie({'_ofs': 'test@informed.com'})
 
     def test_can_lodge_valid_payment(self):
         """
@@ -22,31 +40,33 @@ class PaymentTests(TestCase):
            2. Application Reference number assigned
            3. Payment record is lodged
         """
+        with mock.patch('payment_app.services.payment_service.make_payment') as post_payment_mock, \
+                mock.patch('requests.get') as application_reference_mock, \
+                mock.patch('nanny.notify.send_email') as notify_mock, \
+                mock.patch('payment_app.messaging.sqs_handler.SQSHandler.send_message') as sqs_mock, \
+                mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
+                mock.patch('nanny.db_gateways.NannyGatewayActions.create') as nanny_api_create, \
+                mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put, \
+                mock.patch('nanny.db_gateways.IdentityGatewayActions.read') as identity_api_read:
+            nanny_api_read.side_effect = side_effect
+            nanny_api_create.side_effect = side_effect
+            nanny_api_put.side_effect = side_effect
+            identity_api_read.side_effect = side_effect
 
-        with mock.patch('application.services.payment_service.make_payment') as post_payment_mock, \
-                mock.patch(
-                    'application.services.noo_integration_service.create_application_reference') as application_reference_mock, \
-                mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read:
+            application_reference_mock.return_value = urn_response
 
-            app_id = uuid.UUID()
-            nanny_api_read.return_value = {
-                'application_id': app_id
-            }
+            test_payment_response = b'{ "customerOrderCode" : "TEST", "lastEvent" : "AUTHORISED"}'
 
-            application_reference_mock.return_value = 'TESTURN'
+            test_response = requests.Response()
+            test_response.status_code = 201
+            test_response._content = test_payment_response
 
-            test_payment_response = {
-                "customerOrderCode": "TEST",
-                "lastEvent": "AUTHORISED"
-            }
-
-            post_payment_mock.return_value.status_code = 201
-            post_payment_mock.return_value.text = json.dumps(test_payment_response)
+            post_payment_mock.return_value = test_response
 
             response = self.client.post(
-                reverse('payment-details'),
+                reverse('payment:payment-details'),
                 {
-                    'id': app_id,
+                    'id': self.application_id,
                     'card_type': 'visa',
                     'card_number': '5454545454545454',
                     'expiry_date_0': 1,
@@ -59,16 +79,4 @@ class PaymentTests(TestCase):
             # 1. Assert confirmation page shown
             self.assertEqual(response.status_code, 302)
             redirect_target = resolve(response.url)
-            self.assertEqual(redirect_target.view_name, 'Payment-Confirmation')
-
-            # 2. Assert application reference assigned and marked as submitted
-            application_record = NannyGatewayActions().read('application',
-                                                            params={'application_id': application_id}).record
-            self.assertIsNotNone(application.application_reference)
-            self.assertIsNotNone(application.date_submitted)
-
-            # 3.Assert payment record created and marked appropriately
-            payment_record = Payment.objects.get(application_id=self.app_id)
-            self.assertIsNotNone(payment_record.payment_reference)
-            self.assertTrue(payment_record.payment_submitted)
-            self.assertTrue(payment_record.payment_authorised)
+            self.assertEqual(redirect_target.view_name, 'declaration:confirmation')
