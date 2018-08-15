@@ -24,9 +24,9 @@ mock_nanny_application = {
 }
 
 mock_personal_details_record = {
-    'first_name': 'The Dark Lord',
+    'first_name': 'John',
     'middle_names': '',
-    'last_name': 'Selenium',
+    'last_name': 'Smith',
     'date_of_birth': '2000-01-01',
     'lived_abroad': True
 }
@@ -45,20 +45,28 @@ mock_dbs_record = {
 mock_home_address = {
     'street_line1': 'Test',
     'street_line2': None,
-    'town': 'Middle Earth',
+    'town': 'Altrincham',
     'county': None,
     'postcode': 'WA14 4PA',
     'childcare_address': False,
 }
 
-mock_childcare_address_record = {
-    'street_line1': 'Test',
+mock_childcare_address_record = [{
+    'street_line1': 'Test 1',
     'street_line2': None,
-    'town': 'New New York',
+    'town': 'Manchester',
     'county': None,
     'postcode': 'WA14 4PA',
     'application_id': '998fd8ec-b96b-4a71-a1a1-a7a3ae186729',
-}
+}, 
+    {
+    'street_line1': 'Test 2',
+    'street_line2': None,
+    'town': 'London',
+    'county': None,
+    'postcode': 'WC2N 5DU',
+    'application_id': '998fd8ec-b96b-4a71-a1a1-a7a3ae186729',
+}]
 
 mock_first_aid_record = {
     'training_organisation': 'St Johns Ambulance',

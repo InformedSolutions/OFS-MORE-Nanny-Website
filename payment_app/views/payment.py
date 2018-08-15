@@ -12,6 +12,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.core.urlresolvers import reverse
 from django.views.decorators.cache import never_cache
+import os
 
 from nanny.db_gateways import NannyGatewayActions, IdentityGatewayActions
 
@@ -20,7 +21,7 @@ from ..forms.payment import PaymentDetailsForm
 from ..messaging.sqs_handler import SQSHandler
 
 logger = logging.getLogger()
-sqs_handler = SQSHandler()
+sqs_handler = SQSHandler(os.environ.get('SQS_QUEUE_PREFIX') + '_NA_APPLICATION_QUEUE')
 
 
 @never_cache
