@@ -155,8 +155,88 @@ class ApplyAsANanny(LiveServerTestCase):
 
         self.declaration_and_payment_task.complete_declaration_and_payment()
 
+    @try_except_method
+    def test_submit_application_with_lived_abroad_option(self):
+        """
+        Test that a user can complete personal details task with lived abroad option
+        """
+        self.web_util.navigate_to_base_url()
+        test_email = faker.email()
+        test_phone_number = self.web_util.generate_random_mobile_number()
+        test_alt_phone_number = self.web_util.generate_random_mobile_number()
+        self.registration.register_email_address(test_email)
+
+        self.login.login_to_the_application(test_phone_number, test_alt_phone_number)
+
+        self.personal_details_task.complete_details_with_lived_abroad_option(faker.first_name(), faker.last_name())
+
+    @try_except_method
+    def test_can_access_costs_without_authenticating(self):
+        """
+        Tests the costs page can be accessed without logging in.
+        """
+        driver = self.web_util.get_driver()
+        self.web_util.navigate_to_base_url()
+        self.web_util.click_element_by_link_text("Costs")
+        self.assertEqual("Costs", driver.title)
+
+    @try_except_method
+    def test_can_access_costs_when_authenticated(self):
+        """
+        Tests the costs page can be accessed when logged in.
+        """
+        driver = self.web_util.get_driver()
+        self.web_util.navigate_to_base_url()
+
+        test_email = faker.email()
+        test_phone_number = self.web_util.generate_random_mobile_number()
+        test_alt_phone_number = self.web_util.generate_random_mobile_number()
+        self.registration.register_email_address(test_email)
+        self.login.login_to_the_application(test_phone_number, test_alt_phone_number)
+        self.web_util.click_element_by_link_text("Costs")
+        self.assertEqual("Costs", driver.title)
+
+    @try_except_method
+    def test_can_return_to_task_list_from_help_and_costs_when_authenticated(self):
+        """
+        Test to make sure that task list is accessible from cost page
+        """
+        driver = self.web_util.get_driver()
+        self.web_util.navigate_to_base_url()
+
+        test_email = faker.email()
+        test_phone_number = self.web_util.generate_random_mobile_number()
+        test_alt_phone_number = self.web_util.generate_random_mobile_number()
+        self.registration.register_email_address(test_email)
+
+        self.login.login_to_the_application(test_phone_number, test_alt_phone_number)
+
+        self.personal_details_task.complete_details_with_not_lived_abroad_option(faker.first_name(), faker.last_name())
+
+        # Costs page
+        self.web_util.click_element_by_link_text("Costs")
+        self.assertEqual("Costs", driver.title)
+
+        # Go back to task list
+        self.web_util.click_element_by_link_text("Return to application")
+
+        self.assertEqual("Register as a nanny",
+                         driver.title)
+
+        # Help page
+        self.web_util.click_element_by_link_text("Help and contacts")
+        self.assertEqual("Help and contacts", driver.title)
+
+        # Go back to task list
+        self.web_util.click_element_by_link_text("Return to application")
+
+        self.assertEqual("Register as a nanny", driver.title)
+
     def tearDown(self):
         self.selenium_driver.quit()
-        del os.environ['EMAIL_VALIDATION_URL']
+        try:
+            del os.environ['EMAIL_VALIDATION_URL']
+        except:
+            pass
         super(ApplyAsANanny, self).tearDown()
         self.assertEqual([], self.verification_errors)

@@ -5,8 +5,7 @@ import time
 from django.test import TestCase
 import os
 from faker.generator import random
-from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.common.by import By
+from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
@@ -130,22 +129,24 @@ class WebUtil(TestCase):
             self.assertEqual(page_title, driver.title)
             raise e
 
-    def assertPageTitleAtTaskSummaryPage(self, expected_title):
+    def assert_page_title(self, expected):
+        self.wait_until_page_load(expected)
         driver = self.get_driver()
+        expected_title = expected
+        actual_title = driver.title
+        self.assertEqual(expected_title, actual_title)
 
-        WebDriverWait(driver, self.delay).until(
-            expected_conditions.element_to_be_clickable(
-                (By.XPATH, "//input[@value='Confirm and continue']")))
-        self.assertEqual(expected_title, driver.title)
+    def is_return_link_present(self):
+        """
+        Tests 'Return to list' link is present in the page
+        :return: True if the link is present
+        """
+        try:
+            self.get_driver().find_element_by_link_text("Return to list")
+        except NoSuchElementException:
+            return False
+        return True
 
-    def assert_page_title_at_task_summary_page(self, expected_title):
-        driver = self.get_driver()
-
-        WebDriverWait(driver, self.delay).until(
-            expected_conditions.element_to_be_clickable(
-                (By.XPATH, "//input[@value='Confirm and continue']")))
-
-        self.assertEqual(expected_title, driver.title)
 
     @staticmethod
     def generate_random_mobile_number():
