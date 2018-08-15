@@ -22,7 +22,7 @@ class FirstAidTrainingTask(TestCase):
         self.web_util.send_keys_by_id("id_course_date_2", "2017")
         self.web_util.click_element_by_name("action")
         self.web_util.click_element_by_link_text("Continue")
-        self.web_util.assertPageTitleAtTaskSummaryPage("Check your answers: first aid training")
+        self.web_util.assert_page_title("Check your answers: first aid training")
         self.web_util.click_element_by_xpath("//input[@value='Confirm and continue']")
         self.web_util.wait_until_page_load("Register as a nanny")
         self.assertEqual("Done", driver.find_element_by_xpath("//tr[@id='first_aid_training']/td/a/strong").text)
