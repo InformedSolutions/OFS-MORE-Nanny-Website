@@ -232,6 +232,20 @@ class ApplyAsANanny(LiveServerTestCase):
 
         self.assertEqual("Register as a nanny", driver.title)
 
+    @try_except_method
+    def test_user_should_not_be_able_to_submit_the_application(self):
+        """
+        Test to make sure that the user can't be able to submit application when selected none for type of course
+        """
+        self.web_util.navigate_to_base_url()
+        test_email = faker.email()
+        test_phone_number = self.web_util.generate_random_mobile_number()
+        test_alt_phone_number = self.web_util.generate_random_mobile_number()
+        self.registration.register_email_address(test_email)
+
+        self.login.login_to_the_application(test_phone_number, test_alt_phone_number)
+        self.childcare_training_task.childcare_training_with_none_option_for_type_of_course()
+
     def tearDown(self):
         self.selenium_driver.quit()
         try:
