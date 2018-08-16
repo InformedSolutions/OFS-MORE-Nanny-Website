@@ -10,7 +10,8 @@ class CancelApplicationTemplateView(View):
     Class containing the methods for handling requests to the 'Cancel-Application' page.
     """
     def get(self, request):
-        return render(request, template_name='cancel-application.html')
+        application_id = request.GET['id']
+        return render(request, template_name='cancel-application.html', context={'id': application_id})
 
     def post(self, request):
         application_id = request.GET['id']
