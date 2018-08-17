@@ -41,10 +41,12 @@ class ManualEntryTests(ChildcareAddressTests):
         """
         with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
             mock.patch('nanny.db_gateways.NannyGatewayActions.list') as nanny_api_list,\
-            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
+            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put,\
+            mock.patch('nanny.db_gateways.NannyGatewayActions.create') as nanny_api_create:
 
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
+            nanny_api_create.side_effect = side_effect
 
             nanny_api_list.return_value.status_code = 404
 
@@ -65,15 +67,17 @@ class ManualEntryTests(ChildcareAddressTests):
         """
         with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
             mock.patch('nanny.db_gateways.NannyGatewayActions.list') as nanny_api_list,\
-            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
+            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put,\
+            mock.patch('nanny.db_gateways.NannyGatewayActions.patch') as nanny_api_patch:
 
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
+            nanny_api_patch.side_effect = side_effect
 
             nanny_api_list.return_value.status_code = 404
 
             response = self.client.post(build_url('Childcare-Address-Manual-Entry',
-                                                  get={'id': uuid.UUID,
+                                                  get={'id': uuid.uuid4(),
                                                        'childcare_address_id': uuid.uuid4()}),
                                         {'street_line1': 'test',
                                          'street_line2': '',

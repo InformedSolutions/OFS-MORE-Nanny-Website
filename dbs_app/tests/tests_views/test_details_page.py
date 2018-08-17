@@ -34,9 +34,11 @@ class DBSDetailEntryTests(DBSTests):
         due to no convictions
         """
         with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
-            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
+            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put, \
+            mock.patch('nanny.db_gateways.NannyGatewayActions.patch') as nanny_api_patch:
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
+            nanny_api_patch.side_effect = side_effect
 
             response = self.client.post(build_url('dbs:Details', get={
                 'id': uuid.UUID,
@@ -50,7 +52,8 @@ class DBSDetailEntryTests(DBSTests):
         page due to existing convictions
         """
         with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
-            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
+            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put, \
+            mock.patch('nanny.db_gateways.NannyGatewayActions.patch') as nanny_api_patch:
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
 
