@@ -60,10 +60,14 @@ class FirstAidTrainingTests(TestCase):
 
     def test_can_submit_details_form(self):
         with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read,\
-                mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
+                mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put,\
+                mock.patch('nanny.db_gateways.NannyGatewayActions.patch') as nanny_api_patch,\
+                mock.patch('nanny.db_gateways.NannyGatewayActions.create') as nanny_api_create:
 
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
+            nanny_api_patch.side_effect = side_effect
+            nanny_api_create.side_effect = side_effect
 
             data = {
                 'id': self.app_id,
