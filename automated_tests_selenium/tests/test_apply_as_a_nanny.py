@@ -48,7 +48,7 @@ def capture_screenshot(func):
     scr.screenshot('selenium/screenshot-%s-%s.png' % (func.__name__, now))
 
 
-@tag('smoke')
+@tag('selenium')
 @override_settings(ALLOWED_HOSTS=['*'])
 class ApplyAsANanny(LiveServerTestCase):
     port = 8000
