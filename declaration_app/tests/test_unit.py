@@ -24,9 +24,9 @@ class DeclarationTests(TestCase):
             'login_details_status',
             'personal_details_status',
             'childcare_address_status',
-            'first_aid_training_status',
+            'first_aid_status',
             'childcare_training_status',
-            'criminal_record_check_status',
+            'dbs_status',
             'insurance_cover_status',
         )
         self.nanny_models = views.MasterSummary.model_names
