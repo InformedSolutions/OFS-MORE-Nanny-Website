@@ -70,7 +70,7 @@ class TaskListView(View):
                 },
                 {
                     'name': 'first_aid_training',
-                    'status': application['first_aid_training_status'],
+                    'status': application['first_aid_status'],
                     'arc_flagged': application['first_aid_arc_flagged'],
                     'description': 'First aid training',
                     'status_url': None,
@@ -92,7 +92,7 @@ class TaskListView(View):
                 },
                 {
                     'name': 'criminal_record',
-                    'status': application['criminal_record_check_status'],
+                    'status': application['dbs_status'],
                     'arc_flagged': application['dbs_arc_flagged'],
                     'description': 'Criminal record (DBS) check',
                     'status_url': None,
