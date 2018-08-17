@@ -76,8 +76,10 @@ class ValidateMagicLinkView(View):
         record['magic_link_sms'] = magic_link_sms
         record['sms_expiry_date'] = sms_expiry_date
 
-        notify.send_text(record['mobile_number'],
-                         personalisation={'link': magic_link_sms},
-                         template_id='6947f254-5033-41b6-8fc5-5fcc6d613b66')
+        notify.send_text(
+            record['mobile_number'],
+            personalisation={'link': magic_link_sms},
+            template_id='1c3f0e2f-d9df-474e-9649-db262c9a8dbc'
+        )
 
         return record
