@@ -125,7 +125,7 @@ class TaskListView(View):
             ]
         }
 
-        context['all_complete'] = any(task['status'] != 'COMPLETED' for task in context['tasks'][-1:])
+        context['all_complete'] = all(task['status'] == 'COMPLETED' for task in context['tasks'][:-1])
 
         if context['all_complete']:
             context['tasks'][-1]['status'] = 'NOT_STARTED'
