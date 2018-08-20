@@ -29,4 +29,9 @@ def redirect_by_status(application_id):
         response = HttpResponseRedirect(
             reverse('declaration:confirmation') + '?id=' + str(application_id))
 
+    elif app_record['application_status'] == 'FURTHER_INFORMATION':
+            response = HttpResponseRedirect(
+                reverse('Task-List') + '?id=' + str(application_id)
+            )
+
     return response

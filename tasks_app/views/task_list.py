@@ -4,16 +4,13 @@ from django.shortcuts import render, reverse
 from django.views import View
 from django.views.decorators.cache import never_cache
 
-from nanny.db_gateways import NannyGatewayActions, IdentityGatewayActions
+from nanny.db_gateways import NannyGatewayActions
 
 
 class TaskListView(View):
     @never_cache
     def get(self, request):
         application_id = request.GET["id"]
-        identity_api_response = IdentityGatewayActions().read('user', params={'application_id': application_id})
-        record = identity_api_response.record
-        email_address = record['email']
         nanny_api_response = NannyGatewayActions().read('application', params={'application_id': application_id})
 
         if nanny_api_response.status_code == 200:
@@ -38,7 +35,6 @@ class TaskListView(View):
 
         context = {
             'id': application_id,
-            'email_address': email_address,
             'all_complete': False,
             'application_status': application['application_status'],
             'tasks': [
@@ -47,12 +43,7 @@ class TaskListView(View):
                     'status': application['login_details_status'],
                     'arc_flagged': application['login_details_arc_flagged'],
                     'description': "Your sign in details",
-                    'status_url': None,  # Will be filled later
-                    'status_urls': [  # Available urls for each status
-                        {'status': 'COMPLETED', 'url': 'Contact-Details-Summary'},
-                        {'status': 'FLAGGED', 'url': 'Contact-Details-Summary'},
-                        {'status': 'OTHER', 'url': 'Contact-Details-Summary'},  # For all other statuses
-                    ],
+                    'status_url': 'Contact-Details-Summary',
                 },
                 {
                     'name': 'personal_details',
@@ -60,11 +51,11 @@ class TaskListView(View):
                     'arc_flagged': application['personal_details_arc_flagged'],
                     'description': 'Your personal details',
                     'status_url': None,
-                    'status_urls': [
-                        {'status': 'COMPLETED', 'url': 'personal-details:Personal-Details-Summary'},
-                        {'status': 'FLAGGED', 'url': 'personal-details:Personal-Details-Summary'},
-                        {'status': 'OTHER', 'url': 'personal-details:Personal-Details-Name'},  # For all other statuses
-                    ]
+                    'status_urls': {
+                        'COMPLETED/FLAGGED': 'personal-details:Personal-Details-Summary',
+                        'NOT_COMPLETED': 'personal-details:Personal-Details-Name'
+                    }
+
                 },
                 {
                     'name': 'childcare_address',
@@ -72,23 +63,21 @@ class TaskListView(View):
                     'arc_flagged': application['childcare_address_arc_flagged'],
                     'description': 'Childcare address',
                     'status_url': None,
-                    'status_urls': [
-                        {'status': 'COMPLETED', 'url': 'Childcare-Address-Summary'},
-                        {'status': 'FLAGGED', 'url': 'Childcare-Address-Summary'},
-                        {'status': 'OTHER', 'url': 'Childcare-Address-Guidance'},  # For all other statuses
-                    ]
+                    'status_urls': {
+                        'COMPLETED/FLAGGED': 'Childcare-Address-Summary',
+                        'NOT_COMPLETED': 'Childcare-Address-Guidance'
+                    }
                 },
                 {
                     'name': 'first_aid_training',
-                    'status': application['first_aid_training_status'],
-                    'arc_flagged': application['first_aid_training_arc_flagged'],
+                    'status': application['first_aid_status'],
+                    'arc_flagged': application['first_aid_arc_flagged'],
                     'description': 'First aid training',
                     'status_url': None,
-                    'status_urls': [
-                        {'status': 'COMPLETED', 'url': 'first-aid:First-Aid-Summary'},
-                        {'status': 'FLAGGED', 'url': 'first-aid:First-Aid-Summary'},
-                        {'status': 'OTHER', 'url': 'First-Aid-Guidance'},  # For all other statuses
-                    ]
+                    'status_urls': {
+                        'COMPLETED/FLAGGED': 'first-aid:First-Aid-Summary',
+                        'NOT_COMPLETED': 'First-Aid-Guidance'
+                    }
                 },
                 {
                     'name': 'childcare_training',
@@ -96,23 +85,21 @@ class TaskListView(View):
                     'arc_flagged': application['childcare_training_arc_flagged'],
                     'description': 'Childcare training',
                     'status_url': None,
-                    'status_urls': [
-                        {'status': 'COMPLETED', 'url': 'Childcare-Training-Summary'},
-                        {'status': 'FLAGGED', 'url': 'Childcare-Training-Summary'},
-                        {'status': 'OTHER', 'url': 'Childcare-Training-Guidance'},  # For all other statuses
-                    ]
+                    'status_urls': {
+                        'COMPLETED/FLAGGED': 'Childcare-Training-Summary',
+                        'NOT_COMPLETED': 'Childcare-Training-Guidance'
+                    }
                 },
                 {
                     'name': 'criminal_record',
-                    'status': application['criminal_record_check_status'],
-                    'arc_flagged': application['criminal_record_check_arc_flagged'],
+                    'status': application['dbs_status'],
+                    'arc_flagged': application['dbs_arc_flagged'],
                     'description': 'Criminal record (DBS) check',
                     'status_url': None,
-                    'status_urls': [
-                        {'status': 'COMPLETED', 'url': 'dbs:Summary'},
-                        {'status': 'FLAGGED', 'url': 'dbs:Summary'},
-                        {'status': 'OTHER', 'url': 'dbs:Guidance'},  # For all other statuses
-                    ]
+                    'status_urls': {
+                        'COMPLETED/FLAGGED': 'dbs:Summary',
+                        'NOT_COMPLETED': 'dbs:Guidance'
+                    }
                 },
                 {
                     'name': 'insurance_cover',
@@ -120,54 +107,31 @@ class TaskListView(View):
                     'arc_flagged': application['insurance_cover_arc_flagged'],
                     'description': 'Insurance cover',
                     'status_url': None,
-                    'status_urls': [
-                        {'status': 'COMPLETED', 'url': 'insurance:Summary'},
-                        {'status': 'FLAGGED', 'url': 'insurance:Summary'},
-                        {'status': 'OTHER', 'url': 'insurance:Guidance'},  # For all other statuses
-                    ]
+                    'status_urls': {
+                        'COMPLETED/FLAGGED': 'insurance:Summary',
+                        'NOT_COMPLETED': 'insurance:Guidance'
+                    }
                 },
                 {
                     'name': 'review',
-                    'status': None,
+                    'status': 'DO_LAST',
                     'arc_flagged': application['application_status'],
                     # If application is being resubmitted (i.e. is not drafting,
                     # set declaration task name to read "Declaration" only)
                     'description':
                         "Declaration and payment" if application['application_status'] == 'DRAFTING' else "Declaration",
-                    'status_url': None,
-                    'status_urls': [
-                        {'status': 'COMPLETED', 'url': 'declaration:Declaration-Declaration-View'},
-                        {'status': 'OTHER', 'url': 'declaration:Master-Summary'}
-                    ],
+                    'status_url': '',
                 },
             ]
         }
 
-        if len([task for task in context['tasks'] if task['status'] in ['IN_PROGRESS', 'NOT_STARTED', 'FLAGGED', 'WAITING']]) < 1:
-            context['all_complete'] = True
-        else:
-            context['all_complete'] = False
+        context['all_complete'] = all(task['status'] == 'COMPLETED' for task in context['tasks'][:-1])
 
         if context['all_complete']:
-            # Set declaration status to NOT_STARTED
-            for task in context['tasks']:
-                if task['name'] == 'review':
-                    if task['status'] is None:
-                        task['status'] = application['declarations_status']
+            context['tasks'][-1]['status'] = 'NOT_STARTED'
+            context['tasks'][-1]['status_url'] = 'declaration:Master-Summary'
 
-        # Prepare task links
-
-        for task in context['tasks']:
-
-            # Iterating through tasks
-
-            for url in task.get('status_urls'):  # Iterating through task available urls
-                if url['status'] == task['status']:  # Match current task status with url which is in status_urls
-                    task['status_url'] = url['url']  # Set main task primary url to the one which matched
-
-            if not task['status_url']:  # In case no matches were found by task status
-                for url in task.get('status_urls'):  # Search for link with has status "OTHER"
-                    if url['status'] == "OTHER":
-                        task['status_url'] = url['url']
+        for task in context['tasks'][1:-1]:
+            task['status_url'] = task['status_urls']['COMPLETED/FLAGGED'] if task['status'] in ('COMPLETED', 'FLAGGED') else task['status_urls']['NOT_COMPLETED']
 
         return render(request, 'task-list.html', context)

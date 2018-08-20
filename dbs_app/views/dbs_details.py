@@ -41,7 +41,7 @@ class DBSDetailsView(BaseFormView):
         # Change the task status to in progress, as data entry marks setting the task status to in progress
         application_id = app_id_finder(self.request)
         application_record = NannyGatewayActions().read('application', params={'application_id': application_id}).record
-        application_record['criminal_record_check_status'] = 'IN_PROGRESS'
+        application_record['dbs_status'] = 'IN_PROGRESS'
         NannyGatewayActions().put('application', params=application_record)
 
         # Define a dictionary of the data that will potentially be sent to the api

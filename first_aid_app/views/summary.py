@@ -19,7 +19,7 @@ class Summary(View):
     def post(self, request):
         application_id = self.request.POST['id']
         application_record = NannyGatewayActions().read('application', params={'application_id': application_id}).record
-        application_record['first_aid_training_status'] = 'COMPLETED'
+        application_record['first_aid_status'] = 'COMPLETED'
         NannyGatewayActions().put('application', params=application_record)
         return HttpResponseRedirect(build_url(self.success_url_name, get={'id': application_id}))
 
