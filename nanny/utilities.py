@@ -23,17 +23,18 @@ class NannyForm(GOVUKForm):
     Parent class from which all others will late inherit. Contains logic for checking the existence of ARC comments on
     fields.
     """
-    def check_flag(self, pk):
+    def check_flag(self, application_id):
         """
         For a class to call this method it must set self.pk - this is the primary key of the entry against which the
         ArcComments table is being filtered.
         This method simply checks whether or not a field is flagged, raising a validation error if it is.
         """
         for field in self.fields:
-            arc_comments_filter = NannyGatewayActions().list('arc-comments', params={'pk': pk, 'field_name': field})
-            if arc_comments_filter.status_code == 200 and bool(arc_comments_filter.response[0]['flagged']):
-                comment = arc_comments_filter.response[0]['comment']
-                raise forms.ValidationError(comment)
+            arc_comments_filter = NannyGatewayActions().list('arc-comments', params={'application_id': application_id, 'field_name': field})
+            if arc_comments_filter.status_code == 200 and bool(arc_comments_filter.record[0]['flagged']):
+                comment = arc_comments_filter.record[0]['comment']
+                self.cleaned_data = ''
+                self.add_error(field, forms.ValidationError(comment))
 
 
 def show_django_debug_toolbar(request):
