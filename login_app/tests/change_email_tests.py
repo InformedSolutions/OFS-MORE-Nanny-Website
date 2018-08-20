@@ -33,7 +33,9 @@ class ChangeEmailTests(TestCase):
     def test_post_request(self):
         response = self.client.post(self.url)
         self.assertTrue(response.status_code == 200)
-
+        
+    # Http Tests
+        
     @tag('http')
     @patch('login_app.views.change_email.ChangeEmailTemplateView.form_valid')
     def test_form_valid_request(self, form_valid):
@@ -47,9 +49,8 @@ class ChangeEmailTests(TestCase):
         response = self.client.post(reverse('Change-Email'), mock_data)
 
         form_valid.assert_called_once()
-
-    # Http Tests
-
+        
+        
     @tag('http')
     def test_change_email_email_sent(self):
         client = self.client
