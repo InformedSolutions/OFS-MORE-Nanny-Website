@@ -7,7 +7,6 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import reverse
 
 from nanny import notify
-from nanny.utilities import generate_email_validation_link
 from login_app.forms import ContactEmailForm
 from nanny import utilities
 from .base import BaseFormView
@@ -39,13 +38,23 @@ class ChangeEmailTemplateView(BaseFormView):
         # Get relevant records
         user_identity_record = identity_actions.read('user',
                                                      params={'application_id': application_id}).record
-        personal_details_record = nanny_actions.read('applicant-personal-details',
-                                                     params={'application_id': application_id}).record
 
-        # Get user's current email and first name
+        # Get personal_details response, not record, and check if a record exists
+        personal_details_response = nanny_actions.read('applicant-personal-details',
+                                                     params={'application_id': application_id})
+        try:
+            personal_details_record_exists = personal_details_response.record is not None
+        except AttributeError:
+            personal_details_record_exists = False
+
+        # Get user's current email
         account_email = user_identity_record['email']
-        first_name = personal_details_record['first_name']
 
+        # Get first_name if it exists, otherwise use 'Applicant'
+        if personal_details_record_exists:
+            first_name = personal_details_response.record['first_name']
+        else:
+            first_name = "Applicant"
 
         existing_account_response = identity_actions.list('user', params={'email': self.email_address})
         existing_account_response_status_code = existing_account_response.status_code
@@ -68,7 +77,7 @@ class ChangeEmailTemplateView(BaseFormView):
 
         else:
             # Generate a new magic link and expiry date
-            validation_link, email_expiry_date = generate_email_validation_link(self.email_address)
+            validation_link, email_expiry_date = utilities.generate_email_validation_link(self.email_address)
             magic_link = validation_link.split('/')[-1]
             validation_link += '?email=' + self.email_address
 
@@ -83,8 +92,8 @@ class ChangeEmailTemplateView(BaseFormView):
             # Send the 'Change Email' email
             if settings.DEBUG:
                 print(validation_link)
-            else:
-                self.send_change_email_email(self.email_address, first_name, validation_link)
+
+            self.send_change_email_email(self.email_address, first_name, validation_link)
 
             sent_email_redirect = utilities.build_url(self.success_url,
                                                get={'email_address': self.email_address, 'id': application_id})
