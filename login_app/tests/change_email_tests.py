@@ -1,16 +1,11 @@
-from unittest import mock
 from unittest.mock import patch
 
 from django.http import HttpResponse
 
 from django.test import TestCase, tag, Client
-from django.urls import resolve, reverse
+from django.urls import reverse
 
-from nanny.test_utils import side_effect, mock_nanny_application, mock_personal_details_record, mock_identity_record
-from login_app.forms.contact_email import ContactEmailForm
-from login_app import views
-
-from nanny.utilities import generate_email_validation_link
+from nanny.test_utils import mock_nanny_application, mock_personal_details_record, mock_identity_record
 
 from django.test import modify_settings
 
