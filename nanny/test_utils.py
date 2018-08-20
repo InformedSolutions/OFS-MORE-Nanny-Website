@@ -1,3 +1,5 @@
+import uuid
+
 from django.http import HttpResponse
 
 
@@ -9,13 +11,13 @@ mock_nanny_application = {
     'childcare_training_status': 'NOT_STARTED',
     'login_details_status': 'COMPLETED',
     'personal_details_status': 'NOT_STARTED',
-    'criminal_record_check_status': 'NOT_STARTED',
+    'dbs_status': 'NOT_STARTED',
     'address_to_be_provided': True,
     'login_details_arc_flagged': False,
     'personal_details_arc_flagged': False,
     'childcare_address_status': 'COMPLETED',
     'childcare_address_arc_flagged': False,
-    'first_aid_training_status': 'COMPLETED',
+    'first_aid_status': 'COMPLETED',
     'first_aid_training_arc_flagged': False,
     'childcare_training_arc_flagged': False,
     'criminal_record_check_arc_flagged': False,
@@ -146,3 +148,8 @@ mock_endpoint_return_values = {
 def side_effect(endpoint_name, *args, **kwargs):
     return mock_endpoint_return_values[endpoint_name]
 
+def side_effect_childcare_address_list(endpoint_name, *args, **kwargs):
+    list_response = childcare_address_response
+    list_response.record['childcare_address_id'] = uuid.uuid4()
+    list_response.record = [list_response.record]
+    return list_response

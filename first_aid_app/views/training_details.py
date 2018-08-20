@@ -40,7 +40,7 @@ class FirstAidDetailsView(BaseFormView):
 
         application_id = app_id_finder(self.request)
         application_record = NannyGatewayActions().read('application', params={'application_id': application_id}).record
-        application_record['first_aid_training_status'] = 'IN_PROGRESS'
+        application_record['first_aid_status'] = 'IN_PROGRESS'
         NannyGatewayActions().put('application', params=application_record)
 
         data_dict = {

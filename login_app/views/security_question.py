@@ -26,7 +26,7 @@ class SecurityQuestionFormView(BaseFormView):
 
         if app_record is None:
             form = MobileNumberSecurityQuestionForm
-        elif app_record['criminal_record_check_status'] == 'COMPLETED':
+        elif app_record['dbs_status'] == 'COMPLETED':
             form = DBSSecurityQuestionForm
         elif app_record['personal_details_status'] == 'COMPLETED':
             form = PersonalDetailsSecurityQuestionForm

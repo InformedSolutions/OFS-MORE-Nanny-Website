@@ -21,7 +21,7 @@ class DBSSummary(BaseTemplateView):
         """
         application_id = request.POST['id']
         application_record = NannyGatewayActions().read('application', params={'application_id': application_id}).record
-        application_record['criminal_record_check_status'] = 'COMPLETED'
+        application_record['dbs_status'] = 'COMPLETED'
         NannyGatewayActions().put('application', params=application_record)
 
         return HttpResponseRedirect(build_url(self.success_url_name, get={'id': application_id}))
