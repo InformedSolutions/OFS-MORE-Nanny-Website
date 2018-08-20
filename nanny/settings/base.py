@@ -122,7 +122,10 @@ ROOT_URLCONF = 'nanny.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR],
+        'DIRS': [
+            BASE_DIR,
+            os.path.join(BASE_DIR, 'nanny/generic_templates'),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
