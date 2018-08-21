@@ -89,23 +89,23 @@ class ChangeEmailTemplateView(BaseFormView):
             if settings.DEBUG:
                 print(validation_link)
 
-            self.send_change_email_email(self.email_address, first_name, validation_link)
+            send_change_email_email(self.email_address, first_name, validation_link)
 
             sent_email_redirect = utilities.build_url(self.success_url,
                                                get={'email_address': self.email_address, 'id': application_id})
             return HttpResponseRedirect(sent_email_redirect)
 
-    def send_change_email_email(self, email, first_name, url):
-        """
-        Method to send a 'Change Email' email using the Notify Gateway API
-        :param email: string containing the e-mail address to send the e-mail to
-        :param first_name: string first name
-        :param magic_link: url directing to email validation page.
-        :return: HTTP response
-        """
-        if hasattr(settings, 'NOTIFY_URL'):
-            email = str(email)
-            template_id = '108ecfa0-4496-4ce7-97c8-f43c9f42a374'
-            personalisation = {'first_name': first_name, 'magic_link': url}
-            return notify.send_email(email, personalisation, template_id)
+def send_change_email_email(email, first_name, url):
+    """
+    Method to send a 'Change Email' email using the Notify Gateway API
+    :param email: string containing the e-mail address to send the e-mail to
+    :param first_name: string first name
+    :param magic_link: url directing to email validation page.
+    :return: HTTP response
+    """
+    if hasattr(settings, 'NOTIFY_URL'):
+        email = str(email)
+        template_id = '108ecfa0-4496-4ce7-97c8-f43c9f42a374'
+        personalisation = {'first_name': first_name, 'magic_link': url}
+        return notify.send_email(email, personalisation, template_id)
 
