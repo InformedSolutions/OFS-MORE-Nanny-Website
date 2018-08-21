@@ -38,6 +38,7 @@ class NannyForm(GOVUKForm):
             # If fields cannot be flagged individually, check for flags using the bespoke methods.
             else:
                 self.if_name(application_id, field, True)
+                self.if_home_address(application_id, field, True)
 
     def remove_flags(self, application_id):
         for field in self.fields:
@@ -49,6 +50,7 @@ class NannyForm(GOVUKForm):
             # If fields cannot be flagged individually, check for flags using the bespoke methods.
             else:
                 self.if_name(application_id, field, False)
+                self.if_home_address(application_id, field, False)
 
     def if_name(self, application_id, field, enabled):
         """
@@ -67,6 +69,30 @@ class NannyForm(GOVUKForm):
                     self.cleaned_data = ''
                     self.add_error(field, forms.ValidationError(comment))
                 elif enabled and field != 'first_name':
+                    self.add_error(field, forms.ValidationError(''))
+                else:
+                    arc_record = arc_comments_filter.record[0]
+                    arc_record['flagged'] = False
+                    NannyGatewayActions().put('arc-comments', params=arc_record)
+
+    def if_home_address(self, application_id, field, enabled):
+        """
+        This checks if an address has been flagged, as constituent fields cannot be flagged individually.
+        It will be called on every field during the call to check_flags and remove_flags.
+        :param field: The name of the field with which to query the database.
+        :param enabled: Specify if you are setting the 'flagged' column to True or False.
+        :return: None
+        """
+        if field in ['street_line1', 'street_line2', 'town', 'county', 'country', 'postcode']:
+            query_params = {'application_id': application_id, 'field_name': 'home_address'}
+            arc_comments_filter = NannyGatewayActions().list('arc-comments', params=query_params)
+            if arc_comments_filter.status_code == 200 and bool(arc_comments_filter.record[0]['flagged']):
+                if enabled and field == 'street_line1':
+                    comment = arc_comments_filter.record[0]['comment']
+                    self.cleaned_data = ''
+                    self.add_error(field, forms.ValidationError(comment))
+                elif enabled and field != 'street_line1':
+                    self.cleaned_data = ''
                     self.add_error(field, forms.ValidationError(''))
                 else:
                     arc_record = arc_comments_filter.record[0]
