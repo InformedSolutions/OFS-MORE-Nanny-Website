@@ -1,13 +1,9 @@
 from django import forms
 
-import re
+from nanny.utilities import NannyForm
 
 
-from djcelery.utils import now
-from govuk_forms.forms import GOVUKForm
-
-
-class PersonalDetailsNameForm(GOVUKForm):
+class PersonalDetailsNameForm(NannyForm):
     """
      GOV.UK form for the Personal Details: Name page
      """
@@ -25,7 +21,7 @@ class PersonalDetailsNameForm(GOVUKForm):
     )
 
     middle_names = forms.CharField(
-        label='Middle names (if you have any on yor DBS check)',
+        label='Middle names (if you have any on your DBS check)',
         required=False,
         error_messages={
             'max_length': 'Middle names must be under 100 characters long'
