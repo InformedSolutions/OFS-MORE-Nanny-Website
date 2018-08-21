@@ -35,7 +35,7 @@
     </thead>
     <tbody>
     {% for row in table.row_list %}
-    {% if row.error != '' %}
+    {% if row.error is not None %}
     <tr>
         <td class="error-row" colspan="3">
             <p class="error-container">
@@ -51,7 +51,7 @@
     {% endif %}
     {% if row.value != None %}
     <tr id="{{row.data_name}}">
-        {% if row.error != '' %}
+        {% if row.error is not None %}
             <td class="summary-column error-row">
         {% else %}
             <td class=summary-column>
