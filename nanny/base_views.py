@@ -1,7 +1,7 @@
 from django.core.exceptions import ImproperlyConfigured
 from django.views.generic import FormView, TemplateView
 
-from .utilities import *
+from .utilities import app_id_finder, build_url
 
 
 class NannyFormView(FormView):
@@ -37,8 +37,7 @@ class NannyFormView(FormView):
             # If not none, run the build url util function
             url = build_url(self.success_url, get=self.get_success_parameters())
         else:
-            raise ImproperlyConfigured(
-                "No URL to redirect to. Provide a success_url.")
+            raise ImproperlyConfigured("No URL to redirect to. Provide a success_url.")
         return url
 
     def get_success_parameters(self):
@@ -50,6 +49,19 @@ class NannyFormView(FormView):
         params['id'] = app_id_finder(self.request)
 
         return params
+
+    def get_form(self, form_class=None):
+        """
+        Method to instantiate the form for rendering in the view.
+        If it is a GET request, perform check for ARC comments.
+        If it is a POST, remove any existing ARC comments.
+        """
+        form = super(NannyFormView, self).get_form(form_class)
+        if self.request.method == 'GET':
+            form.check_flags(self.request.GET['id'])
+        elif self.request.method == 'POST':
+            form.remove_flags(self.request.GET['id'])
+        return form
 
 
 class BaseTemplateView(TemplateView):
