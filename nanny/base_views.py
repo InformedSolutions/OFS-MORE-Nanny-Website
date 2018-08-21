@@ -58,9 +58,11 @@ class NannyFormView(FormView):
         """
         form = super(NannyFormView, self).get_form(form_class)
         if self.request.method == 'GET':
-            form.check_flags(self.request.GET['id'])
+            if getattr(form, 'check_flags', None):
+                form.check_flags(self.request.GET['id'])
         elif self.request.method == 'POST':
-            form.remove_flags(self.request.GET['id'])
+            if getattr(form, 'remove_flags', None):
+                form.remove_flags(self.request.GET['id'])
         return form
 
 
