@@ -2,48 +2,53 @@ import time
 
 from django.conf import settings
 from django.http import HttpResponseRedirect
-from django.views import View
 from django.shortcuts import reverse
-
+from django.views import View
 from nanny import notify
 from nanny import utilities
 from nanny.middleware import CustomAuthenticationHandler
-
 from nanny.db_gateways import IdentityGatewayActions
 
 
 class ValidateMagicLinkView(View):
+    record = None
+
     def get(self, request, id):
         identity_actions = IdentityGatewayActions()
         api_response = identity_actions.list('user', params={'magic_link_email': id})
 
-        if api_response.status_code != 200:
-            return HttpResponseRedirect(reverse('Service-Unavailable'))
+        if api_response.status_code == 200:
 
-        self.record = api_response.record[0]
+            self.record = api_response.record[0]
 
-        if not self.link_has_expired():
+            if not self.link_has_expired():
 
-            # If user has come from the 'Change Email' journey
-            if 'email' in request.GET:
-                # Update the user's email
-                new_email = request.GET.get('email')
-                new_email_record = self.record
-                new_email_record['email'] = new_email
+                # If user has come from the 'Change Email' journey
+                if 'email' in request.GET:
+                    # Update the user's email
+                    new_email = request.GET.get('email')
+                    new_email_record = self.record
+                    new_email_record['email'] = new_email
 
-                response = identity_actions.put('user', params=new_email_record)
+                    response = identity_actions.put('user', params=new_email_record)
 
-                if response.status_code != 200:
-                    return HttpResponseRedirect(reverse('Service-Unavailable'))
+                    if response.status_code != 200:
+                        return HttpResponseRedirect(reverse('Service-Unavailable'))
 
-                http_response = HttpResponseRedirect(self.get_success_url())
-                CustomAuthenticationHandler.create_session(http_response, new_email)
-                return http_response
+                    http_response = HttpResponseRedirect(self.get_success_url())
+                    CustomAuthenticationHandler.create_session(http_response, new_email)
+                    return http_response
 
-            return HttpResponseRedirect(self.get_success_url())
+                return HttpResponseRedirect(self.get_success_url())
+
+            else:
+                return HttpResponseRedirect(reverse('Link-Used'))
+
+        elif api_response.status_code == 404:
+            return HttpResponseRedirect(reverse('Link-Used'))
 
         else:
-            return HttpResponseRedirect(reverse('Link-Used'))
+            return HttpResponseRedirect(reverse('Service-Unavailable'))
 
     def link_has_expired(self):
         # Expiry period is set in hours in settings.py
