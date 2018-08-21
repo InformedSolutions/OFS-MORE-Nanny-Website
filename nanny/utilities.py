@@ -23,17 +23,81 @@ class NannyForm(GOVUKForm):
     Parent class from which all others will late inherit. Contains logic for checking the existence of ARC comments on
     fields.
     """
-    def check_flag(self, pk):
+    def check_flags(self, application_id):
         """
         For a class to call this method it must set self.pk - this is the primary key of the entry against which the
         ArcComments table is being filtered.
         This method simply checks whether or not a field is flagged, raising a validation error if it is.
         """
         for field in self.fields:
-            arc_comments_filter = NannyGatewayActions().list('arc-comments', params={'pk': pk, 'field_name': field})
-            if arc_comments_filter.status_code == 200 and bool(arc_comments_filter.response[0]['flagged']):
-                comment = arc_comments_filter.response[0]['comment']
-                raise forms.ValidationError(comment)
+            arc_comments_filter = NannyGatewayActions().list('arc-comments', params={'application_id': application_id, 'field_name': field})
+            if arc_comments_filter.status_code == 200 and bool(arc_comments_filter.record[0]['flagged']):
+                comment = arc_comments_filter.record[0]['comment']
+                self.cleaned_data = ''
+                self.add_error(field, forms.ValidationError(comment))
+            # If fields cannot be flagged individually, check for flags using the bespoke methods.
+            else:
+                self.if_name(application_id, field, True)
+                self.if_home_address(application_id, field, True)
+
+    def remove_flags(self, application_id):
+        for field in self.fields:
+            arc_comments_filter = NannyGatewayActions().list('arc-comments', params={'application_id': application_id, 'field_name': field})
+            if arc_comments_filter.status_code == 200 and bool(arc_comments_filter.record[0]['flagged']):
+                arc_record = arc_comments_filter.record[0]
+                arc_record['flagged'] = False
+                NannyGatewayActions().put('arc-comments', params=arc_record)
+            # If fields cannot be flagged individually, check for flags using the bespoke methods.
+            else:
+                self.if_name(application_id, field, False)
+                self.if_home_address(application_id, field, False)
+
+    def if_name(self, application_id, field, enabled):
+        """
+        This checks if a name has been flagged, as first, middle or last cannot be flagged individually.
+        It will be called on every field during the call to check_flags and remove_flags.
+        :param field: The name of the field with which to query the database.
+        :param enabled: Specify if you are setting the 'flagged' column to True or False.
+        :return: None
+        """
+        if field in ('first_name', 'middle_names', 'last_name'):
+            query_params = {'application_id': application_id, 'field_name': 'name'}
+            arc_comments_filter = NannyGatewayActions().list('arc-comments', params=query_params)
+            if arc_comments_filter.status_code == 200 and bool(arc_comments_filter.record[0]['flagged']):
+                if enabled and field == 'first_name':
+                    comment = arc_comments_filter.record[0]['comment']
+                    self.cleaned_data = ''
+                    self.add_error(field, forms.ValidationError(comment))
+                elif enabled and field != 'first_name':
+                    self.add_error(field, forms.ValidationError(''))
+                else:
+                    arc_record = arc_comments_filter.record[0]
+                    arc_record['flagged'] = False
+                    NannyGatewayActions().put('arc-comments', params=arc_record)
+
+    def if_home_address(self, application_id, field, enabled):
+        """
+        This checks if an address has been flagged, as constituent fields cannot be flagged individually.
+        It will be called on every field during the call to check_flags and remove_flags.
+        :param field: The name of the field with which to query the database.
+        :param enabled: Specify if you are setting the 'flagged' column to True or False.
+        :return: None
+        """
+        if field in ['street_line1', 'street_line2', 'town', 'county', 'country', 'postcode']:
+            query_params = {'application_id': application_id, 'field_name': 'home_address'}
+            arc_comments_filter = NannyGatewayActions().list('arc-comments', params=query_params)
+            if arc_comments_filter.status_code == 200 and bool(arc_comments_filter.record[0]['flagged']):
+                if enabled and field == 'street_line1':
+                    comment = arc_comments_filter.record[0]['comment']
+                    self.cleaned_data = ''
+                    self.add_error(field, forms.ValidationError(comment))
+                elif enabled and field != 'street_line1':
+                    self.cleaned_data = ''
+                    self.add_error(field, forms.ValidationError(''))
+                else:
+                    arc_record = arc_comments_filter.record[0]
+                    arc_record['flagged'] = False
+                    NannyGatewayActions().put('arc-comments', params=arc_record)
 
 
 def show_django_debug_toolbar(request):

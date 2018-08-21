@@ -57,7 +57,14 @@
 
                 {% elif application_status == 'FURTHER_INFORMATION' %}
 
+<<<<<<< HEAD
+                    {% if task.status == 'NOT_STARTED' %}
+                        <strong class="task-finished task-to-do" alt="{{ task.status_url }}: To do">To do</strong>
+
+                    {% elif task.status == 'IN_PROGRESS' %}
+=======
                     {% if task.status == 'IN_PROGRESS' %}
+>>>>>>> 311ed1a238102d2cb642be45b7a7789f308febde
                         <strong class="task-finished task-in-progress" alt="{{ task.name }}: Started">Started</strong>
 
                     {% elif  task.status == 'FLAGGED' %}

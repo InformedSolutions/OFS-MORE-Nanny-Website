@@ -1,10 +1,10 @@
-from nanny.base_views import BaseTemplateView
+from nanny.base_views import NannyTemplateView
 from nanny.utilities import *
 
 from nanny.db_gateways import NannyGatewayActions
 
 
-class Confirmation(BaseTemplateView):
+class Confirmation(NannyTemplateView):
     """
     Template view to  render the guidance page from first access of task from task list
     """

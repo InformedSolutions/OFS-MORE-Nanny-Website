@@ -1,10 +1,11 @@
 from django import forms
 
-from govuk_forms.forms import GOVUKForm
 from govuk_forms.widgets import CheckboxSelectMultiple
 
+from nanny.utilities import NannyForm
 
-class TypeOfChildcareTrainingForm(GOVUKForm):
+
+class TypeOfChildcareTrainingForm(NannyForm):
     """
     GOV.UK form for 'Type-Of-Course' page.
     """
