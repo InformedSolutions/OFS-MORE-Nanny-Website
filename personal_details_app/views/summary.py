@@ -5,10 +5,9 @@ from django.shortcuts import render
 from django.views import View
 from ..address_helper import AddressHelper
 
-from ..utils import build_url
-
 from nanny.db_gateways import NannyGatewayActions
 from nanny.table_util import Row, Table
+from nanny.utilities import build_url
 
 
 class Summary(View):

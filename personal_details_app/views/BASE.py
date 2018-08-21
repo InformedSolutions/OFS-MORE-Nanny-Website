@@ -4,7 +4,7 @@ from django.views.generic import TemplateView
 from django.views import View
 from django.shortcuts import render
 
-from ..utils import build_url
+from nanny.utilities import build_url
 
 
 class BaseFormView(FormView):
