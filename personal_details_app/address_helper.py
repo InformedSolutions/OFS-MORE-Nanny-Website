@@ -77,9 +77,7 @@ class AddressHelper:
         :return: a dictionary response object representing a chosen addresss
         """
         addresses = AddressHelper.issue_postcode_search_address_elements(postcode)
-        for index, address in enumerate(addresses):
-            if index == selected_address_index:
-                return address[1]
+        return addresses[int(selected_address_index)][1]
 
     @staticmethod
     def format_address(address, format):
