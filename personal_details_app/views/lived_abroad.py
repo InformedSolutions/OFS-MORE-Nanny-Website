@@ -1,12 +1,11 @@
-from .BASE import BaseFormView
 from ..forms.lived_abroad import PersonalDetailsLivedAbroadForm
 
+from nanny.base_views import NannyFormView
 from nanny.db_gateways import NannyGatewayActions
 from nanny.utilities import app_id_finder
 
 
-class PersonalDetailLivedAbroadView(BaseFormView):
-
+class PersonalDetailLivedAbroadView(NannyFormView):
     template_name = 'lived_abroad.html'
     form_class = PersonalDetailsLivedAbroadForm
     success_url = 'task-list'

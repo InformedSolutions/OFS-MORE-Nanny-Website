@@ -1,12 +1,13 @@
 from django import forms
 
-from govuk_forms.forms import GOVUKForm
 from govuk_forms.widgets import InlineRadioSelect
 
+from nanny.utilities import NannyForm
 
-class PersonalDetailsLivedAbroadForm(GOVUKForm):
+
+class PersonalDetailsLivedAbroadForm(NannyForm):
     """
-    GOV.UK form for
+    GOV.UK form for specifying whether or not the applicant has lived abroad in the past 5 years.
     """
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'standard-error-summary.html'
