@@ -78,7 +78,7 @@ class FirstAidTrainingTests(TestCase):
             }
 
             r = self.client.post(reverse('first-aid:Training-Details'), data, params={'id': self.app_id})
-            self.assertEqual(r.status_code, 302)
+            self.assertEqual(r.status_code, 200)
 
     def test_invalid_course_date_stopped(self):
         with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read,\
