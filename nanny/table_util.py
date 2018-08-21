@@ -11,10 +11,10 @@ class Table:
     def get_errors(self):
         for row in self.row_list:
             api_response = NannyGatewayActions().list('arc-comments', params={'application_id': self.application_id, 'field_name': row.data_name})
-            if api_response.status_code == 200:
+            if api_response.status_code == 200 and bool(api_response.record[0]['flagged']):
                 row.error = api_response.record[0]['comment']
             else:
-                pass
+                row.error = None
 
     def get_error_amount(self):
         return sum([1 for row in self.row_list if row.error is not None])
