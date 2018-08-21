@@ -30,7 +30,7 @@
     <div class="two-thirds">
         <p>Ofsted does not keep a record of your card details.</p>
         {% csrf_token %}
-        <input type="hidden" value="{{application_id}}" name="id"/>
+        <input type="hidden" value="{{id}}" name="id"/>
         <input type="submit" class="button" value="Pay and apply">
     </div>
 </form>

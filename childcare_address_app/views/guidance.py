@@ -17,20 +17,19 @@ class GuidanceView(BaseTemplateView):
         """
         Handle get requests to the guidance page.
         """
-        app_id = request.GET['id']
+        context = self.get_context_data(**kwargs)
         api_response = NannyGatewayActions().list(
             'childcare-address',
             params={
-                'application_id': app_id
+                'application_id': context['id']
             }
         )
 
         # if there are any existing childcare address records, reroute the user to the address details page
         # to prevent them from being able to add more than five addresses.
         if api_response.status_code != 404:
-            return HttpResponseRedirect(reverse('Childcare-Address-Details') + "?id=" + app_id)
+            return HttpResponseRedirect(reverse('Childcare-Address-Details') + "?id=" + context['id'])
 
-        context = self.get_context_data(**kwargs)
         return self.render_to_response(context)
 
     def post(self, request):

@@ -37,5 +37,7 @@ class Summary(View):
         context['table_list'] = [first_aid_table]
         context['application_id'] = application_id
         context['page_title'] = 'Check your answers: first aid training'
-
+        context['link_url'] = build_url(self.success_url_name, get={'id': application_id})
+        context['id'] = self.request.GET['id']
+        context['first_aid_record'] = NannyGatewayActions().read('first-aid', params={'application_id': application_id}).record
         return context

@@ -28,16 +28,19 @@ class DateOfBirthTests(PersonalDetailsTests):
 
             self.assertEqual(response.status_code, 200)
 
-    def test_can_submit_valid_name_page(self):
+    def test_can_submit_valid_dob__page(self):
         """
         Test to assert that the 'dob' page can be rendered.
         """
 
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_get_pd:
+        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_get_pd, \
+                mock.patch('nanny.db_gateways.NannyGatewayActions.patch') as nanny_api_patch, \
+                mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
             nanny_api_get_pd.side_effect = side_effect
+            nanny_api_patch.side_effect = side_effect
 
             response = self.client.post(build_url('personal-details:Personal-Details-Date-Of-Birth', get={
-                'id': uuid.UUID
+                'id': uuid.uuid4()
             }), {
                 'date_of_birth_0': '23',
                 'date_of_birth_1': '08',
@@ -47,7 +50,7 @@ class DateOfBirthTests(PersonalDetailsTests):
             self.assertEqual(response.status_code, 302)
             self.assertTrue('/your-home-address/' in response.url)
 
-    def test_can_submit_invalid_name_page(self):
+    def test_can_submit_invalid_dob_page(self):
         """
         Test to assert that the 'dob' page can be rendered.
         """

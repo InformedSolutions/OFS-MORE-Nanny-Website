@@ -49,7 +49,7 @@ def card_payment_get_handler(request):
         form = PaymentDetailsForm()
         variables = {
             'form': form,
-            'application_id': application_id
+            'id': application_id
         }
 
         return render(request, 'payment-details.html', variables)
@@ -60,7 +60,7 @@ def card_payment_get_handler(request):
     # If payment has been fully authorised show fee paid page
     if payment_record['payment_authorised']:
         variables = {
-            'application_id': application_id,
+            'id': application_id,
             'order_code': paid
         }
         return render(request, 'paid.html', variables)
@@ -69,7 +69,7 @@ def card_payment_get_handler(request):
     form = PaymentDetailsForm()
     variables = {
         'form': form,
-        'application_id': application_id
+        'id': application_id
     }
 
     return render(request, 'payment-details.html', variables)
@@ -88,7 +88,7 @@ def card_payment_post_handler(request):
     if not form.is_valid():
         variables = {
             'form': form,
-            'application_id': application_id
+            'id': application_id
         }
         return render(request, 'payment-details.html', variables)
 
@@ -200,7 +200,7 @@ def resubmission_handler(request, payment_reference, form, application):
 
                 variables = {
                     'form': form,
-                    'application_id': application.application_id,
+                    'id': application.application_id,
                 }
 
                 return HttpResponseRedirect(
@@ -356,7 +356,7 @@ def __yield_general_processing_error_to_user(request, form, app_id):
     # Payment failure path if server error encountered
     variables = {
         'form': form,
-        'application_id': app_id,
+        'id': app_id,
     }
 
     return render(request, 'payment-details.html', variables)
@@ -384,27 +384,3 @@ def __redirect_to_payment_confirmation(application_reference, application_id):
         + '?id=' + str(application_id)
         + '&orderCode=' + application_reference
     )
-
-
-def payment_confirmation(request):
-    """
-    Method returning the template for the Payment confirmation page (for a given application)
-    :param request: a request object used to generate the HttpResponse
-    :return: an HttpResponse object with the rendered Payment confirmation template
-    """
-    application_id_local = request.GET['id']
-    conviction = NannyGatewayActions().read('dbs-check', params={'application_id': application_id_local}).record['cautions_convictions']
-    local_app = NannyGatewayActions().read('application', params={'application_id': application_id_local}).record
-
-    variables = {
-        'application_id': application_id_local,
-        'order_code': request.GET["orderCode"],
-        'conviction': conviction,
-        # 'health_status': local_app['health_status']  # Non-existent field in NannyApplication table.
-    }
-
-    local_app['declarations_status'] = 'COMPLETED'
-    local_app['application_status'] = 'SUBMITTED'
-    NannyGatewayActions().put('application', params=local_app)
-
-    return render(request, 'payment-confirmation.html', variables)

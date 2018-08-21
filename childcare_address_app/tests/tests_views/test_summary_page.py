@@ -4,7 +4,7 @@ from django.urls import resolve
 from unittest import mock
 import uuid
 
-from nanny.test_utils import side_effect
+from nanny.test_utils import side_effect, side_effect_childcare_address_list
 
 
 @mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)
@@ -19,9 +19,9 @@ class ManualEntryTests(ChildcareAddressTests):
         Test to assert that the summary page can be rendered.
         """
         with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
-            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
+            mock.patch('nanny.db_gateways.NannyGatewayActions.list') as nanny_api_list:
             nanny_api_read.side_effect = side_effect
-            nanny_api_put.side_effect = side_effect
+            nanny_api_list.side_effect = side_effect_childcare_address_list
 
             response = self.client.get(build_url('Childcare-Address-Summary', get={
                 'id': self.sample_app['application_id']

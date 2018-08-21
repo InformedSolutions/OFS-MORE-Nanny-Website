@@ -44,7 +44,7 @@
         </td>
         <td class="change-answer">
             {% if include_change_links %}
-                <a href="{% url 'Change-Email' %}/id={{ id }}" alt='Change email address'>
+                <a href="{% url 'Change-Email' %}?id={{ id }}" alt='Change email address'>
                     Change <span class="visuallyhidden">email address</span>
                 </a>
             {% endif %}
@@ -86,7 +86,7 @@
 <br>
 
 <form method="post" novalidate>
-    <input type="submit" class="button" value="Continue" alt='Continue'>
+    <input type="submit" class="button" value="Confirm and continue" alt='Continue'>
     {% csrf_token %}
 </form>
 
