@@ -2,12 +2,12 @@ import re
 
 from django import forms
 from django.conf import settings
-from govuk_forms.forms import GOVUKForm
 
 from nanny.db_gateways import NannyGatewayActions
+from nanny.utilities import NannyForm
 
 
-class HomeAddressForm(GOVUKForm):
+class HomeAddressForm(NannyForm):
     """
     GOV.UK form for childcare address postcode search
     """
@@ -41,7 +41,7 @@ class HomeAddressForm(GOVUKForm):
         return postcode
 
 
-class HomeAddressManualForm(GOVUKForm):
+class HomeAddressManualForm(NannyForm):
     """
     GOV.UK form for the Your personal details: home address page for manual entry
     """
@@ -144,7 +144,7 @@ class HomeAddressManualForm(GOVUKForm):
         return postcode
 
 
-class HomeAddressLookupForm(GOVUKForm):
+class HomeAddressLookupForm(NannyForm):
     """
     GOV.UK form for the childcare address page for postcode search results
     """
@@ -153,8 +153,8 @@ class HomeAddressLookupForm(GOVUKForm):
     error_summary_title = 'There was a problem'
     auto_replace_widgets = True
 
-    address = forms.ChoiceField(label='Select address', required=True,
-                                error_messages={'required': 'Please select your address'})
+    home_address = forms.ChoiceField(label='Select address', required=True,
+                                     error_messages={'required': 'Please select your address'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -171,7 +171,7 @@ class HomeAddressLookupForm(GOVUKForm):
 
         if 'choices' in kwargs['initial']:
             self.choices = kwargs['initial']['choices']
-            self.fields['address'].choices = self.choices
+            self.fields['home_address'].choices = self.choices
 
     def clean_address(self):
         return int(self.cleaned_data['address'])

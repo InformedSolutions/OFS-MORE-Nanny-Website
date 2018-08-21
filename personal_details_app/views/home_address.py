@@ -1,15 +1,14 @@
-from .BASE import *
 from ..forms.home_address import HomeAddressForm, HomeAddressLookupForm, HomeAddressManualForm
 from ..address_helper import *
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
+from nanny.base_views import NannyFormView, NannyTemplateView
 from nanny.db_gateways import NannyGatewayActions
 from nanny.utilities import app_id_finder
 
 
-class PersonalDetailHomeAddressView(BaseFormView):
-
+class PersonalDetailHomeAddressView(NannyFormView):
     template_name = 'personal-details-home-address.html'
     form_class = HomeAddressForm
     success_url = 'personal-details:Personal-Details-Select-Address'
@@ -40,16 +39,24 @@ class PersonalDetailHomeAddressView(BaseFormView):
 
         return super().form_valid(form)
 
+    def get_form(self, form_class=None):
+        """
+        Use BaseFormView method as opposed to NannyFormView's overridden version, as it is not intended for errors to
+        appear on the postcode lookup form.
+        """
+        if form_class is None:
+            form_class = self.get_form_class()
+        return form_class(**self.get_form_kwargs())
 
-class PersonalDetailSelectAddressView(BaseFormView):
 
+class PersonalDetailSelectAddressView(NannyFormView):
     template_name = 'personal-details-home-address-lookup.html'
     form_class = HomeAddressLookupForm
     success_url = 'personal-details:Personal-Details-Address-Summary'
 
     def form_valid(self, form):
         app_id = app_id_finder(self.request)
-        selected_address_index = form.cleaned_data['address']
+        selected_address_index = form.cleaned_data['home_address']
         api_response = NannyGatewayActions().read('applicant-home-address', params={'application_id': app_id})
 
         if api_response.status_code == 200:
@@ -65,21 +72,36 @@ class PersonalDetailSelectAddressView(BaseFormView):
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
+        context = super(PersonalDetailSelectAddressView, self).get_context_data(**kwargs)
         app_id = app_id_finder(self.request)
         api_response = NannyGatewayActions().read('applicant-home-address', params={'application_id': app_id})
 
         if api_response.status_code == 200:
             postcode = api_response.record['postcode']
-            kwargs['postcode'] = postcode
-            kwargs['id'] = app_id
+            context['postcode'] = postcode
+            context['id'] = app_id
             address_choices = AddressHelper.create_address_lookup_list(postcode)
             self.initial['choices'] = address_choices
 
-        return super(PersonalDetailSelectAddressView, self).get_context_data(**kwargs)
+        return context
+
+    def get_form(self, form_class=None):
+        """
+        Use BaseFormView method as opposed to NannyFormView's overridden version, as it is not intended for errors to
+        appear on the postcode lookup form.
+        If making a POST request, however, we still need to remove the flags.
+        """
+        if form_class is None:
+            form_class = self.get_form_class()
+        form = form_class(**self.get_form_kwargs())
+
+        if self.request.method == 'POST':
+            form.remove_flags(self.request.GET['id'])
+
+        return form
 
 
-class PersonalDetailManualAddressView(BaseFormView):
-
+class PersonalDetailManualAddressView(NannyFormView):
     template_name = 'personal-details-home-address-manual.html'
     success_url = 'personal-details:Personal-Details-Address-Summary'
     form_class = HomeAddressManualForm
@@ -101,9 +123,7 @@ class PersonalDetailManualAddressView(BaseFormView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         app_id = app_id_finder(self.request)
-
         context['id'] = app_id
-
         return context
 
     def form_valid(self, form):
@@ -146,10 +166,9 @@ class PersonalDetailManualAddressView(BaseFormView):
         return super().form_valid(form)
 
 
-class PersonalDetailSummaryAddressView(BaseTemplateView):
-
+class PersonalDetailSummaryAddressView(NannyTemplateView):
     template_name = 'address-details.html'
-    success_url = 'personal-details:Personal-Details-Lived-Abroad'
+    success_url_name = 'personal-details:Personal-Details-Lived-Abroad'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
@@ -160,7 +179,7 @@ class PersonalDetailSummaryAddressView(BaseTemplateView):
         context['id'] = app_id
         return context
 
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         """
         Handle post requests to the guidance page.
         """
