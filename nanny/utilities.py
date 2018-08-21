@@ -35,6 +35,9 @@ class NannyForm(GOVUKForm):
                 comment = arc_comments_filter.record[0]['comment']
                 self.cleaned_data = ''
                 self.add_error(field, forms.ValidationError(comment))
+            # If fields cannot be flagged individually, check for flags using the bespoke methods.
+            else:
+                self.if_name(application_id, field, True)
 
     def remove_flags(self, application_id):
         for field in self.fields:
@@ -43,6 +46,32 @@ class NannyForm(GOVUKForm):
                 arc_record = arc_comments_filter.record[0]
                 arc_record['flagged'] = False
                 NannyGatewayActions().put('arc-comments', params=arc_record)
+            # If fields cannot be flagged individually, check for flags using the bespoke methods.
+            else:
+                self.if_name(application_id, field, False)
+
+    def if_name(self, application_id, field, enabled):
+        """
+        This checks if a name has been flagged, as first, middle or last cannot be flagged individually.
+        It will be called on every field during the call to check_flags and remove_flags.
+        :param field: The name of the field with which to query the database.
+        :param enabled: Specify if you are setting the 'flagged' column to True or False.
+        :return: None
+        """
+        if field in ('first_name', 'middle_names', 'last_name'):
+            query_params = {'application_id': application_id, 'field_name': 'name'}
+            arc_comments_filter = NannyGatewayActions().list('arc-comments', params=query_params)
+            if arc_comments_filter.status_code == 200 and bool(arc_comments_filter.record[0]['flagged']):
+                if enabled and field == 'first_name':
+                    comment = arc_comments_filter.record[0]['comment']
+                    self.cleaned_data = ''
+                    self.add_error(field, forms.ValidationError(comment))
+                elif enabled and field != 'first_name':
+                    self.add_error(field, forms.ValidationError(''))
+                else:
+                    arc_record = arc_comments_filter.record[0]
+                    arc_record['flagged'] = False
+                    NannyGatewayActions().put('arc-comments', params=arc_record)
 
 
 def show_django_debug_toolbar(request):
