@@ -1,11 +1,11 @@
-from first_aid_app.views.base import BaseFormView
 from dbs_app.forms.dbs_details import DBSDetailsForm
 from nanny.utilities import app_id_finder
 
 from nanny.db_gateways import NannyGatewayActions
+from nanny.base_views import NannyFormView
 
 
-class DBSDetailsView(BaseFormView):
+class DBSDetailsView(NannyFormView):
 
     template_name = 'dbs-details.html'
     form_class = DBSDetailsForm
