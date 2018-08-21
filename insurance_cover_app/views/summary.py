@@ -1,4 +1,4 @@
-from nanny.base_views import *
+from nanny.base_views import NannyTemplateView
 from django.http import HttpResponseRedirect
 from nanny.utilities import *
 
@@ -6,7 +6,7 @@ from nanny.db_gateways import NannyGatewayActions
 from nanny.table_util import Row, Table
 
 
-class SummaryView(BaseTemplateView):
+class SummaryView(NannyTemplateView):
     template_name = 'generic-summary-template.html'
     success_url_name = 'Task-List'
 

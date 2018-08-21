@@ -1,12 +1,12 @@
 from django.http import HttpResponseRedirect
 
-from nanny.base_views import BaseTemplateView
+from nanny.base_views import NannyTemplateView
 from nanny.db_gateways import NannyGatewayActions
 from nanny.table_util import Row, Table
 from nanny.utilities import app_id_finder, build_url
 
 
-class DBSSummary(BaseTemplateView):
+class DBSSummary(NannyTemplateView):
     """
     View to render the DBS summary page and act on post requests accordingly
     """

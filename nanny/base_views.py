@@ -66,12 +66,10 @@ class NannyFormView(FormView):
         return form
 
 
-class BaseTemplateView(TemplateView):
+class NannyTemplateView(TemplateView):
     """
     Base Template view is used for any pages that do not require a form, but still require some context data
     """
-
-    # Used in instantiation to generate the link for the template
     success_url_name = None
 
     def get_context_data(self, **kwargs):
@@ -80,9 +78,8 @@ class BaseTemplateView(TemplateView):
         :param kwargs:
         :return:
         """
-        context = super(BaseTemplateView, self).get_context_data(**kwargs)
+        context = super(NannyTemplateView, self).get_context_data(**kwargs)
         application_id = app_id_finder(self.request)
         context['link_url'] = build_url(self.success_url_name, get={'id': application_id})
         context['id'] = app_id_finder(self.request)
-
         return context
