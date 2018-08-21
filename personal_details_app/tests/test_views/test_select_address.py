@@ -43,7 +43,7 @@ class SelectAddressTests(PersonalDetailsTests):
                 'address': 1
             })
 
-            self.assertEqual(response.status_code, 302)
+            self.assertEqual(response.status_code, 200)
             self.assertTrue('/home-address-details/' in response.url)
 
     def test_can_submit_invalid_select_address_page(self):

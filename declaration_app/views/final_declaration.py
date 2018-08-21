@@ -22,7 +22,7 @@ def generate_list_of_updated_tasks(application):
     if application['personal_details_arc_flagged'] is True:
         updated_list.append('Your personal details')
     if application['childcare_address_arc_flagged'] is True:
-        updated_list.append('Childcare addresses')
+        updated_list.append('Childcare address')
     if application['first_aid_arc_flagged'] is True:
         updated_list.append('First aid training')
     if application['dbs_arc_flagged'] is True:
@@ -47,7 +47,7 @@ def resubmission_confirmation_email(email, application_reference, first_name, up
     all_tasks = [
         'Your sign in details',
         'Your personal details',
-        'Childcare addresses',
+        'Childcare address',
         'First aid training',
         'Criminal record (DBS) check',
         'Childcare training',

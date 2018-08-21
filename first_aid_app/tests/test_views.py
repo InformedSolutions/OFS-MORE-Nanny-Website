@@ -25,7 +25,6 @@ class FirstAidTrainingTests(TestCase):
 
     app_id = '3575d19f-5bfc-4fcc-a7cf-229323876043'
 
-
     def setUp(self):
         self.client.cookies = SimpleCookie({'_ofs': 'test@informed.com'})
 

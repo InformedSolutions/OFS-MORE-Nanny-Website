@@ -57,12 +57,13 @@ class NannyFormView(FormView):
         If it is a POST, remove any existing ARC comments.
         """
         form = super(NannyFormView, self).get_form(form_class)
+        id = app_id_finder(self.request)
         if self.request.method == 'GET':
             if getattr(form, 'check_flags', None):
-                form.check_flags(self.request.GET['id'])
+                form.check_flags(id)
         elif self.request.method == 'POST':
             if getattr(form, 'remove_flags', None):
-                form.remove_flags(self.request.GET['id'])
+                form.remove_flags(id)
         return form
 
 
