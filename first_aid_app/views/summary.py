@@ -2,7 +2,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views import View
 
-from first_aid_app.views.base import build_url
+from .base import build_url
 
 from nanny.db_gateways import NannyGatewayActions
 
@@ -27,6 +27,6 @@ class Summary(View):
         context = {}
         application_id = self.request.GET['id']
         context['link_url'] = build_url(self.success_url_name, get={'id': application_id})
-        context['application_id'] = self.request.GET['id']
+        context['id'] = self.request.GET['id']
         context['first_aid_record'] = NannyGatewayActions().read('first-aid', params={'application_id': application_id}).record
         return context
