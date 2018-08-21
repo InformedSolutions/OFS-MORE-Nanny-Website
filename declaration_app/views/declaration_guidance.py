@@ -1,4 +1,4 @@
-from first_aid_app.views.base import BaseTemplateView
+from nanny.base_views import BaseTemplateView
 
 
 class DeclarationGuidance(BaseTemplateView):

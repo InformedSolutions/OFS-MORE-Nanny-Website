@@ -2,14 +2,12 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views import View
 
-from first_aid_app.views.base import build_url
-
 from nanny.db_gateways import NannyGatewayActions
 from nanny.table_util import Row, Table
+from nanny.utilities import build_url
 
 
 class Summary(View):
-
     template_name = 'summary.html'
     success_url_name = 'Task-List'
 

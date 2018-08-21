@@ -1,10 +1,9 @@
 from django.http import HttpResponseRedirect
 
-from first_aid_app.views.base import BaseTemplateView, build_url
-from nanny.table_util import Row, Table
-from nanny.utilities import app_id_finder
-
+from nanny.base_views import BaseTemplateView
 from nanny.db_gateways import NannyGatewayActions
+from nanny.table_util import Row, Table
+from nanny.utilities import app_id_finder, build_url
 
 
 class DBSSummary(BaseTemplateView):

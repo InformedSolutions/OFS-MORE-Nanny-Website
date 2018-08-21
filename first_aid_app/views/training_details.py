@@ -1,14 +1,13 @@
 import datetime
 
-from first_aid_app.views.base import BaseFormView
 from first_aid_app.forms.training_details import FirstAidTrainingDetailsForm
 
 from nanny.utilities import app_id_finder
-
+from nanny.base_views import NannyFormView
 from nanny.db_gateways import NannyGatewayActions
 
 
-class FirstAidDetailsView(BaseFormView):
+class FirstAidDetailsView(NannyFormView):
 
     template_name = 'training_details.html'
     form_class = FirstAidTrainingDetailsForm
@@ -29,8 +28,8 @@ class FirstAidDetailsView(BaseFormView):
         else:
             return initial
 
-        initial['first_aid_training_organisation'] = first_aid_record['training_organisation']
-        initial['title_of_training_course'] = first_aid_record['course_title']
+        initial['training_organisation'] = first_aid_record['training_organisation']
+        initial['course_title'] = first_aid_record['course_title']
         initial['course_date'] = datetime.datetime.strptime(first_aid_record['course_date'], '%Y-%m-%d')
         # If there has yet to be an entry for the model associated with the form, then no population necessary
 
@@ -45,8 +44,8 @@ class FirstAidDetailsView(BaseFormView):
 
         data_dict = {
             'application_id': application_id,
-            'training_organisation': form.cleaned_data['first_aid_training_organisation'],
-            'course_title': form.cleaned_data['title_of_training_course'],
+            'training_organisation': form.cleaned_data['training_organisation'],
+            'course_title': form.cleaned_data['course_title'],
             'course_date': form.cleaned_data['course_date'],
         }
 
