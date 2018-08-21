@@ -1,9 +1,8 @@
 from .BASE import BaseFormView
 from ..forms.name import PersonalDetailsNameForm
 
-from ..utils import app_id_finder
-
 from nanny.db_gateways import NannyGatewayActions
+from nanny.utilities import app_id_finder
 
 
 class PersonalDetailNameView(BaseFormView):

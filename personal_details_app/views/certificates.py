@@ -1,5 +1,6 @@
 from .BASE import BaseTemplateView
-from ..utils import app_id_finder
+
+from nanny.utilities import app_id_finder
 
 
 class PersonalDetailCertificateView(BaseTemplateView):
