@@ -26,7 +26,7 @@ class ChildcareTrainingSummaryView(View):
         childcare_record = NannyGatewayActions().read('childcare-training', params={'application_id': application_id}).record
 
         level_2_training     = childcare_record['level_2_training']
-        common_core_training = childcare_record['level_2_training']
+        common_core_training = childcare_record['common_core_training']
 
         if level_2_training and common_core_training:
             row_value = 'Childcare qualification (level 2 or higher) and training in common core skills'
