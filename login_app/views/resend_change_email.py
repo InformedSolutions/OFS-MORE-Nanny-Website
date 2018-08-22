@@ -14,7 +14,6 @@ class ResendChangeEmail(View):
     Class containing the methods for handling requests to the 'Resend-Email' page.
     """
     def get(self, request):
-
         email_address = request.GET['email_address']
         application_id = request.GET['id']
 
@@ -29,6 +28,7 @@ class ResendChangeEmail(View):
         # Get personal_details response, not record, and check if a record exists
         personal_details_response = nanny_actions.read('applicant-personal-details',
                                                        params={'application_id': application_id})
+
         try:
             personal_details_record_exists = personal_details_response.record is not None
         except AttributeError:
@@ -40,24 +40,34 @@ class ResendChangeEmail(View):
         else:
             first_name = "Applicant"
 
-        # Generate a new magic link and expiry date
-        validation_link, email_expiry_date = utilities.generate_email_validation_link(email_address)
-        magic_link = validation_link.split('/')[-1]
-        validation_link += '?email=' + email_address
+        # Check if email already exists/in use
+        existing_account_response = identity_actions.list('user', params={'email': email_address})
+        existing_account_response_status_code = existing_account_response.status_code
 
-        # Create an update record with the magic_link information
-        email_update_record = user_identity_record
-        email_update_record['magic_link_email'] = magic_link
-        email_update_record['email_expiry_date'] = email_expiry_date
+        email_in_use = existing_account_response_status_code == 200
 
-        # Update the user record
-        IdentityGatewayActions().put('user', params=email_update_record)
+        if email_in_use:
+            if settings.DEBUG:
+                print("You will not see an email validation link printed because an account already exists with that email.")
+        else:
+            # Generate a new magic link and expiry date
+            validation_link, email_expiry_date = utilities.generate_email_validation_link(email_address)
+            magic_link = validation_link.split('/')[-1]
+            validation_link += '?email=' + email_address
 
-        # Send the 'Change Email' email
-        if settings.DEBUG:
-            print(validation_link)
+            # Create an update record with the magic_link information
+            email_update_record = user_identity_record
+            email_update_record['magic_link_email'] = magic_link
+            email_update_record['email_expiry_date'] = email_expiry_date
 
-        send_change_email_email(email_address, first_name, validation_link)
+            # Update the user record
+            IdentityGatewayActions().put('user', params=email_update_record)
+
+            # Send the 'Change Email' email
+            if settings.DEBUG:
+                print(validation_link)
+
+            send_change_email_email(email_address, first_name, validation_link)
 
         return render(request, template_name='email-resent.html', context={'id': application_id,
                                                                            'email_address': email_address})
