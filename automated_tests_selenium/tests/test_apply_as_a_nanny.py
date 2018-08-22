@@ -97,9 +97,12 @@ class ApplyAsANanny(LiveServerTestCase):
         If the HEADLESS_CHROME value in Environment variables is set to true then it will launch chrome headless
         browser, else it will launch firefox.
         """
-
         if os.environ.get('HEADLESS_CHROME') == 'True':
-            path_to_chromedriver = '/usr/lib/chromium-browser/chromedriver'
+            # To install chromedriver on an ubuntu machine:
+            # https://tecadmin.net/setup-selenium-chromedriver-on-ubuntu/
+            # For the latest version:
+            # https://github.com/joyzoursky/docker-python-chromedriver/blob/master/py3/py3.6-selenium/Dockerfile
+            path_to_chromedriver = os.popen("which chromedriver").read().rstrip()
             chrome_options = Options()
             chrome_options.add_argument("--headless")
             chrome_options.add_argument("--disable-gpu")
@@ -113,11 +116,23 @@ class ApplyAsANanny(LiveServerTestCase):
         If the HEADLESS_CHROME value in Environment variables is set to true then it will launch chrome headless
         browser, else it will launch firefox.
         """
-
         if os.environ.get('HEADLESS_CHROME') == 'True':
+            chrome_options = webdriver.ChromeOptions()
+            URL = os.environ['SELENIUM_HOST']
+            chrome_options.add_argument('--headless')
+            chrome_options.add_argument('--disable-gpu')
+            chrome_options.add_argument('--no-sandbox')
+            chrome_options.add_argument('--disable-dev-shm-usage')
+            # chrome_options.add_argument('--disable-web-security')
+            # chrome_options.binary_location("/usr/bin/chromedriver.exe")
+            # chrome_options.add_argument("--log-path=D:\\qc1.log")
+
+            desired_capabilities = chrome_options.to_capabilities()
+            # desired_capabilities['browserConnectionEnabled'] = True
+
             self.selenium_driver = webdriver.Remote(
-                command_executor=os.environ['SELENIUM_HOST'],
-                desired_capabilities={'platform': 'ANY', "headless": 'true', 'browserName': 'chrome', 'version': ''}
+                command_executor=URL,
+                desired_capabilities=desired_capabilities
             )
 
         else:
