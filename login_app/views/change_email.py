@@ -17,7 +17,7 @@ class ChangeEmailTemplateView(BaseFormView):
     template_name = 'change-email.html'
     form_class = ContactEmailForm
     check_answers_url = 'Contact-Details-Summary'
-    success_url = 'Check-New-Email'
+    success_url = 'Check-Change-Email'
     email_address = None
 
     def get_context_data(self, **kwargs):

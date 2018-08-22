@@ -10,7 +10,7 @@ urlpatterns = [
     url(r'^sign-in/new-application/', views.AccountSelectionFormView.as_view(), name='Account-Selection'),
     url(r'^new-application/$', views.NewUserSignInFormView.as_view(), name='New-User-Sign-In'),
     url(r'^new-application/check-email/', views.CheckEmailView.as_view(), name='Check-New-Email'),
-    url(r'^sign-in/check-email/', views.CheckEmailView.as_view(), name='Check-Existing-Email'),
+    url(r'^sign-in/check-email/$', views.CheckEmailView.as_view(), name='Check-Existing-Email'),
     url(r'^email-resent/', views.ResendEmail.as_view(), name='Resend-Email'),
     url(r'^sign-in/$', views.ExistingUserSignInFormView.as_view(), name='Existing-User-Sign-In'),
     url(r'^security-code/', views.SecurityCodeFormView.as_view(), name='Security-Code'),
@@ -22,7 +22,8 @@ urlpatterns = [
     url(r'^sign-in/check-answers/', views.ContactDetailsSummaryView.as_view(), name='Contact-Details-Summary'),
     url(r'^validate/(?P<id>[\w-]+)/$', views.ValidateMagicLinkView.as_view(), name='Validate-Magic-Link'),
     url(r'^help-contact/$', views.HelpAndContactsView.as_view(), name='Help-And-Contacts'),
-    url(r'^sign-in/check-change-email/$', views.ChangeEmailTemplateView.as_view(), name='Change-Email'),
+    url(r'^sign-in/change-email/$', views.ChangeEmailTemplateView.as_view(), name='Change-Email'),
+    url(r'^sign-in/check-email-change/$', views.CheckEmailView.as_view(), name='Check-Change-Email'),
     url(r'^sign-in/change-email-resent/', views.ResendChangeEmail.as_view(), name='Resend-Change-Email'),
 ]
 
