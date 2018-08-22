@@ -20,6 +20,11 @@ class ChangeEmailTemplateView(BaseFormView):
     success_url = 'Check-New-Email'
     email_address = None
 
+    def get_context_data(self, **kwargs):
+        context = super(ChangeEmailTemplateView, self).get_context_data(**kwargs)
+        context['id'] = self.request.GET.get('id')
+        return context
+
     def form_valid(self, form):
         if not utilities.test_notify():
             return HttpResponseRedirect(reverse('Service-Unavailable'))
