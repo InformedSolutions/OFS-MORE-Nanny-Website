@@ -3,8 +3,7 @@ from re import compile
 from django.conf import settings  # import the settings file
 from django.http import HttpResponseRedirect
 
-from nanny.db_gateways import IdentityGatewayActions
-
+from .db_gateways import IdentityGatewayActions, NannyGatewayActions
 
 COOKIE_IDENTIFIER = '_ofs'
 

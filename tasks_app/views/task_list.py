@@ -11,6 +11,7 @@ class TaskListView(View):
     @never_cache
     def get(self, request):
         application_id = request.GET["id"]
+        application = None
         nanny_api_response = NannyGatewayActions().read('application', params={'application_id': application_id})
 
         if nanny_api_response.status_code == 200:
@@ -32,6 +33,18 @@ class TaskListView(View):
                 raise RuntimeError('The nanny-gateway API did not respond as expected.')
             else:
                 HttpResponseRedirect(reverse('Service-Unavailable'))
+
+        status = application.get('application_status')
+        # Add handlers to prevent a user re-accessing their application details and modifying post-submission
+        if status == 'ARC_REVIEW' or status == 'SUBMITTED':
+            return HttpResponseRedirect(
+                reverse('declaration:confirmation') + '?id=' + str(application['application_id'])
+            )
+
+        if status == 'ACCEPTED':
+            return HttpResponseRedirect(
+                reverse('declaration:accepted-confirmation') + '?id=' + str(application['application_id'])
+            )
 
         context = {
             'id': application_id,

@@ -56,9 +56,7 @@ class SelectAddressTests(PersonalDetailsTests):
 
             response = self.client.post(build_url('personal-details:Personal-Details-Select-Address', get={
                 'id': uuid.UUID
-            }), {
-                                            'postcode': ''
-                                        })
+            }), {'postcode': ''})
 
             self.assertEqual(response.status_code, 200)
             self.assertTrue(type(response) == TemplateResponse)

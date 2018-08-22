@@ -131,10 +131,10 @@ TEMPLATES = [
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
-                "nanny.middleware.globalise_authentication_flag",
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 "nanny.middleware.globalise_url_prefix",
+                "nanny.middleware.globalise_authentication_flag",
                 'govuk_template_base.context_processors.govuk_template_base'
             ],
         },
