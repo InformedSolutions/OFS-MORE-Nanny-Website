@@ -59,4 +59,5 @@ class ResendChangeEmail(View):
 
         send_change_email_email(email_address, first_name, validation_link)
 
-        return render(request, template_name='email-resent.html', context={'email_address': email_address})
+        return render(request, template_name='email-resent.html', context={'id': application_id,
+                                                                           'email_address': email_address})

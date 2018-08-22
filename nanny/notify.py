@@ -54,7 +54,6 @@ def send_text(phone, personalisation, template_id):
     if settings.EXECUTING_AS_TEST == 'True':
         phone = '07700900111'
         os.environ['SMS_VALIDATION_CODE'] = personalisation['link']
-    else:
         print(personalisation['link'])
 
     notification_request = {
