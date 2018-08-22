@@ -7,6 +7,7 @@
 
 - [ ] Branch has been rebased against develop
 - [ ] Unit tests passed (`make test`)
+- [ ] Selenium tests have passed
 - [ ] PR named appropriately - see [guide](https://github.com/InformedSolutions/OFS-MORE-DevOps-Tooling/wiki/Commits-guideline)
 - [ ] PR description describes the overall goals of PR commits
 - [ ] Templates have been checked against the relevant user-story
