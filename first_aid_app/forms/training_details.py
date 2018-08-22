@@ -1,15 +1,11 @@
 from django import forms
 
-import re
-
-
-from djcelery.utils import now
-from govuk_forms.forms import GOVUKForm
+from nanny.utilities import NannyForm
 
 from first_aid_app.widgets.customfields import CustomSplitDateField
 
 
-class FirstAidTrainingDetailsForm(GOVUKForm):
+class FirstAidTrainingDetailsForm(NannyForm):
     """
     GOV.UK form for the First aid training: details page
     """
@@ -18,14 +14,14 @@ class FirstAidTrainingDetailsForm(GOVUKForm):
     auto_replace_widgets = True
     error_summary_title = 'There was a problem'
 
-    first_aid_training_organisation = forms.CharField(
+    training_organisation = forms.CharField(
         label='First aid training organisation',
         error_messages={
             'required': 'Please enter the name of the training organisation',
         }
     )
 
-    title_of_training_course = forms.CharField(
+    course_title = forms.CharField(
         label='Title of training course',
         error_messages={
             'required': 'Please enter the title of the course',

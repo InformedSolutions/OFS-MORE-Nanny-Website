@@ -19,5 +19,9 @@ class InsuranceCoverTask(TestCase):
         self.web_util.click_element_by_xpath("//input[@value='Save and continue']")
         self.web_util.wait_until_page_load("Check your answers: insurance cover")
         self.assertEqual("Check your answers: insurance cover", driver.title)
+<<<<<<< HEAD
         self.web_util.click_element_by_id("id_continue")
+=======
+        self.web_util.click_element_by_xpath("//input[@value='Confirm and continue']")
+>>>>>>> develop
         self.assertEqual("Done", driver.find_element_by_xpath("//tr[@id='insurance_cover']/td/a/strong").text)

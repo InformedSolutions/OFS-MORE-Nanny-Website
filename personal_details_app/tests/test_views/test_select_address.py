@@ -33,35 +33,32 @@ class SelectAddressTests(PersonalDetailsTests):
         Test to assert that the 'select address' page can be rendered.
         """
         with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
-            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
+                mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
 
             response = self.client.post(build_url('personal-details:Personal-Details-Select-Address', get={
                 'id': uuid.UUID
             }), {
-                'address': 1
-            })
+                                            'address': 1
+                                        })
 
-            self.assertEqual(response.status_code, 302)
-            self.assertTrue('/home-address-details/' in response.url)
+            self.assertEqual(response.status_code, 200)
 
     def test_can_submit_invalid_select_address_page(self):
         """
         Test to assert that the 'select address' page can be rendered.
         """
         with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
-            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
+                mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
 
             response = self.client.post(build_url('personal-details:Personal-Details-Select-Address', get={
                 'id': uuid.UUID
             }), {
-                'postcode': ''
-            })
+                                            'postcode': ''
+                                        })
 
             self.assertEqual(response.status_code, 200)
             self.assertTrue(type(response) == TemplateResponse)
-
-

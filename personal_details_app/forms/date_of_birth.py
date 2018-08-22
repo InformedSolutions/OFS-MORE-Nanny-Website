@@ -2,14 +2,11 @@ from datetime import date
 
 from django import forms
 
-import re
-
-
+from nanny.utilities import NannyForm
 from ..customfields import CustomSplitDateFieldDOB
-from govuk_forms.forms import GOVUKForm
 
 
-class PersonalDetailsDOBForm(GOVUKForm):
+class PersonalDetailsDOBForm(NannyForm):
     """
     GOV.UK form for the Your personal details: date of birth page
     """

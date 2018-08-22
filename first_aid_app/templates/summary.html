@@ -33,7 +33,7 @@
                 {{first_aid_record.training_organisation}}
             </td>
             <td class="change-answer">
-                <a href="{% url 'first-aid:Training-Details' %}?id={{application_id}}"
+                <a href="{% url 'first-aid:Training-Details' %}?id={{id}}"
                    alt='Change training organisation'>
                     Change <span class="visuallyhidden">training organisation</span>
                 </a>
@@ -47,7 +47,7 @@
                 {{first_aid_record.course_title}}
             </td>
             <td class="change-answer">
-                <a href="{% url 'first-aid:Training-Details' %}?id={{application_id}}"
+                <a href="{% url 'first-aid:Training-Details' %}?id={{id}}"
                    alt='Change title of training course'>
                     Change <span class="visuallyhidden">title of training course</span>
                 </a>
@@ -61,7 +61,7 @@
                 {{first_aid_record.course_date}}
             </td>
             <td class="change-answer">
-                <a href="{% url 'first-aid:Training-Details' %}?id={{application_id}}"
+                <a href="{% url 'first-aid:Training-Details' %}?id={{id}}"
                    alt='Change course date'>
                     Change <span class="visuallyhidden">course date</span>
                 </a>
@@ -70,7 +70,7 @@
     </tbody>
 </table>
     {% csrf_token %}
-    <input type="hidden" value="{{application_id}}" name="id"/>
+    <input type="hidden" value="{{id}}" name="id"/>
     <input type="submit" class="button" value="Confirm and continue">
 
 </form>

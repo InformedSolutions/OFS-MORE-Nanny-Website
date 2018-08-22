@@ -20,7 +20,9 @@ class ContactEmailForm(GOVUKForm):
     error_summary_title = 'There was a problem'
     auto_replace_widgets = True
 
-    email_address = forms.EmailField(required=True, error_messages={'required': "Please enter an email address"},
+    email_address = forms.EmailField(required=True,
+                                     help_text='Make sure only you can access it',
+                                     error_messages={'required': "Please enter an email address"},
                                      widget=NannyFormInput)
 
     def clean_email_address(self):

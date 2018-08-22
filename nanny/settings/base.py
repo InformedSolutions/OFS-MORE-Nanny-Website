@@ -122,7 +122,10 @@ ROOT_URLCONF = 'nanny.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR],
+        'DIRS': [
+            BASE_DIR,
+            os.path.join(BASE_DIR, 'nanny/generic_templates'),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -271,44 +274,4 @@ REGEX = {
     "MASTERCARD": "^(?:5[1-5][0-9]{2}|222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720)[0-9]{12}$",
     "MAESTRO": "^(?:5[0678]\d\d|6304|6390|67\d\d)\d{8,15}$",
     "CARD_SECURITY_NUMBER": "^[0-9]{3,4}$"
-}
-
-# Django logging configuration
-LOGGING = {
-  'version': 1,
-  'disable_existing_loggers': False,
-  'formatters': {
-    'console': {
-            # exact format is not important, this is the minimum information
-            'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
-        },
-        },
-  'handlers': {
-    'file': {
-        'level': 'DEBUG',
-        'class': 'logging.handlers.RotatingFileHandler',
-        'maxBytes': 1 * 1024 * 1024,
-        'filename': 'logs/output.log',
-        'formatter': 'console',
-        'maxBytes': 1 * 1024 * 1024,
-        'backupCount': 30
-    },
-    'console': {
-        'level': 'DEBUG',
-        'class': 'logging.StreamHandler'
-    },
-   },
-   'loggers': {
-     '': {
-       'handlers': ['file', 'console'],
-         'level': 'DEBUG',
-           'propagate': True,
-      },
-      'django.server': {
-       'handlers': ['file', 'console'],
-         'level': 'INFO',
-           'propagate': True,
-      },
-    },
-
 }

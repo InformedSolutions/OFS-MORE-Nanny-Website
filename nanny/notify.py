@@ -20,13 +20,10 @@ def send_email(email, personalisation, template_id):
     # If executing function in test mode override email address
     if settings.EXECUTING_AS_TEST == 'True':
         email = 'simulate-delivered@notifications.service.gov.uk'
-        # If executing login function in test mode set env variable for later retrieval by test code
-        os.environ['EMAIL_VALIDATION_URL'] = personalisation.get('link')
-    else:
-        try:
+        if personalisation.get('link'):
+            # If executing login function in test mode set env variable for later retrieval by test code
+            os.environ['EMAIL_VALIDATION_URL'] = personalisation.get('link')
             print(personalisation['link'])
-        except:
-            pass
 
     notification_request = {
         'service_name': 'Nannies',
@@ -57,7 +54,6 @@ def send_text(phone, personalisation, template_id):
     if settings.EXECUTING_AS_TEST == 'True':
         phone = '07700900111'
         os.environ['SMS_VALIDATION_CODE'] = personalisation['link']
-    else:
         print(personalisation['link'])
 
     notification_request = {

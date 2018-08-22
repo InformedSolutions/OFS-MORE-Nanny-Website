@@ -6,7 +6,7 @@ from childcare_address_app import views
 # Django toolbar settings for development environments
 urlpatterns = [
     url(r'^service-unavailable/', views.ServiceUnavailableView.as_view(), name='Service-Unavailable'),
-    url(r'^where-you-work/', views.WhereYouWorkView.as_view(), name='Childcare-Address-Where-You-Work'),
+    url(r'^childcare-address/where-you-work/', views.WhereYouWorkView.as_view(), name='Childcare-Address-Where-You-Work'),
     url(r'^childcare-address/details-later/', views.AddressDetailsLaterView.as_view(), name='Childcare-Address-Details-Later'),
     url(r'^childcare-address/childcare-location/', views.ChildcareLocationView.as_view(), name='Childcare-Address-Location'),
     url(r'^childcare-address-postcode/', views.ChildcareAddressPostcodeView.as_view(), name='Childcare-Address-Postcode-Entry'),

@@ -22,7 +22,8 @@ urlpatterns = [
     url(r'^sign-in/check-answers/', views.ContactDetailsSummaryView.as_view(), name='Contact-Details-Summary'),
     url(r'^validate/(?P<id>[\w-]+)/$', views.ValidateMagicLinkView.as_view(), name='Validate-Magic-Link'),
     url(r'^help-contact/$', views.HelpAndContactsView.as_view(), name='Help-And-Contacts'),
-    url(r'^change-email/', views.ChangeEmailTemplateView.as_view(), name='Change-Email'),
+    url(r'^sign-in/check-change-email/$', views.ChangeEmailTemplateView.as_view(), name='Change-Email'),
+    url(r'^sign-in/change-email-resent/', views.ResendChangeEmail.as_view(), name='Resend-Change-Email'),
 ]
 
 # Django toolbar settings for development environments

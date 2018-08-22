@@ -1,7 +1,7 @@
-from first_aid_app.views.base import BaseTemplateView
+from nanny.base_views import NannyTemplateView
 
 
-class DBSUpload(BaseTemplateView):
+class DBSUpload(NannyTemplateView):
     """
     Template view to  render the post dbs page from the dbs task
     """

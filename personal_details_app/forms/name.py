@@ -1,13 +1,9 @@
 from django import forms
 
-import re
+from nanny.utilities import NannyForm
 
 
-from djcelery.utils import now
-from govuk_forms.forms import GOVUKForm
-
-
-class PersonalDetailsNameForm(GOVUKForm):
+class PersonalDetailsNameForm(NannyForm):
     """
      GOV.UK form for the Personal Details: Name page
      """
