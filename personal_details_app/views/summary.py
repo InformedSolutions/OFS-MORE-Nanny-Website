@@ -5,14 +5,13 @@ from django.shortcuts import render
 from django.views import View
 from ..address_helper import AddressHelper
 
-from ..utils import build_url
-
 from nanny.db_gateways import NannyGatewayActions
+from nanny.table_util import Row, Table
+from nanny.utilities import build_url
 
 
 class Summary(View):
-
-    template_name = 'personal_details_summary.html'
+    template_name = 'generic-summary-template.html'
     success_url_name = 'Task-List'
 
     def get(self, request):
@@ -27,18 +26,26 @@ class Summary(View):
 
         return HttpResponseRedirect(build_url(self.success_url_name, get={'id': application_id}))
 
-    def get_context_data(self, **kwargs):
-        context = {}
+    def get_context_data(self):
+        context = dict()
         application_id = self.request.GET['id']
-        context['link_url'] = build_url(self.success_url_name, get={'id': application_id})
+        personal_details_record = NannyGatewayActions().read('applicant-personal-details', params={'application_id': application_id}).record
+        address_record          = NannyGatewayActions().read('applicant-home-address', params={'application_id': application_id}).record
+
+        name = personal_details_record['first_name'] + ' ' + personal_details_record['middle_names'] + ' ' + personal_details_record['last_name']
+        date_of_birth = datetime.datetime.strptime(personal_details_record['date_of_birth'], '%Y-%m-%d').date()
+        address = AddressHelper.format_address(address_record, ", ")
+
+        name_row          = Row('name', 'Your name', name, 'personal-details:Personal-Details-Name')
+        date_of_birth_row = Row('date_of_birth', 'Date of birth', date_of_birth, 'personal-details:Personal-Details-Date-Of-Birth')
+        home_address_row  = Row('home_address', 'Your home address', address, 'personal-details:Personal-Details-Manual-Address')
+        lived_abroad_row  = Row('lived_abroad', 'Have you lived abroad in the last 5 years?', personal_details_record['lived_abroad'], 'personal-details:Personal-Details-Lived-Abroad')
+
+        personal_details_table = Table(application_id)
+        personal_details_table.row_list = [name_row, date_of_birth_row, home_address_row, lived_abroad_row]
+        personal_details_table.get_errors()
+
+        context['table_list'] = [personal_details_table]
         context['application_id'] = application_id
-        context['id'] = application_id
-        temp_record = NannyGatewayActions().read('applicant-personal-details', params={'application_id': application_id}).record
-        temp_record['date_of_birth'] = datetime.datetime.strptime(temp_record['date_of_birth'], '%Y-%m-%d')
-        context['personal_details_record'] = temp_record
-
-        # ADD PERSONAL ADDRESS RECORD HERE
-        address = NannyGatewayActions().read('applicant-home-address', params={'application_id': application_id}).record
-        context['personal_address_record'] = AddressHelper.format_address(address, ", ")
+        context['page_title'] = 'Check your answers: your personal details'
         return context
-

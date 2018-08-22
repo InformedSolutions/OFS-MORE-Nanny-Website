@@ -1,13 +1,14 @@
-from first_aid_app.views.base import BaseTemplateView
-from django.http import HttpResponseRedirect
-from django.conf import settings
-from django.shortcuts import reverse
-from nanny.utilities import build_url
 import requests
-import simplejson
+
+from django.conf import settings
+from django.http import HttpResponseRedirect
+from django.shortcuts import reverse
+
+from nanny.base_views import NannyTemplateView
+from nanny.utilities import build_url
 
 
-class MasterSummary(BaseTemplateView):
+class MasterSummary(NannyTemplateView):
     """
     Template view to  render the guidance page from first access of task from task list
     """

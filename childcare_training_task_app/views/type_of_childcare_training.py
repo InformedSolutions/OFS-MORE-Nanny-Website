@@ -1,16 +1,15 @@
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.shortcuts import HttpResponseRedirect, reverse
-from django.views.generic import FormView
 
+from nanny.base_views import NannyFormView
+from nanny.db_gateways import NannyGatewayActions
 from nanny.utilities import build_url
 
 from childcare_training_task_app.forms import TypeOfChildcareTrainingForm
 
-from nanny.db_gateways import NannyGatewayActions
 
-
-class TypeOfChildcareTrainingFormView(FormView):
+class TypeOfChildcareTrainingFormView(NannyFormView):
     """
     Class containing the methods for handling requests to the 'Type-Of-Childcare-Training' page.
     """

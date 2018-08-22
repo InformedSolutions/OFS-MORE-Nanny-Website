@@ -28,4 +28,4 @@ class Login(TestCase):
         self.web_util.click_element_by_xpath("//input[@value='Continue']")
 
         # Summary page
-        self.web_util.click_element_by_xpath("//input[@value='Continue']")
+        self.web_util.click_element_by_xpath("//input[@value='Confirm and continue']")

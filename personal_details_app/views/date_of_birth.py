@@ -1,15 +1,13 @@
 import datetime
 
-from .BASE import BaseFormView
+from nanny.base_views import NannyFormView
+from nanny.db_gateways import NannyGatewayActions
+from nanny.utilities import app_id_finder
+
 from ..forms.date_of_birth import PersonalDetailsDOBForm
 
-from ..utils import app_id_finder
 
-from nanny.db_gateways import NannyGatewayActions
-
-
-class PersonalDetailDOBView(BaseFormView):
-
+class PersonalDetailDOBView(NannyFormView):
     template_name = 'dob.html'
     form_class = PersonalDetailsDOBForm
     success_url = 'personal-details:Personal-Details-Home-Address'

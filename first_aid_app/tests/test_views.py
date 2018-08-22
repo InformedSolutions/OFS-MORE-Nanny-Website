@@ -25,7 +25,6 @@ class FirstAidTrainingTests(TestCase):
 
     app_id = '3575d19f-5bfc-4fcc-a7cf-229323876043'
 
-
     def setUp(self):
         self.client.cookies = SimpleCookie({'_ofs': 'test@informed.com'})
 
@@ -79,7 +78,7 @@ class FirstAidTrainingTests(TestCase):
             }
 
             r = self.client.post(reverse('first-aid:Training-Details'), data, params={'id': self.app_id})
-            self.assertEqual(r.status_code, 302)
+            self.assertEqual(r.status_code, 200)
 
     def test_invalid_course_date_stopped(self):
         with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read,\

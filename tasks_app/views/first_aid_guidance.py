@@ -1,7 +1,7 @@
-from first_aid_app.views import BaseTemplateView
+from first_aid_app.views import NannyTemplateView
 
 
-class FirstAidGuidanceView(BaseTemplateView):
+class FirstAidGuidanceView(NannyTemplateView):
     """
     Template view to  render the guidance page from first access of task from task list
     """

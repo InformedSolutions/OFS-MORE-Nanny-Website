@@ -1,13 +1,11 @@
-from .BASE import BaseFormView
 from ..forms.name import PersonalDetailsNameForm
 
-from ..utils import app_id_finder
-
+from nanny.base_views import NannyFormView
 from nanny.db_gateways import NannyGatewayActions
+from nanny.utilities import app_id_finder
 
 
-class PersonalDetailNameView(BaseFormView):
-
+class PersonalDetailNameView(NannyFormView):
     template_name = 'names.html'
     form_class = PersonalDetailsNameForm
     success_url = 'personal-details:Personal-Details-Date-Of-Birth'
@@ -40,7 +38,6 @@ class PersonalDetailNameView(BaseFormView):
         return context
 
     def form_valid(self, form):
-
         application_id = app_id_finder(self.request)
         application_record = NannyGatewayActions().read('application', params={'application_id': application_id}).record
         application_record['personal_details_status'] = 'IN_PROGRESS'

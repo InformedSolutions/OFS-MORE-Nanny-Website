@@ -1,17 +1,16 @@
 from django.http import HttpResponseRedirect
 
-from first_aid_app.views.base import BaseTemplateView, build_url
-from nanny.utilities import app_id_finder
-
+from nanny.base_views import NannyTemplateView
 from nanny.db_gateways import NannyGatewayActions
+from nanny.table_util import Row, Table
+from nanny.utilities import app_id_finder, build_url
 
 
-class DBSSummary(BaseTemplateView):
+class DBSSummary(NannyTemplateView):
     """
     View to render the DBS summary page and act on post requests accordingly
     """
-
-    template_name = 'dbs-summary.html'
+    template_name = 'generic-summary-template.html'
     success_url_name = 'Task-List'
 
     def post(self, request):
@@ -33,9 +32,20 @@ class DBSSummary(BaseTemplateView):
         :param kwargs:
         :return:
         """
-        context = super().get_context_data()
+        context = dict()
         application_id = app_id_finder(self.request)
-        context['link_url'] = build_url(self.success_url_name, get={'id': application_id})
-        context['id'] = application_id
-        context['dbs_record'] = NannyGatewayActions().read('dbs-check', params={'application_id': application_id}).record
+        dbs_record = NannyGatewayActions().read('dbs-check', params={'application_id': application_id}).record
+
+        dbs_row = Row('dbs_number', 'DBS certificate number', dbs_record['dbs_number'], 'dbs:Details', None)
+        convictions_row = Row('convictions', 'Do you have any criminal cautions or convictions?', dbs_record['convictions'], 'dbs:Details', None)
+
+        dbs_summary_table = Table(application_id)
+        dbs_summary_table.row_list = [dbs_row, convictions_row]
+        dbs_summary_table.get_errors()
+        table_list = [dbs_summary_table]
+
+        context['table_list'] = table_list
+        context['application_id'] = application_id
+        context['page_title'] = 'Check your answers: criminal record (DBS) check'
+
         return context

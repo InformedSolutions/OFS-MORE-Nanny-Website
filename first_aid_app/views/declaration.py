@@ -1,7 +1,7 @@
-from first_aid_app.views.base import BaseTemplateView
+from nanny.base_views import NannyTemplateView
 
 
-class Declaration(BaseTemplateView):
+class Declaration(NannyTemplateView):
     """
     Template view to  render the declaration page from first access of task from task list
     """

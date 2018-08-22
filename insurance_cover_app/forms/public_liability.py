@@ -1,10 +1,10 @@
 from django import forms
 
-from govuk_forms.forms import GOVUKForm
+from nanny.utilities import NannyForm
 from govuk_forms.widgets import InlineRadioSelect
 
 
-class PublicLiabilityForm(GOVUKForm):
+class PublicLiabilityForm(NannyForm):
     """
     GOV.UK form for 'Public Liability' page.
     """

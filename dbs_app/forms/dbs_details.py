@@ -1,13 +1,11 @@
 from django import forms
 
-import re
-
-from djcelery.utils import now
-from govuk_forms.forms import GOVUKForm
 from govuk_forms.widgets import NumberInput, InlineRadioSelect
 
+from nanny.utilities import NannyForm
 
-class DBSDetailsForm(GOVUKForm):
+
+class DBSDetailsForm(NannyForm):
     """
     GOV.UK form for the DBS Details Page
     """
