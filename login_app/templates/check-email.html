@@ -17,7 +17,11 @@
 <ul style="list-style-type:disc;padding-left:20px">
     <li>check your spam or junk folders</li>
     <li>check you have entered the correct email</li>
+    {% if id %}
+    <li><a href="{% url 'Resend-Change-Email' %}?email_address={{ email_address }}&id={{id}}">resend the email</a></li>
+    {% else %}
     <li><a href="{% url 'Resend-Email' %}?email_address={{ email_address }}">resend the email</a></li>
+    {% endif %}
 
 </ul>
 
