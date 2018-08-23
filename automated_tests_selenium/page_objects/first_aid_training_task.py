@@ -15,13 +15,8 @@ class FirstAidTrainingTask(TestCase):
         self.assertEqual("To do", driver.find_element_by_xpath("//tr[@id='first_aid_training']/td/a/strong").text)
         driver.find_element_by_xpath("//tr[@id='first_aid_training']/td/a/span").click()
         self.web_util.click_element_by_link_text("Continue")
-<<<<<<< HEAD
-        self.web_util.send_keys_by_id("id_first_aid_training_organisation", "First aid taining organisation")
-        self.web_util.send_keys_by_id("id_title_of_training_course", "Title of training course")
-=======
         self.web_util.send_keys_by_id("id_training_organisation", "First aid taining organisation")
         self.web_util.send_keys_by_id("id_course_title", "Title of training course")
->>>>>>> develop
         self.web_util.send_keys_by_id("id_course_date_0", "12")
         self.web_util.send_keys_by_id("id_course_date_1", "12")
         self.web_util.send_keys_by_id("id_course_date_2", "2017")

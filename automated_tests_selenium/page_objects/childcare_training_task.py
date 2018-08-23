@@ -20,11 +20,7 @@ class ChildcareTrainingTask(TestCase):
         self.web_util.click_element_by_id("id_continue")
         self.web_util.wait_until_page_load("Check your answers: childcare training")
         self.assertEqual("Check your answers: childcare training", driver.title)
-<<<<<<< HEAD
-        self.web_util.click_element_by_id("id_continue")
-=======
         self.web_util.click_element_by_xpath("//input[@value='Confirm and continue']")
->>>>>>> develop
         self.assertEqual("Done", driver.find_element_by_xpath("//tr[@id='childcare_training']/td/a/strong").text)
 
     def childcare_training_with_none_option_for_type_of_course(self):
