@@ -29,3 +29,5 @@ class Login(TestCase):
 
         # Summary page
         self.web_util.click_element_by_xpath("//input[@value='Confirm and continue']")
+        self.assertEqual("Done", driver.find_element_by_xpath("//tr[@id='account_details']/td/a/strong").text)
+

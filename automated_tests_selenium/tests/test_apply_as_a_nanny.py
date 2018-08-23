@@ -261,6 +261,33 @@ class ApplyAsANanny(LiveServerTestCase):
         self.login.login_to_the_application(test_phone_number, test_alt_phone_number)
         self.childcare_training_task.childcare_training_with_none_option_for_type_of_course()
 
+    @try_except_method
+    def test_can_cancel_application(self):
+        """
+        Test that cancel application functionality is working
+        """
+        self.web_util.navigate_to_base_url()
+
+        test_email = faker.email()
+        test_phone_number = self.web_util.generate_random_mobile_number()
+        test_alt_phone_number = self.web_util.generate_random_mobile_number()
+        self.registration.register_email_address(test_email)
+
+        self.login.login_to_the_application(test_phone_number, test_alt_phone_number)
+
+        self.web_util.click_element_by_link_text("Cancel application")
+        self.web_util.click_element_by_xpath("//input[@value='Cancel application']")
+        self.assertEqual("Application cancelled", self.web_util.get_driver().title)
+
+        # verifying the deletion was successful by using the same email id for re registration
+        # if the cancellation was not successful then the application will land on sms page
+        # as existing user where our tests will fail
+        test_phone_number = self.web_util.generate_random_mobile_number()
+        test_alt_phone_number = self.web_util.generate_random_mobile_number()
+        self.web_util.navigate_to_base_url()
+        self.registration.register_email_address(test_email)
+        self.login.login_to_the_application(test_phone_number, test_alt_phone_number)
+
     def tearDown(self):
         self.selenium_driver.quit()
         try:
