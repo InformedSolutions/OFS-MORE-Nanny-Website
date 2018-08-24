@@ -31,3 +31,22 @@ class Login(TestCase):
         self.web_util.click_element_by_xpath("//input[@value='Confirm and continue']")
         self.assertEqual("Done", driver.find_element_by_xpath("//tr[@id='account_details']/td/a/strong").text)
 
+    def navigate_to_SMS_validation_page(self, email_id):
+        """
+        Selenium steps for signing back into the application, but stopping at SMS validation page unlike sign_back_in()
+        :param email_id: Email address to be used during the sign in process.
+        """
+        # Start sign in process.
+        self.web_util.navigate_to_base_url()
+        self.web_util.click_element_by_xpath("//input[@value='Sign in']")
+        self.web_util.click_element_by_id("id_account_selection_0-label")
+        self.web_util.click_element_by_xpath("//input[@value='Continue']")
+        self.web_util.click_element_by_id("id_email_address")
+        self.web_util.send_keys_by_id("id_email_address", email_id)
+        self.web_util.click_element_by_xpath("//input[@value='Continue']")
+        self.web_util.wait_until_page_load("Check your email")
+
+        # Reach SMS validation page.
+        self.web_util.navigate_to_email_validation_url()
+
+

@@ -288,6 +288,30 @@ class ApplyAsANanny(LiveServerTestCase):
         self.registration.register_email_address(test_email)
         self.login.login_to_the_application(test_phone_number, test_alt_phone_number)
 
+    @try_except_method
+    def test_user_cannot_resend_sms_code_more_than_three_times(self):
+        """
+        Test to ensure that, if the user requests to resend their SMS security code a fourth time, they are instead
+        asked to enter their security question details.
+        """
+        self.web_util.navigate_to_base_url()
+        test_email = faker.email()
+        test_phone_number = self.web_util.generate_random_mobile_number()
+        test_alt_phone_number = self.web_util.generate_random_mobile_number()
+
+        self.registration.register_email_address(test_email)
+
+        self.login.login_to_the_application(test_phone_number, test_alt_phone_number)
+        self.web_util.click_element_by_link_text('Sign out')
+        self.login.navigate_to_SMS_validation_page(test_email)
+
+        for n in range(3):
+            self.web_util.click_element_by_link_text("Didn't get a code?")
+            self.web_util.click_element_by_id("id_send_new_code_button")
+
+        self.web_util.get_driver().find_element_by_link_text("Still didn't get a code?").click()
+        self.assertEqual("Sign in question", self.web_util.get_driver().title)
+
     def tearDown(self):
         self.selenium_driver.quit()
         try:
