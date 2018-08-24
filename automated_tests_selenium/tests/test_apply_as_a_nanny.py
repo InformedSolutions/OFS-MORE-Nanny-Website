@@ -230,22 +230,21 @@ class ApplyAsANanny(LiveServerTestCase):
 
         # Costs page
         self.web_util.click_element_by_link_text("Costs")
-        self.assertEqual("Costs", driver.title)
+        self.web_util.assert_page_title("Costs")
 
         # Go back to task list
         self.web_util.click_element_by_link_text("Return to application")
 
-        self.assertEqual("Register as a nanny",
-                         driver.title)
+        self.web_util.assert_page_title("Register as a nanny")
 
         # Help page
         self.web_util.click_element_by_link_text("Help and contacts")
-        self.assertEqual("Help and contacts", driver.title)
+        self.web_util.assert_page_title("Help and contacts")
 
         # Go back to task list
         self.web_util.click_element_by_link_text("Return to application")
 
-        self.assertEqual("Register as a nanny", driver.title)
+        self.web_util.assert_page_title("Register as a nanny")
 
     @try_except_method
     def test_user_should_not_be_able_to_submit_the_application(self):
