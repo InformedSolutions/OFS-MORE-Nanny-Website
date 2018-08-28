@@ -4,9 +4,12 @@ Selenium test cases for the nanny service
 
 import os
 from datetime import datetime
+
 from django.test import LiveServerTestCase, override_settings, tag
+
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+
 from automated_tests_selenium.util.web_util import WebUtil
 from automated_tests_selenium.page_objects.personal_details_task import PersonalDetailsTask
 from automated_tests_selenium.page_objects.childcare_address_task import ChildcareAddressTask
@@ -30,11 +33,12 @@ def try_except_method(func):
     :param func: assert method to be used in try/except statement
     :return: decorated method to use in try/except statement
     """
-
     def func_wrapper(*args, **kwargs):
         try:
             func(*args, **kwargs)
         except Exception as e:
+            # Destroy session upon test failure.
+            args[0].selenium_driver.delete_all_cookies()
             capture_screenshot(func)
             raise e
 
@@ -60,39 +64,41 @@ class ApplyAsANanny(LiveServerTestCase):
 
     current_year = datetime.now().year
 
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
         base_url = os.environ.get('DJANGO_LIVE_TEST_SERVER_ADDRESS')
 
         if os.environ.get('LOCAL_SELENIUM_DRIVER') == 'True':
             # If running on a windows host, make sure to drop the
             # geckodriver.exe into your Python/Scripts installation folder
-            self.launch_local_browser()
+            cls.launch_local_browser()
         else:
             # If not using local driver, default requests to a selenium grid server
-            self.launch_remote_browser()
+            cls.launch_remote_browser()
 
-        self.selenium_driver.implicitly_wait(15)
+        cls.selenium_driver.implicitly_wait(15)
 
-        self.verification_errors = []
-        self.accept_next_alert = True
+        cls.verification_errors = []
+        cls.accept_next_alert = True
 
-        self.web_util = WebUtil(self.selenium_driver, base_url)
-        self.registration = Registration(self.web_util)
-        self.login = Login(self.web_util)
-        self.personal_details_task = PersonalDetailsTask(self.web_util)
-        self.childcare_address_task = ChildcareAddressTask(self.web_util)
-        self.first_aid_training_task = FirstAidTrainingTask(self.web_util)
-        self.childcare_training_task = ChildcareTrainingTask(self.web_util)
-        self.criminal_record_check_task = CriminalRecordCheckTask(self.web_util)
-        self.insurance_cover_task = InsuranceCoverTask(self.web_util)
-        self.declaration_and_payment_task = DeclarationAndPaymentTask(self.web_util)
+        cls.web_util = WebUtil(cls.selenium_driver, base_url)
+        cls.registration = Registration(cls.web_util)
+        cls.login = Login(cls.web_util)
+        cls.personal_details_task = PersonalDetailsTask(cls.web_util)
+        cls.childcare_address_task = ChildcareAddressTask(cls.web_util)
+        cls.first_aid_training_task = FirstAidTrainingTask(cls.web_util)
+        cls.childcare_training_task = ChildcareTrainingTask(cls.web_util)
+        cls.criminal_record_check_task = CriminalRecordCheckTask(cls.web_util)
+        cls.insurance_cover_task = InsuranceCoverTask(cls.web_util)
+        cls.declaration_and_payment_task = DeclarationAndPaymentTask(cls.web_util)
 
         global selenium_driver_out
-        selenium_driver_out = self.selenium_driver
+        selenium_driver_out = cls.selenium_driver
 
-        super(ApplyAsANanny, self).setUp()
+        super(ApplyAsANanny, cls).setUpClass()
 
-    def launch_local_browser(self):
+    @classmethod
+    def launch_local_browser(cls):
         """
         If the HEADLESS_CHROME value in Environment variables is set to true then it will launch chrome headless
         browser, else it will launch firefox.
@@ -106,12 +112,13 @@ class ApplyAsANanny(LiveServerTestCase):
             chrome_options = Options()
             chrome_options.add_argument("--headless")
             chrome_options.add_argument("--disable-gpu")
-            self.selenium_driver = webdriver.Chrome(path_to_chromedriver, chrome_options=chrome_options)
+            cls.selenium_driver = webdriver.Chrome(path_to_chromedriver, chrome_options=chrome_options)
         else:
-            self.selenium_driver = webdriver.Firefox()
-        self.selenium_driver.maximize_window()
+            cls.selenium_driver = webdriver.Firefox()
+        cls.selenium_driver.maximize_window()
 
-    def launch_remote_browser(self):
+    @classmethod
+    def launch_remote_browser(cls):
         """
         If the HEADLESS_CHROME value in Environment variables is set to true then it will launch chrome headless
         browser, else it will launch firefox.
@@ -130,17 +137,17 @@ class ApplyAsANanny(LiveServerTestCase):
             desired_capabilities = chrome_options.to_capabilities()
             # desired_capabilities['browserConnectionEnabled'] = True
 
-            self.selenium_driver = webdriver.Remote(
+            cls.selenium_driver = webdriver.Remote(
                 command_executor=URL,
                 desired_capabilities=desired_capabilities
             )
 
         else:
-            self.selenium_driver = webdriver.Remote(
+            cls.selenium_driver = webdriver.Remote(
                 command_executor=os.environ['SELENIUM_HOST'],
                 desired_capabilities={'platform': 'ANY', 'browserName': 'firefox', 'version': ''}
             )
-            self.selenium_driver.maximize_window()
+        cls.selenium_driver.maximize_window()
 
     @try_except_method
     def test_submit_application_with_not_lived_abroad_option(self):
@@ -170,6 +177,8 @@ class ApplyAsANanny(LiveServerTestCase):
 
         self.declaration_and_payment_task.complete_declaration_and_payment()
 
+        self.web_util.click_element_by_link_text('Sign out')
+
     @try_except_method
     def test_submit_application_with_lived_abroad_option(self):
         """
@@ -184,6 +193,8 @@ class ApplyAsANanny(LiveServerTestCase):
         self.login.login_to_the_application(test_phone_number, test_alt_phone_number)
 
         self.personal_details_task.complete_details_with_lived_abroad_option(faker.first_name(), faker.last_name())
+
+        self.web_util.click_element_by_link_text('Sign out')
 
     @try_except_method
     def test_can_access_costs_without_authenticating(self):
@@ -210,6 +221,7 @@ class ApplyAsANanny(LiveServerTestCase):
         self.login.login_to_the_application(test_phone_number, test_alt_phone_number)
         self.web_util.click_element_by_link_text("Costs")
         self.assertEqual("Costs", driver.title)
+        self.web_util.click_element_by_link_text('Sign out')
 
     @try_except_method
     def test_can_return_to_task_list_from_help_and_costs_when_authenticated(self):
@@ -246,6 +258,8 @@ class ApplyAsANanny(LiveServerTestCase):
 
         self.web_util.assert_page_title("Register as a nanny")
 
+        self.web_util.click_element_by_link_text('Sign out')
+
     @try_except_method
     def test_user_should_not_be_able_to_submit_the_application(self):
         """
@@ -259,6 +273,8 @@ class ApplyAsANanny(LiveServerTestCase):
 
         self.login.login_to_the_application(test_phone_number, test_alt_phone_number)
         self.childcare_training_task.childcare_training_with_none_option_for_type_of_course()
+
+        self.web_util.click_element_by_link_text('Sign out')
 
     @try_except_method
     def test_can_cancel_application(self):
@@ -286,6 +302,7 @@ class ApplyAsANanny(LiveServerTestCase):
         self.web_util.navigate_to_base_url()
         self.registration.register_email_address(test_email)
         self.login.login_to_the_application(test_phone_number, test_alt_phone_number)
+        self.web_util.click_element_by_link_text('Sign out')
 
     @try_except_method
     def test_user_cannot_resend_sms_code_more_than_three_times(self):
@@ -356,11 +373,11 @@ class ApplyAsANanny(LiveServerTestCase):
             self.assertIn("problem",
                           self.web_util.get_driver().find_element_by_class_name("error-summary").text)
 
-    def tearDown(self):
-        self.selenium_driver.quit()
+    @classmethod
+    def tearDownClass(cls):
+        cls.selenium_driver.quit()
         try:
             del os.environ['EMAIL_VALIDATION_URL']
-        except:
+        except KeyError:
             pass
-        super(ApplyAsANanny, self).tearDown()
-        self.assertEqual([], self.verification_errors)
+        super(ApplyAsANanny, cls).tearDownClass()
