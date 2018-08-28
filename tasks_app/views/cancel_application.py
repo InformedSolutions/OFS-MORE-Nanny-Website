@@ -20,10 +20,6 @@ class CancelApplicationTemplateView(View):
         NannyGatewayActions().delete('application', params={'application_id': application_id})
         IdentityGatewayActions().delete('user', params={'application_id': application_id})
 
-        # Wipe cookie.
-        cookie_key = CustomAuthenticationHandler.get_cookie_identifier()
-        request.COOKIES[cookie_key] = None
-
         # Destroy session.
         response = HttpResponseRedirect(reverse('Application-Cancelled'))
         CustomAuthenticationHandler.destroy_session(response)
