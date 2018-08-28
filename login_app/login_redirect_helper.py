@@ -15,8 +15,8 @@ def redirect_by_status(application_id):
         app_record = NannyGatewayActions().read('application', params={'application_id': application_id}).record
     except AttributeError:
         return HttpResponseRedirect(reverse('Contact-Details-Summary') + '?id=' + str(application_id))
-
-    if app_record['application_status'] == 'DRAFTING':
+    status = app_record['application_status']
+    if status == 'DRAFTING':
         if app_record['login_details_status'] == 'COMPLETED':
             response = HttpResponseRedirect(
                 reverse('Task-List') + '?id=' + str(application_id)
@@ -25,13 +25,19 @@ def redirect_by_status(application_id):
             response = HttpResponseRedirect(
                 reverse('Contact-Details-Summary') + '?id=' + str(application_id))
 
-    elif app_record['application_status'] == 'SUBMITTED':
+    elif status == 'SUBMITTED' or status == 'ARC_REVIEW':
         response = HttpResponseRedirect(
             reverse('declaration:confirmation') + '?id=' + str(application_id))
 
-    elif app_record['application_status'] == 'FURTHER_INFORMATION':
+    elif status == 'FURTHER_INFORMATION':
             response = HttpResponseRedirect(
                 reverse('Task-List') + '?id=' + str(application_id)
             )
+
+    # default to task list
+    else:
+        response = HttpResponseRedirect(
+            reverse('Task-List') + '?id=' + str(application_id)
+        )
 
     return response
