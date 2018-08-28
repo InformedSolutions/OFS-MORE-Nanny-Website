@@ -5,8 +5,7 @@ from django.test import TestCase
 import os
 from faker.generator import random
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
-from selenium.webdriver.support import expected_conditions
-from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.by import By
 
@@ -18,7 +17,7 @@ class WebUtil(TestCase):
 
     __driver = None
     __base_url = None
-    delay = 10
+    delay = 15
 
     def __init__(self, driver, base_url, *args, **kwargs):
         """
@@ -89,7 +88,7 @@ class WebUtil(TestCase):
     def click_element_by_id(self, element_id):
         try:
             element = WebDriverWait(self.get_driver(), self.delay).until(
-                EC.element_to_be_clickable((By.ID, element_id)))
+                ec.element_to_be_clickable((By.ID, element_id)))
             element.click()
         except TimeoutException as e:
             print("Element is not in expected state")
@@ -97,8 +96,9 @@ class WebUtil(TestCase):
 
     def send_keys_by_id(self, element_id, text):
         try:
-            expected_conditions.element_to_be_clickable(
-                self.get_driver().find_element_by_id(element_id).send_keys(text))
+            element = WebDriverWait(self.get_driver(), self.delay).until(
+                ec.element_to_be_clickable((By.ID, element_id)))
+            element.send_keys(text)
         except TimeoutException as e:
             print("Element is not in an expected state or rendered correctly")
             raise e
@@ -106,7 +106,7 @@ class WebUtil(TestCase):
     def click_element_by_name(self, element_name):
         try:
             element = WebDriverWait(self.get_driver(), self.delay).until(
-                EC.element_to_be_clickable((By.NAME, element_name)))
+                ec.element_to_be_clickable((By.NAME, element_name)))
             element.click()
         except TimeoutException as e:
             print("Element is not clickable")
@@ -115,7 +115,7 @@ class WebUtil(TestCase):
     def click_element_by_xpath(self, xpath):
         try:
             element = WebDriverWait(self.get_driver(), self.delay).until(
-                EC.element_to_be_clickable((By.XPATH, xpath)))
+                ec.element_to_be_clickable((By.XPATH, xpath)))
             element.click()
         except TimeoutException as e:
             print("Element is not clickable ")
@@ -124,7 +124,7 @@ class WebUtil(TestCase):
     def click_element_by_link_text(self, link_text):
         try:
             element = WebDriverWait(self.get_driver(), self.delay).until(
-                EC.presence_of_element_located((By.LINK_TEXT, link_text)))
+                ec.presence_of_element_located((By.LINK_TEXT, link_text)))
             element.click()
         except TimeoutException as e:
             print("Element is not clickable ")
@@ -134,7 +134,7 @@ class WebUtil(TestCase):
         driver = self.get_driver()
         try:
             WebDriverWait(driver, self.delay).until(
-                expected_conditions.title_contains(page_title))
+                ec.title_contains(page_title))
         except TimeoutException as e:
             self.assertEqual(page_title, driver.title)
             raise e
@@ -152,10 +152,10 @@ class WebUtil(TestCase):
         :return: True if the link is present
         """
         try:
-            self.get_driver().find_element_by_link_text("Return to list")
+            self.get_driver().find_element_by_link_text("Return to list").is_displayed()
+            return True
         except NoSuchElementException:
             return False
-        return True
 
     @staticmethod
     def generate_random_mobile_number():

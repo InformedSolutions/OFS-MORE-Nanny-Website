@@ -276,7 +276,7 @@ class ApplyAsANanny(LiveServerTestCase):
 
         self.web_util.click_element_by_link_text("Cancel application")
         self.web_util.click_element_by_xpath("//input[@value='Cancel application']")
-        self.assertEqual("Application cancelled", self.web_util.get_driver().title)
+        self.web_util.assert_page_title("Application cancelled")
 
         # verifying the deletion was successful by using the same email id for re registration
         # if the cancellation was not successful then the application will land on sms page
@@ -310,6 +310,51 @@ class ApplyAsANanny(LiveServerTestCase):
 
         self.web_util.get_driver().find_element_by_link_text("Still didn't get a code?").click()
         self.assertEqual("Sign in question", self.web_util.get_driver().title)
+
+    @try_except_method
+    def test_user_can_not_use_email_link_twice(self):
+        """
+        Tests that using email link for sign-in more than once returns a 'bad link' page.
+        """
+        self.web_util.navigate_to_base_url()
+        test_email = faker.email()
+        self.registration.register_email_address(test_email)
+        self.web_util.navigate_to_email_validation_url()
+        self.web_util.navigate_to_email_validation_url()
+
+        self.assertEqual("Link used already",
+                         self.web_util.get_driver().find_element_by_class_name("form-title").text)
+
+    @try_except_method
+    def test_error_message_for_invalid_mobile_security_question(self):
+        """
+        Test that invalid response to mobile number security question form raises validation error.
+            * App has user mobile number
+            * If app doesn't have DBS number  then it ask for user's phone number.
+        """
+        self.web_util.navigate_to_base_url()
+        test_email = faker.email()
+        test_phone_number = self.web_util.generate_random_mobile_number()
+        test_alt_phone_number = self.web_util.generate_random_mobile_number()
+
+        self.registration.register_email_address(test_email)
+
+        self.login.login_to_the_application(test_phone_number, test_alt_phone_number)
+        self.web_util.click_element_by_link_text('Sign out')
+        self.login.navigate_to_SMS_validation_page(test_email)
+
+        # Select 'Don't have your phone?' to trigger security question.
+        self.web_util.get_driver().find_element_by_link_text('Don\'t have your phone?').click()
+        self.assertTrue("Your mobile number ",
+                        self.web_util.get_driver().find_element_by_id("id_mobile_number-label").text)
+
+        # Test no number, too short a mobile number, too long a mobile number and incorrect mobile number.
+        test_numbers = ['', '0', '123456789012', '07754000001']
+        for test_number in test_numbers:
+            self.web_util.send_keys_by_id("id_mobile_number", test_number)
+            self.web_util.click_element_by_xpath("//input[@value='Continue']")
+            self.assertIn("problem",
+                          self.web_util.get_driver().find_element_by_class_name("error-summary").text)
 
     def tearDown(self):
         self.selenium_driver.quit()
