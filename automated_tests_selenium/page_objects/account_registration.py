@@ -21,3 +21,4 @@ class Registration(TestCase):
         self.web_util.click_element_by_id("id_email_address")
         self.web_util.send_keys_by_id("id_email_address", email_address)
         self.web_util.click_element_by_xpath("//input[@value='Continue']")
+        self.web_util.wait_until_page_load('Check your email')
