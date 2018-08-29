@@ -31,7 +31,8 @@ class SummaryTests(InsuranceCoverTests):
         """
         Test to assert that the summary page can be rendered
         """
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_get:
+        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_get, \
+            mock.patch('nanny.db_gateways.NannyGatewayActions.list'):
             response = self.client.get(build_url('insurance:Summary', get={
                 'id': self.application_id
             }))

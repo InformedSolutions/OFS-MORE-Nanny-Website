@@ -36,7 +36,8 @@ class PublicLiabilityTests(InsuranceCoverTests):
         Test to assert that the public liability page can be rendered
         """
         with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
-            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
+            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put, \
+            mock.patch('nanny.db_gateways.NannyGatewayActions.list'):
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
 
@@ -52,7 +53,8 @@ class PublicLiabilityTests(InsuranceCoverTests):
         if they do not have public liability insurance.
         """
         with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
-            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
+            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put, \
+            mock.patch('nanny.db_gateways.NannyGatewayActions.list'):
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
 
@@ -70,7 +72,8 @@ class PublicLiabilityTests(InsuranceCoverTests):
         if they do not have public liability insurance.
         """
         with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
-            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
+            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put, \
+            mock.patch('nanny.db_gateways.NannyGatewayActions.list'):
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
 
@@ -88,7 +91,8 @@ class PublicLiabilityTests(InsuranceCoverTests):
         Test to assert that user gets redirected to the insurance cover page
         if they do not have public liability insurance.
         """
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_get:
+        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_get, \
+            mock.patch('nanny.db_gateways.NannyGatewayActions.list'):
             nanny_api_get.return_value.status_code = 200
             response = self.client.post(build_url('insurance:Public-Liability', get={
                 'id': self.application_id

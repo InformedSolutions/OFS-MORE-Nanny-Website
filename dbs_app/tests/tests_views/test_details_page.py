@@ -18,7 +18,8 @@ class DBSDetailEntryTests(DBSTests):
         Test to assert that the 'dbs details' page can be rendered with an initial value.
         """
         with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
-            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
+            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put, \
+            mock.patch('nanny.db_gateways.NannyGatewayActions.list'):
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
 
@@ -35,7 +36,8 @@ class DBSDetailEntryTests(DBSTests):
         """
         with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
             mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put, \
-            mock.patch('nanny.db_gateways.NannyGatewayActions.patch') as nanny_api_patch:
+            mock.patch('nanny.db_gateways.NannyGatewayActions.patch') as nanny_api_patch, \
+            mock.patch('nanny.db_gateways.NannyGatewayActions.list'):
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
             nanny_api_patch.side_effect = side_effect
@@ -53,7 +55,8 @@ class DBSDetailEntryTests(DBSTests):
         """
         with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
             mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put, \
-            mock.patch('nanny.db_gateways.NannyGatewayActions.patch') as nanny_api_patch:
+            mock.patch('nanny.db_gateways.NannyGatewayActions.patch') as nanny_api_patch, \
+            mock.patch('nanny.db_gateways.NannyGatewayActions.list'):
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
 
@@ -74,7 +77,8 @@ class DBSDetailEntryTests(DBSTests):
         Test to assert that the 'dbs details' page will deny an invalid form
         """
         with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
-            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
+            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put, \
+            mock.patch('nanny.db_gateways.NannyGatewayActions.list'):
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
             self.sample_dbs['dbs_number'] = 12

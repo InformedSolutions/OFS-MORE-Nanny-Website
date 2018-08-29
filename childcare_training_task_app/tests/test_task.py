@@ -49,7 +49,8 @@ class ChildcareTrainingTests(TestCase):
         Test to assert that the 'Type-Of-Childcare-Training' page can be rendered.
         """
         with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_get, \
-                mock.patch('nanny.db_gateways.IdentityGatewayActions.read') as identity_api_read:
+                mock.patch('nanny.db_gateways.IdentityGatewayActions.read') as identity_api_read, \
+                mock.patch('nanny.db_gateways.NannyGatewayActions.list'):
 
             nanny_api_get.side_effect = side_effect
             identity_api_read.side_effect = side_effect
@@ -82,7 +83,8 @@ class ChildcareTrainingTests(TestCase):
         Test to assert that the 'Childcare-Training-Summary' page can be rendered.
         """
         with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
-                mock.patch('nanny.db_gateways.IdentityGatewayActions.read') as identity_api_read:
+                mock.patch('nanny.db_gateways.IdentityGatewayActions.read') as identity_api_read, \
+                mock.patch('nanny.db_gateways.NannyGatewayActions.list'):
 
             nanny_api_read.side_effect = side_effect
             identity_api_read.side_effect = side_effect
@@ -125,7 +127,8 @@ class ChildcareTrainingTests(TestCase):
         Test to assert that the applicant can select 'Level 2 Training Course'.
         """
         with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as training_api_get, \
-                mock.patch('nanny.db_gateways.NannyGatewayActions.put') as training_api_put:
+                mock.patch('nanny.db_gateways.NannyGatewayActions.put') as training_api_put, \
+                mock.patch('nanny.db_gateways.NannyGatewayActions.list'):
 
             training_api_get.return_value.status_code = 200
             training_api_get.return_value.record = self.childcare_training_record
@@ -143,7 +146,8 @@ class ChildcareTrainingTests(TestCase):
         Test to assert that the applicant can select 'Common core training'.
         """
         with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as training_api_get, \
-                mock.patch('nanny.db_gateways.NannyGatewayActions.put') as training_api_put:
+                mock.patch('nanny.db_gateways.NannyGatewayActions.put') as training_api_put, \
+                mock.patch('nanny.db_gateways.NannyGatewayActions.list'):
 
             training_api_get.return_value.status_code = 200
             training_api_get.return_value.record = self.childcare_training_record
@@ -161,7 +165,8 @@ class ChildcareTrainingTests(TestCase):
         Test to assert that the applicant can select 'No training'.
         """
         with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as training_api_get, \
-                mock.patch('nanny.db_gateways.NannyGatewayActions.put') as training_api_put:
+                mock.patch('nanny.db_gateways.NannyGatewayActions.put') as training_api_put, \
+                mock.patch('nanny.db_gateways.NannyGatewayActions.list'):
 
             training_api_get.return_value.status_code = 200
             training_api_get.return_value.record = self.childcare_training_record
@@ -189,7 +194,8 @@ class ChildcareTrainingTests(TestCase):
         """
         Test to assert that the applicant cannot select both 'No training' and another option.
         """
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as training_api_get:
+        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as training_api_get, \
+                mock.patch('nanny.db_gateways.NannyGatewayActions.list'):
 
             training_api_get.return_value.status_code = 404
 

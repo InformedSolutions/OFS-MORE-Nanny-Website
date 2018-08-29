@@ -19,7 +19,8 @@ class DateOfBirthTests(PersonalDetailsTests):
         """
         Test to assert that the 'dob' page can be rendered.
         """
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_get_pd:
+        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_get_pd, \
+            mock.patch('nanny.db_gateways.NannyGatewayActions.list'):
             nanny_api_get_pd.side_effect = side_effect
 
             response = self.client.get(build_url('personal-details:Personal-Details-Date-Of-Birth', get={
@@ -35,7 +36,8 @@ class DateOfBirthTests(PersonalDetailsTests):
 
         with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_get_pd, \
                 mock.patch('nanny.db_gateways.NannyGatewayActions.patch') as nanny_api_patch, \
-                mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
+                mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put, \
+            mock.patch('nanny.db_gateways.NannyGatewayActions.list'):
             nanny_api_get_pd.side_effect = side_effect
             nanny_api_patch.side_effect = side_effect
 
@@ -55,7 +57,8 @@ class DateOfBirthTests(PersonalDetailsTests):
         Test to assert that the 'dob' page can be rendered.
         """
         with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
-            mock.patch('nanny.db_gateways.IdentityGatewayActions.read') as identity_api_read:
+            mock.patch('nanny.db_gateways.IdentityGatewayActions.read') as identity_api_read, \
+            mock.patch('nanny.db_gateways.NannyGatewayActions.list'):
             nanny_api_read.side_effect = side_effect
             identity_api_read.side_effect = side_effect
 

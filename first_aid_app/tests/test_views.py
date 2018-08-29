@@ -22,7 +22,6 @@ def authenticate(application_id, *args, **kwargs):
 
 @mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)
 class FirstAidTrainingTests(TestCase):
-
     app_id = '3575d19f-5bfc-4fcc-a7cf-229323876043'
 
     def setUp(self):
@@ -34,7 +33,8 @@ class FirstAidTrainingTests(TestCase):
 
     def test_can_access_details(self):
         with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
-            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
+                mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put, \
+                mock.patch('nanny.db_gateways.NannyGatewayActions.list'):
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
 
@@ -46,9 +46,9 @@ class FirstAidTrainingTests(TestCase):
         self.assertEqual(r.status_code, 200)
 
     def test_can_access_summary(self):
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read,\
-                mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
-
+        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
+                mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put, \
+                mock.patch('nanny.db_gateways.NannyGatewayActions.list'):
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
 
@@ -58,11 +58,11 @@ class FirstAidTrainingTests(TestCase):
             self.assertEqual(p.status_code, 302)
 
     def test_can_submit_details_form(self):
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read,\
-                mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put,\
-                mock.patch('nanny.db_gateways.NannyGatewayActions.patch') as nanny_api_patch,\
-                mock.patch('nanny.db_gateways.NannyGatewayActions.create') as nanny_api_create:
-
+        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
+                mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put, \
+                mock.patch('nanny.db_gateways.NannyGatewayActions.patch') as nanny_api_patch, \
+                mock.patch('nanny.db_gateways.NannyGatewayActions.create') as nanny_api_create, \
+                mock.patch('nanny.db_gateways.NannyGatewayActions.list'):
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
             nanny_api_patch.side_effect = side_effect
@@ -81,9 +81,9 @@ class FirstAidTrainingTests(TestCase):
             self.assertEqual(r.status_code, 200)
 
     def test_invalid_course_date_stopped(self):
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read,\
-                mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
-
+        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
+                mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put, \
+                mock.patch('nanny.db_gateways.NannyGatewayActions.list'):
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
 
