@@ -26,22 +26,25 @@ class Summary(View):
     def get_context_data(self):
         context = dict()
         application_id = self.request.GET['id']
-        first_aid_record = NannyGatewayActions().read('first-aid', params={'application_id': application_id}).record
+        first_aid_response = NannyGatewayActions().read('first-aid', params={'application_id': application_id})
+        if first_aid_response.status_code == 200:
+            first_aid_record = first_aid_response.record
+            formatted_course_date = datetime.datetime.strptime(first_aid_record['course_date'], '%Y-%m-%d').date()
 
-        formatted_course_date = datetime.datetime.strptime(first_aid_record['course_date'], '%Y-%m-%d').date()
+            organisation_row = Row('training_organisation', 'Training organisation', first_aid_record['training_organisation'], 'first-aid:Training-Details')
+            course_title_row = Row('course_title', 'Title of training course', first_aid_record['course_title'], 'first-aid:Training-Details')
+            course_date_row  = Row('course_date', 'Date you completed the course', formatted_course_date, 'first-aid:Training-Details')
 
-        organisation_row = Row('training_organisation', 'Training organisation', first_aid_record['training_organisation'], 'first-aid:Training-Details')
-        course_title_row = Row('course_title', 'Title of training course', first_aid_record['course_title'], 'first-aid:Training-Details')
-        course_date_row  = Row('course_date', 'Date you completed the course', formatted_course_date, 'first-aid:Training-Details')
+            first_aid_table = Table(application_id)
+            first_aid_table.row_list = [organisation_row, course_title_row, course_date_row]
+            first_aid_table.get_errors()
 
-        first_aid_table = Table(application_id)
-        first_aid_table.row_list = [organisation_row, course_title_row, course_date_row]
-        first_aid_table.get_errors()
-
-        context['table_list'] = [first_aid_table]
-        context['application_id'] = application_id
-        context['page_title'] = 'Check your answers: first aid training'
-        context['link_url'] = build_url(self.success_url_name, get={'id': application_id})
-        context['id'] = self.request.GET['id']
-        context['first_aid_record'] = NannyGatewayActions().read('first-aid', params={'application_id': application_id}).record
+            context['table_list'] = [first_aid_table]
+            context['application_id'] = application_id
+            context['page_title'] = 'Check your answers: first aid training'
+            context['link_url'] = build_url(self.success_url_name, get={'id': application_id})
+            context['id'] = self.request.GET['id']
+            context['first_aid_record'] = first_aid_record
+        else:
+            raise Exception("A matching first aid record couldn't be found.")
         return context
