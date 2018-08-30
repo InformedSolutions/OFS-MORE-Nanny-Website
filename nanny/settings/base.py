@@ -195,7 +195,7 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.handlers.TimedRotatingFileHandler',
-            'filename': 'logs/output.log',
+            'filename': os.path.join(BASE_DIR, 'logs/output.log'),
             'formatter': 'console',
             'when': 'midnight',
             'backupCount': 10
