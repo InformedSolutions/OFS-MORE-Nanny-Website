@@ -28,8 +28,6 @@ class DBGatewayActions:
         def log_wrapper(*args, **kwargs):
             response = func(*args, **kwargs)
 
-            response.status_code = 500
-
             if response.status_code not in (200, 201, 404):
 
                 verb_name = func.__name__
