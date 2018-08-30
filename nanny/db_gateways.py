@@ -1,7 +1,11 @@
+import logging
 import os
 import json
 
 import requests
+
+
+logger = logging.getLogger()
 
 
 class DBGatewayActions:
@@ -9,6 +13,58 @@ class DBGatewayActions:
     Base class for handling all requests to Database gateway services at specified target_url_prefix.
     """
     target_url_prefix = None
+    event_list = None
+
+    def __init__(self):
+        self.event_list = [getattr(self, func) for func in dir(self) if callable(getattr(self, func)) and func[0] != '_']
+        self._register_events()
+
+    def _register_events(self):
+        for event in self.event_list:
+            setattr(self, event.__name__, self._dispatch(event))
+
+    def _dispatch(self, func):
+
+        def log_wrapper(*args, **kwargs):
+            response = func(*args, **kwargs)
+
+            response.status_code = 500
+
+            if response.status_code not in (200, 201, 404):
+
+                verb_name = func.__name__
+
+                if verb_name == 'list':
+                    logger.error(
+                        '!GATEWAY ERROR! "{}" request to API endpoint "{}" with {}: {} returned {} status code - see the Gateway logs for traceback'.format(
+                            verb_name, args[0], list(kwargs['params'].keys()), list(kwargs['params'].values()),
+                            response.status_code))
+                    logger.info('!GATEWAY ERROR! Targeted url: {}'.format(response.url))
+
+                elif verb_name == 'childcare_address':
+                    logger.error(
+                        '!GATEWAY ERROR! "{}" request to API endpoint "{}" with {}: {} returned {} status code - see the Gateway logs for traceback'.format(
+                            verb_name, args[0], 'childcare_address_id', kwargs['params']['childcare_address_id'],
+                            response.status_code))
+                    logger.info('!GATEWAY ERROR! Targeted url: {}'.format(response.url))
+
+                elif verb_name == 'arc-comments':
+                    logger.error(
+                        '!GATEWAY ERROR! "{}" request to API endpoint "{}" with {}: {} returned {} status code - see the Gateway logs for traceback'.format(
+                            verb_name, args[0], 'review_id', kwargs['params']['review_id'],
+                            response.status_code))
+                    logger.info('!GATEWAY ERROR! Targeted url: {}'.format(response.url))
+
+                else:
+                    logger.error(
+                        '!GATEWAY ERROR! "{}" request to API endpoint "{}" with {}: {} returned {} status code - see the Gateway logs for traceback'.format(
+                            verb_name, args[0], 'application_id', kwargs['params']['application_id'],
+                            response.status_code))
+                    logger.info('!GATEWAY ERROR! Targeted url: {}'.format(response.url))
+
+            return response
+
+        return log_wrapper
 
     def list(self, endpoint, params):
         query_params = ''.join(['&' + key + '=' + value for key, value in params.items()])
