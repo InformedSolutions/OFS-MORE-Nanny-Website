@@ -183,39 +183,39 @@ TEST_OUTPUT_DIR = 'xmlrunner'
 
 # Output all logs to /logs directory
 LOGGING = {
-  'version': 1,
-  'disable_existing_loggers': False,
-  'formatters': {
-    'console': {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'console': {
             # exact format is not important, this is the minimum information
             'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
         },
+    },
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'filename': 'logs/output.log',
+            'formatter': 'console',
+            'when': 'midnight',
+            'backupCount': 10
         },
-  'handlers': {
-    'file': {
-        'level': 'DEBUG',
-        'class': 'logging.handlers.TimedRotatingFileHandler',
-        'filename': 'logs/output.log',
-        'formatter': 'console',
-        'when': 'midnight',
-        'backupCount': 10
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler'
+        },
     },
-    'console': {
-        'level': 'DEBUG',
-        'class': 'logging.StreamHandler'
-    },
-   },
-   'loggers': {
-     '': {
-       'handlers': ['file', 'console'],
-         'level': 'DEBUG',
-           'propagate': True,
-      },
-      'django.server': {
-       'handlers': ['file', 'console'],
-         'level': 'INFO',
-           'propagate': True,
-      },
+    'loggers': {
+        '': {
+            'handlers': ['file', 'console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'django.server': {
+            'handlers': ['file', 'console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
     },
 }
 
