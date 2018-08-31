@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 
 import os
 
+from nanny.logging import skip_starting_http_connection_logs
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -205,6 +207,12 @@ LOGGING = {
             'class': 'logging.StreamHandler'
         },
     },
+    'filters': {
+        'urllib3_filter': {
+            '()': 'django.utils.log.CallbackFilter',
+            'callback': skip_starting_http_connection_logs,
+        }
+    },
     'loggers': {
         '': {
             'handlers': ['file', 'console'],
@@ -215,6 +223,12 @@ LOGGING = {
             'handlers': ['file', 'console'],
             'level': 'INFO',
             'propagate': False,
+        },
+        'urllib3.connectionpool': {
+            'handlers': ['file', 'console'],
+            'level': 'DEBUG',
+            'propagate': False,
+            'filters': ['urllib3_filter'],
         },
     },
 }
