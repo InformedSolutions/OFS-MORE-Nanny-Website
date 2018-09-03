@@ -80,10 +80,22 @@ class PersonalDetailSelectAddressView(NannyFormView):
             postcode = api_response.record['postcode']
             context['postcode'] = postcode
             context['id'] = app_id
-            address_choices = AddressHelper.create_address_lookup_list(postcode)
-            self.initial['choices'] = address_choices
 
         return context
+
+    def get_initial(self):
+        initial = super(PersonalDetailSelectAddressView, self).get_initial()
+        app_id = app_id_finder(self.request)
+        api_response = NannyGatewayActions().read('applicant-home-address', params={'application_id': app_id})
+
+        if api_response.status_code == 200:
+            postcode = api_response.record['postcode']
+            initial['postcode'] = postcode
+            initial['id'] = app_id
+            address_choices = AddressHelper.create_address_lookup_list(postcode)
+            initial['choices'] = address_choices
+
+        return initial
 
     def get_form(self, form_class=None):
         """
