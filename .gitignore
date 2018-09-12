@@ -1,6 +1,5 @@
 selenium/*
 xmlrunner/*
-logs/*
 htmlcov/
 .coverage
 
