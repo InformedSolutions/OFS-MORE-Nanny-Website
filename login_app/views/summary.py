@@ -21,9 +21,10 @@ class ContactDetailsSummaryView(View):
         return render(request, template_name='contact-details-summary.html', context=context)
 
     def post(self, request):
-        """ Handle POST request. Create session for user if one not currently existing."""
+        """ Handle POST request. Create session for user if one not currently existing.
+            Redirect to next task to force user to enter personal details before viewing Task list"""
         application_id = request.GET['id']
-        response = HttpResponseRedirect(build_url('Task-List', get={'id': application_id}))
+        response = HttpResponseRedirect(build_url('personal-details:Personal-Details-Name', get={'id': application_id}))
         return response
 
     def include_change_links(self, application_id):
