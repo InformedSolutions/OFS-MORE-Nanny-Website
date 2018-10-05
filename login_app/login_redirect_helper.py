@@ -17,7 +17,7 @@ def redirect_by_status(application_id):
         return HttpResponseRedirect(reverse('Contact-Details-Summary') + '?id=' + str(application_id))
     status = app_record['application_status']
     if status == 'DRAFTING':
-        if app_record['login_details_status'] == 'COMPLETED':
+        if app_record['personal_details_status'] == 'COMPLETED':
             response = HttpResponseRedirect(
                 reverse('Task-List') + '?id=' + str(application_id)
             )
