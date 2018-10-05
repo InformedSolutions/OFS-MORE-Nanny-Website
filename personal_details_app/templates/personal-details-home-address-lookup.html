@@ -26,8 +26,9 @@
     <input type="submit" class="button button-submit" value="Save and continue">
     <input type="hidden" id="id" name="id" value="{{id}}"/>
 </form>
-<br>
 
+{% if personal_details_status == 'COMPLETED' or personal_details_status == 'FLAGGED' %}
 {% include 'return-to-list.html' %}
+{% endif %}
 
 {% endblock %}
