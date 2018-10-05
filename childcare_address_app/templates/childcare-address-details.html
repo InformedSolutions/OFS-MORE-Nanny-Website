@@ -20,6 +20,9 @@
             Address {{ address.0 }}
         </label>
         {{ address.1 }}
+        <br>
+        <input type="submit" class="button-remove" value="Remove this address" address="{{ address.0 }}" name="remove_address" alt='Remove this address'>
+        <br>
     </p>
     {% endfor %}
 

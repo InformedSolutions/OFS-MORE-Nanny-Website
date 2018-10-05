@@ -296,8 +296,7 @@ class ChildcareAddressDetailsView(BaseTemplateView):
         """
         app_id = request.GET['id']
         if 'add_another' in request.POST:
-            api_response = NannyGatewayActions().list('childcare-address',
-                                                  params={'application_id': app_id})
+            api_response = NannyGatewayActions().list('childcare-address', params={'application_id': app_id})
             if api_response.status_code == 200 and len(api_response.record) > 4:
                 context = self.get_context_data()
                 context['non_field_errors'] = ["You can only enter up to 5 childcare addresses"]
@@ -306,6 +305,19 @@ class ChildcareAddressDetailsView(BaseTemplateView):
             return HttpResponseRedirect(build_url('Childcare-Address-Postcode-Entry', get={
                 'id': app_id,
                 }))
+        elif 'remove' in request.POST:
+
+            address = request.POST['address']
+
+            api_response = NannyGatewayActions().list('childcare-address', params={'application_id': app_id})
+            if api_response.status_code == 200 and len(api_response.record) < 1:
+                context = self.get_context_data()
+                context['non_field_errors'] = ["You can only enter up to 5 childcare addresses"]
+                context['error_summary_title'] = "There was a problem"
+                return render(request, self.template_name, context)
+            return HttpResponseRedirect(build_url('Childcare-Address-Details', get={
+                'id': app_id,
+            }))
         else:
             return HttpResponseRedirect(build_url('Childcare-Address-Summary', get={
                 'id': app_id,
