@@ -15,7 +15,10 @@ class PersonalDetailHomeAddressView(NannyFormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
-        context['id'] = app_id_finder(self.request)
+        application_id = app_id_finder(self.request)
+        context['id'] = application_id
+        application_record = NannyGatewayActions().read('application', params={'application_id': application_id}).record
+        context['personal_details_status'] = application_record['personal_details_status']
         return context
 
     def form_valid(self, form):
@@ -74,6 +77,9 @@ class PersonalDetailSelectAddressView(NannyFormView):
     def get_context_data(self, **kwargs):
         context = super(PersonalDetailSelectAddressView, self).get_context_data(**kwargs)
         app_id = app_id_finder(self.request)
+        context['id'] = app_id
+        application_record = NannyGatewayActions().read('application', params={'application_id': app_id}).record
+        context['personal_details_status'] = application_record['personal_details_status']
         api_response = NannyGatewayActions().read('applicant-home-address', params={'application_id': app_id})
 
         if api_response.status_code == 200:
@@ -134,8 +140,10 @@ class PersonalDetailManualAddressView(NannyFormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
-        app_id = app_id_finder(self.request)
-        context['id'] = app_id
+        application_id = app_id_finder(self.request)
+        context['id'] = application_id
+        application_record = NannyGatewayActions().read('application', params={'application_id': application_id}).record
+        context['personal_details_status'] = application_record['personal_details_status']
         return context
 
     def form_valid(self, form):
@@ -189,6 +197,8 @@ class PersonalDetailSummaryAddressView(NannyTemplateView):
         if api_response.status_code == 200:
             context['address'] = AddressHelper.format_address(api_response.record, ", ")
         context['id'] = app_id
+        application_record = NannyGatewayActions().read('application', params={'application_id': app_id}).record
+        context['personal_details_status'] = application_record['personal_details_status']
         return context
 
     def post(self, request, *args, **kwargs):

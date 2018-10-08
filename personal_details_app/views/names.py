@@ -34,7 +34,10 @@ class PersonalDetailNameView(NannyFormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
-        context['id'] = app_id_finder(self.request)
+        application_id = app_id_finder(self.request)
+        context['id'] = application_id
+        application_record = NannyGatewayActions().read('application', params={'application_id': application_id}).record
+        context['personal_details_status'] = application_record['personal_details_status']
         return context
 
     def form_valid(self, form):
