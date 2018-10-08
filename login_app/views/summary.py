@@ -23,17 +23,27 @@ class ContactDetailsSummaryView(View):
         return render(request, template_name='contact-details-summary.html', context=context)
 
     def post(self, request):
-        """ Handle POST request. Create session for user if one not currently existing.
-            Redirect to next task to force user to enter personal details before viewing Task list"""
+        """ Handle POST request. Create session for user if the request does not return a record. If a record exists,
+        a check is completed on if the user has completed the personal details task. If they have, they are presented
+        with the task-list, if not they are presented with the personal details task"""
 
         application_id = request.GET['id']
         nanny_api_response = NannyGatewayActions().read('application', params={'application_id': application_id})
 
         if nanny_api_response.status_code == 200:
-            response = HttpResponseRedirect(build_url('Task-List', get={'id': application_id}))
-            return response
+            application_record = NannyGatewayActions().read('application',
+                                                            params={'application_id': application_id}).record
 
-        elif nanny_api_response.status_code == 404:
+            # This differentiates between a new user and one who has signed out during the personal details task.
+            if application_record['personal_details_status'] == 'COMPLETED':
+                response = HttpResponseRedirect(build_url('Task-List', get={'id': application_id}))
+                return response
+
+            else:
+                return HttpResponseRedirect(build_url('personal-details:Personal-Details-Name', get={
+                    'id': application_id}))
+
+        if nanny_api_response.status_code == 404:
             create_response = NannyGatewayActions().create(
                 'application',
                 params={
