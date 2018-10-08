@@ -1,6 +1,8 @@
 from django.http import HttpResponseRedirect
+from django.urls import reverse
 from django.views import View
 from django.shortcuts import render
+from django.conf import settings
 
 from nanny.utilities import build_url
 
@@ -25,15 +27,26 @@ class ContactDetailsSummaryView(View):
             Redirect to next task to force user to enter personal details before viewing Task list"""
 
         application_id = request.GET['id']
-        api_response = NannyGatewayActions().read('applicant-personal-details', params={'application_id': application_id})
+        nanny_api_response = NannyGatewayActions().read('application', params={'application_id': application_id})
 
-        if api_response.status_code == 404:
-            response = HttpResponseRedirect(build_url('personal-details:Personal-Details-Name', get={'id': application_id}))
-            return response
-
-        else:
+        if nanny_api_response.status_code == 200:
             response = HttpResponseRedirect(build_url('Task-List', get={'id': application_id}))
             return response
+
+        elif nanny_api_response.status_code == 404:
+            create_response = NannyGatewayActions().create(
+                'application',
+                params={
+                    'application_id': application_id,
+                    'application_status': 'DRAFTING',
+                    'login_details_status': 'COMPLETED',
+
+                }
+            )
+            application = create_response.record
+
+            return HttpResponseRedirect(build_url('personal-details:Personal-Details-Name', get={
+                'id': application_id}))
 
     def include_change_links(self, application_id):
         """ If the applicant is coming from task list, an application object will exist => get_record gives 200 code."""
