@@ -31,9 +31,13 @@ class Summary(View):
             first_aid_record = first_aid_response.record
             formatted_course_date = datetime.datetime.strptime(first_aid_record['course_date'], '%Y-%m-%d').date()
 
-            organisation_row = Row('training_organisation', 'Training organisation', first_aid_record['training_organisation'], 'first-aid:Training-Details')
-            course_title_row = Row('course_title', 'Title of training course', first_aid_record['course_title'], 'first-aid:Training-Details')
-            course_date_row  = Row('course_date', 'Date you completed the course', formatted_course_date, 'first-aid:Training-Details')
+            organisation_row = Row('training_organisation', 'Training organisation',
+                                   first_aid_record['training_organisation'], 'first-aid:Training-Details',
+                                   "training organisation")
+            course_title_row = Row('course_title', 'Title of training course', first_aid_record['course_title'],
+                                   'first-aid:Training-Details', "course title")
+            course_date_row = Row('course_date', 'Date you completed the course', formatted_course_date,
+                                  'first-aid:Training-Details', "course completion date")
 
             first_aid_table = Table(application_id)
             first_aid_table.row_list = [organisation_row, course_title_row, course_date_row]
