@@ -39,7 +39,8 @@ class PersonalDetailLivedAbroadView(NannyFormView):
 
         application_id = app_id_finder(self.request)
         application_record = NannyGatewayActions().read('application', params={'application_id': application_id}).record
-        application_record['personal_details_status'] = 'IN_PROGRESS'
+        if application_record['personal_details_status'] != 'COMPLETED':
+            application_record['personal_details_status'] = 'IN_PROGRESS'
         NannyGatewayActions().put('application', params=application_record)
 
         data_dict = {
