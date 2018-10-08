@@ -23,9 +23,17 @@ class ContactDetailsSummaryView(View):
     def post(self, request):
         """ Handle POST request. Create session for user if one not currently existing.
             Redirect to next task to force user to enter personal details before viewing Task list"""
+
         application_id = request.GET['id']
-        response = HttpResponseRedirect(build_url('personal-details:Personal-Details-Name', get={'id': application_id}))
-        return response
+        api_response = NannyGatewayActions().read('applicant-personal-details', params={'application_id': application_id})
+
+        if api_response.status_code == 404:
+            response = HttpResponseRedirect(build_url('personal-details:Personal-Details-Name', get={'id': application_id}))
+            return response
+
+        else:
+            response = HttpResponseRedirect(build_url('Task-List', get={'id': application_id}))
+            return response
 
     def include_change_links(self, application_id):
         """ If the applicant is coming from task list, an application object will exist => get_record gives 200 code."""
