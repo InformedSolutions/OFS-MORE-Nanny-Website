@@ -1,6 +1,7 @@
 import logging
 import os
 import json
+from unittest.mock import MagicMock
 
 import requests
 
@@ -17,14 +18,16 @@ class DBGatewayActions:
 
     def __init__(self):
         self.event_list = [getattr(self, func) for func in dir(self) if callable(getattr(self, func)) and func[0] != '_']
-        self._register_events()
+        self.__register_events()
 
-    def _register_events(self):
+    def __register_events(self):
+        if any([isinstance(event, MagicMock) for event in self.event_list]):
+            return None
+
         for event in self.event_list:
-            setattr(self, event.__name__, self._dispatch(event))
+            setattr(self, event.__name__, self.__dispatch(event))
 
-    def _dispatch(self, func):
-
+    def __dispatch(self, func):
         def log_wrapper(*args, **kwargs):
             response = func(*args, **kwargs)
 
