@@ -16,6 +16,21 @@ class DBGatewayActions:
     target_url_prefix = None
     event_list = None
 
+    endpoint_pk_dict = {
+        'childcare-address': 'childcare_address_id',
+        'arc-comments': 'review_id',
+        'applicant-home-address': 'application_id',
+        'applicant-personal-details': 'application_id',
+        'application': 'application_id',
+        'childcare-training': 'application_id',
+        'dbs-check': 'application_id',
+        'declaration': 'application_id',
+        'first-aid': 'application_id',
+        'insurance-cover': 'application_id',
+        'payment': 'application_id',
+        'summary': 'application_id'
+    }
+
     def __init__(self):
         self.event_list = [getattr(self, func) for func in dir(self) if callable(getattr(self, func)) and func[0] != '_']
         self.__register_events()
@@ -34,32 +49,20 @@ class DBGatewayActions:
             if response.status_code not in (200, 201, 404):
 
                 verb_name = func.__name__
+                endpoint_name = args[0]
+                endpoint_lookup_field = self.endpoint_pk_dict[endpoint_name]
 
-                if verb_name == 'list':
+                if func.__name__ == 'list':
                     logger.error(
                         '!GATEWAY ERROR! "{}" request to API endpoint "{}" with {}: {} returned {} status code - see the Gateway logs for traceback'.format(
-                            verb_name, args[0], list(kwargs['params'].keys()), list(kwargs['params'].values()),
-                            response.status_code))
-                    logger.info('!GATEWAY ERROR! Targeted url: {}'.format(response.url))
-
-                elif verb_name == 'childcare_address':
-                    logger.error(
-                        '!GATEWAY ERROR! "{}" request to API endpoint "{}" with {}: {} returned {} status code - see the Gateway logs for traceback'.format(
-                            verb_name, args[0], 'childcare_address_id', kwargs['params']['childcare_address_id'],
-                            response.status_code))
-                    logger.info('!GATEWAY ERROR! Targeted url: {}'.format(response.url))
-
-                elif verb_name == 'arc-comments':
-                    logger.error(
-                        '!GATEWAY ERROR! "{}" request to API endpoint "{}" with {}: {} returned {} status code - see the Gateway logs for traceback'.format(
-                            verb_name, args[0], 'review_id', kwargs['params']['review_id'],
+                            verb_name, endpoint_name, list(kwargs['params'].keys()), list(kwargs['params'].values()),
                             response.status_code))
                     logger.info('!GATEWAY ERROR! Targeted url: {}'.format(response.url))
 
                 else:
                     logger.error(
                         '!GATEWAY ERROR! "{}" request to API endpoint "{}" with {}: {} returned {} status code - see the Gateway logs for traceback'.format(
-                            verb_name, args[0], 'application_id', kwargs['params']['application_id'],
+                            verb_name, args[0], endpoint_lookup_field, kwargs['params'][endpoint_lookup_field],
                             response.status_code))
                     logger.info('!GATEWAY ERROR! Targeted url: {}'.format(response.url))
 
@@ -78,15 +81,13 @@ class DBGatewayActions:
         return response
 
     def read(self, endpoint, params):
-        if endpoint == 'childcare-address':
-            response = requests.get(self.target_url_prefix + endpoint + '/' + params['childcare_address_id'] + '/', data=params)
-        elif endpoint == 'arc-comments':
-            response = requests.get(self.target_url_prefix + endpoint + '/' + params['review_id'] + '/', data=params)
-        else:
-            response = requests.get(self.target_url_prefix + endpoint + '/' + params['application_id'] + '/', data=params)
+        endpoint_lookup_field = self.endpoint_pk_dict[endpoint]
+        response = requests.get(self.target_url_prefix + endpoint + '/' + params[endpoint_lookup_field] + '/', data=params)
 
         if response.status_code == 200:
             response.record = json.loads(response.text)
+
+        response.status_code = 500
 
         return response
 
@@ -107,12 +108,8 @@ class DBGatewayActions:
         return response
 
     def put(self, endpoint, params):
-        if endpoint == 'childcare-address':
-            response = requests.put(self.target_url_prefix + endpoint + '/' + params['childcare_address_id'] + '/', data=params)
-        elif endpoint == 'arc-comments':
-            response = requests.put(self.target_url_prefix + endpoint + '/' + params['review_id'] + '/', data=params)
-        else:
-            response = requests.put(self.target_url_prefix + endpoint + '/' + params['application_id'] + '/', data=params)
+        endpoint_lookup_field = self.endpoint_pk_dict[endpoint]
+        response = requests.put(self.target_url_prefix + endpoint + '/' + params[endpoint_lookup_field] + '/', data=params)
 
         if response.status_code == 200:
             response.record = json.loads(response.text)
@@ -120,10 +117,8 @@ class DBGatewayActions:
         return response
 
     def delete(self, endpoint, params):
-        if endpoint == 'arc-comments':
-            return requests.delete(self.target_url_prefix + endpoint + '/' + params['review_id'] + '/', data=params)
-        else:
-            return requests.delete(self.target_url_prefix + endpoint + '/' + params['application_id'] + '/', data=params)
+        endpoint_lookup_field = self.endpoint_pk_dict[endpoint]
+        return requests.delete(self.target_url_prefix + endpoint + '/' + params[endpoint_lookup_field] + '/', data=params)
 
 
 class IdentityGatewayActions(DBGatewayActions):
