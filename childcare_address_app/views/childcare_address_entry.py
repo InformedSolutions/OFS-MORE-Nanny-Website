@@ -126,6 +126,7 @@ class ChildcareAddressLookupView(BaseFormView):
             record['street_line2'] = selected_address['line2']
             record['town'] = selected_address['townOrCity']
             record['postcode'] = selected_address['postcode']
+            record['number'] = get_address_number(app_id, childcare_address_id, False)
             NannyGatewayActions().put('childcare-address', params=record)
 
         return HttpResponseRedirect(build_url('Childcare-Address-Details', get={
@@ -288,6 +289,11 @@ class ChildcareAddressDetailsView(BaseTemplateView):
                 count += 1
         kwargs['childcare_addresses'] = sorted(addresses.items())
 
+        if 'number' in self.request.GET:
+            number = int(self.request.GET['number'])
+            NannyGatewayActions().delete('childcare-address', params={'application_id': app_id, 'number': number})
+            print(number)
+
         return super(ChildcareAddressDetailsView, self).get_context_data(**kwargs)
 
     def post(self, request):
@@ -305,19 +311,6 @@ class ChildcareAddressDetailsView(BaseTemplateView):
             return HttpResponseRedirect(build_url('Childcare-Address-Postcode-Entry', get={
                 'id': app_id,
                 }))
-        elif 'remove' in request.POST:
-
-            address = request.POST['address']
-
-            api_response = NannyGatewayActions().list('childcare-address', params={'application_id': app_id})
-            if api_response.status_code == 200 and len(api_response.record) < 1:
-                context = self.get_context_data()
-                context['non_field_errors'] = ["You can only enter up to 5 childcare addresses"]
-                context['error_summary_title'] = "There was a problem"
-                return render(request, self.template_name, context)
-            return HttpResponseRedirect(build_url('Childcare-Address-Details', get={
-                'id': app_id,
-            }))
         else:
             return HttpResponseRedirect(build_url('Childcare-Address-Summary', get={
                 'id': app_id,
