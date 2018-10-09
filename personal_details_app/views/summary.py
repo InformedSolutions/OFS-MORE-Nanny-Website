@@ -33,7 +33,6 @@ class Summary(View):
                                                              params={'application_id': application_id}).record
         address_record = NannyGatewayActions().read('applicant-home-address',
                                                     params={'application_id': application_id}).record
-
         name = personal_details_record['first_name'] + ' ' + personal_details_record['middle_names'] + ' ' + \
                personal_details_record['last_name']
         date_of_birth = datetime.datetime.strptime(personal_details_record['date_of_birth'], '%Y-%m-%d').date()

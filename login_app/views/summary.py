@@ -1,6 +1,8 @@
 from django.http import HttpResponseRedirect
+from django.urls import reverse
 from django.views import View
 from django.shortcuts import render
+from django.conf import settings
 
 from nanny.utilities import build_url
 
@@ -21,10 +23,40 @@ class ContactDetailsSummaryView(View):
         return render(request, template_name='contact-details-summary.html', context=context)
 
     def post(self, request):
-        """ Handle POST request. Create session for user if one not currently existing."""
+        """ Handle POST request. Create session for user if the request does not return a record. If a record exists,
+        a check is completed on if the user has completed the personal details task. If they have, they are presented
+        with the task-list, if not they are presented with the personal details task"""
+
         application_id = request.GET['id']
-        response = HttpResponseRedirect(build_url('Task-List', get={'id': application_id}))
-        return response
+        nanny_api_response = NannyGatewayActions().read('application', params={'application_id': application_id})
+
+        if nanny_api_response.status_code == 200:
+            application_record = NannyGatewayActions().read('application',
+                                                            params={'application_id': application_id}).record
+
+            # This differentiates between a new user and one who has signed out during the personal details task.
+            if application_record['personal_details_status'] == 'COMPLETED':
+                response = HttpResponseRedirect(build_url('Task-List', get={'id': application_id}))
+                return response
+
+            else:
+                return HttpResponseRedirect(build_url('personal-details:Personal-Details-Name', get={
+                    'id': application_id}))
+
+        if nanny_api_response.status_code == 404:
+            create_response = NannyGatewayActions().create(
+                'application',
+                params={
+                    'application_id': application_id,
+                    'application_status': 'DRAFTING',
+                    'login_details_status': 'COMPLETED',
+
+                }
+            )
+            application = create_response.record
+
+            return HttpResponseRedirect(build_url('personal-details:Personal-Details-Name', get={
+                'id': application_id}))
 
     def include_change_links(self, application_id):
         """ If the applicant is coming from task list, an application object will exist => get_record gives 200 code."""

@@ -12,18 +12,33 @@ from nanny.test_utils import side_effect
 class PostcodeEntryTests(PersonalDetailsTests):
 
     def test_postcode_entry_url_resolves_to_page(self):
+        """
+        Test to assert that the 'postcode entry' page can be resolved.
+        """
+        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
+                mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
+            nanny_api_read.side_effect = side_effect
+            nanny_api_put.side_effect = side_effect
+
         found = resolve(reverse('personal-details:Personal-Details-Home-Address'))
+
         self.assertEqual(found.func.__name__, PersonalDetailHomeAddressView.__name__)
 
     def test_can_render_postcode_entry_page(self):
         """
         Test to assert that the 'postcode entry' page can be rendered.
         """
-        response = self.client.get(build_url('personal-details:Personal-Details-Home-Address', get={
-            'id': uuid.UUID
-        }))
+        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_get_pd, \
+                mock.patch('nanny.db_gateways.NannyGatewayActions.patch') as nanny_api_patch,\
+                mock.patch('nanny.db_gateways.NannyGatewayActions.list'):
+            nanny_api_get_pd.side_effect = side_effect
+            nanny_api_patch.side_effect = side_effect
 
-        self.assertEqual(response.status_code, 200)
+            response = self.client.post(build_url('personal-details:Personal-Details-Home-Address', get={
+                'id': uuid.uuid4()
+            }))
+
+            self.assertEqual(response.status_code, 200)
 
     def test_can_update_address_valid_postcode_entry_page(self):
         """
