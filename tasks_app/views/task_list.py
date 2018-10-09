@@ -11,23 +11,9 @@ class TaskListView(View):
     @never_cache
     def get(self, request):
         application_id = request.GET["id"]
-        application = None
         nanny_api_response = NannyGatewayActions().read('application', params={'application_id': application_id})
-
         if nanny_api_response.status_code == 200:
             application = nanny_api_response.record
-
-        elif nanny_api_response.status_code == 404:
-            create_response = NannyGatewayActions().create(
-                'application',
-                params={
-                    'application_id': application_id,
-                    'application_status': 'DRAFTING',
-                    'login_details_status': 'COMPLETED',
-                }
-            )
-            application = create_response.record
-
         else:
             if settings.DEBUG:
                 raise RuntimeError('The nanny-gateway API did not respond as expected.')

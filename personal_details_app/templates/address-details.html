@@ -20,8 +20,11 @@
 
     <input type="submit" name="action" class="button" value="Save and continue">
 </form>
-<br>
-{% include 'return-to-list.html' %}
 
+<br/>
+
+{% if personal_details_status == 'COMPLETED' or personal_details_status == 'FLAGGED' %}
+{% include 'return-to-list.html' %}
+{% endif %}
 
 {% endblock %}
