@@ -280,6 +280,31 @@ class ChildcareAddressDetailsView(BaseTemplateView):
     """
     template_name = 'childcare-address-details.html'
 
+    def dispatch(self, request, *args, **kwargs):
+        """
+        Method to redirect to Where you work page when the applicant removes all addresses
+        :return: HTTP response redirect
+        """
+
+        app_id = self.request.GET['id']
+
+        api_response = NannyGatewayActions().list('childcare-address', params={'application_id': app_id})
+
+        # If the number of childcare addresses equal to 1 and the applicant clicks the Remove this address link
+        if 'childcare-address-id' in self.request.GET and api_response.status_code == 200 and len(
+                api_response.record) <= 1:
+
+            # Delete the childcare address
+            childcare_address_id = self.request.GET['childcare-address-id']
+            NannyGatewayActions().delete('childcare-address', params={'childcare_address_id': childcare_address_id})
+
+            # Redirect to Where you work page
+            return HttpResponseRedirect(build_url('Childcare-Address-Where-You-Work', get={
+                'id': app_id,
+            }))
+
+        return super(ChildcareAddressDetailsView, self).dispatch(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         """
         Override base BaseTemplateView method to add 'fields' key to context for rendering in template.
@@ -287,14 +312,13 @@ class ChildcareAddressDetailsView(BaseTemplateView):
         app_id = self.request.GET['id']
         kwargs['id'] = app_id
 
+        # If clicking on Remove this address link
         if 'childcare-address-id' in self.request.GET:
-
             childcare_address_id = self.request.GET['childcare-address-id']
-            NannyGatewayActions().delete('childcare-address',
-                                         params={'childcare_address_id': childcare_address_id})
+            NannyGatewayActions().delete('childcare-address', params={'childcare_address_id': childcare_address_id})
 
-        api_response = NannyGatewayActions().list('childcare-address',
-                                                  params={'application_id': app_id})
+        # Generate list of childcare addresses and display in through page context
+        api_response = NannyGatewayActions().list('childcare-address', params={'application_id': app_id})
 
         addresses = {}
         count = 1
