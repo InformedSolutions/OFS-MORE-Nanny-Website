@@ -97,8 +97,6 @@ class DBGatewayActions:
         if response.status_code == 200:
             response.record = json.loads(response.text)
 
-        response.status_code = 500
-
         return response
 
     def create(self, endpoint, params):
