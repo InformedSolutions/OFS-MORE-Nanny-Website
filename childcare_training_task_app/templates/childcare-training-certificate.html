@@ -1,24 +1,21 @@
 {% extends 'govuk_template.html' %}
 {% load static %}
 {% load govuk_template_base %}
-{% block page_title %}Go on a training course{% endblock %}
+{% block page_title %}Childcare training certificate{% endblock %}
 
 {% block inner_content %}
 
 {% include "back-button.html" %}
 
-<h1 class="form-title heading-large">Go on a training course</h1>
-
-<p>You need to go on a common core skills training course.</p>
-
-<p><a href="https://www.gov.uk/find-local-council" target="_blank">Ask your council</a> for details of courses in your area.</p>
+<h1 class="form-title heading-large">Childcare training certificate</h1>
 
 <p>An inspector will ask to see your certificate if they inspect you.</p>
 
-<p>You can finish this section when you complete your course.</p>
+<p>You must show them your certificate.</p>
 
 <form method="post">
     {% csrf_token %}
+    {{ form.as_div }}
     <input type="submit" class="button" value="Continue" alt="continue" id="id_continue">
 </form>
 

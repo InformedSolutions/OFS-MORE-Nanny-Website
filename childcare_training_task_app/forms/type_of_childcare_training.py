@@ -23,7 +23,7 @@ class TypeOfChildcareTrainingForm(NannyForm):
     childcare_training = forms.MultipleChoiceField(label='', choices=options,
                                                   widget=CheckboxSelectMultiple, required=True,
                                                   error_messages={'required': 'Please select the types of childcare courses you have completed'},
-                                                  help_text="Select all that apply")
+                                                  help_text="Tick all that apply")
 
     def clean_childcare_training(self):
         data = self.cleaned_data['childcare_training']

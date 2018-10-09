@@ -15,7 +15,7 @@ class TypeOfChildcareTrainingFormView(NannyFormView):
     """
     template_name = 'type-of-childcare-training.html'
     form_class = TypeOfChildcareTrainingForm
-    success_url = 'Childcare-Training-Summary'
+    success_url = 'Childcare-Training-Certificate'
 
     def form_valid(self, form):
         application_id = self.request.GET['id']
