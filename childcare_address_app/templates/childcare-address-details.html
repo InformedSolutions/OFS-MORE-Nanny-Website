@@ -19,9 +19,9 @@
         <label class="form-label-bold">
             Address {{ address.0 }}
         </label>
-        {{ address.1 }}
+        {{ address.1.address }}
         <br>
-        <a href="{% url 'Childcare-Address-Details' %}?id={{id}}&number={{ address.0 }}" class="button-remove">Remove this address</a>
+        <a href="{% url 'Childcare-Address-Details' %}?id={{id}}&childcare-address-id={{ address.1.childcare_address_id }}" class="button-remove">Remove this address</a>
         <br>
     </p>
     {% endfor %}

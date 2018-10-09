@@ -65,6 +65,9 @@ class DBGatewayActions:
     def delete(self, endpoint, params):
         if endpoint == 'arc-comments':
             return requests.delete(self.target_url_prefix + endpoint + '/' + params['review_id'] + '/', data=params)
+        elif endpoint == 'childcare-address':
+            return requests.delete(self.target_url_prefix + endpoint + '/' + params['childcare_address_id'] + '/',
+                                   data=params)
         else:
             return requests.delete(self.target_url_prefix + endpoint + '/' + params['application_id'] + '/', data=params)
 

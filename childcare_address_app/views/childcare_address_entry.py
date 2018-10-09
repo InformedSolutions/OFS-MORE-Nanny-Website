@@ -49,12 +49,14 @@ class ChildcareAddressPostcodeView(BaseFormView):
         Re-route the user if the postcode given is accurate.
         """
         app_id = self.request.GET['id']
-        childcare_address_id = self.request.GET['childcare_address_id'] if 'childcare_address_id' in self.request.GET else None
+        childcare_address_id = self.request.GET[
+            'childcare_address_id'] if 'childcare_address_id' in self.request.GET else None
         postcode = form.cleaned_data['postcode']
 
         if childcare_address_id:
             # update postcode of address
-            api_response = NannyGatewayActions().read('childcare-address', params={'childcare_address_id': childcare_address_id})
+            api_response = NannyGatewayActions().read('childcare-address',
+                                                      params={'childcare_address_id': childcare_address_id})
             api_response.record['postcode'] = postcode
             NannyGatewayActions().put('childcare-address', params=api_response.record)  # Update entire record.
 
@@ -74,14 +76,15 @@ class ChildcareAddressPostcodeView(BaseFormView):
         return HttpResponseRedirect(build_url('Childcare-Address-Lookup', get={
             'id': app_id,
             'childcare_address_id': childcare_address_id
-            }))
+        }))
 
     def get_context_data(self, **kwargs):
         """
         Override base BaseFormView method to add 'fields' key to context for rendering in template.
         """
         app_id = self.request.GET['id']
-        childcare_address_id = self.request.GET['childcare_address_id'] if 'childcare_address_id' in self.request.GET else None
+        childcare_address_id = self.request.GET[
+            'childcare_address_id'] if 'childcare_address_id' in self.request.GET else None
         self.initial = {
             'id': app_id
         }
@@ -114,12 +117,14 @@ class ChildcareAddressLookupView(BaseFormView):
         Re-route the user if the address selected is valid.
         """
         app_id = self.request.GET['id']
-        childcare_address_id = self.request.GET['childcare_address_id'] if 'childcare_address_id' in self.request.GET else None
+        childcare_address_id = self.request.GET[
+            'childcare_address_id'] if 'childcare_address_id' in self.request.GET else None
         selected_address_index = form.cleaned_data['address']
 
         if childcare_address_id:
             # update postcode of address
-            api_response = NannyGatewayActions().read('childcare-address', params={'childcare_address_id': childcare_address_id})
+            api_response = NannyGatewayActions().read('childcare-address',
+                                                      params={'childcare_address_id': childcare_address_id})
             record = api_response.record
             selected_address = AddressHelper.get_posted_address(selected_address_index, record['postcode'])
             record['street_line1'] = selected_address['line1']
@@ -131,14 +136,15 @@ class ChildcareAddressLookupView(BaseFormView):
 
         return HttpResponseRedirect(build_url('Childcare-Address-Details', get={
             'id': app_id
-            }))
+        }))
 
     def get_context_data(self, **kwargs):
         """
         Override base BaseFormView method to add 'fields' key to context for rendering in template.
         """
         app_id = self.request.GET['id']
-        childcare_address_id = self.request.GET['childcare_address_id'] if 'childcare_address_id' in self.request.GET else None
+        childcare_address_id = self.request.GET[
+            'childcare_address_id'] if 'childcare_address_id' in self.request.GET else None
 
         self.initial = {
             'id': app_id
@@ -233,12 +239,13 @@ class ChildcareAddressManualView(BaseFormView):
         Override base BaseFormView method to add 'fields' key to context for rendering in template.
         """
         app_id = self.request.GET['id']
-        childcare_address_id = self.request.GET['childcare_address_id'] if 'childcare_address_id' in self.request.GET else None
+        childcare_address_id = self.request.GET[
+            'childcare_address_id'] if 'childcare_address_id' in self.request.GET else None
 
         self.initial = {
             'id': app_id
         }
-        
+
         kwargs['id'] = app_id
 
         if childcare_address_id:
@@ -279,20 +286,26 @@ class ChildcareAddressDetailsView(BaseTemplateView):
         """
         app_id = self.request.GET['id']
         kwargs['id'] = app_id
+
+        if 'childcare-address-id' in self.request.GET:
+
+            childcare_address_id = self.request.GET['childcare-address-id']
+            NannyGatewayActions().delete('childcare-address',
+                                         params={'childcare_address_id': childcare_address_id})
+
         api_response = NannyGatewayActions().list('childcare-address',
                                                   params={'application_id': app_id})
+
         addresses = {}
         count = 1
         if api_response.status_code == 200:
             for address in api_response.record:
-                addresses[str(count)] = AddressHelper.format_address(address, ", ")
+                addresses[str(count)] = {
+                    "address": AddressHelper.format_address(address, ", "),
+                    "childcare_address_id": address['childcare_address_id']
+                }
                 count += 1
         kwargs['childcare_addresses'] = sorted(addresses.items())
-
-        if 'number' in self.request.GET:
-            number = int(self.request.GET['number'])
-            NannyGatewayActions().delete('childcare-address', params={'application_id': app_id, 'number': number})
-            print(number)
 
         return super(ChildcareAddressDetailsView, self).get_context_data(**kwargs)
 
@@ -310,8 +323,8 @@ class ChildcareAddressDetailsView(BaseTemplateView):
                 return render(request, self.template_name, context)
             return HttpResponseRedirect(build_url('Childcare-Address-Postcode-Entry', get={
                 'id': app_id,
-                }))
+            }))
         else:
             return HttpResponseRedirect(build_url('Childcare-Address-Summary', get={
                 'id': app_id,
-                }))
+            }))
