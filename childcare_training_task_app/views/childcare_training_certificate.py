@@ -11,6 +11,9 @@ class ChildcareTrainingCertificateView(View):
     """
     def get(self, request):
         context = {'id': request.GET['id']}
+        application_id = request.GET['id']
+        record = NannyGatewayActions().read('application', params={'application_id':application_id}).record
+        record['childcare_training_status'] = 'IN_PROGRESS'
         return render(request, template_name='childcare-training-certificate.html', context=context)
 
     def post(self, request):
