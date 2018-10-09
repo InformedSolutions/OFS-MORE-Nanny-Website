@@ -291,17 +291,24 @@ class ChildcareAddressDetailsView(BaseTemplateView):
         api_response = NannyGatewayActions().list('childcare-address', params={'application_id': app_id})
 
         # If the number of childcare addresses equal to 1 and the applicant clicks the Remove this address link
-        if 'childcare-address-id' in self.request.GET and api_response.status_code == 200 and len(
-                api_response.record) <= 1:
+        if 'childcare-address-id' in self.request.GET:
 
-            # Delete the childcare address
-            childcare_address_id = self.request.GET['childcare-address-id']
-            NannyGatewayActions().delete('childcare-address', params={'childcare_address_id': childcare_address_id})
+            if api_response.status_code == 200 and len(api_response.record) <= 1:
 
-            # Redirect to Where you work page
-            return HttpResponseRedirect(build_url('Childcare-Address-Where-You-Work', get={
-                'id': app_id,
-            }))
+                # Delete the childcare address
+                childcare_address_id = self.request.GET['childcare-address-id']
+                NannyGatewayActions().delete('childcare-address', params={'childcare_address_id': childcare_address_id})
+
+                # Set Where you work default response to No
+                application_response = NannyGatewayActions().read('application', params={'application_id': app_id})
+                record = application_response.record
+                record['address_to_be_provided'] = False
+                NannyGatewayActions().put('application', params=record)
+
+                # Redirect to Where you work page
+                return HttpResponseRedirect(build_url('Childcare-Address-Where-You-Work', get={
+                    'id': app_id,
+                }))
 
         return super(ChildcareAddressDetailsView, self).dispatch(request, *args, **kwargs)
 
