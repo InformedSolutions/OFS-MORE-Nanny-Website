@@ -55,9 +55,10 @@ class DBGatewayActions:
         """
         def log_wrapper(*args, **kwargs):
             response = func(*args, **kwargs)
+            expected_db_api_responses = (200, 201, 204, 404)
 
-            if response.status_code not in (200, 201, 404):
-
+            # If unexpected response, enter a WARNING log.
+            if response.status_code not in expected_db_api_responses:
                 verb_name = func.__name__
                 endpoint_name = args[0]
                 endpoint_lookup_field = self.endpoint_pk_dict[endpoint_name]
