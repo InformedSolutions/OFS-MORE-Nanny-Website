@@ -29,17 +29,26 @@ class Summary(View):
     def get_context_data(self):
         context = dict()
         application_id = self.request.GET['id']
-        personal_details_record = NannyGatewayActions().read('applicant-personal-details', params={'application_id': application_id}).record
-        address_record          = NannyGatewayActions().read('applicant-home-address', params={'application_id': application_id}).record
 
-        name = personal_details_record['first_name'] + ' ' + personal_details_record['middle_names'] + ' ' + personal_details_record['last_name']
+        personal_details_record = NannyGatewayActions().read('applicant-personal-details',
+                                                             params={'application_id': application_id}).record
+        address_record = NannyGatewayActions().read('applicant-home-address',
+                                                    params={'application_id': application_id}).record
+
+        name = personal_details_record['first_name'] + ' ' + personal_details_record['middle_names'] + ' ' + \
+               personal_details_record['last_name']
         date_of_birth = datetime.datetime.strptime(personal_details_record['date_of_birth'], '%Y-%m-%d').date()
         address = AddressHelper.format_address(address_record, ", ")
 
-        name_row          = Row('name', 'Your name', name, 'personal-details:Personal-Details-Name')
-        date_of_birth_row = Row('date_of_birth', 'Date of birth', date_of_birth, 'personal-details:Personal-Details-Date-Of-Birth')
-        home_address_row  = Row('home_address', 'Your home address', address, 'personal-details:Personal-Details-Manual-Address')
-        lived_abroad_row  = Row('lived_abroad', 'Have you lived abroad in the last 5 years?', personal_details_record['lived_abroad'], 'personal-details:Personal-Details-Lived-Abroad')
+        name_row = Row('name', 'Your name', name, 'personal-details:Personal-Details-Name', "your name")
+        date_of_birth_row = Row('date_of_birth', 'Date of birth', date_of_birth,
+                                'personal-details:Personal-Details-Date-Of-Birth', "your date of birth")
+        home_address_row = Row('home_address', 'Your home address', address,
+                               'personal-details:Personal-Details-Manual-Address', "your home address")
+        lived_abroad_row = Row('lived_abroad', 'Have you lived abroad in the last 5 years?',
+                               personal_details_record['lived_abroad'],
+                               'personal-details:Personal-Details-Lived-Abroad',
+                               "answer on living abroad in the last 5 years")
 
         personal_details_table = Table(application_id)
         personal_details_table.row_list = [name_row, date_of_birth_row, home_address_row, lived_abroad_row]

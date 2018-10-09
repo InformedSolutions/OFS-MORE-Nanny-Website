@@ -33,17 +33,18 @@ class Row:
     """
     Class to contain a specific row rendered in a table on the generic summary template.
     """
-    def __init__(self, data_name, row_name, value, back_link, error=None):
+    def __init__(self, data_name, row_name, value, back_link, change_link_description, error=None):
         """
         :param data_name: The name of the field as stored in the database
         :param row_name: The name of the field as rendered on the template
         :param value: The value of the field
-        :param change_link: The view which, when reversed, redirects to the page where the value is defined
-        :param error: The error associated with the field, empty by default, only populated on table.get_errors
+        :param back_link: The view which, when reversed, redirects to the page where the value is defined
         :param change_link_description: An optional change link textual description value
+        :param error: The error associated with the field, empty by default, only populated on table.get_errors
         """
         self.data_name = data_name
         self.row_name = row_name
         self.value = value
         self.back_link = back_link
+        self.change_link_description = change_link_description
         self.error = error

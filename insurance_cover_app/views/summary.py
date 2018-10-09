@@ -24,9 +24,12 @@ class SummaryView(NannyTemplateView):
     def get_context_data(self):
         context = dict()
         application_id = app_id_finder(self.request)
-        insurance_record = NannyGatewayActions().read('insurance-cover', params={'application_id': application_id}).record
+        insurance_record = NannyGatewayActions().read('insurance-cover',
+                                                      params={'application_id': application_id}).record
 
-        insurance_row = Row('public_liability', 'Do you have public liability insurance?', insurance_record['public_liability'], 'insurance:Public-Liability')
+        insurance_row = Row('public_liability', 'Do you have public liability insurance?',
+                            insurance_record['public_liability'], 'insurance:Public-Liability',
+                            "answer on having public liability insurance")
 
         insurance_summary_table = Table(application_id)
         insurance_summary_table.row_list = [insurance_row, ]
