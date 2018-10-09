@@ -1,0 +1,28 @@
+{% extends 'govuk_template.html' %}
+{% load static %}
+{% load govuk_template_base %}
+{% block page_title %}Type of course{% endblock %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+<h1 class="form-title heading-large">Childcare training certificate</h1>
+
+<h1 class="form-title heading-small">What type of childcare course have you completed?</h1>
+
+<p>An inspector will ask to see your certificate if they inspect you.</p>
+
+<p>You must show them your certificate.</p>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_div }}
+    <input type="submit" class="button" value="Save and continue" alt="continue" id="id_continue">
+</form>
+
+<br>
+
+<a href="{% url 'Task-List' %}?id={{ id }}">Return to list</a>
+
+{% endblock %}
