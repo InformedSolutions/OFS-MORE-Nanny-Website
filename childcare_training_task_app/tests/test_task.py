@@ -35,7 +35,7 @@ class ChildcareTrainingTests(TestCase):
         Test to assert that the 'Childcare-Training-Guidance' page can be rendered.
         """
         with mock.patch('nanny.db_gateways.IdentityGatewayActions.read') as identity_api_read:
-
+            self.test_can_select_common_core_training
             identity_api_read.side_effect = side_effect
 
             response = self.client.get(reverse('Childcare-Training-Guidance') + '?id=' + self.application_id)
@@ -43,6 +43,23 @@ class ChildcareTrainingTests(TestCase):
 
             self.assertEqual(response.status_code, 200)
             self.assertEqual(found.func.view_class, views.ChildcareTrainingGuidanceView)
+
+    def test_can_render_certificate_page(self):
+        """
+        Test to assert that the 'Childcare-Training-Certificate' page can be rendered.
+        """
+        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
+                mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put, \
+                mock.patch('nanny.db_gateways.IdentityGatewayActions.read') as identity_api_read:
+
+            nanny_api_read.side_effect = side_effect
+            identity_api_read.side_effect = side_effect
+
+            response = self.client.get(reverse('Childcare-Training-Certificate') + '?id=' + self.application_id)
+            found = resolve(response.request.get('PATH_INFO'))
+
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(found.func.view_class, views.ChildcareTrainingCertificateView)
 
     def test_can_render_type_of_childcare_page(self):
         """
@@ -139,7 +156,7 @@ class ChildcareTrainingTests(TestCase):
             found = resolve(response.url)
 
             self.assertEqual(response.status_code, 302)
-            self.assertEqual(found.func.view_class, views.ChildcareTrainingSummaryView)
+            self.assertEqual(found.func.view_class, views.ChildcareTrainingCertificateView)
 
     def test_can_select_common_core_training(self):
         """
@@ -158,7 +175,7 @@ class ChildcareTrainingTests(TestCase):
             found = resolve(response.url)
 
             self.assertEqual(response.status_code, 302)
-            self.assertEqual(found.func.view_class, views.ChildcareTrainingSummaryView)
+            self.assertEqual(found.func.view_class, views.ChildcareTrainingCertificateView)
 
     def test_can_select_no_training(self):
         """
