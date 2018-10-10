@@ -52,30 +52,13 @@ def get_address_number_address_lookup(app_id, ord):
 
     # Catch users coming back from the address details page
     if len(incomplete_addresses) == 0:
-        index = len(complete_addresses) - 1
-
+        index = len(complete_addresses)
     else:
         index = len(complete_addresses) + 1
-
-
-    # # Catch users who have gone back from the address lookup page and reentered the postcode
-    # elif len(incomplete_addresses) > 1:
-    #     index = len(complete_addresses) + 1
-    #
-    # # Catch users who are using the journey as intended
-    # if len(complete_addresses) != len(incomplete_addresses):
-    #
-    #
-    #     if len(complete_addresses) < len(incomplete_addresses):
-    #         index = len(complete_addresses) + 1
-    #
-    #     if len(complete_addresses) > len(incomplete_addresses):
-
     if ord:
         return formatter.number_to_words(formatter.ordinal(index)).title()
     else:
         return str(index)
-
 
 
 class ChildcareAddressPostcodeView(BaseFormView):
@@ -178,6 +161,14 @@ class ChildcareAddressLookupView(BaseFormView):
             record['town'] = selected_address['townOrCity']
             record['postcode'] = selected_address['postcode']
             NannyGatewayActions().put('childcare-address', params=record)
+
+        #  Redefine API response so that incorrect address records can be removed
+        api_response = NannyGatewayActions().list('childcare-address', params={'application_id': app_id})
+        incomplete_addresses = [address for address in api_response.record if address['street_line1'] is None]
+
+        # Delete record that have not being completed - only invalid
+        for address in incomplete_addresses:
+            NannyGatewayActions().delete('childcare-address', params=address)
 
         return HttpResponseRedirect(build_url('Childcare-Address-Details', get={
             'id': app_id,
@@ -352,8 +343,6 @@ class ChildcareAddressDetailsView(BaseTemplateView):
         """
         app_id = self.request.GET['id']
         kwargs['id'] = app_id
-
-
         api_response = NannyGatewayActions().list('childcare-address',
                                                   params={'application_id': app_id})
 
