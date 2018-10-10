@@ -38,6 +38,46 @@ def get_address_number(app_id, add, ord):
             return str(index)
 
 
+def get_address_number_address_lookup(app_id, ord):
+    """
+
+    :param app_id:
+    :param ord:
+    :return:
+    """
+    formatter = inflect.engine()
+    api_response = NannyGatewayActions().list('childcare-address', params={'application_id': app_id})
+    complete_addresses = [address for address in api_response.record if address['street_line1'] is not None]
+    incomplete_addresses = [address for address in api_response.record if address['street_line1'] is None]
+
+    # Catch users coming back from the address details page
+    if len(incomplete_addresses) == 0:
+        index = len(complete_addresses) - 1
+
+    else:
+        index = len(complete_addresses) + 1
+
+
+    # # Catch users who have gone back from the address lookup page and reentered the postcode
+    # elif len(incomplete_addresses) > 1:
+    #     index = len(complete_addresses) + 1
+    #
+    # # Catch users who are using the journey as intended
+    # if len(complete_addresses) != len(incomplete_addresses):
+    #
+    #
+    #     if len(complete_addresses) < len(incomplete_addresses):
+    #         index = len(complete_addresses) + 1
+    #
+    #     if len(complete_addresses) > len(incomplete_addresses):
+
+    if ord:
+        return formatter.number_to_words(formatter.ordinal(index)).title()
+    else:
+        return str(index)
+
+
+
 class ChildcareAddressPostcodeView(BaseFormView):
     """
     Class containing the view(s) for handling the GET requests to the childcare address postcode page.
@@ -150,7 +190,7 @@ class ChildcareAddressLookupView(BaseFormView):
         """
         app_id = self.request.GET['id']
         childcare_address_id = self.request.GET['childcare_address_id'] if 'childcare_address_id' in self.request.GET else None
-        add = self.request.GET.get('add', 0)
+        # add = self.request.GET.get('add', 0)
 
         self.initial = {
             'id': app_id
@@ -173,8 +213,8 @@ class ChildcareAddressLookupView(BaseFormView):
 
             self.initial['choices'] = addresses
 
-            kwargs['ordinal'] = get_address_number(app_id, add, True)
-            kwargs['addr_num'] = get_address_number(app_id, add, False)
+            kwargs['ordinal'] = get_address_number_address_lookup(app_id, True)
+            kwargs['addr_num'] = get_address_number_address_lookup(app_id, False)
 
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
@@ -189,6 +229,13 @@ class ChildcareAddressLookupView(BaseFormView):
         """
         self.get_context_data()
         form = self.get_form()
+
+        # Clear incomplete addresses from the API record
+        app_id = self.request.GET['id']
+        api_response = NannyGatewayActions().list('childcare-address', params={'application_id': app_id})
+        if api_response.status_code == 200:
+            api_response.record = [address for address in api_response.record if address['street_line1'] is not None]
+
         if form.is_valid():
             return self.form_valid(form)
         else:
