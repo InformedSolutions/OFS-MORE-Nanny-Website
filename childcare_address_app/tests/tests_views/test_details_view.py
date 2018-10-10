@@ -65,9 +65,9 @@ class ManualEntryTests(ChildcareAddressTests):
             nanny_api_put.side_effect = side_effect
 
             # Assert list call returns five records.
-            nanny_api_list.return_value.record = [self.sample_address, self.sample_address,
-                                                  self.sample_address, self.sample_address,
-                                                  self.sample_address]
+            nanny_api_list.return_value.record = [mock_childcare_address_record, mock_childcare_address_record,
+                                                  mock_childcare_address_record, mock_childcare_address_record,
+                                                  mock_childcare_address_record]
             nanny_api_list.return_value.status_code = 200
 
             response = self.client.post(build_url('Childcare-Address-Details', get={
@@ -87,20 +87,16 @@ class ManualEntryTests(ChildcareAddressTests):
             mock.patch('nanny.db_gateways.NannyGatewayActions.list') as nanny_api_list,\
             mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
 
-            mock_childcare_address_id = uuid.uuid4()
+            nanny_api_read.side_effect = side_effect
+            nanny_api_put.side_effect = side_effect
 
-            mock_childcare_address_record['childcare_address_id'] = mock_childcare_address_id
-
-            nanny_api_read.side_effect = mock_childcare_address_record
-            nanny_api_put.side_effect = mock_childcare_address_record
-
-            # Assert list call returns one record
-            nanny_api_list.return_value.record = mock_childcare_address_record
+            # Assert list call returns five records.
+            nanny_api_list.return_value.record = [mock_childcare_address_record]
             nanny_api_list.return_value.status_code = 200
 
             response = self.client.get(build_url('Childcare-Address-Details', get={
-                'id': uuid.UUID,
-                'childcare-address-id': mock_childcare_address_id
+                'id': mock_childcare_address_record['application_id'],
+                'childcare-address-id': mock_childcare_address_record['childcare_address_id']
             }))
 
             print(response.url)

@@ -54,6 +54,7 @@ mock_home_address = {
 }
 
 mock_childcare_address_record = {
+    'childcare_address_id': '7e6f1bf3-ee36-444d-99c6-b521d51a484f',
     'street_line1': 'Test',
     'street_line2': None,
     'town': 'New New York',
