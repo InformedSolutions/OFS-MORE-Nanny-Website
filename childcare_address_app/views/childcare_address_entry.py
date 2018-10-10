@@ -131,7 +131,6 @@ class ChildcareAddressLookupView(BaseFormView):
             record['street_line2'] = selected_address['line2']
             record['town'] = selected_address['townOrCity']
             record['postcode'] = selected_address['postcode']
-            record['number'] = get_address_number(app_id, childcare_address_id, False)
             NannyGatewayActions().put('childcare-address', params=record)
 
         return HttpResponseRedirect(build_url('Childcare-Address-Details', get={
