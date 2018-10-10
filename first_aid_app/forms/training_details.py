@@ -15,7 +15,7 @@ class FirstAidTrainingDetailsForm(NannyForm):
     error_summary_title = 'There was a problem'
 
     training_organisation = forms.CharField(
-        label='First aid training organisation',
+        label='Training organisation',
         error_messages={
             'required': 'Please enter the name of the training organisation',
         }
