@@ -4,7 +4,7 @@ from django.urls import resolve
 from unittest import mock
 import uuid
 
-from nanny.test_utils import side_effect
+from nanny.test_utils import side_effect, mock_childcare_address_record
 
 
 @mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)
@@ -78,3 +78,32 @@ class ManualEntryTests(ChildcareAddressTests):
 
             # test that we have not been re-directed
             self.assertEqual(response.status_code, 200)
+
+    def test_redirected_when_removing_last_address(self):
+        """
+        Test to assert that the applicant is redirected to the Where you work page if they have removed the last address
+        """
+        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
+            mock.patch('nanny.db_gateways.NannyGatewayActions.list') as nanny_api_list,\
+            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
+
+            mock_childcare_address_id = uuid.uuid4()
+
+            mock_childcare_address_record['childcare_address_id'] = mock_childcare_address_id
+
+            nanny_api_read.side_effect = mock_childcare_address_record
+            nanny_api_put.side_effect = mock_childcare_address_record
+
+            # Assert list call returns one record
+            nanny_api_list.return_value.record = mock_childcare_address_record
+            nanny_api_list.return_value.status_code = 200
+
+            response = self.client.get(build_url('Childcare-Address-Details', get={
+                'id': uuid.UUID,
+                'childcare-address-id': mock_childcare_address_id
+            }))
+
+            print(response.url)
+
+            self.assertEqual(response.status_code, 302)
+            self.assertTrue('where-you-work' in response.url)
