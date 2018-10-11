@@ -4,7 +4,7 @@ from django.urls import resolve
 from unittest import mock
 import uuid
 
-from nanny.test_utils import side_effect
+from nanny.test_utils import side_effect, mock_childcare_address_record
 
 
 @mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)
@@ -65,9 +65,9 @@ class ManualEntryTests(ChildcareAddressTests):
             nanny_api_put.side_effect = side_effect
 
             # Assert list call returns five records.
-            nanny_api_list.return_value.record = [self.sample_address, self.sample_address,
-                                                  self.sample_address, self.sample_address,
-                                                  self.sample_address]
+            nanny_api_list.return_value.record = [mock_childcare_address_record, mock_childcare_address_record,
+                                                  mock_childcare_address_record, mock_childcare_address_record,
+                                                  mock_childcare_address_record]
             nanny_api_list.return_value.status_code = 200
 
             response = self.client.post(build_url('Childcare-Address-Details', get={
@@ -78,3 +78,56 @@ class ManualEntryTests(ChildcareAddressTests):
 
             # test that we have not been re-directed
             self.assertEqual(response.status_code, 200)
+
+    def test_redirected_when_removing_last_address(self):
+        """
+        Test to assert that the applicant is redirected to the Where you work page if they have removed the last address
+        """
+        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
+            mock.patch('nanny.db_gateways.NannyGatewayActions.list') as nanny_api_list,\
+            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put,\
+            mock.patch('nanny.db_gateways.NannyGatewayActions.delete') as nanny_api_delete:
+
+            nanny_api_read.side_effect = side_effect
+            nanny_api_put.side_effect = side_effect
+
+            # Assert list call returns one record
+            nanny_api_list.return_value.record = [mock_childcare_address_record]
+            nanny_api_list.return_value.status_code = 200
+
+            response = self.client.get(build_url('Childcare-Address-Details', get={
+                'id': mock_childcare_address_record['application_id'],
+                'childcare-address-id': mock_childcare_address_record['childcare_address_id']
+            }))
+
+            self.assertEqual(response.status_code, 302)
+            self.assertTrue('where-you-work' in response.url)
+
+    def test_can_remove_childcare_address(self):
+        """
+        Test to assert that a childcare address can be removed
+        """
+        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
+            mock.patch('nanny.db_gateways.NannyGatewayActions.list') as nanny_api_list,\
+            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put,\
+            mock.patch('nanny.db_gateways.NannyGatewayActions.delete') as nanny_api_delete:
+
+            nanny_api_read.side_effect = side_effect
+            nanny_api_put.side_effect = side_effect
+
+            mock_childcare_address_1 = mock_childcare_address_record
+            mock_childcare_address_2 = mock_childcare_address_record
+            mock_childcare_address_3 = mock_childcare_address_record
+
+            # Assert list call returns multiple records
+            nanny_api_list.return_value.record = [mock_childcare_address_1, mock_childcare_address_2,
+                                                  mock_childcare_address_3]
+            nanny_api_list.return_value.status_code = 200
+
+            response = self.client.get(build_url('Childcare-Address-Details', get={
+                'id': mock_childcare_address_1['application_id'],
+                'childcare-address-id': mock_childcare_address_1['childcare_address_id']
+            }))
+
+            self.assertEqual(response.status_code, 200)
+            self.assertTrue(nanny_api_delete.called)
