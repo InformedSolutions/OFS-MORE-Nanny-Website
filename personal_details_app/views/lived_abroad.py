@@ -8,7 +8,7 @@ from nanny.utilities import app_id_finder
 class PersonalDetailLivedAbroadView(NannyFormView):
     template_name = 'lived_abroad.html'
     form_class = PersonalDetailsLivedAbroadForm
-    success_url = 'task-list'
+    success_url = 'Personal-Details-Home-Address'
 
     def get_initial(self):
         """
@@ -60,6 +60,6 @@ class PersonalDetailLivedAbroadView(NannyFormView):
         if form.cleaned_data['lived_abroad'] == 'True':
             self.success_url = 'personal-details:Personal-Details-Certificates-Of-Good-Conduct'
         elif form.cleaned_data['lived_abroad'] == 'False':
-            self.success_url = 'personal-details:Personal-Details-Summary'
+            self.success_url = 'personal-details:Personal-Details-Home-Address'
 
         return super().form_valid(form)

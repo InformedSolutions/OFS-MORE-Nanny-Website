@@ -14,4 +14,4 @@ class PersonalDetailsPostCertificateView(NannyTemplateView):
     Template view to  render the guidance page from first access of task from task list
     """
     template_name = "send_certificates.html"
-    success_url_name = 'personal-details:Personal-Details-Summary'
+    success_url_name = 'personal-details:Personal-Details-Home-Address'
