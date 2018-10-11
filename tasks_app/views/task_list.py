@@ -7,6 +7,38 @@ from django.views.decorators.cache import never_cache
 from nanny.db_gateways import NannyGatewayActions
 
 
+def show_hide_tasks(context, application):
+    """
+    Method hiding or showing the your children tasks based on whether the applicant has
+    children
+    :param context: a dictionary containing all tasks for the task list
+    :param context: Application object
+    :return: dictionary object
+    """
+
+    for task in context['tasks']:
+        if task['name'] == 'your_children':
+
+            application_id = application.get['id']
+            nanny_api_response = NannyGatewayActions().read('application', params={'application_id': application_id})
+            if nanny_api_response.status_code == 200:
+                application = nanny_api_response.record
+            else:
+                if settings.DEBUG:
+                    raise RuntimeError('The nanny-gateway API did not respond as expected.')
+                else:
+                    HttpResponseRedirect(reverse('Service-Unavailable'))
+
+            child_under_16 = application.record['children_under16']
+
+            if child_under_16 is False:
+                task['hidden'] = False
+            else:
+                task['hidden'] = True
+
+    return context
+
+
 class TaskListView(View):
     @never_cache
     def get(self, request):
@@ -49,6 +81,7 @@ class TaskListView(View):
                     'status': application['personal_details_status'],
                     'arc_flagged': application['personal_details_arc_flagged'],
                     'description': 'Your personal details',
+                    'your_children': "children_under16",
                     'status_url': None,
                     'status_urls': {
                         'COMPLETED/FLAGGED': 'personal-details:Personal-Details-Summary',
@@ -123,6 +156,8 @@ class TaskListView(View):
                 },
             ]
         }
+
+        context = show_hide_tasks(context, application)
 
         context['all_complete'] = all(task['status'] == 'COMPLETED' for task in context['tasks'][:-1])
 

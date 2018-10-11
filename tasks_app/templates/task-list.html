@@ -31,6 +31,10 @@
                 {% elif task.status == 'DO_LAST' %}
                     <span class="task-name grayed-out">{{ task.description }}</span>
 
+                <!-- If the task is hidden by the show/hide task function, do not display it unless conditions are met -->
+                {% elif task.hidden %}
+                    <!-- do nothing -->
+
                 <!-- Otherwise, include a link to the task. -->
                 {% else %}
                     <a href="{% url task.status_url %}?id={{ id }}">
