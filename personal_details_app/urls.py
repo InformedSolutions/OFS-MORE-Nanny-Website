@@ -4,7 +4,8 @@ from django.views.generic import TemplateView
 
 from .views import PersonalDetailNameView, PersonalDetailDOBView, PersonalDetailHomeAddressView, \
     PersonalDetailSelectAddressView, PersonalDetailManualAddressView, PersonalDetailSummaryAddressView, \
-    PersonalDetailLivedAbroadView, PersonalDetailCertificateView, PersonalDetailsPostCertificateView, Summary
+    PersonalDetailLivedAbroadView, PersonalDetailCertificateView, PersonalDetailsPostCertificateView, \
+    PersonalDetailsYourChildrenView, Summary
 
 urlpatterns = [
     url(r'^personal-details/your-name/', PersonalDetailNameView.as_view(), name='Personal-Details-Name'),
@@ -17,6 +18,7 @@ urlpatterns = [
     url(r'^personal-details/good-conduct-certificates/', PersonalDetailCertificateView.as_view(),
         name='Personal-Details-Certificates-Of-Good-Conduct'),
     url(r'^personal-details/post-certificates/', PersonalDetailsPostCertificateView.as_view(), name='Personal-Details-Post-Certificates'),
+    url(r'^personal-details/your-children/', PersonalDetailsYourChildrenView.as_View(), name='Personal-Details-Your-Children'),
     url(r'^personal-details/check-answers/', Summary.as_view(), name='Personal-Details-Summary')
 ]
 
