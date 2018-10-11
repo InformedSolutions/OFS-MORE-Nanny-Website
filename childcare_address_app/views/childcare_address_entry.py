@@ -54,14 +54,23 @@ def get_address_number_address_lookup(app_id, add, ord):
     complete_addresses = [address for address in api_response.record if address['street_line1'] is not None]
     incomplete_addresses = [address for address in api_response.record if address['street_line1'] is None]
 
-    if len(incomplete_addresses) > 0:
-        if add != 'None':
+    # Catch users coming back from the details page
+    if len(incomplete_addresses) != 0:
+        # Catch users on first journey
+        if len(complete_addresses) == 0:
+            addr_num = 1
+        # Catch users who have not used the 'add another' button
+        elif add != 'None':
             addr_num = len(complete_addresses) + 1
+        # Catch users using the back button
         else:
             addr_num = len(complete_addresses)
+
+    # Catch users using the back button
     else:
         addr_num = len(complete_addresses)
 
+    # Catch kwarg requests for page title ordinals
     if ord:
         return formatter.number_to_words(formatter.ordinal(addr_num)).title()
     else:
@@ -218,14 +227,6 @@ class ChildcareAddressLookupView(BaseFormView):
             record['town'] = selected_address['townOrCity']
             record['postcode'] = selected_address['postcode']
             NannyGatewayActions().put('childcare-address', params=record)
-
-        #  Redefine API response so that incorrect address records can be removed
-        api_response = NannyGatewayActions().list('childcare-address', params={'application_id': app_id})
-        incomplete_addresses = [address for address in api_response.record if address['street_line1'] is None]
-
-        # Delete record that have not being completed - only invalid
-        for address in incomplete_addresses:
-            NannyGatewayActions().delete('childcare-address', params=address)
 
         return HttpResponseRedirect(build_url('Childcare-Address-Details', get={
             'id': app_id,
@@ -408,11 +409,14 @@ class ChildcareAddressDetailsView(BaseTemplateView):
         """
         app_id = self.request.GET['id']
         kwargs['id'] = app_id
-        api_response = NannyGatewayActions().list('childcare-address',
-                                                  params={'application_id': app_id})
 
-        if api_response.status_code == 200:
-            api_response.record = [address for address in api_response.record if address['street_line1'] is not None]
+        #  Redefine API response so that incorrect address records can be removed
+        api_response = NannyGatewayActions().list('childcare-address', params={'application_id': app_id})
+        incomplete_addresses = [address for address in api_response.record if address['street_line1'] is None]
+
+        # Delete record that have not being completed - only invalid
+        for address in incomplete_addresses:
+            NannyGatewayActions().delete('childcare-address', params=address)
 
         addresses = {}
         count = 1
