@@ -7,26 +7,33 @@ from ..utils import *
 from ..address_helper import *
 import inflect
 from datetime import datetime
-
 from nanny.db_gateways import NannyGatewayActions
 
 
 def get_address_number_postcode(app_id, add, ord):
     """
-
-    :param app_id:
-    :param add:
-    :param ord:
-    :return:
+    A function that uses the API to find the number of complete and incomplete childcare addresses within the postcode
+    lookup page.
+    :param app_id: The ID of the current applicant
+    :param add: A flag that is appended to the URL should a user use the 'add another address' button on the address
+                details page.
+                *** This can be abused by using the 'add another' button, completing a second address, then using the
+                    back button to return to the postcode lookup page
+    :param ord: Ordinal: A true/false value that is passed in to differentiate between a request for the number of
+                addresses and the ordinal required for the page title
+    :return: Return either the address number or the ordinal string for adaptable html content
     """
     formatter = inflect.engine()
     api_response = NannyGatewayActions().list('childcare-address', params={'application_id': app_id})
 
+    # API records do not exist while on the postcode lookup page for the first time so the ordinal needs to be defined
+    # outside of the address number
     if api_response.status_code == 404:
         return 'First'
 
     complete_addresses = [address for address in api_response.record if address['street_line1'] is not None]
 
+    # catch first time journey users or those using the back button from the address lookup page on the first journey
     if len(complete_addresses) == 0:
         addr_num = 1
     else:
@@ -34,7 +41,6 @@ def get_address_number_postcode(app_id, add, ord):
             addr_num = len(complete_addresses) + 1
         else:
             addr_num = len(complete_addresses)
-
     if ord:
         return formatter.number_to_words(formatter.ordinal(addr_num)).title()
     else:
@@ -43,11 +49,15 @@ def get_address_number_postcode(app_id, add, ord):
 
 def get_address_number_address_lookup(app_id, add, ord):
     """
-
-    :param app_id:
-    :param add:
-    :param ord:
-    :return:
+    A function that uses the API to find the number of complete and incomplete childcare addresses within the address
+    lookup page.
+    :param app_id: The ID of the current applicant
+    :param add: A flag that is appended to the URL should a user use the 'add another address' button on the address
+                details page, which is then continued as a string (!) to this page, allowing formatting of the
+                address number if this is a new journey.
+    :param ord: Ordinal: A true/false value that is passed in to differentiate between a request for the number of
+                addresses and the ordinal required for the page title
+    :return: Return either the address number or the ordinal string for adaptable html content
     """
     formatter = inflect.engine()
     api_response = NannyGatewayActions().list('childcare-address', params={'application_id': app_id})
@@ -66,65 +76,13 @@ def get_address_number_address_lookup(app_id, add, ord):
         else:
             addr_num = len(complete_addresses)
 
-    # Catch users using the back button
     else:
         addr_num = len(complete_addresses)
 
-    # Catch kwarg requests for page title ordinals
     if ord:
         return formatter.number_to_words(formatter.ordinal(addr_num)).title()
     else:
         return str(addr_num)
-
-
-# def get_address_number_postcode(app_id, add, ord):
-#     """
-#     get ordinal value of this childcare address
-#     :param app_id: id of the application
-#     :return:
-#     """
-#     formatter = inflect.engine()
-#     api_response = NannyGatewayActions().list('childcare-address', params={'application_id': app_id})
-#
-#     # If no record exists set ordinal to First
-#     if api_response.status_code == 404:
-#         return 'First'
-#     else:
-#         api_response.record = [address for address in api_response.record if address['street_line1'] is not None]
-#         index = len(api_response.record)
-#
-#         if add or len(api_response.record) == 0:
-#             #  If the user has entered this page through the use of the 'add another address' button, increase the
-#             #  index number for correct ordinals and address number displayed within the html
-#             index += 1
-#
-#         if ord:
-#             return formatter.number_to_words(formatter.ordinal(index)).title()
-#         else:
-#             return str(index)
-#
-
-# def get_address_number_address_lookup(app_id, ord):
-#     """
-#
-#     :param app_id:
-#     :param ord:
-#     :return:
-#     """
-#     formatter = inflect.engine()
-#     api_response = NannyGatewayActions().list('childcare-address', params={'application_id': app_id})
-#     complete_addresses = [address for address in api_response.record if address['street_line1'] is not None]
-#     incomplete_addresses = [address for address in api_response.record if address['street_line1'] is None]
-#
-#     # Catch users coming back from the address details page
-#     if len(incomplete_addresses) == 0:
-#         index = len(complete_addresses)
-#     else:
-#         index = len(complete_addresses) + 1
-#     if ord:
-#         return formatter.number_to_words(formatter.ordinal(index)).title()
-#     else:
-#         return str(index)
 
 
 class ChildcareAddressPostcodeView(BaseFormView):
@@ -194,7 +152,6 @@ class ChildcareAddressPostcodeView(BaseFormView):
 
         kwargs['fields'] = [kwargs['form'].render_field(name, field) for name, field in kwargs['form'].fields.items()]
         kwargs['id'] = app_id
-
         kwargs['ordinal'] = get_address_number_postcode(app_id, add, True)
         kwargs['addr_num'] = get_address_number_postcode(app_id, add, False)
 
@@ -359,12 +316,8 @@ class ChildcareAddressManualView(BaseFormView):
         childcare_address_id = self.request.GET['childcare_address_id'] if 'childcare_address_id' in self.request.GET else None
         add = self.request.GET.get('add')  # Returns none if 'add another' button is not used - User using back button
 
-        self.initial = {
-            'id': app_id
-        }
-        
+        self.initial = {'id': app_id}
         kwargs['id'] = app_id
-
         api_response = NannyGatewayActions().list('childcare-address',
                                                   params={'application_id': app_id})
 
@@ -379,7 +332,6 @@ class ChildcareAddressManualView(BaseFormView):
             kwargs['form'] = self.get_form()
 
         kwargs['fields'] = [kwargs['form'].render_field(name, field) for name, field in kwargs['form'].fields.items()]
-
         kwargs['ordinal'] = get_address_number_address_lookup(app_id, add, True)
         kwargs['addr_num'] = get_address_number_address_lookup(app_id, add, False)
 
@@ -414,7 +366,7 @@ class ChildcareAddressDetailsView(BaseTemplateView):
         api_response = NannyGatewayActions().list('childcare-address', params={'application_id': app_id})
         incomplete_addresses = [address for address in api_response.record if address['street_line1'] is None]
 
-        # Delete record that have not being completed - only invalid
+        # Delete record that have not being completed
         for address in incomplete_addresses:
             NannyGatewayActions().delete('childcare-address', params=address)
 
@@ -441,6 +393,8 @@ class ChildcareAddressDetailsView(BaseTemplateView):
                 context['non_field_errors'] = ["You can only enter up to 5 childcare addresses"]
                 context['error_summary_title'] = "There was a problem"
                 return render(request, self.template_name, context)
+
+            # Return the URL with a flag that is used to increment the number of addresses
             return HttpResponseRedirect(build_url('Childcare-Address-Postcode-Entry', get={
                 'id': app_id,
                 'add': 1
