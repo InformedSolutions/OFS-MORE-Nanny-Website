@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 
 import os
 
+from nanny.logging import skip_starting_http_connection_logs
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -183,39 +185,51 @@ TEST_OUTPUT_DIR = 'xmlrunner'
 
 # Output all logs to /logs directory
 LOGGING = {
-  'version': 1,
-  'disable_existing_loggers': False,
-  'formatters': {
-    'console': {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'console': {
             # exact format is not important, this is the minimum information
             'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
         },
+    },
+    'handlers': {
+        'file': {
+            'level': 'WARNING',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs/output.log'),
+            'formatter': 'console',
+            'when': 'midnight',
+            'backupCount': 10
         },
-  'handlers': {
-    'file': {
-        'level': 'DEBUG',
-        'class': 'logging.handlers.TimedRotatingFileHandler',
-        'filename': 'logs/output.log',
-        'formatter': 'console',
-        'when': 'midnight',
-        'backupCount': 10
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler'
+        },
     },
-    'console': {
-        'level': 'DEBUG',
-        'class': 'logging.StreamHandler'
+    'filters': {
+        'urllib3_filter': {
+            '()': 'django.utils.log.CallbackFilter',
+            'callback': skip_starting_http_connection_logs,
+        }
     },
-   },
-   'loggers': {
-     '': {
-       'handlers': ['file', 'console'],
-         'level': 'DEBUG',
-           'propagate': True,
-      },
-      'django.server': {
-       'handlers': ['file', 'console'],
-         'level': 'INFO',
-           'propagate': True,
-      },
+    'loggers': {
+        '': {
+            'handlers': ['file', 'console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'django.server': {
+            'handlers': ['file', 'console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'urllib3.connectionpool': {
+            'handlers': ['file', 'console'],
+            'level': 'DEBUG',
+            'propagate': False,
+            'filters': ['urllib3_filter'],
+        },
     },
 }
 
