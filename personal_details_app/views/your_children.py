@@ -43,21 +43,20 @@ class PersonalDetailsYourChildrenView(NannyFormView):
             application_record['personal_details_status'] = 'IN_PROGRESS'
         NannyGatewayActions().put('application', params=application_record)
 
-        nanny_api_response = NannyGatewayActions().read('application', params={'application_id': application_id})
-        if nanny_api_response.status_code == 200:
-            nanny_api_response.record['your_children'] = form.cleaned_data['your_children']
+        application_record['your_children'] = form.cleaned_data['your_children']
 
         data_dict = {
             'application_id': application_id,
             'your_children': form.cleaned_data['your_children'],
         }
 
+
+        # TODO If the application is not made by this point an error should be raised and should not be created
+
         existing_record = NannyGatewayActions().read('applicant-personal-details', params={'application_id': application_id})
         if existing_record.status_code == 200:
             NannyGatewayActions().patch('applicant-personal-details', params=data_dict)
         elif existing_record.status_code == 404:
             NannyGatewayActions().create('applicant-personal-details', params=data_dict)
-
-        self.success_url = 'personal-details:Personal-Details-Summary'
 
         return super().form_valid(form)
