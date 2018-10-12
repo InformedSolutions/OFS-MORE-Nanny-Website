@@ -27,7 +27,9 @@
 
                     {% if row.link %}
                         <td class="change-answer">
-                            <a href="{{row.link}}" alt="Change {{ row.change_link_description }}">Change</a>
+                            <a href="{{row.link}}" alt="Change {{ row.change_link_description }}">
+                                Change <span class="visuallyhidden">{{ row.change_link_description }}</span>
+                            </a>
                         </td>
                     {% endif %}
                 </tr>
