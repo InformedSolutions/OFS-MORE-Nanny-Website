@@ -10,7 +10,7 @@ from ..forms.date_of_birth import PersonalDetailsDOBForm
 class PersonalDetailDOBView(NannyFormView):
     template_name = 'dob.html'
     form_class = PersonalDetailsDOBForm
-    success_url = 'Personal-Details-Lived-Abroad'
+    success_url = 'Personal-Details-Home-Address'
 
     def get_initial(self):
         """

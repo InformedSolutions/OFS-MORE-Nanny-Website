@@ -8,7 +8,7 @@ from nanny.utilities import app_id_finder
 class PersonalDetailsYourChildrenView(NannyFormView):
     template_name = 'your_children.html'
     form_class = PersonalDetailsYourChildrenForm
-    success_url = 'Personal-Details-Summary' # Add to url file
+    success_url = 'Personal-Details-Summary'
 
     def get_initial(self):
         """
@@ -24,7 +24,7 @@ class PersonalDetailsYourChildrenView(NannyFormView):
         elif response.status_code == 404:
             return initial
 
-        initial['child_under16'] = personal_details_record['child_under16'] # Use this name for the form too
+        initial['child_under16'] = personal_details_record['child_under16']
 
         # If there has yet to be an entry for the model associated with the form, then no population necessary
 
