@@ -9,8 +9,7 @@ from nanny.db_gateways import NannyGatewayActions
 
 def show_hide_tasks(context, application, application_id):
     """
-    Method hiding or showing the your children tasks based on whether the applicant has
-    children
+    Method hiding or showing the your children tasks based on whether the applicant has children
     :param context: a dictionary containing all tasks for the task list
     :param context: Application object
     :return: dictionary object
