@@ -18,18 +18,13 @@ class PersonalDetailsYourChildrenView(NannyFormView):
         initial = super().get_initial()
         application_id = app_id_finder(self.request)
 
-        if self.request.method == 'GET':
+        response = NannyGatewayActions().read('applicant-personal-details', params={'application_id': application_id})
+        if response.status_code == 200:
+            personal_details_record = response.record
+        elif response.status_code == 404:
+            return initial
 
-            response = NannyGatewayActions().read('applicant-personal-details', params={'application_id': application_id})
-            if response.status_code == 200:
-                initial['your_children'] = response.record['your_children']
-                return initial
-
-            elif response.status_code == 404:
-                return initial
-
-        else:
-            return {}
+        initial['your_children'] = personal_details_record['your_children']
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
@@ -47,6 +42,10 @@ class PersonalDetailsYourChildrenView(NannyFormView):
             application_record['personal_details_status'] = 'IN_PROGRESS'
         NannyGatewayActions().put('application', params=application_record)
 
+        nanny_api_response = NannyGatewayActions().read('application', params={'application_id': application_id})
+        if nanny_api_response.status_code == 200:
+            nanny_api_response.record['your_children'] = form.cleaned_data['your_children']
+
         data_dict = {
             'application_id': application_id,
             'your_children': form.cleaned_data['your_children'],
@@ -58,9 +57,6 @@ class PersonalDetailsYourChildrenView(NannyFormView):
         elif existing_record.status_code == 404:
             NannyGatewayActions().create('applicant-personal-details', params=data_dict)
 
-        if form.cleaned_data['your_children'] == 'True':
-            self.success_url = 'personal-details:Personal-Details-Certificates-Of-Good-Conduct'
-        elif form.cleaned_data['your_children'] == 'False':
-            self.success_url = 'personal-details:Personal-Details-Summary'
+        self.success_url = 'personal-details:Personal-Details-Summary'
 
         return super().form_valid(form)

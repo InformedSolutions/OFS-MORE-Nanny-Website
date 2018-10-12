@@ -7,7 +7,7 @@ from django.views.decorators.cache import never_cache
 from nanny.db_gateways import NannyGatewayActions
 
 
-def show_hide_tasks(context, application):
+def show_hide_tasks(context, application, application_id):
     """
     Method hiding or showing the your children tasks based on whether the applicant has
     children
@@ -19,8 +19,7 @@ def show_hide_tasks(context, application):
     for task in context['tasks']:
         if task['name'] == 'your_children':
 
-            application_id = application.get['id']
-            nanny_api_response = NannyGatewayActions().read('application', params={'application_id': application_id})
+            nanny_api_response = NannyGatewayActions().read('applicant-personal-details', params={'application_id': application_id})
             if nanny_api_response.status_code == 200:
                 application = nanny_api_response.record
             else:
@@ -29,9 +28,7 @@ def show_hide_tasks(context, application):
                 else:
                     HttpResponseRedirect(reverse('Service-Unavailable'))
 
-            your_children = application.record['your_children']
-
-            if your_children is False:
+            if application['your_children'] is True:
                 task['hidden'] = False
             else:
                 task['hidden'] = True
@@ -81,11 +78,22 @@ class TaskListView(View):
                     'status': application['personal_details_status'],
                     'arc_flagged': application['personal_details_arc_flagged'],
                     'description': 'Your personal details',
-                    'your_children': "your_children",
                     'status_url': None,
                     'status_urls': {
                         'COMPLETED/FLAGGED': 'personal-details:Personal-Details-Summary',
                         'NOT_COMPLETED': 'personal-details:Personal-Details-Name'
+                    }
+
+                },
+                {   # This is using placeholder details to populate fields as the task is not yet created
+                    'name': 'your_children',
+                    'status': application['childcare_address_status'],
+                    'arc_flagged': application['childcare_address_arc_flagged'],
+                    'description': 'Your children',
+                    'status_url': '',
+                    'status_urls': {
+                        'COMPLETED/FLAGGED': 'Childcare-Address-Summary',
+                        'NOT_COMPLETED': 'Childcare-Address-Guidance',
                     }
 
                 },
@@ -99,6 +107,7 @@ class TaskListView(View):
                         'COMPLETED/FLAGGED': 'Childcare-Address-Summary',
                         'NOT_COMPLETED': 'Childcare-Address-Guidance'
                     }
+
                 },
                 {
                     'name': 'first_aid_training',
@@ -157,7 +166,7 @@ class TaskListView(View):
             ]
         }
 
-        context = show_hide_tasks(context, application)
+        context = show_hide_tasks(context, application, application_id)
 
         context['all_complete'] = all(task['status'] == 'COMPLETED' for task in context['tasks'][:-1])
 
