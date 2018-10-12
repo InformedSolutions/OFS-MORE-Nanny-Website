@@ -19,7 +19,7 @@ class PersonalDetailsYourChildrenForm(NannyForm):
         (False, 'No')
     )
 
-    child_under16 = forms.ChoiceField(
+    your_children = forms.ChoiceField(
         label='Do you have children of your own under 16?',
         choices=options,
         widget=InlineRadioSelect,

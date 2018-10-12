@@ -8,7 +8,7 @@ from nanny.utilities import app_id_finder
 class PersonalDetailsYourChildrenView(NannyFormView):
     template_name = 'your_children.html'
     form_class = PersonalDetailsYourChildrenForm
-    success_url = 'Personal-Details-Summary'
+    success_url = 'personal-details:Personal-Details-Summary'
 
     def get_initial(self):
         """
@@ -18,17 +18,18 @@ class PersonalDetailsYourChildrenView(NannyFormView):
         initial = super().get_initial()
         application_id = app_id_finder(self.request)
 
-        response = NannyGatewayActions().read('applicant-personal-details', params={'application_id': application_id})
-        if response.status_code == 200:
-            personal_details_record = response.record
-        elif response.status_code == 404:
-            return initial
+        if self.request.method == 'GET':
 
-        initial['child_under16'] = personal_details_record['child_under16']
+            response = NannyGatewayActions().read('applicant-personal-details', params={'application_id': application_id})
+            if response.status_code == 200:
+                initial['your_children'] = response.record['your_children']
+                return initial
 
-        # If there has yet to be an entry for the model associated with the form, then no population necessary
+            elif response.status_code == 404:
+                return initial
 
-        return initial
+        else:
+            return {}
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
@@ -48,7 +49,7 @@ class PersonalDetailsYourChildrenView(NannyFormView):
 
         data_dict = {
             'application_id': application_id,
-            'child_under16': form.cleaned_data['child_under16'],
+            'your_children': form.cleaned_data['your_children'],
         }
 
         existing_record = NannyGatewayActions().read('applicant-personal-details', params={'application_id': application_id})
@@ -57,9 +58,9 @@ class PersonalDetailsYourChildrenView(NannyFormView):
         elif existing_record.status_code == 404:
             NannyGatewayActions().create('applicant-personal-details', params=data_dict)
 
-        if form.cleaned_data['child_under16'] == 'True':
+        if form.cleaned_data['your_children'] == 'True':
             self.success_url = 'personal-details:Personal-Details-Certificates-Of-Good-Conduct'
-        elif form.cleaned_data['child_under16'] == 'False':
+        elif form.cleaned_data['your_children'] == 'False':
             self.success_url = 'personal-details:Personal-Details-Summary'
 
         return super().form_valid(form)

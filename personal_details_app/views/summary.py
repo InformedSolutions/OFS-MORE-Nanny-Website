@@ -48,7 +48,7 @@ class Summary(View):
                                'personal-details:Personal-Details-Lived-Abroad',
                                "answer on living abroad in the last 5 years")
         your_children_row = Row('your_children', 'Do you have any children of your own under 16?',
-                                personal_details_record['children_under16'],
+                                personal_details_record['your_children'],
                                 'personal_details:Personal-Details-Your-Children',
                                 "answer on if you have any children under 16")
 

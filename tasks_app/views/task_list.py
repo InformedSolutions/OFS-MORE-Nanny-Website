@@ -29,9 +29,9 @@ def show_hide_tasks(context, application):
                 else:
                     HttpResponseRedirect(reverse('Service-Unavailable'))
 
-            child_under_16 = application.record['children_under16']
+            your_children = application.record['your_children']
 
-            if child_under_16 is False:
+            if your_children is False:
                 task['hidden'] = False
             else:
                 task['hidden'] = True
@@ -81,7 +81,7 @@ class TaskListView(View):
                     'status': application['personal_details_status'],
                     'arc_flagged': application['personal_details_arc_flagged'],
                     'description': 'Your personal details',
-                    'your_children': "children_under16",
+                    'your_children': "your_children",
                     'status_url': None,
                     'status_urls': {
                         'COMPLETED/FLAGGED': 'personal-details:Personal-Details-Summary',
