@@ -7,10 +7,9 @@
 
 {% include "back-button.html" %}
 
-{% include 'standard-error-summary.html' %}
+{% include 'childcare-details-error-summary.html' %}
 
 <!--<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>-->
-<br>
 <form method="post" novalidate>
 
     <h1 class="form-title heading-large">Childcare address details</h1>
@@ -19,7 +18,10 @@
         <label class="form-label-bold">
             Address {{ address.0 }}
         </label>
-        {{ address.1 }}
+        {{ address.1.address }}
+        <br>
+        <a href="{% url 'Childcare-Address-Details' %}?id={{id}}&childcare-address-id={{ address.1.childcare_address_id }}" class="button-remove">Remove this address</a>
+        <br>
     </p>
     {% endfor %}
 

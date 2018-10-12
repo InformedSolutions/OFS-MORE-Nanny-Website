@@ -408,6 +408,16 @@ div.error-summary ul.error-summary-list {
   margin-top: 15px;
 }
 
+.button-remove {
+  font-weight: bold;
+  float: right;
+  background:none!important;
+  color:#005ea5;
+  border:none;
+  padding:0!important;
+  cursor: pointer;
+}
+
 .button-save-and-exit {
   margin-left: 0;
   display: table;

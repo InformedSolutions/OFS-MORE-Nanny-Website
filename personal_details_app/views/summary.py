@@ -53,6 +53,6 @@ class Summary(View):
         personal_details_table.get_errors()
 
         context['table_list'] = [personal_details_table]
-        context['application_id'] = application_id
+        context['id'] = application_id
         context['page_title'] = 'Check your answers: your personal details'
         return context
