@@ -1,4 +1,4 @@
-from ..forms.your_children import PersonalDetailsYourChildrenForm # Create form with this name
+from ..forms.your_children import PersonalDetailsYourChildrenForm  # Create form with this name
 
 from nanny.base_views import NannyFormView
 from nanny.db_gateways import NannyGatewayActions
@@ -39,7 +39,8 @@ class PersonalDetailsYourChildrenView(NannyFormView):
 
         application_id = app_id_finder(self.request)
         application_record = NannyGatewayActions().read('application', params={'application_id': application_id}).record
-        if application_record['personal_details_status'] != 'COMPLETED' or application_record['personal_details_status'] != 'FLAGGED':
+        if application_record['personal_details_status'] != 'COMPLETED' or application_record[
+            'personal_details_status'] != 'FLAGGED':
             application_record['personal_details_status'] = 'IN_PROGRESS'
         NannyGatewayActions().put('application', params=application_record)
 
@@ -50,13 +51,11 @@ class PersonalDetailsYourChildrenView(NannyFormView):
             'your_children': form.cleaned_data['your_children'],
         }
 
-
-        # TODO If the application is not made by this point an error should be raised and should not be created
-
-        existing_record = NannyGatewayActions().read('applicant-personal-details', params={'application_id': application_id})
+        existing_record = NannyGatewayActions().read('applicant-personal-details',
+                                                     params={'application_id': application_id})
         if existing_record.status_code == 200:
             NannyGatewayActions().patch('applicant-personal-details', params=data_dict)
-        elif existing_record.status_code == 404:
-            NannyGatewayActions().create('applicant-personal-details', params=data_dict)
+        else:
+            raise ValueError("Application record does not exist")
 
         return super().form_valid(form)
