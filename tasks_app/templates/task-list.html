@@ -15,85 +15,85 @@
 
 
 <div class="grid-row">
-<div class="form-group task-list-align">
-<table id="your-details" style="table-layout: fixed; width: 100%">
-    <tbody>
+    <div class="form-group task-list-align">
+        <table id="your-details" style="table-layout: fixed; width: 100%">
+            <tbody>
 
-    {% for task in tasks %}
-                        {% if task.name == "review" and all_complete == False %}
+            {% for task in tasks %}
+            {% if task.name == "review" and all_complete == False %}
 
-                            <tr id="reviewInactive"> {# Display grayed out review button #}
-                                <td class="task" style="padding-right: 10px; word-wrap: break-word;">
+            <tr id="reviewInactive"> {# Display grayed out review button #}
+                <td class="task" style="padding-right: 10px; word-wrap: break-word;">
                                     <span>
                                         <span class="task-name grayed-out">Declaration and payment</span>
                                         <strong class="task-finished task-do-last">Do last</strong>
                                     </span>
-                                </td>
-                            </tr>
+                </td>
+            </tr>
 
-                        {% elif task.hidden %}
-                            <!-- do nothing -->
+            {% elif task.hidden %}
+            <!-- do nothing -->
 
-                        {% else %}
+            {% else %}
 
-                        <tr id="{{ task.name }}">
-                            <td class="task" style="padding-right: 10px; word-wrap: break-word;">
+            <tr id="{{ task.name }}">
+                <td class="task" style="padding-right: 10px; word-wrap: break-word;">
 
-                                    {% if task.status == 'NOT_STARTED' %}
-                                        <a href="{% url task.status_url %}?id={{ id }}">
-                                            <span class="task-name">{{ task.description }}</span>
-                                            <strong class="task-finished task-to-do" alt="{{ task.name }}: To do">To do</strong>
-                                        </a>
-                                    {% elif task.status == 'IN_PROGRESS' %}
-                                        <a href="{% url task.status_url %}?id={{ id }}">
-                                            <span class="task-name">{{ task.description }}</span>
-                                            <strong class="task-finished task-in-progress" alt="{{ task.name }}: Started">Started</strong>
-                                        </a>
-                                    {% elif task.status == 'FLAGGED' %}
-                                        <a href="{% url task.status_url %}?id={{ id }}">
-                                            <span class="task-name">{{ task.description }}</span>
-                                            <strong class="task-finished task-returned" alt="{{ task.name }}: Returned">Update</strong>
-                                        </a>
-                                    {% elif task.status == 'WAITING' %}
-                                        <a href="{% url task.status_url %}?id={{ id }}">
-                                            <span class="task-name">{{ task.description }}</span>
-                                            <strong class="task-finished task-waiting" alt="{{ task.name }}: Waiting">Waiting</strong>
-                                        </a>
-                                    {% elif task.status == 'COMPLETED' %}
-                                        {% if task.arc_flagged is True %}
-                                            <a href="{% url task.status_url %}?id={{ id }}">
-                                                <span class="task-name">{{ task.description }}</span>
-                                                <strong class="task-finished" alt="{{ task.name }}: Done">Done</strong>
-                                            </a>
-                                        {% elif task.arc_flagged is False %}
-                                            {% if application_status == 'FURTHER_INFORMATION' %}
-                                            <a href="" style="pointer-events: none;">
-                                                <span class="task-name grayed-out">{{ task.description }}</span>
-                                                <strong class="task-finished task-disabled" alt="{{ task.name }}: Done">Done</strong>
-                                            </a>
-                                            {% else %}
-                                            <a href="{% url task.status_url %}?id={{ id }}">
-                                                <span class="task-name">{{ task.description }}</span>
-                                                <strong class="task-finished" alt="{{ task.name }}: Done">Done</strong>
-                                            </a>
-                                            {% endif %}
-                                        {% else %}
-                                            <a href="{% url task.status_url %}?id={{ id }}">
-                                                <span class="task-name">{{ task.description }}</span>
-                                                <strong class="task-finished" alt="{{ task.name }}: Done">Done</strong>
-                                            </a>
-                                        {% endif %}
-                                    {% endif %}
+                    {% if task.status == 'NOT_STARTED' %}
+                    <a href="{% url task.status_url %}?id={{ id }}">
+                        <span class="task-name">{{ task.description }}</span>
+                        <strong class="task-finished task-to-do" alt="{{ task.name }}: To do">To do</strong>
+                    </a>
+                    {% elif task.status == 'IN_PROGRESS' %}
+                    <a href="{% url task.status_url %}?id={{ id }}">
+                        <span class="task-name">{{ task.description }}</span>
+                        <strong class="task-finished task-in-progress" alt="{{ task.name }}: Started">Started</strong>
+                    </a>
+                    {% elif task.status == 'FLAGGED' %}
+                    <a href="{% url task.status_url %}?id={{ id }}">
+                        <span class="task-name">{{ task.description }}</span>
+                        <strong class="task-finished task-returned" alt="{{ task.name }}: Returned">Update</strong>
+                    </a>
+                    {% elif task.status == 'WAITING' %}
+                    <a href="{% url task.status_url %}?id={{ id }}">
+                        <span class="task-name">{{ task.description }}</span>
+                        <strong class="task-finished task-waiting" alt="{{ task.name }}: Waiting">Waiting</strong>
+                    </a>
+                    {% elif task.status == 'COMPLETED' %}
+                    {% if task.arc_flagged is True %}
+                    <a href="{% url task.status_url %}?id={{ id }}">
+                        <span class="task-name">{{ task.description }}</span>
+                        <strong class="task-finished" alt="{{ task.name }}: Done">Done</strong>
+                    </a>
+                    {% elif task.arc_flagged is False %}
+                    {% if application_status == 'FURTHER_INFORMATION' %}
+                    <a href="" style="pointer-events: none;">
+                        <span class="task-name grayed-out">{{ task.description }}</span>
+                        <strong class="task-finished task-disabled" alt="{{ task.name }}: Done">Done</strong>
+                    </a>
+                    {% else %}
+                    <a href="{% url task.status_url %}?id={{ id }}">
+                        <span class="task-name">{{ task.description }}</span>
+                        <strong class="task-finished" alt="{{ task.name }}: Done">Done</strong>
+                    </a>
+                    {% endif %}
+                    {% else %}
+                    <a href="{% url task.status_url %}?id={{ id }}">
+                        <span class="task-name">{{ task.description }}</span>
+                        <strong class="task-finished" alt="{{ task.name }}: Done">Done</strong>
+                    </a>
+                    {% endif %}
+                    {% endif %}
 
-                            </td>
-                        </tr>
+                </td>
+            </tr>
 
-                        {% endif %}
-                    {% endfor %}
+            {% endif %}
+            {% endfor %}
 
-    </tbody>
-</table>
-</div>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <p>You can apply when everything is complete.</p>
@@ -104,7 +104,7 @@
 </div>
 
 {% if application_status == 'DRAFTING' %}
-    <a href="{% url 'Cancel-Application' %}?id={{ id }}">Cancel application</a>
+<a href="{% url 'Cancel-Application' %}?id={{ id }}">Cancel application</a>
 {% endif %}
 
 {% endblock %}
