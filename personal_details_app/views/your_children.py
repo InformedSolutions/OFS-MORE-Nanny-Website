@@ -25,6 +25,7 @@ class PersonalDetailsYourChildrenView(NannyFormView):
             return initial
 
         initial['your_children'] = personal_details_record['your_children']
+        return initial
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
