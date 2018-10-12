@@ -48,7 +48,7 @@ class YourChildrenTests(PersonalDetailsTests):
             self.assertEqual(response.status_code, 302)
             self.assertTrue('/check-answers/' in response.url)
 
-    def test_can_submit_your_children_abroad_page(self):
+    def test_can_submit_your_children_page(self):
         """
         Test to assert that the 'your children' page can be submitted.
         """
@@ -68,7 +68,7 @@ class YourChildrenTests(PersonalDetailsTests):
             self.assertEqual(response.status_code, 302)
             self.assertTrue('/check-answers/' in response.url)
 
-    def test_can_submit_invalid_lived_abroad_page(self):
+    def test_can_submit_invalid_your_children_page(self):
         """
         Test to assert that the 'your children' page can be submitted.
         """
