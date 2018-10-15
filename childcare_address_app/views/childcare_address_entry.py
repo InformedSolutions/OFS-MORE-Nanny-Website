@@ -127,7 +127,7 @@ class ChildcareAddressPostcodeView(BaseFormView):
             'id': app_id,
             'childcare_address_id': childcare_address_id,
             'add': add_another
-            }))
+        }))
 
     def get_context_data(self, **kwargs):
         """
@@ -322,7 +322,7 @@ class ChildcareAddressManualView(BaseFormView):
 
         childcare_address_id = self.request.GET[
             'childcare_address_id'] if 'childcare_address_id' in self.request.GET else None
-  
+
         add = self.request.GET.get('add')  # Returns none if 'add another' button is not used - User using back button
 
         self.initial = {
@@ -385,24 +385,28 @@ class ChildcareAddressDetailsView(BaseTemplateView):
                 # Check if childcare address exists (to handle page reloads)
                 childcare_address_id = self.request.GET['childcare-address-id']
                 last_childcare_address = NannyGatewayActions().list('childcare-address',
-                                                                    params={'childcare_address_id': childcare_address_id})
+                                                                    params={
+                                                                        'childcare_address_id': childcare_address_id})
 
-                if len(last_childcare_address) > 1:
+                if last_childcare_address.status_code == 200:
 
-                    # Delete the childcare address
-                    childcare_address_id = self.request.GET['childcare-address-id']
-                    NannyGatewayActions().delete('childcare-address', params={'childcare_address_id': childcare_address_id})
+                    if len(last_childcare_address.record) > 0:
+                        # Delete the childcare address
+                        childcare_address_id = self.request.GET['childcare-address-id']
+                        NannyGatewayActions().delete('childcare-address',
+                                                     params={'childcare_address_id': childcare_address_id})
 
-                    # Set Where you work default response to No
-                    application_response = NannyGatewayActions().read('application', params={'application_id': app_id})
-                    record = application_response.record
-                    record['address_to_be_provided'] = False
-                    NannyGatewayActions().put('application', params=record)
+                        # Set Where you work default response to No
+                        application_response = NannyGatewayActions().read('application',
+                                                                          params={'application_id': app_id})
+                        record = application_response.record
+                        record['address_to_be_provided'] = False
+                        NannyGatewayActions().put('application', params=record)
 
-                    # Redirect to Where you work page
-                    return HttpResponseRedirect(build_url('Childcare-Address-Where-You-Work', get={
-                        'id': app_id,
-                    }))
+                        # Redirect to Where you work page
+                        return HttpResponseRedirect(build_url('Childcare-Address-Where-You-Work', get={
+                            'id': app_id,
+                        }))
 
         return super(ChildcareAddressDetailsView, self).dispatch(request, *args, **kwargs)
 
