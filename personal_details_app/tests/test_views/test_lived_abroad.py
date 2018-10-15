@@ -66,7 +66,7 @@ class LivedAbroadTests(PersonalDetailsTests):
             })
 
             self.assertEqual(response.status_code, 302)
-            self.assertTrue('/children/' in response.url)
+            self.assertTrue('/your-children/' in response.url)
 
     def test_can_submit_invalid_lived_abroad_page(self):
         """
