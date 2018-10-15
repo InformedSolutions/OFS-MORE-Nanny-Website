@@ -129,8 +129,5 @@ class FinalDeclaration(NannyFormView):
         api_response = NannyGatewayActions().read('declaration', params={'application_id': app_id})
         if api_response.status_code == 200:
             record = api_response.record
-            initial['follow_rules'] = record['follow_rules']
-            initial['share_info_declare'] = record['share_info_declare']
-            initial['information_correct_declare'] = record['information_correct_declare']
-            initial['change_declare'] = record['change_declare']
+            initial['confirm_declare'] = record['confirmdeclare']
         return initial

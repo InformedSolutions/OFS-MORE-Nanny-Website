@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.conf.urls import url, include
 
-from declaration_app.views import declaration_guidance, final_declaration, master_summary, confirmation, accepted_confirmation
+from declaration_app.views import declaration_guidance, final_declaration, master_summary, confirmation, accepted_confirmation, registration_rules
 
 urlpatterns = [
     url(r'^check-answers/', master_summary.MasterSummary.as_view(), name='Master-Summary'),
