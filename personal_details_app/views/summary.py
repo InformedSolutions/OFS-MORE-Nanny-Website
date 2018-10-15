@@ -3,11 +3,12 @@ import datetime
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views import View
+
 from ..address_helper import AddressHelper
 
 from nanny.db_gateways import NannyGatewayActions
 from nanny.table_util import Row, Table
-from nanny.utilities import build_url
+from nanny.utilities import build_url, app_id_finder
 
 
 class Summary(View):
@@ -19,7 +20,7 @@ class Summary(View):
         return render(request, self.template_name, context)
 
     def post(self, request):
-        application_id = self.request.POST['id']
+        application_id = app_id_finder(request)
         application_record = NannyGatewayActions().read('application', params={'application_id': application_id}).record
         application_record['personal_details_status'] = 'COMPLETED'
         NannyGatewayActions().put('application', params=application_record)
