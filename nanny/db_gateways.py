@@ -29,7 +29,8 @@ class DBGatewayActions:
         'insurance-cover': 'application_id',
         'payment': 'application_id',
         'summary': 'application_id',
-        'user': 'application_id'
+        'user': 'application_id',
+        'arc-search': 'application_id'
     }
 
     def __init__(self):
