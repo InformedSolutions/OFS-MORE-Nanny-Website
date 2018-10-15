@@ -29,7 +29,7 @@ class Summary(View):
 
     def get_context_data(self):
         context = dict()
-        application_id = self.request.GET['id']
+        application_id = app_id_finder(self.request)
         personal_details_record = NannyGatewayActions().read('applicant-personal-details',
                                                              params={'application_id': application_id}).record
         address_record = NannyGatewayActions().read('applicant-home-address',
