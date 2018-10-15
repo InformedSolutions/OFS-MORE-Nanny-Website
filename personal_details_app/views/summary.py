@@ -55,5 +55,6 @@ class Summary(View):
 
         context['table_list'] = [personal_details_table]
         context['id'] = application_id
+        context['application_id'] = application_id
         context['page_title'] = 'Check your answers: your personal details'
         return context
