@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'^first-aid-training/', FirstAidGuidanceView.as_view(), name='First-Aid-Guidance'),
     url(r'^costs/', CostsView.as_view(), name='Costs'),
     url(r'^help-contacts/', HelpAndContactView.as_view(), name='Help-And-Contact'),
+    url(r'^your_children/your_children/', YourChildrenGuidance.as_view(), name='Your-Children-Guidance'),
 ]
 
 # Django toolbar settings for development environments
