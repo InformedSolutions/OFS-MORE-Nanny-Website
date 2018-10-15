@@ -1,14 +1,14 @@
-from ..forms.lived_abroad import PersonalDetailsLivedAbroadForm
+from ..forms.your_children import PersonalDetailsYourChildrenForm  # Create form with this name
 
 from nanny.base_views import NannyFormView
 from nanny.db_gateways import NannyGatewayActions
 from nanny.utilities import app_id_finder
 
 
-class PersonalDetailLivedAbroadView(NannyFormView):
-    template_name = 'lived_abroad.html'
-    form_class = PersonalDetailsLivedAbroadForm
-    success_url = 'personal-details:Personal-Details-Your-Children'
+class PersonalDetailsYourChildrenView(NannyFormView):
+    template_name = 'your_children.html'
+    form_class = PersonalDetailsYourChildrenForm
+    success_url = 'personal-details:Personal-Details-Summary'
 
     def get_initial(self):
         """
@@ -17,16 +17,11 @@ class PersonalDetailLivedAbroadView(NannyFormView):
         """
         initial = super().get_initial()
         application_id = app_id_finder(self.request)
-
         response = NannyGatewayActions().read('applicant-personal-details', params={'application_id': application_id})
+
         if response.status_code == 200:
             personal_details_record = response.record
-        elif response.status_code == 404:
-            return initial
-
-        initial['lived_abroad'] = personal_details_record['lived_abroad']
-
-        # If there has yet to be an entry for the model associated with the form, then no population necessary
+            initial['your_children'] = personal_details_record['your_children']
 
         return initial
 
@@ -42,24 +37,23 @@ class PersonalDetailLivedAbroadView(NannyFormView):
 
         application_id = app_id_finder(self.request)
         application_record = NannyGatewayActions().read('application', params={'application_id': application_id}).record
-        if application_record['personal_details_status'] != 'COMPLETED' or application_record['personal_details_status'] != 'FLAGGED':
+        if application_record['personal_details_status'] != 'COMPLETED' or application_record[
+            'personal_details_status'] != 'FLAGGED':
             application_record['personal_details_status'] = 'IN_PROGRESS'
         NannyGatewayActions().put('application', params=application_record)
 
+        application_record['your_children'] = form.cleaned_data['your_children']
+
         data_dict = {
             'application_id': application_id,
-            'lived_abroad': form.cleaned_data['lived_abroad'],
+            'your_children': form.cleaned_data['your_children'],
         }
 
-        existing_record = NannyGatewayActions().read('applicant-personal-details', params={'application_id': application_id})
+        existing_record = NannyGatewayActions().read('applicant-personal-details',
+                                                     params={'application_id': application_id})
         if existing_record.status_code == 200:
             NannyGatewayActions().patch('applicant-personal-details', params=data_dict)
-        elif existing_record.status_code == 404:
-            NannyGatewayActions().create('applicant-personal-details', params=data_dict)
-
-        if form.cleaned_data['lived_abroad'] == 'True':
-            self.success_url = 'personal-details:Personal-Details-Certificates-Of-Good-Conduct'
-        elif form.cleaned_data['lived_abroad'] == 'False':
-            self.success_url = 'personal-details:Personal-Details-Your-Children'
+        else:
+            raise ValueError("Application record does not exist")
 
         return super().form_valid(form)

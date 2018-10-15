@@ -48,9 +48,14 @@ class Summary(View):
                                personal_details_record['lived_abroad'],
                                'personal-details:Personal-Details-Lived-Abroad',
                                "answer on living abroad in the last 5 years")
+        your_children_row = Row('your_children', 'Do you have any children of your own under 16?',
+                                personal_details_record['your_children'],
+                                'personal-details:Personal-Details-Your-Children',
+                                "answer on if you have any children under 16")
 
         personal_details_table = Table(application_id)
-        personal_details_table.row_list = [name_row, date_of_birth_row, home_address_row, lived_abroad_row]
+        personal_details_table.row_list = [name_row, date_of_birth_row, home_address_row,
+                                           lived_abroad_row, your_children_row]
         personal_details_table.get_errors()
 
         context['table_list'] = [personal_details_table]
