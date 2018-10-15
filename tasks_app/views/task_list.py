@@ -87,13 +87,13 @@ class TaskListView(View):
                 {   # This is using placeholder details to populate fields as the task is not yet created
                     # and this currently mirrors the links and status of the 'childcare address' task
                     'name': 'your_children',
-                    'status': application['childcare_address_status'],
+                    'status': application['your_children_status'],
                     'arc_flagged': application['childcare_address_arc_flagged'],
                     'description': 'Your children',
                     'status_url': None,
                     'status_urls': {
-                        'COMPLETED/FLAGGED': 'Childcare-Address-Summary',
-                        'NOT_COMPLETED': 'Childcare-Address-Guidance',
+                        'COMPLETED/FLAGGED': 'Your-Children-Guidance',
+                        'NOT_COMPLETED': 'Your-Children-Guidance',
                     }
 
                 },
