@@ -1,0 +1,22 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Your Children{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+<h1 class="form-title heading-large">
+    Your children
+</h1>
+
+<p>You need to tell us about your children who are under 16.</p>
+<p>Council social services will carry out checks on them.</p>
+<p>This to make sure that you’re suitable to look after children.</p>
+
+<a href="{{ link_url }}" class="button">Continue</a>
+<br>
+<br>
+
+{% endblock %}
