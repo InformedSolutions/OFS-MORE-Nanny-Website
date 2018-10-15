@@ -9,4 +9,5 @@ urlpatterns = [
     url(r'^your-declaration', final_declaration.FinalDeclaration.as_view(), name='Declaration-Summary'),
     url(r'^accepted-confirmation/', accepted_confirmation.AcceptedConfirmation.as_view(), name='accepted-confirmation'),
     url(r'^confirmation/', confirmation.Confirmation.as_view(), name='confirmation'),
+    url(r'^registration-rules/', registration_rules.RegistrationRules.as_view(), name='Registration-Rules')
 ]
