@@ -17,14 +17,12 @@ class PersonalDetailsYourChildrenView(NannyFormView):
         """
         initial = super().get_initial()
         application_id = app_id_finder(self.request)
-
         response = NannyGatewayActions().read('applicant-personal-details', params={'application_id': application_id})
+
         if response.status_code == 200:
             personal_details_record = response.record
-        elif response.status_code == 404:
-            return initial
+            initial['your_children'] = personal_details_record['your_children']
 
-        initial['your_children'] = personal_details_record['your_children']
         return initial
 
     def get_context_data(self, **kwargs):
