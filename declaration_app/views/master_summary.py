@@ -26,6 +26,7 @@ class MasterSummary(NannyTemplateView):
         json = self.load_json(app_id, '', self.section_names, False)
         context['json'] = json
         context['application_id'] = app_id
+        context['id'] = self.request.GET['id']
         return context
 
     def post(self, request):
