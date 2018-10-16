@@ -32,6 +32,9 @@ def show_hide_tasks(context, application, application_id):
             else:
                 task['hidden'] = True
 
+        else:
+            task['hidden'] = False
+
     return context
 
 
@@ -168,7 +171,7 @@ class TaskListView(View):
 
         context = show_hide_tasks(context, application, application_id)
 
-        context['all_complete'] = all(task['status'] == 'COMPLETED' for task in context['tasks'][:-1])
+        context['all_complete'] = all(task['status'] == 'COMPLETED' for task in context['tasks'][:-1] if not task['hidden'])
 
         if context['all_complete']:
             context['tasks'][-1]['status'] = 'NOT_STARTED'
