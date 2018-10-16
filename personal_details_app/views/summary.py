@@ -51,7 +51,7 @@ class Summary(View):
         your_children_row = Row('your_children', 'Do you have any children of your own under 16?',
                                 personal_details_record['your_children'],
                                 'personal-details:Personal-Details-Your-Children',
-                                "answer on if you have any children under 16")
+                                "Change children of your own")
 
         personal_details_table = Table(application_id)
         personal_details_table.row_list = [name_row, date_of_birth_row, home_address_row,
