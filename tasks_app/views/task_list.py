@@ -18,7 +18,8 @@ def show_hide_tasks(context, application, application_id):
     for task in context['tasks']:
         if task['name'] == 'your_children':
 
-            nanny_api_response = NannyGatewayActions().read('applicant-personal-details', params={'application_id': application_id})
+            nanny_api_response = NannyGatewayActions().read('applicant-personal-details',
+                                                            params={'application_id': application_id})
             if nanny_api_response.status_code == 200:
                 application = nanny_api_response.record
             else:
@@ -90,7 +91,7 @@ class TaskListView(View):
                     }
 
                 },
-                {   # This is using placeholder details to populate fields as the task is not yet created
+                {  # This is using placeholder details to populate fields as the task is not yet created
                     # and this currently mirrors the links and status of the 'childcare address' task
                     'name': 'your_children',
                     'status': application['your_children_status'],
@@ -174,13 +175,15 @@ class TaskListView(View):
 
         context = show_hide_tasks(context, application, application_id)
 
-        context['all_complete'] = all(task['status'] == 'COMPLETED' for task in context['tasks'][:-1] if not task['hidden'])
+        context['all_complete'] = all(
+            task['status'] == 'COMPLETED' for task in context['tasks'][:-1] if not task['hidden'])
 
         if context['all_complete']:
             context['tasks'][-1]['status'] = 'NOT_STARTED'
             context['tasks'][-1]['status_url'] = 'declaration:Master-Summary'
 
         for task in context['tasks'][1:-1]:
-            task['status_url'] = task['status_urls']['COMPLETED/FLAGGED'] if task['status'] in ('COMPLETED', 'FLAGGED') else task['status_urls']['NOT_COMPLETED']
+            task['status_url'] = task['status_urls']['COMPLETED/FLAGGED'] if task['status'] in (
+            'COMPLETED', 'FLAGGED') else task['status_urls']['NOT_COMPLETED']
 
         return render(request, 'task-list.html', context)
