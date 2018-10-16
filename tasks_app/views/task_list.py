@@ -27,10 +27,16 @@ def show_hide_tasks(context, application, application_id):
                 else:
                     HttpResponseRedirect(reverse('Service-Unavailable'))
 
+            # If the applicant has children under 16, reveal the 'your children' task
             if application['your_children'] is True:
                 task['hidden'] = False
             else:
                 task['hidden'] = True
+
+        # If the task is not conditionally revealed, set the 'hidden' flag to false
+        # This allows the declaration task to be unlocked correctly
+        else:
+            task['hidden'] = False
 
     return context
 
@@ -168,7 +174,7 @@ class TaskListView(View):
 
         context = show_hide_tasks(context, application, application_id)
 
-        context['all_complete'] = all(task['status'] == 'COMPLETED' for task in context['tasks'][:-1])
+        context['all_complete'] = all(task['status'] == 'COMPLETED' for task in context['tasks'][:-1] if not task['hidden'])
 
         if context['all_complete']:
             context['tasks'][-1]['status'] = 'NOT_STARTED'
