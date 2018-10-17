@@ -1,0 +1,27 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Your children's addresses{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+
+<h1 class="form-title heading-large">
+    Your children's addresses
+</h1>
+
+<p>Please give details of your children who are under 16.</p>
+
+    {% csrf_token %}
+    <input type="hidden" value="{{id}}" name="id"/>
+    <input type="submit" class="button" value="Confirm and continue">
+</form>
+
+
+<br>
+<br>
+
+{% endblock %}

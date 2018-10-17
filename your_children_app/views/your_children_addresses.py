@@ -4,12 +4,12 @@ from nanny import NannyGatewayActions
 from nanny.base_views import NannyTemplateView
 
 
-class YourChildrenGuidance(NannyTemplateView):
+class YourChildrenAddressesView(NannyTemplateView):
     """
-    Template view to  render the guidance page from first access of task from task list
+    Template view to  render the your children details view
     """
-    template_name = "your_children_guidance.html"
-    success_url_name = 'Task-List'
+    template_name = "your_children_addresses.html"
+    success_url_name = 'Your-Children-address'
 
     def post(self, request):
 
@@ -21,4 +21,4 @@ class YourChildrenGuidance(NannyTemplateView):
             record['your_children_status'] = 'IN_PROGRESS'
             NannyGatewayActions().put('application', params=record)
 
-        return HttpResponseRedirect(build_url('Task-List', get={'id': app_id}))
+        return HttpResponseRedirect(build_url('Your-Children-address', get={'id': app_id}))
