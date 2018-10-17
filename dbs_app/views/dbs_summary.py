@@ -44,6 +44,8 @@ class DBSSummary(NannyTemplateView):
         dbs_summary_table.get_errors()
         table_list = [dbs_summary_table]
 
+        context['id'] = self.request.GET['id']
+
         context['table_list'] = table_list
         context['application_id'] = application_id
         context['page_title'] = 'Check your answers: criminal record (DBS) check'

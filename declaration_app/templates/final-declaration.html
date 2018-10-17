@@ -16,16 +16,17 @@
 <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
 
     <h3 class="heading-small">
-        I understand that:
+        I understand that I must follow the registration rules.
     </h3>
-    {{ fields.0 }}
-    {{ fields.1 }}
     <h3 class="heading-small">
         By continuing, I confirm that:
     </h3>
-    {{ fields.2 }}
-    {{ fields.3 }}
-
+    <p>
+        <ul class = "list-bullet">
+            <li>the information I have given is correct</li>
+            <li>I will tell Ofsted if this information changes</li>
+        </ul>
+    </p>
     <p>
         <img src="{% static 'icon-important-2x.png' %}" alt="Important"
                     style="height: 40px; margin-right: 10px; display: inline-block; vertical-align: middle;"/>
@@ -37,9 +38,11 @@
             </ul>
         </div>
     </p>
-
+    <p>
+        {{ fields.0 }}
+    </p>
     {% csrf_token %}
-    <input type="submit" name="action"  class="button" value="Confirm and pay your fee">
+    <input type="submit" name="action"  class="button" value="Continue">
 
 </form>
 

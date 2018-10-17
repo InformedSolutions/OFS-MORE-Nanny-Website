@@ -124,7 +124,7 @@ class TaskListView(View):
                     'status_url': None,
                     'status_urls': {
                         'COMPLETED/FLAGGED': 'first-aid:First-Aid-Summary',
-                        'NOT_COMPLETED': 'First-Aid-Guidance'
+                        'NOT_COMPLETED': 'first-aid:First-Aid-Guidance'
                     }
                 },
                 {

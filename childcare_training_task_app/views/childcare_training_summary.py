@@ -43,6 +43,7 @@ class ChildcareTrainingSummaryView(View):
 
         context['table_list'] = [childcare_training_summary_table]
         context['application_id'] = application_id
+        context['id'] = application_id
         context['page_title'] = 'Check your answers: childcare training'
 
         context['record'] = childcare_record
