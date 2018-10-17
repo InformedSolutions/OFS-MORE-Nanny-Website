@@ -39,4 +39,5 @@ class SummaryView(NannyTemplateView):
         context['application_id'] = application_id
         context['page_title'] = 'Check your answers: insurance cover'
 
+        context['id'] = self.request.GET['id']
         return context

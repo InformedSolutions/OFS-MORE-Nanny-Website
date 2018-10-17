@@ -3,11 +3,12 @@ import datetime
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views import View
+
 from ..address_helper import AddressHelper
 
 from nanny.db_gateways import NannyGatewayActions
 from nanny.table_util import Row, Table
-from nanny.utilities import build_url
+from nanny.utilities import build_url, app_id_finder
 
 
 class Summary(View):
@@ -19,7 +20,7 @@ class Summary(View):
         return render(request, self.template_name, context)
 
     def post(self, request):
-        application_id = self.request.POST['id']
+        application_id = app_id_finder(request)
         application_record = NannyGatewayActions().read('application', params={'application_id': application_id}).record
         application_record['personal_details_status'] = 'COMPLETED'
         NannyGatewayActions().put('application', params=application_record)
@@ -28,7 +29,7 @@ class Summary(View):
 
     def get_context_data(self):
         context = dict()
-        application_id = self.request.GET['id']
+        application_id = app_id_finder(self.request)
         personal_details_record = NannyGatewayActions().read('applicant-personal-details',
                                                              params={'application_id': application_id}).record
         address_record = NannyGatewayActions().read('applicant-home-address',
@@ -47,10 +48,11 @@ class Summary(View):
                                personal_details_record['lived_abroad'],
                                'personal-details:Personal-Details-Lived-Abroad',
                                "answer on living abroad in the last 5 years")
-        your_children_row = Row('your_children', 'Do you have any children of your own under 16?',
+        your_children_row = Row('your_children', 'Do you have children of your own under 16?',
                                 personal_details_record['your_children'],
                                 'personal-details:Personal-Details-Your-Children',
-                                "answer on if you have any children under 16")
+                                "children of your own")
+
 
         personal_details_table = Table(application_id)
         personal_details_table.row_list = [name_row, date_of_birth_row, home_address_row,
@@ -58,6 +60,7 @@ class Summary(View):
         personal_details_table.get_errors()
 
         context['table_list'] = [personal_details_table]
+        context['id'] = application_id
         context['application_id'] = application_id
         context['page_title'] = 'Check your answers: your personal details'
         return context
