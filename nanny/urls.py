@@ -9,6 +9,7 @@ urlpatterns = [
     url(r'^', include('tasks_app.urls')),
     url(r'^', include('personal_details_app.urls', namespace="personal-details")),
     url(r'^', include('childcare_address_app.urls')),
+    url(r'^', include('your_children_app.urls')),
     url(r'^', include('childcare_training_task_app.urls')),
     url(r'^', include('payment_app.urls', namespace="payment")),
     url(r'^', include('declaration_app.urls', namespace="declaration")),

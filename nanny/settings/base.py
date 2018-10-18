@@ -102,7 +102,8 @@ PROJECT_APPS = [
     'insurance_cover_app.apps.InsuranceCoverAppConfig',
     'dbs_app.apps.DbsAppConfig',
     'payment_app.apps.PaymentAppConfig',
-    'declaration_app.apps.DeclarationPaymentAppConfig'
+    'declaration_app.apps.DeclarationPaymentAppConfig',
+    'your_children_app.apps.YourChildrenAppConfig'
 ]
 
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
