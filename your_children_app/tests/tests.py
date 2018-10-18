@@ -22,9 +22,9 @@ class YourChildrenTests(TestCase):
 
     def test_can_access_your_children_endpoint(self):
         """
-        Test to assert that the 'your_children' endpoint can be accesses.
+        Test to assert that the 'your_children' endpoint can be accessed.
         """
 
-        response = self.nanny_actions.list('your-children', params={})
+        response = self.nanny_actions.list('application', params={})
 
         self.assertEqual(response.status_code, 200)
