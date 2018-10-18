@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Your children's addresses{% endblock %}
+{% block page_title %}Your child's address{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -10,16 +10,18 @@
 <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
 
 <h1 class="form-title heading-large">
-    Your children's addresses
+    Select ((first child name))’s address
 </h1>
 
-<p>WHICH OF YOUR CHILDREN LIVE WITH YOU TICK FORM</p>
+<p>ADDRESS LOOKUP SELECTION FORM</p>
 
     {% csrf_token %}
     <input type="hidden" value="{{id}}" name="id"/>
     <input type="submit" class="button" value="Confirm and continue">
 </form>
+<br>
 
+<a href="your-children-address-manual.html">I cannot find the address in the list</a>
 
 <br>
 <br>

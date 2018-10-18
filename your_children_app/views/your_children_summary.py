@@ -8,7 +8,7 @@ class YourChildrenManualSummaryView(NannyTemplateView):
     """
     Template view to  render the your children details view
     """
-    template_name = "your_children_address.html"
+    template_name = "your-children-check-answers.html"
     success_url_name = 'Task-List'
 
     def post(self, request):

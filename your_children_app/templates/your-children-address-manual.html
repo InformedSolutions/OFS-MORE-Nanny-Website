@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Your children's addresses{% endblock %}
+{% block page_title %}Your child's address{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -13,7 +13,7 @@
     Your children's addresses
 </h1>
 
-<p>WHICH OF YOUR CHILDREN LIVE WITH YOU TICK FORM</p>
+<p>ADDRESS MANUAL ENTRY FORM</p>
 
     {% csrf_token %}
     <input type="hidden" value="{{id}}" name="id"/>
