@@ -24,7 +24,6 @@ class YourChildrenDetailsForm(NannyForm):
             'max_length': 'First name must be under 100 characters long'
         }
     )
-
     middle_names = forms.CharField(
         label='Middle names (if you have any on your DBS check)',
         required=False,
@@ -32,7 +31,6 @@ class YourChildrenDetailsForm(NannyForm):
             'max_length': 'Middle names must be under 100 characters long'
         }
     )
-
     last_name = forms.CharField(
         label='Last name',
         error_messages={
@@ -40,7 +38,6 @@ class YourChildrenDetailsForm(NannyForm):
             'max_length': 'Last name must be under 100 characters long'
         }
     )
-
     date_of_birth = CustomSplitDateFieldDOB(
         label='Date of birth',
         help_text='For example, 31 03 1980',
@@ -48,6 +45,41 @@ class YourChildrenDetailsForm(NannyForm):
             'required': 'Please enter the full date, including the day, month and year'
         }
     )
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to initialise the form for the entry of child details
+        :param args: arguments passed to the form
+        :param kwargs: arguments passed to the form as keyword, such as the application ID
+        """
+        if 'id' in kwargs['initial']:
+            self.application_id_local = kwargs['initial']['id']
+        elif 'data' in kwargs and 'id' in kwargs['data']:
+            self.application_id_local = kwargs['data']['id']
+
+        if 'child_id' in kwargs['initial']:
+            self.childcare_address_id = kwargs['initial']['child_id']
+
+        super(YourChildrenDetailsForm, self).__init__(*args, **kwargs)
+
+        # TODO - Adapt the section below for this form, set all self.fields, consider the view file
+        # attempt to mirror the functions present in childcare address entry views/forms
+        # If information was previously entered, display it on the form
+
+        # set all field vars to None
+        # if child_id in self
+
+
+        postcode = None
+        if 'childcare_address_id' in self:
+            response = NannyGatewayActions().list('childcare-address', params={'childcare_address_id': self.childcare_address_id})
+            if response.status_code == 200:
+                postcode = response.record[0]['postcode']
+            self.pk = self.childcare_address_id
+
+        self.fields['postcode'].initial = postcode
+        self.field_list = ['postcode']
+
 
     def clean_first_name(self):
         """
