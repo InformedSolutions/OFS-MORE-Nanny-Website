@@ -1,4 +1,11 @@
+import datetime
+
 from nanny import app_id_finder, NannyGatewayActions
+from nanny.base_views import NannyTemplateView
+from your_children_app.forms.your_children_details_form import YourChildrenDetailsForm
+from django.http import HttpResponseRedirect
+from nanny.utilities import build_url, app_id_finder
+from nanny import NannyGatewayActions
 from nanny.base_views import NannyTemplateView
 
 
@@ -6,192 +13,88 @@ class YourChildrenDetailsView(NannyTemplateView):
     """
     Template view to  render the your children details view
     """
-    def get(self, request):
+    template_name = "your-children-details.html"
+    form_class = YourChildrenDetailsForm
+    success_url_name = 'your-children:Your-Children-addresses'
 
-        application_id_local = request.GET["id"]
-        application = Application.objects.get(pk=application_id_local)
+    def get_initial(self):
+        """
+        Get initial defines the initial data for the form instance that is to be rendered on the page
+        :return: a dictionary mapping form field names to values of the correct type
+        """
+        initial = super().get_initial()
+        application_id = app_id_finder(self.request)
+        response = NannyGatewayActions().read('applicant_children_details', params={'application_id': application_id})
 
-        number_of_children = int(request.GET["children"])
-        remove_person = int(request.GET["remove"])
-        remove_button = True
+        # Return existing record if one exists
+        if response.status_code == 200:
+            children_details_record = response.record
+        elif response.status_code == 404:
+            return initial
 
-        if number_of_children == 0:  # If there are no children in the database
+        initial['first_name'] = children_details_record['first_name']
+        initial['middle_name'] = children_details_record['middle_name']
+        initial['last_name'] = children_details_record['last_name']
 
-            number_of_children = 1  # Set the number of children to 1 to initialise one instance of the form
-            log.debug('Number of children set to 1 to initialise one instance of the form')
+        try:
+            initial['date_of_birth'] = datetime.datetime.strptime(children_details_record['date_of_birth'], '%Y-%m-%d')
+        except TypeError:
+            initial['date_of_birth'] = None
 
-        if number_of_children == 1:
-            remove_button = False  # Disable the remove person button
-            log.debug('Remove button disabled')
+        return initial
 
-        remove_child(application_id_local, remove_person)
-        log.debug('Child ' + str(remove_person) + ' removed')
-        rearrange_children(number_of_children, application_id_local)
-        log.debug('Children rearranged')
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        application_id = app_id_finder(self.request)
+        context['id'] = application_id
+        application_record = NannyGatewayActions().read('application',
+                                                        params={'application_id': application_id}).record
+        context['children_details_record'] = application_record['children_details_record']
+        return context
 
-        form_list = [PITHOwnChildrenDetailsForm(id=application_id_local, child=i, prefix=i) for i in
-                     range(1, number_of_children + 1)]
-        log.debug('List of own children not in the home generated')
+    def form_valid(self, form):
+        application_id = app_id_finder(self.request)
+        child_id = self.request.GET['child_id'] if 'child_id' in self.request.GET else None
 
-        if application.application_status == 'FURTHER_INFORMATION':
+        # Define the form field returns
+        first_name = form.cleaned_data['first_name']
+        middle_names = form.cleaned_data['middle_names'],
+        last_name = form.cleaned_data['last_name'],
+        date_of_birth = form.cleaned_data['date_of_birth'],
 
-            for index, form in enumerate(form_list):
+        if child_id:
+            # Update child details
+            api_response = NannyGatewayActions().read('child', params={'child_id': child_id})
+            api_response.record['first_name'] = first_name
+            api_response.record['middle_names'] = middle_names
+            api_response.record['last_name'] = last_name
+            api_response.record['date_of_birth'] = date_of_birth
 
-                if form.pk != '':  # If there are no children in the database yet, there will be no pk for the child.
+            NannyGatewayActions().put('child', params=api_response.record)
 
-                    form.error_summary_template_name = 'returned-error-summary.html'
-                    form.error_summary_title = "There was a problem with Child {0}'s details".format(str(index + 1))
-                    form.check_flag()
-
-                    log.debug('Error summary set up')
-
-        variables = {
-            'form_list': form_list,
-            'application_id': application_id_local,
-            'number_of_children': number_of_children,
-            'add_child': number_of_children + 1,
-            'remove_button': remove_button,
-            'remove_child': number_of_children - 1,
-            'people_in_home_status': application.people_in_home_status
-        }
-
-        return render(request, 'PITH_templates/PITH_own_children_details.html', variables)
-
-    def post(self, request):
-
-        current_date = timezone.now()
-        application_id_local = request.POST["id"]
-        application = Application.objects.get(pk=application_id_local)
-
-        number_of_children = int(request.POST["children"])
-        remove_button = True
-
-        if number_of_children == 0:  # If there are no children in the database
-
-            number_of_children = 1  # Set the number of children to 1 to initialise one instance of the form
-            log.debug('Number of children set to 1 to initialise one instance of the form')
-
-        if number_of_children == 1:
-            remove_button = False  # Disable the remove person button
-            log.debug('Remove button disabled')
-
-        form_list = []
-        forms_valid = True  # Bool indicating whether or not all the forms are valid
-        children_turning_16 = False  # Bool indicating whether or not all any children are turning 16
-
-        for i in range(1, int(number_of_children) + 1):
-
-            form = PITHOwnChildrenDetailsForm(request.POST, id=application_id_local, child=i, prefix=i)
-            form.error_summary_title = 'There was a problem with Child {0}\'s details'.format(str(i))
-            log.debug('Form initialised for child ' + str(i))
-
-            if application.application_status == 'FURTHER_INFORMATION':
-                form.error_summary_template_name = 'returned-error-summary.html'
-                form.remove_flag()
-                log.debug('Returned error summary template set up')
-
-            form_list.append(form)
-
-            if form.is_valid():
-
-                child_record = PITH_own_children_details_logic(application_id_local, form, i)
-                child_record.save()
-                log.debug('Child ' + str(i) + ' record saved to database')
-                reset_declaration(application)
-                log.debug('Declaration status reset')
-
-                # Calculate child's age
-                birth_day, birth_month, birth_year = form.cleaned_data.get('date_of_birth')
-                applicant_dob = date(birth_year, birth_month, birth_day)
-                today = date.today()
-
-                age = today.year - applicant_dob.year - (
-                        (today.month, today.day) < (applicant_dob.month, applicant_dob.day))
-                log.debug('Child ' + str(i) + 'age calculated:' + str(age))
-
-                if 15 <= age < 16:
-                    children_turning_16 = True
-                    log.debug('Child is approaching 16')
-
-            else:
-
-                forms_valid = False
-                log.debug('Form for child ' + str(i) + ' invalid')
-
-        if 'submit' in request.POST:
-            # If all forms are valid
-            if forms_valid:
-
-                log.debug('All forms valid')
-
-                variables = {
-                    'application_id': application_id_local,
-                    'people_in_home_status': application.people_in_home_status,
+        else:
+            api_response = NannyGatewayActions().create(
+                'child',
+                params={
+                    'application_id': application_id,
+                    'child_id': child_id,
+                    'first_name': first_name,
+                    'middle_names': middle_names,
+                    'last_name': last_name,
+                    'date_of_birth': date_of_birth,
                 }
+            )
+            if api_response.status_code == 201:
+                child_id = api_response.record['child_id']
 
-                application.date_updated = current_date
-                application.save()
-                log.debug('Update date updated for application: ' + application_id_local)
-                reset_declaration(application)
-                log.debug('Declaration status reset')
-                return HttpResponseRedirect(
-                    build_url('PITH-Own-Children-Postcode-View', get={'id': application_id_local,
-                                                                      'children': 1}))
+        return HttpResponseRedirect(build_url('your-children:Your-Children-addresses', get={
+            'id': application_id,
+            'child_id': child_id,
+        }))
 
-            # If there is an invalid form
-            else:
 
-                log.debug('Forms invalid')
+    """
+    Need functionality for the 'add' and 'remove' children features, also how the form will be rendered 
+    within the page!
+    """
 
-                variables = {
-                    'form_list': form_list,
-                    'application_id': application_id_local,
-                    'number_of_children': number_of_children,
-                    'add_child': int(number_of_children) + 1,
-                    'remove_child': int(number_of_children) - 1,
-                    'remove_button': remove_button,
-                    'people_in_home_status': application.people_in_home_status
-                }
-
-                return render(request, 'PITH_templates/PITH_own_children_details.html', variables)
-
-        if 'add_child' in request.POST:
-
-            # If all forms are valid
-            if forms_valid:
-
-                log.debug('All forms valid')
-
-                variables = {
-                    'application_id': application_id_local,
-                    'people_in_home_status': application.people_in_home_status
-                }
-
-                add_child = int(number_of_children) + 1
-                add_child_string = str(add_child)
-
-                log.debug('Generate URL to add child')
-
-                # Redirect to self.get(), it seems.
-                return HttpResponseRedirect(reverse('PITH-Own-Children-Details-View') + \
-                                            '?id=' + application_id_local + \
-                                            '&children=' + add_child_string + \
-                                            '&remove=0#person' + add_child_string,
-                                            variables)
-
-            # If there is an invalid form
-            else:
-
-                log.debug('Forms invalid')
-
-                variables = {
-                    'form_list': form_list,
-                    'application_id': application_id_local,
-                    'number_of_children': number_of_children,
-                    'add_child': int(number_of_children) + 1,
-                    'remove_child': int(number_of_children) - 1,
-                    'remove_button': remove_button,
-                    'people_in_home_status': application.people_in_home_status
-                }
-
-                return render(request, 'PITH_templates/PITH_own_children_details.html', variables)
