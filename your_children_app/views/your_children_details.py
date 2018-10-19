@@ -47,6 +47,10 @@ class YourChildrenDetailsView(NannyTemplateView):
         context['id'] = application_id
         application_record = NannyGatewayActions().read('application', params={'application_id': application_id}).record
         context['your_children_status'] = application_record['your_children_status']
+
+        context['form'] = self.form_class
+        context['fields'] = [context['form'].render_field(name, field) for name, field in context['form'].fields.items()]
+
         return context
 
     def form_valid(self, form):
