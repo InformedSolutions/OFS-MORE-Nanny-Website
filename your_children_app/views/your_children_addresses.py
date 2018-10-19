@@ -9,7 +9,7 @@ class YourChildrenAddressesView(NannyTemplateView):
     Template view to  render the your children details view
     """
     template_name = "your-children-addresses.html"
-    success_url_name = 'Your-Children-address'
+    success_url_name = 'your-children:Your-Children-address'
     # form = X
 
     """
@@ -56,4 +56,4 @@ class YourChildrenAddressesView(NannyTemplateView):
             record['your_children_status'] = 'IN_PROGRESS'
             NannyGatewayActions().put('application', params=record)
 
-        return HttpResponseRedirect(build_url('Your-Children-address', get={'id': app_id}))
+        return HttpResponseRedirect(build_url('your-children:Your-Children-address', get={'id': app_id}))
