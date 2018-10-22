@@ -11,7 +11,8 @@ urlpatterns = [
     url(r'^lived-abroad/', LivedAbroadFormView.as_view(), name='Lived-Abroad-View'),
     url(r'^UK/', DBSGuidanceView.as_view(), name='DBS-Guidance-View'),
     url(r'^type/', DBSTypeFormView.as_view(), name='DBS-Type-View'),
-    url(r'DBS-details/', NonCapitaDBSDetailsFormView.as_view(), name='Non-Capita-DBS-Details-View')
+    url(r'^DBS-details/', NonCapitaDBSDetailsFormView.as_view(), name='Non-Capita-DBS-Details-View'),
+    url(r'^update/', DBSUpdateServiceFormView.as_view(), name='DBS-Update-Service-Page')
 ]
 
 # Django toolbar settings for development environments

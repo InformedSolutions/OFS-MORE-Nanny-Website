@@ -12,7 +12,7 @@ class DBSTypeFormView(NannyFormView):
         if self.request.POST['is_ofsted_dbs']:
             self.success_url = 'dbs:Capita-DBS-Details-View'
         else:
-            self.success_url = 'dbs:Non-Capita-DBS-Details-View'
+            self.success_url = 'dbs:DBS-Update-Service-Page'
         return super(DBSTypeFormView, self).get_success_url()
 
     def form_valid(self, form):
