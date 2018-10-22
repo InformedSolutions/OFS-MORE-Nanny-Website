@@ -107,7 +107,7 @@ class CriminalRecordChecksTest(SimpleTestCase):
         response = self.client.post(reverse('dbs:DBS-Guidance-View'))
 
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(resolve(response.url).__name__, views.DBSGuidanceView)
+        self.assertEqual(resolve(response.url).__name__, views.DBSTypeFormView)
 
     def test_can_render_dbs_type_page(self, *args):
         response = self.client.get(reverse('dbs:DBS-Type-View'))
