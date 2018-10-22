@@ -45,10 +45,10 @@ class CriminalRecordChecksTest(TestCase):
         self.assertTemplateUsed('criminal-record-checks-guidance.html')
 
     def test_post_request_to_guidance_page_redirects_to_lived_abroad_page(self, *args):
-        response = self.client.post(reverse('dbs:Criminal-Record-Check-Summary-View') + self.url_suffix)
+        response = self.client.post(reverse('dbs:Criminal-Record-Checks-Guidance-View') + self.url_suffix)
 
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(resolve(response.url).func.__name__, views.LivedAbroadFormView)
+        self.assertEqual(resolve(response.url).func.__name__, views.LivedAbroadFormView.__name__)
 
     def test_post_request_to_guidance_page_sets_task_status_to_in_progress(self, *args):
         self.client.post('dbs:Guidance-View' + self.url_suffix)
@@ -81,8 +81,11 @@ class CriminalRecordChecksTest(TestCase):
         self.assertEqual(resolve(response.url).func.__name__, views.CriminalRecordsFromAbroadView.__name__)
 
     def can_render_criminal_records_abroad_page(self, *args):
-        # CriminalRecordsFromAbroadView
-        self.skipTest('NotImplemented')
+        response = self.client.get(reverse('dbs:Criminal-Records-Abroad-View') + self.url_suffix)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.resolver_match.func.__name__, views.CriminalRecordsFromAbroadView.__name__)
+        self.assertTemplateUsed('criminal-record-abroad.html')
 
     def test_post_request_to_criminal_records_abroad_page_redirects_to_email_good_conduct_certificates_page(self, *args):
         response = self.client.post(reverse('dbs:Criminal-Records-Abroad-View') + self.url_suffix)
@@ -98,7 +101,10 @@ class CriminalRecordChecksTest(TestCase):
         self.assertTemplateUsed('email-good-conduct-certificates.html')
 
     def test_post_request_to_post_good_conduct_certificates_page_redirects_to_dbs_guidance(self, *args):
-        self.skipTest('NotImplemented')
+        response = self.client.post(reverse('dbs:Email-Good-Conduct-Certificates-View') + self.url_suffix)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(resolve(response.url).func.__name__, views.DBSGuidanceView.__name__)
 
     def test_can_render_dbs_guidance_page(self, *args):
         response = self.client.get(reverse('dbs:DBS-Guidance-View') + self.url_suffix)
