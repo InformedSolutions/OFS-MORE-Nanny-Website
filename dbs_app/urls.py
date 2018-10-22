@@ -15,6 +15,7 @@ urlpatterns = [
     url(r'^update/', DBSUpdateServiceFormView.as_view(), name='DBS-Update-Service-Page'),
     url(r'^Ofsted-check/', GetDBSView.as_view(), name='Get-A-DBS-View'),
     url(r'^abroad/', CriminalRecordsFromAbroadView.as_view(), name='Criminal-Records-Abroad-View'),
+    url(r'^email-certificates/', EmailGoodConductCertificatesView.as_view(), name='Email-Good-Conduct-Certificates-View'),
 ]
 
 # Django toolbar settings for development environments
