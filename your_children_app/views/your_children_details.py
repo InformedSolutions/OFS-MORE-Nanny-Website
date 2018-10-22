@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from your_children_app.forms.your_children_details_form import YourChildrenDetailsForm
 from nanny.utilities import build_url, app_id_finder
 from nanny.base_views import NannyTemplateView
@@ -30,7 +32,9 @@ class YourChildrenDetailsView(FormMixin, NannyTemplateView):
             api_response.record['first_name'] = first_name
             api_response.record['middle_names'] = middle_names
             api_response.record['last_name'] = last_name
-            api_response.record['date_of_birth'] = date_of_birth
+            api_response.record['birth_day'] = date_of_birth.day
+            api_response.record['birth_month'] = date_of_birth.month
+            api_response.record['birth_year'] = date_of_birth.year
 
             NannyGatewayActions().put('your-children', params=api_response.record)
 
@@ -40,10 +44,13 @@ class YourChildrenDetailsView(FormMixin, NannyTemplateView):
                 params={
                     'application_id': application_id,
                     'child_id': uuid.uuid4(),
+                    'date_created': datetime.today(),
                     'first_name': first_name,
                     'middle_names': middle_names,
                     'last_name': last_name,
-                    'date_of_birth': date_of_birth,
+                    'birth_day': date_of_birth.day,
+                    'birth_month': date_of_birth.month,
+                    'birth_year': date_of_birth.year,
                 }
             )
 
@@ -66,10 +73,6 @@ class YourChildrenDetailsView(FormMixin, NannyTemplateView):
             'id': application_id
         }
 
-        api_response = NannyGatewayActions().list('your-children', params={
-            'application_id': application_id})
-
-
         if 'child_id' in self.request.GET:
             self.initial['child_id'] = child_id
 
@@ -81,6 +84,19 @@ class YourChildrenDetailsView(FormMixin, NannyTemplateView):
         kwargs['child_id'] = child_id
 
         return super(YourChildrenDetailsView, self).get_context_data(**kwargs)
+
+    def post(self, *args, **kwargs):
+        """
+        Handles post requests
+
+        """
+        self.get_context_data()
+        form = self.get_form()
+
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
 
     """
    Need functionality for the 'add' and 'remove' children features, also how the form will be rendered 

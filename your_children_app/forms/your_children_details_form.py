@@ -1,6 +1,5 @@
 import re
-from datetime import date
-
+from datetime import date, datetime
 from nanny import NannyForm, CustomSplitDateFieldDOB
 from django import forms
 from django.conf import settings
@@ -58,7 +57,7 @@ class YourChildrenDetailsForm(NannyForm):
             self.application_id_local = kwargs['data']['id']
 
         if 'child_id' in kwargs['initial']:
-            self.childcare_address_id = kwargs['initial']['child_id']
+            self.child_id = kwargs['initial']['child_id']
 
         super(YourChildrenDetailsForm, self).__init__(*args, **kwargs)
 
@@ -73,7 +72,8 @@ class YourChildrenDetailsForm(NannyForm):
                 first_name = response.record[0]['first_name']
                 middle_names = response.record[0]['middle_names']
                 last_name = response.record[0]['last_name']
-                date_of_birth = response.record[0]['date_of_birth']
+                date_of_birth = datetime.datetime.strptime(
+                    response.record['date_of_birth'], '%Y-%m-%d')
 
                 self.pk = self.child_id
 
@@ -81,8 +81,6 @@ class YourChildrenDetailsForm(NannyForm):
                 self.fields['middle_names'].initial = middle_names
                 self.fields['last_name'].initial = last_name
                 self.fields['date_of_birth'].initial = date_of_birth
-
-        # self.field_list = ['first_name', 'middle_names', 'last_name', 'date_of_birth']
 
     def clean_first_name(self):
         """
@@ -125,7 +123,7 @@ class YourChildrenDetailsForm(NannyForm):
         applicant_dob = date(birth_year, birth_month, birth_day)
         today = date.today()
         age = today.year - applicant_dob.year - ((today.month, today.day) < (applicant_dob.month, applicant_dob.day))
-        if age < 16:
+        if age > 16:
             raise forms.ValidationError('Please only use this page for children aged under 16')
         date_today_diff = today.year - applicant_dob.year - (
                 (today.month, today.day) < (applicant_dob.month, applicant_dob.day))
@@ -134,4 +132,4 @@ class YourChildrenDetailsForm(NannyForm):
         if date_today_diff < 0:
             raise forms.ValidationError('Please check the year')
 
-        return self.cleaned_data['date_of_birth']
+        return applicant_dob
