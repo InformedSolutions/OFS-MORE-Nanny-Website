@@ -120,7 +120,7 @@ class CriminalRecordChecksTest(SimpleTestCase):
         response = self.client.post(reverse('dbs:DBS-Type-View'), data={'is_ofsted_dbs': True})
 
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(resolve(response.url).__name__, views.CaptitaDBSDetailsFormView)
+        self.assertEqual(resolve(response.url).__name__, views.CapitaDBSDetailsFormView)
 
     def test_non_capita_dbs_to_dbs_type_page_redirects_to_dbs_update_service_page(self, *args):
         response = self.client.post(reverse('dbs:DBS-Type-View'), data={'is_ofsted_dbs': False})
@@ -132,7 +132,7 @@ class CriminalRecordChecksTest(SimpleTestCase):
         response = self.client.get(reverse('dbs:Capita-DBS-Details-View'))
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.resolver_match.__name__, views.CaptitaDBSDetailsFormView)
+        self.assertEqual(response.resolver_match.__name__, views.CapitaDBSDetailsFormView)
         self.assertTemplateUsed('capita-dbs-details.html')
 
     def test_cautions_and_convictions_on_capita_dbs_details_page_redirects_to_post_dbs_certificate_page(self, *args):
@@ -182,7 +182,7 @@ class CriminalRecordChecksTest(SimpleTestCase):
                                     })
 
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(resolve(response.url).__name__, views.NonCatitaDBSDetailsFormView)
+        self.assertEqual(resolve(response.url).__name__, views.NonCapitaDBSDetailsFormView)
 
     def test_no_to_dbs_update_page_redirects_to_get_a_dbs_page(self, *args):
         response = self.client.post(reverse('dbs:DBS-Update-Service-Page'),
@@ -218,14 +218,14 @@ class CriminalRecordChecksTest(SimpleTestCase):
         self.assertEqual(put_mock.call_args, expected_call_args)
 
     def test_can_render_non_captita_dbs_details_page(self, *args):
-        response = self.client.get(reverse('dbs:Non-Captia-DBS-Details-View'))
+        response = self.client.get(reverse('dbs:Non-Capita-DBS-Details-View'))
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.resolver_match.__name__, views.NonCatitaDBSDetailsFormView)
+        self.assertEqual(response.resolver_match.__name__, views.NonCapitaDBSDetailsFormView)
         self.assertTemplateUsed('non-capita-dbs-details.html')
 
     def test_post_to_non_captita_dbs_details_page_redirects_to_post_dbs_certificate_page(self, *args):
-        response = self.client.post(reverse('dbs:Non-Captia-DBS-Details-View'),
+        response = self.client.post(reverse('dbs:Non-Capita-DBS-Details-View'),
                                     data={
                                         'dbs_number': '000000000012'
                                     })
@@ -289,7 +289,7 @@ class CriminalRecordFormsTest(SimpleTestCase):
             form.fields['lived_abroad'].clean('')
 
     def test_not_entering_an_option_for_on_update_raises_error(self):
-        form = dbs_forms.DBSUpdateService(data={'on_update_service': ''})
+        form = dbs_forms.DBSUpdateServiceForm(data={'on_update_service': ''})
 
         with self.assertRaisesMessage(ValidationError, 'Please say if you are on the DBS update service'):
             form.fields['on_update_service'].clean('')
