@@ -25,7 +25,7 @@ class YourChildrenDetailsForm(NannyForm):
         }
     )
     middle_names = forms.CharField(
-        label='Middle names (if you have any on your DBS check)',
+        label='Middle names (if they have any)',
         required=False,
         error_messages={
             'max_length': 'Middle names must be under 100 characters long'
@@ -62,24 +62,27 @@ class YourChildrenDetailsForm(NannyForm):
 
         super(YourChildrenDetailsForm, self).__init__(*args, **kwargs)
 
-        # TODO - Adapt the section below for this form, set all self.fields, consider the view file
-        # attempt to mirror the functions present in childcare address entry views/forms
-        # If information was previously entered, display it on the form
+        if hasattr(self, 'child_id'):
+            response = NannyGatewayActions().read('your-children', params={
+                'child_id': self.child_id})
 
-        # set all field vars to None
-        # if child_id in self
-
-
-        postcode = None
-        if 'childcare_address_id' in self:
-            response = NannyGatewayActions().list('childcare-address', params={'childcare_address_id': self.childcare_address_id})
+            # Can replace index with child number
             if response.status_code == 200:
-                postcode = response.record[0]['postcode']
-            self.pk = self.childcare_address_id
+                # application_id = response.record[0]['application_id']
+                # child_id = response.record[0]['child_id']
+                first_name = response.record[0]['first_name']
+                middle_names = response.record[0]['middle_names']
+                last_name = response.record[0]['last_name']
+                date_of_birth = response.record[0]['date_of_birth']
 
-        self.fields['postcode'].initial = postcode
-        self.field_list = ['postcode']
+                self.pk = self.child_id
 
+                self.fields['first_name'].initial = first_name
+                self.fields['middle_names'].initial = middle_names
+                self.fields['last_name'].initial = last_name
+                self.fields['date_of_birth'].initial = date_of_birth
+
+        # self.field_list = ['first_name', 'middle_names', 'last_name', 'date_of_birth']
 
     def clean_first_name(self):
         """

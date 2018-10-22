@@ -8,13 +8,13 @@ from your_children_app.views.your_children_details import YourChildrenDetailsVie
 from your_children_app.views.your_children_summary import YourChildrenManualSummaryView
 
 urlpatterns = [
-    url(r'^your_children/your_children/', YourChildrenGuidanceView.as_view(), name='Your-Children-Guidance'),
-    url(r'^your_children_details/', YourChildrenDetailsView.as_view(), name='Your-Children-Details'),
-    url(r'^your_children/addresses/', YourChildrenAddressesView.as_view(), name='Your-Children-addresses'),
-    url(r'^your_children/address/', YourChildrenAddressView.as_view(), name='Your-Children-address'),
-    url(r'^your_children/address_selection/', YourChildrenAddressLookupView.as_view(), name='Your-Children-address-lookup'),
-    url(r'^your_children/enter_address/', YourChildrenManualAddressView.as_view(), name='Your-Children-Manual-address'),
-    url(r'^your_children/check_answers/', YourChildrenManualSummaryView.as_view(), name='Your-Children-Summary'),
+    url(r'^your-children/your-children/', YourChildrenGuidanceView.as_view(), name='Your-Children-Guidance'),
+    url(r'^your-children-details/', YourChildrenDetailsView.as_view(), name='Your-Children-Details'),
+    url(r'^your-children/addresses/', YourChildrenAddressesView.as_view(), name='Your-Children-addresses'),
+    url(r'^your-children/address/', YourChildrenAddressView.as_view(), name='Your-Children-address'),
+    url(r'^your-children/address-selection/', YourChildrenAddressLookupView.as_view(), name='Your-Children-address-lookup'),
+    url(r'^your-children/enter-address/', YourChildrenManualAddressView.as_view(), name='Your-Children-Manual-address'),
+    url(r'^your-children/check-answers/', YourChildrenManualSummaryView.as_view(), name='Your-Children-Summary'),
 ]
 
 # Django toolbar settings for development environments
