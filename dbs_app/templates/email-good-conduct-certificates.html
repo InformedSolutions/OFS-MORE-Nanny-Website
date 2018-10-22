@@ -1,0 +1,19 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Email your certificates{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+<h1 class="form-title heading-large">
+    Email your certificates
+</h1>
+
+<p>Email a copy of your certificates to Ofsted after you submit your application.</p>
+<p>We need this to check that you're suitable to care for children.</p>
+
+<a href="{{ link_url }}" class="button">Continue</a>
+
+{% endblock %}

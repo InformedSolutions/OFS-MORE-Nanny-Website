@@ -6,4 +6,4 @@ class CriminalRecordsFromAbroadView(NannyTemplateView):
     Template view to render the Get A DBS page.
     """
     template_name = 'criminal-record-abroad.html'
-    success_url_name = 'Post-Good-Conduct-Certificates-View'
+    success_url_name = 'dbs:Email-Good-Conduct-Certificates-View'

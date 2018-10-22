@@ -83,21 +83,20 @@ class CriminalRecordChecksTest(SimpleTestCase):
         # CriminalRecordsFromAbroadView
         self.skipTest('NotImplemented')
 
-    def test_post_request_to_criminal_records_abroad_page_redirects_to_post_good_conduct_certificates_page(self, *args):
+    def test_post_request_to_criminal_records_abroad_page_redirects_to_email_good_conduct_certificates_page(self, *args):
         response = self.client.post(reverse('dbs:Criminal-Records-Abroad-View'))
 
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(resolve(response.url).__name__, views.PostGoodConductCertificatesView)
+        self.assertEqual(resolve(response.url).__name__, views.EmailGoodConductCertificatesView)
 
-    def test_can_render_post_good_conduct_certificates_page(self, *args):
-        response = self.client.get(reverse('dbs:Post-Good-Conduct-Certificates-View'))
+    def test_can_render_email_good_conduct_certificates_page(self, *args):
+        response = self.client.get(reverse('dbs:Email-Good-Conduct-Certificates-View'))
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.resolver_match.__name__, views.PostGoodConductCertificatesView)
-        self.assertTemplateUsed('post-good-conduct-certificates.html')
+        self.assertEqual(response.resolver_match.__name__, views.EmailGoodConductCertificatesView)
+        self.assertTemplateUsed('email-good-conduct-certificates.html')
 
     def test_post_request_to_post_good_conduct_certificates_page_redirects_to_dbs_guidance(self, *args):
-        # TODO: Check this doesn't involve an actual form.
         self.skipTest('NotImplemented')
 
     def test_can_render_dbs_guidance_page(self, *args):
