@@ -9,10 +9,13 @@ class LivedAbroadFormView(NannyFormView):
     template_name = 'lived-abroad.html'
 
     def get_success_url(self):
-        if self.request.POST['lived_abroad']:
+        if self.request.POST['lived_abroad'] == 'True':
             self.success_url = 'dbs:Criminal-Records-Abroad-View'
-        else:
+        elif self.request.POST['lived_abroad'] == 'False':
             self.success_url = 'dbs:DBS-Guidance-View'
+        else:
+            raise ValueError('The field "lived_abroad" is not equal to one of "True" or "False".')
+
         return super(LivedAbroadFormView, self).get_success_url()
 
     def form_valid(self, form):

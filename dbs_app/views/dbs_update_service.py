@@ -9,10 +9,13 @@ class DBSUpdateServiceFormView(NannyFormView):
     template_name = 'dbs-update-service.html'
 
     def get_success_url(self):
-        if self.request.POST['on_dbs_update_service']:
+        if self.request.POST['on_dbs_update_service'] == 'True':
             self.success_url = 'dbs:Non-Capita-DBS-Details-View'
-        else:
+        elif self.request.POST['on_dbs_update_service'] == 'False':
             self.success_url = 'dbs:Get-A-DBS-View'
+        else:
+            raise ValueError('The field "on_dbs_update_service" is not equal to one of "True" or "False"')
+
         return super(DBSUpdateServiceFormView, self).get_success_url()
 
     def form_valid(self, form):

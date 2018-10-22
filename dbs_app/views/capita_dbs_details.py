@@ -15,10 +15,12 @@ class CapitaDBSDetailsFormView(NannyFormView):
         dbs_number = form.cleaned_data['has_convictions']
         has_convictions = form.cleaned_data['has_convictions']
 
-        if has_convictions:
+        if has_convictions == 'True':
             self.success_url = 'dbs:Post-DBS-Certificate'
-        else:
+        elif has_convictions == 'False':
             self.success_url = 'dbs:Criminal-Record-Check-Summary-View'
+        else:
+            raise ValueError('The field "has_convictions" is not equal to one of "True" or "False".')
 
         criminal_checks_record['dbs_number'] = dbs_number
         criminal_checks_record['has_convictions'] = has_convictions
