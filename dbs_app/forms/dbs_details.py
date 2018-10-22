@@ -46,7 +46,6 @@ class CriminalCautionsAndConvictionsFormFieldMixin(forms.Form):
 
     has_convictions = forms.ChoiceField(
         label='Do you have any criminal cautions or convictions?',
-        help_text='Include any information recorded on your certificate',
         choices=convictions_choices,
         error_messages={
             'required': 'Please say if you have any criminal cautions or convictions',
@@ -65,7 +64,7 @@ class NonCapitaDBSDetailsForm(DBSNumberFormFieldMixin, NannyForm):
     auto_replace_widgets = True
 
 
-class CaptiaDBSDetailsForm(DBSNumberFormFieldMixin, CriminalCautionsAndConvictionsFormFieldMixin, NannyForm):
+class CaptiaDBSDetailsForm(CriminalCautionsAndConvictionsFormFieldMixin, DBSNumberFormFieldMixin, NannyForm):
     """
     GOV.UK form for the Non-Capita DBS Details Page
     """
