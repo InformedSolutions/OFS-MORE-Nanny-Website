@@ -132,6 +132,9 @@ identity_response = HttpResponse()
 identity_response.status_code = 200
 identity_response.record = mock_identity_record
 
+arc_comments_response = HttpResponse()
+arc_comments_response.status_code = 404
+
 
 mock_endpoint_return_values = {
     'application': nanny_application_response,
@@ -144,6 +147,7 @@ mock_endpoint_return_values = {
     'insurance-cover': insurance_cover_response,
     'declaration': declaration_response,
     'user': identity_response,
+    'arc-comments': arc_comments_response,
 }
 
 
