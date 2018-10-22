@@ -20,7 +20,7 @@ class LivedAbroadForm(NannyForm):
     )
 
     lived_abroad = forms.ChoiceField(
-            label='Have they lived outside of the UK in the last 5 years?',
+            label='Have you lived outside of the UK in the last 5 years?',
             choices=options,
             widget=InlineRadioSelect,
             required=True,

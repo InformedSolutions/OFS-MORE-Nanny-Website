@@ -1,13 +1,14 @@
 from django.conf import settings
 from django.conf.urls import url, include
 
-from dbs_app.views import CriminalRecordsCheckGuidanceView
+from dbs_app.views import *
 
 urlpatterns = [
     # url(r'^your-details/', DBSDetailsView.as_view(), name='Details'),
     # url(r'^post-certificate/', DBSUpload.as_view(), name='DBS-Upload'),
     # url(r'^check-answers/', DBSSummary.as_view(), name='Summary'),
-    url(r'^', CriminalRecordsCheckGuidanceView.as_view(), name='Criminal-Record-Checks-Guidance-View')
+    url(r'^$', CriminalRecordsCheckGuidanceView.as_view(), name='Criminal-Record-Checks-Guidance-View'),
+    url(r'^lived-abroad/', LivedAbroadFormView.as_view(), name='Lived-Abroad-View')
 ]
 
 # Django toolbar settings for development environments
