@@ -5,7 +5,7 @@ from govuk_forms.widgets import NumberInput, InlineRadioSelect
 from nanny.utilities import NannyForm
 
 
-class DBSNumberFormFieldMixin:
+class DBSNumberFormFieldMixin(forms.Form):
     """
     Mixin for the 'DBS certificate number' ChoiceField.
     """
@@ -35,7 +35,7 @@ class DBSNumberFormFieldMixin:
         return dbs_number
 
 
-class CriminalCautionsAndConvictionsFormFieldMixin:
+class CriminalCautionsAndConvictionsFormFieldMixin(forms.Form):
     """
     Mixin for the 'Do you have any criminal cautions or convictions?' ChoiceField.
     """
@@ -55,7 +55,7 @@ class CriminalCautionsAndConvictionsFormFieldMixin:
     )
 
 
-class NonCapitaDBSDetailsForm(NannyForm, DBSNumberFormFieldMixin):
+class NonCapitaDBSDetailsForm(DBSNumberFormFieldMixin, NannyForm):
     """
     GOV.UK form for the Captia DBS Details Page
     """
@@ -65,7 +65,7 @@ class NonCapitaDBSDetailsForm(NannyForm, DBSNumberFormFieldMixin):
     auto_replace_widgets = True
 
 
-class CaptiaDBSDetailsForm(NannyForm, DBSNumberFormFieldMixin, CriminalCautionsAndConvictionsFormFieldMixin):
+class CaptiaDBSDetailsForm(DBSNumberFormFieldMixin, CriminalCautionsAndConvictionsFormFieldMixin, NannyForm):
     """
     GOV.UK form for the Non-Capita DBS Details Page
     """
