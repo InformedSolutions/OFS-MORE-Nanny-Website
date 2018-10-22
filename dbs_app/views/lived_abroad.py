@@ -10,7 +10,7 @@ class LivedAbroadFormView(NannyFormView):
 
     def get_success_url(self):
         if self.request.POST['lived_abroad']:
-            self.success_url = 'dbs:Good-Conduct-View'
+            self.success_url = 'dbs:Criminal-Records-Abroad-View'
         else:
             self.success_url = 'dbs:DBS-Guidance-View'
         return super(LivedAbroadFormView, self).get_success_url()

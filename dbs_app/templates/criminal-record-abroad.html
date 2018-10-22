@@ -1,0 +1,26 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Criminal record checks from abroad{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+<h1 class="form-title heading-large">
+    Criminal record checks from abroad
+</h1>
+
+<p>You need to have criminal record checks from living abroad in the last 5 years.</p>
+<p><a href="" target="_blank">Contact the countries' embassies</a> to get certificates as proof.</p>
+<p>the most common proof is a certificate of good conduct.</p>
+<p>If you certificates are not in English, you must <a href="" target="_blank">get certified translations</a>.</p>
+
+<a href="{{ link_url }}" class="button">Continue</a>
+
+<br>
+<br>
+
+{% include "return-to-list.html" %}
+
+{% endblock %}

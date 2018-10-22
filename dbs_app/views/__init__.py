@@ -8,3 +8,4 @@ from .criminal_record_checks_summary import *
 from .non_capita_dbs_details import *
 from .dbs_update_service import *
 from .get_a_dbs import *
+from .criminal_record_abroad import *

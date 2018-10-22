@@ -73,20 +73,24 @@ class CriminalRecordChecksTest(SimpleTestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(resolve(response.url).__name__, views.DBSGuidanceView)
 
-    def test_yes_to_lived_abroad_redirects_to_certificates_of_good_conduct_page(self, *args):
+    def test_yes_to_lived_abroad_redirects_to_criminal_records_abroad_page(self, *args):
         response = self.client.post(reverse('dbs:Lived-Abroad-View'), data={'lived_abroad': True})
 
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(resolve(response.url).__name__, views.GoodConductView)
+        self.assertEqual(resolve(response.url).__name__, views.CriminalRecordsFromAbroadView)
 
-    def test_post_request_to_certificates_of_good_conduct_page_redirects_to_post_good_conduct_certificates_page(self, *args):
-        response = self.client.post(reverse('dbs:Good-Conduct-View'))
+    def can_render_criminal_records_abroad_page(self, *args):
+        # CriminalRecordsFromAbroadView
+        self.skipTest('NotImplemented')
+
+    def test_post_request_to_criminal_records_abroad_page_redirects_to_post_good_conduct_certificates_page(self, *args):
+        response = self.client.post(reverse('dbs:Criminal-Records-Abroad-View'))
 
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(resolve(response.url).__name__, views.GoodConductView)
+        self.assertEqual(resolve(response.url).__name__, views.PostGoodConductCertificatesView)
 
     def test_can_render_post_good_conduct_certificates_page(self, *args):
-        response = self.client.get(reverse('dbs:Good-Conduct-View'))
+        response = self.client.get(reverse('dbs:Post-Good-Conduct-Certificates-View'))
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.resolver_match.__name__, views.PostGoodConductCertificatesView)
