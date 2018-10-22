@@ -1,0 +1,24 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Criminal record (DBS) check{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+<h1 class="form-title heading-large">
+    Criminal record checks
+</h1>
+
+<p>You need to have:</p>
+<ul class="list list-bullet">
+    <li>a UK criminal record (DBS) check</li>
+    <li>criminal records checks from abroad if you have lived outside of the UK in the last 5 years</li>
+</ul>
+
+<p>This is to make sure you are suitable to look after children.</p>
+
+<a href="{{ link_url }}" class="button">Continue</a>
+
+{% endblock %}

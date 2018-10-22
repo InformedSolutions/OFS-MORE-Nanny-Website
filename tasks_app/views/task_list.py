@@ -146,7 +146,7 @@ class TaskListView(View):
                     'status_url': None,
                     'status_urls': {
                         'COMPLETED/FLAGGED': 'dbs:Summary',
-                        'NOT_COMPLETED': 'dbs:Guidance'
+                        'NOT_COMPLETED': 'dbs:Criminal-Record-Checks-Guidance-View'
                     }
                 },
                 {
