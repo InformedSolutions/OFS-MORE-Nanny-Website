@@ -24,8 +24,6 @@ class LivedAbroadFormView(NannyFormView):
         criminal_checks_record = api_response.record
         criminal_checks_record['lived_abroad'] = self.request.POST['lived_abroad']
 
-        # TODO: Check how this integrates with Personal Details workflow.
-
         NannyGatewayActions().put('dbs-check', params=criminal_checks_record)
 
         return super(LivedAbroadFormView, self).form_valid(form)
