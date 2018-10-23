@@ -51,15 +51,11 @@ class CriminalRecordChecksTest(TestCase):
         self.assertEqual(resolve(response.url).func.__name__, views.LivedAbroadFormView.__name__)
 
     def test_post_request_to_guidance_page_sets_task_status_to_in_progress(self, *args):
-        self.client.post('dbs:Guidance-View' + self.url_suffix)
-        put_mock = args[1]
+        self.client.post(reverse('dbs:Criminal-Record-Checks-Guidance-View') + self.url_suffix)
+        patch_mock = args[2]
 
-        expected_call_args = mock_nanny_application
-        expected_call_args['dbs_status'] = 'IN_PROGRESS'
-
-        self.assertTrue(put_mock.called)
-        self.assertEqual(1, len(put_mock.call_args_list))
-        self.assertEqual(put_mock.call_args, expected_call_args)
+        self.assertTrue(patch_mock.called)
+        patch_mock.assert_called_once_with('dbs-check', params={'application_id': self.app_id, 'dbs_status': 'IN_PROGRESS'})
 
     def test_can_render_lived_abroad_page(self, *args):
         response = self.client.get(reverse('dbs:Lived-Abroad-View') + self.url_suffix)
