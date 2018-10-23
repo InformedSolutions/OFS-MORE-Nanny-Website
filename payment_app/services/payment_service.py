@@ -90,7 +90,7 @@ def payment_email(email, name, application_reference, application_id):
     # Check for cautions and convictions, and whether the applicant has lived abroad
 
     dbs_record = NannyGatewayActions().read('dbs-check', params={'application_id': application_id}).record
-    conviction = dbs_record['convictions']
+    conviction = dbs_record['has_convictions']
 
     personal_details_record = NannyGatewayActions().read('applicant-personal-details', params={'application_id': application_id}).record
     lived_abroad = personal_details_record['lived_abroad']
