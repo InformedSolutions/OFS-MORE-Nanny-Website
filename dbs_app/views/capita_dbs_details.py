@@ -11,17 +11,17 @@ class CapitaDBSDetailsFormView(NannyFormView):
 
     def form_valid(self, form):
         application_id = self.request.GET['id']
-        criminal_checks_record = NannyGatewayActions().read('dbs-check', params={'application_id': application_id})
+        criminal_checks_record = NannyGatewayActions().read('dbs-check', params={'application_id': application_id}).record
 
-        dbs_number = form.cleaned_data['has_convictions']
+        dbs_number = form.cleaned_data['dbs_number']
         has_convictions = form.cleaned_data['has_convictions']
 
-        if has_convictions == 'True':
+        if has_convictions:
             self.success_url = 'dbs:Post-DBS-Certificate'
-        elif has_convictions == 'False':
+        elif not has_convictions:
             self.success_url = 'dbs:Criminal-Record-Check-Summary-View'
         else:
-            raise ValueError('The field "has_convictions" is not equal to one of "True" or "False".')
+            raise ValueError('The field "has_convictions" is not equal to either True or False.')
 
         criminal_checks_record['dbs_number'] = dbs_number
         criminal_checks_record['has_convictions'] = has_convictions

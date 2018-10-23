@@ -12,7 +12,7 @@ class NonCapitaDBSDetailsFormView(NannyFormView):
     def form_valid(self, form):
         application_id = self.request.GET['id']
 
-        criminal_checks_record = NannyGatewayActions().read('dbs-check', params={'application_id': application_id})
+        criminal_checks_record = NannyGatewayActions().read('dbs-check', params={'application_id': application_id}).record
         criminal_checks_record['dbs_number'] = form.cleaned_data['dbs_number']
 
         NannyGatewayActions().put('dbs-check', params=criminal_checks_record)
