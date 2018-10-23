@@ -19,7 +19,7 @@ class CriminalRecordChecksSummaryView(NannyTemplateView):
         :return:
         """
         application_id = app_id_finder(request)
-        NannyGatewayActions().patch('dbs-check', params={'application_id': application_id, 'dbs_status': 'COMPLETED'})
+        NannyGatewayActions().patch('application', params={'application_id': application_id, 'dbs_status': 'COMPLETED'})
         return HttpResponseRedirect(build_url(self.success_url_name, get={'id': application_id}))
 
     def get_context_data(self, **kwargs):

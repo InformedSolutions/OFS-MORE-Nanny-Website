@@ -14,5 +14,5 @@ class CriminalRecordsCheckGuidanceView(NannyTemplateView):
 
     def post(self, request):
         application_id = app_id_finder(request)
-        NannyGatewayActions().patch('dbs-check', params={'application_id': application_id, 'dbs_status': 'IN_PROGRESS'})
+        NannyGatewayActions().patch('application', params={'application_id': application_id, 'dbs_status': 'IN_PROGRESS'})
         return HttpResponseRedirect(build_url(self.success_url_name, get={'id': application_id}))
