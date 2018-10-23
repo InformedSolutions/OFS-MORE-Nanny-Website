@@ -222,7 +222,6 @@ class CriminalRecordChecksTest(TestCase):
 
         self.assertTrue(patch_mock.called)
         patch_mock.assert_called_once_with('dbs-check', params={'application_id': self.app_id, 'dbs_status': 'IN_PROGRESS'})
-        self.client.post(reverse('dbs:Get-A-DBS-View') + self.url_suffix)
 
     def test_can_render_non_captita_dbs_details_page(self, *args):
         response = self.client.get(reverse('dbs:Non-Capita-DBS-Details-View') + self.url_suffix)
@@ -255,14 +254,10 @@ class CriminalRecordChecksTest(TestCase):
 
     def test_post_request_to_summary_page_sets_task_status_to_completed(self, *args):
         self.client.post(reverse('dbs:Criminal-Record-Check-Summary-View') + self.url_suffix)
-        put_mock = args[1]
+        patch_mock = args[2]
 
-        expected_call_args = mock_nanny_application
-        expected_call_args['dbs_status'] = 'COMPLETED'
-
-        self.assertTrue(put_mock.called)
-        self.assertEqual(1, len(put_mock.call_args_list))
-        self.assertEqual(put_mock.call_args, expected_call_args)
+        self.assertTrue(patch_mock.called)
+        patch_mock.assert_called_once_with('dbs-check', params={'application_id': self.app_id, 'dbs_status': 'COMPLETED'})
 
 
 class CriminalRecordFormsTest(SimpleTestCase):
