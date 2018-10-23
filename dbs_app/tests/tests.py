@@ -55,7 +55,7 @@ class CriminalRecordChecksTest(TestCase):
         patch_mock = args[2]
 
         self.assertTrue(patch_mock.called)
-        patch_mock.assert_called_once_with('dbs-check', params={'application_id': self.app_id, 'dbs_status': 'IN_PROGRESS'})
+        patch_mock.assert_called_once_with('application', params={'application_id': self.app_id, 'dbs_status': 'IN_PROGRESS'})
 
     def test_can_render_lived_abroad_page(self, *args):
         response = self.client.get(reverse('dbs:Lived-Abroad-View') + self.url_suffix)
@@ -221,7 +221,7 @@ class CriminalRecordChecksTest(TestCase):
         patch_mock = args[2]
 
         self.assertTrue(patch_mock.called)
-        patch_mock.assert_called_once_with('dbs-check', params={'application_id': self.app_id, 'dbs_status': 'IN_PROGRESS'})
+        patch_mock.assert_called_once_with('application', params={'application_id': self.app_id, 'dbs_status': 'IN_PROGRESS'})
 
     def test_can_render_non_captita_dbs_details_page(self, *args):
         response = self.client.get(reverse('dbs:Non-Capita-DBS-Details-View') + self.url_suffix)
@@ -257,7 +257,7 @@ class CriminalRecordChecksTest(TestCase):
         patch_mock = args[2]
 
         self.assertTrue(patch_mock.called)
-        patch_mock.assert_called_once_with('dbs-check', params={'application_id': self.app_id, 'dbs_status': 'COMPLETED'})
+        patch_mock.assert_called_once_with('application', params={'application_id': self.app_id, 'dbs_status': 'COMPLETED'})
 
 
 class CriminalRecordFormsTest(SimpleTestCase):
