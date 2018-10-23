@@ -33,12 +33,12 @@ class CriminalRecordChecksSummaryView(NannyTemplateView):
         application_id = app_id_finder(self.request)
         dbs_record = NannyGatewayActions().read('dbs-check', params={'application_id': application_id}).record
 
-        if dbs_record['is_ofsted_dbs'] == 'True':
+        if dbs_record['is_ofsted_dbs']:
             dbs_page_link = 'dbs:Capita-DBS-Details-View'
-        elif dbs_record['is_ofsted_dbs'] == 'False':
+        elif not dbs_record['is_ofsted_dbs']:
             dbs_page_link = 'dbs:Non-Capita-DBS-Details-View'
         else:
-            raise ValueError('The "is_ofsted_dbs" value does not equal either "True" or "False".')
+            raise ValueError('The "is_ofsted_dbs" value does not equal either True or False.')
 
         lived_abroad_row = Row('lived_abroad', 'Have you lived outside of the UK in the last 5 years?', dbs_record['lived_abroad'], 'dbs:Lived-Abroad-View', None)
         ofsted_dbs = Row('is_ofsted_dbs', 'Do you have an Ofsted DBS Check?', dbs_record['is_ofsted_dbs'], 'dbs:DBS-Type-View', "Change answer to having an Ofsted DBS Check")
@@ -46,9 +46,9 @@ class CriminalRecordChecksSummaryView(NannyTemplateView):
         dbs_number_row = Row('dbs_number', 'DBS certificate number', dbs_record['dbs_number'], dbs_page_link, None)
         has_convictions_row = Row('has_convictions', 'Do you have any criminal cautions or convictions?', dbs_record['has_convictions'], 'dbs:Capita-DBS-Details-View', None)
 
-        if dbs_record['is_ofsted_dbs'] == 'True':
+        if dbs_record['is_ofsted_dbs']:
             row_list = [lived_abroad_row, ofsted_dbs, dbs_number_row, has_convictions_row]
-        elif dbs_record['is_ofsted_dbs'] == 'False':
+        elif not dbs_record['is_ofsted_dbs']:
             row_list = [lived_abroad_row, ofsted_dbs, dbs_update_service_row, dbs_number_row]
 
         dbs_summary_table = Table(application_id)
