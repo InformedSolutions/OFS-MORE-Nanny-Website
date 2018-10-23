@@ -83,11 +83,12 @@ class CriminalRecordChecksTest(TestCase):
         self.assertEqual(response.resolver_match.func.__name__, views.CriminalRecordsFromAbroadView.__name__)
         self.assertTemplateUsed('criminal-record-abroad.html')
 
-    # def test_post_request_to_criminal_records_abroad_page_redirects_to_email_good_conduct_certificates_page(self, *args):
-    #     response = self.client.post(reverse('dbs:Criminal-Records-Abroad-View') + self.url_suffix)
-    #
-    #     self.assertEqual(response.status_code, 302)
-    #     self.assertEqual(resolve(response.url).func.__name__, views.EmailGoodConductCertificatesView.__name__)
+    def test_criminal_records_abroad_page_contains_link_to_email_good_conduct_certificates_page(self, *args):
+        response = self.client.get(reverse('dbs:Criminal-Records-Abroad-View') + self.url_suffix)
+
+        expected_link = reverse('dbs:Email-Good-Conduct-Certificates-View') + self.url_suffix
+
+        self.assertContains(response, '<a href="%s" class="button">Continue</a>' % expected_link, html=True)
 
     def test_can_render_email_good_conduct_certificates_page(self, *args):
         response = self.client.get(reverse('dbs:Email-Good-Conduct-Certificates-View') + self.url_suffix)
@@ -96,11 +97,12 @@ class CriminalRecordChecksTest(TestCase):
         self.assertEqual(response.resolver_match.func.__name__, views.EmailGoodConductCertificatesView.__name__)
         self.assertTemplateUsed('email-good-conduct-certificates.html')
 
-    # def test_post_request_to_post_good_conduct_certificates_page_redirects_to_dbs_guidance(self, *args):
-    #     response = self.client.post(reverse('dbs:Email-Good-Conduct-Certificates-View') + self.url_suffix)
-    #
-    #     self.assertEqual(response.status_code, 302)
-    #     self.assertEqual(resolve(response.url).func.__name__, views.DBSGuidanceView.__name__)
+    def test_post_good_conduct_certificates_page_contains_link_to_dbs_guidance_page(self, *args):
+        response = self.client.get(reverse('dbs:Email-Good-Conduct-Certificates-View') + self.url_suffix)
+
+        expected_link = reverse('dbs:DBS-Guidance-View') + self.url_suffix
+
+        self.assertContains(response, '<a href="%s" class="button">Continue</a>' % expected_link, html=True)
 
     def test_can_render_dbs_guidance_page(self, *args):
         response = self.client.get(reverse('dbs:DBS-Guidance-View') + self.url_suffix)
@@ -109,11 +111,12 @@ class CriminalRecordChecksTest(TestCase):
         self.assertEqual(response.resolver_match.func.__name__, views.DBSGuidanceView.__name__)
         self.assertTemplateUsed('dbs-guidance.html')
 
-    # def test_post_request_to_dbs_guidance_page_redirects_to_dbs_type_page(self, *args):
-    #     response = self.client.post(reverse('dbs:DBS-Guidance-View') + self.url_suffix)
-    #
-    #     self.assertEqual(response.status_code, 302)
-    #     self.assertEqual(resolve(response.url).func.__name__, views.DBSTypeFormView.__name__)
+    def test_dbs_guidance_page_contains_link_to_dbs_type_page(self, *args):
+        response = self.client.get(reverse('dbs:DBS-Guidance-View') + self.url_suffix)
+
+        expected_link = reverse('dbs:DBS-Type-View') + self.url_suffix
+
+        self.assertContains(response, '<a href="%s" class="button">Continue</a>' % expected_link, html=True)
 
     def test_can_render_dbs_type_page(self, *args):
         response = self.client.get(reverse('dbs:DBS-Type-View') + self.url_suffix)
@@ -168,11 +171,12 @@ class CriminalRecordChecksTest(TestCase):
         self.assertEqual(response.resolver_match.func.__name__, views.PostDBSCertificateView.__name__)
         self.assertTemplateUsed('post-dbs-certificate.html')
 
-    # def test_post_request_to_post_dbs_certificate_page_redirects_to_summary_page(self, *args):
-    #     response = self.client.post(reverse('dbs:Post-DBS-Certificate') + self.url_suffix)
-    #
-    #     self.assertEqual(response.status_code, 302)
-    #     self.assertEqual(resolve(response.url).func.__name__, views.CriminalRecordChecksSummaryView.__name__)
+    def test_post_dbs_certificate_page_contains_link_to_summary_page(self, *args):
+        response = self.client.get(reverse('dbs:Post-DBS-Certificate') + self.url_suffix)
+
+        expected_link = reverse('dbs:Criminal-Record-Check-Summary-View') + self.url_suffix
+
+        self.assertContains(response, '<a href="%s" class="button">Continue</a>' % expected_link, html=True)
 
     def test_can_render_dbs_update_service_page(self, *args):
         response = self.client.get(reverse('dbs:DBS-Update-Service-Page') + self.url_suffix)
