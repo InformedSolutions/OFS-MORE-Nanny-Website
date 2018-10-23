@@ -15,8 +15,8 @@ class WhereYouWorkForm(GOVUKForm):
     error_summary_title = 'There was a problem'
     auto_replace_widgets = True
     options = (
-        ('True', 'Yes'),
-        ('False', 'No')
+        (True, 'Yes'),
+        (False, 'No')
     )
     address_to_be_provided = forms.ChoiceField(choices=options,
                                                label='Do you know where you will be working?', required=True,

@@ -1,8 +1,8 @@
-from .base import BaseFormView
-from ..forms.childcare_location import ChildcareLocationForm
 from datetime import datetime
 
 from nanny.db_gateways import NannyGatewayActions
+from .base import BaseFormView
+from ..forms.childcare_location import ChildcareLocationForm
 
 
 class ChildcareLocationView(BaseFormView):
@@ -13,6 +13,32 @@ class ChildcareLocationView(BaseFormView):
     template_name = 'childcare-location.html'
     success_url = ''
     form_class = ChildcareLocationForm
+
+    def get_initial(self):
+        initial = super().get_initial()
+        app_id = self.request.GET['id']
+        api_response = NannyGatewayActions().read(
+            'applicant-home-address',
+            {'application_id': app_id},
+        )
+        if api_response.status_code == 200:
+            record = api_response.record
+            initial['home_address'] = record['childcare_address']
+            initial['home_address_id'] = record['home_address_id']
+            initial['id'] = app_id
+        return initial
+
+    def get_context_data(self, **kwargs):
+        """
+        Override base BaseFormView method to add 'fields' key to context for rendering in template.
+        """
+        if 'form' not in kwargs:
+            kwargs['form'] = self.get_form()
+
+        kwargs['id'] = self.request.GET['id']
+        kwargs['fields'] = [kwargs['form'].render_field(name, field) for name, field in kwargs['form'].fields.items()]
+
+        return super(ChildcareLocationView, self).get_context_data(**kwargs)
 
     def form_valid(self, form):
         # pull the applicant's home address from their personal details
@@ -25,6 +51,8 @@ class ChildcareLocationView(BaseFormView):
         elif form.cleaned_data['home_address'] == 'False':
             home_address = False
             self.success_url = 'Childcare-Address-Postcode-Entry'
+
+        childcare_address_changed_to_false = self.__check_childcare_address_changed_to_false(app_id, home_address)
 
         apd_api_response = NannyGatewayActions().read('applicant-personal-details', params={'application_id': app_id})
 
@@ -54,60 +82,47 @@ class ChildcareLocationView(BaseFormView):
                         }
                     )
 
-            # if applicant home address has not been created, do so for purposes of storing childcare location
-            else:
-                NannyGatewayActions().create(
-                    'applicant-home-address',
-                    params={
-                        'application_id': app_id,
-                        'personal_detail_id': personal_detail_id,
-                        'childcare_location': home_address,
-                    }
-                )
-
-        # if personal details has not been created, do so for purposes of storing childcare location
-        else:
-            apd_api_response_create = NannyGatewayActions().create(
-                'applicant-personal-details',
-                {'application_id': app_id},
-            )
-            if apd_api_response_create.status_code == 201:
-                record = apd_api_response_create.record
-                NannyGatewayActions().create(
-                    'applicant-home-address',
-                    params={
-                        'application_id': app_id,
-                        'personal_detail_id': record['personal_detail_id'],
-                        'childcare_location': home_address,
-                    }
-                )
+        if childcare_address_changed_to_false:
+            # Delete all childcare addresses that are the same as the Applicant's home address.
+            self.__delete_home_childcare_addresses(app_id)
 
         return super(ChildcareLocationView, self).form_valid(form)
 
-    def get_initial(self):
-        initial = super().get_initial()
-        app_id = self.request.GET['id']
-        api_response = NannyGatewayActions().read(
-                'applicant-home-address',
-                {'application_id': app_id},
-            )
-        if api_response.status_code == 200:
-            record = api_response.record
-            initial['home_address'] = record['childcare_address']
-            initial['home_address_id'] = record['home_address_id']
-            initial['id'] = app_id
-        return initial
-
-    def get_context_data(self, **kwargs):
+    @staticmethod
+    def __check_childcare_address_changed_to_false(app_id, cleaned_childcare_address):
         """
-        Override base BaseFormView method to add 'fields' key to context for rendering in template.
+        Returns True if the childcare_address field for the applicant's home address was False and has been changed to
+        True.
+        :param app_id: Application id
+        :param cleaned_childcare_address: Boolean of cleaned form data.
+        :return: Boolean
         """
+        if not cleaned_childcare_address:
+            nanny_actions = NannyGatewayActions()
+            applicant_home_address_record = nanny_actions.read('applicant-home-address',
+                                                               params={'application_id': app_id}).record
 
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
+            if applicant_home_address_record['childcare_address']:
+                return True
 
-        kwargs['fields'] = [kwargs['form'].render_field(name, field) for name, field in kwargs['form'].fields.items()]
+        return False
 
-        kwargs['id'] = self.request.GET['id']
+    @staticmethod
+    def __delete_home_childcare_addresses(app_id):
+        nanny_actions = NannyGatewayActions()
 
-        return super(ChildcareLocationView, self).get_context_data(**kwargs)
+        home_address_record = nanny_actions.read('applicant-home-address', params={'application_id': app_id}).record
+
+        home_address_filter = {
+            'street_line1': home_address_record['street_line1'] if home_address_record['street_line1'] else "",
+            'street_line2': home_address_record['street_line2'] if home_address_record['street_line2'] else "",
+            'town': home_address_record['town'] if home_address_record['town'] else "",
+            'county': home_address_record['county'] if home_address_record['county'] else "",
+            'country': home_address_record['country'] if home_address_record['country'] else "",
+            'postcode': home_address_record['postcode'] if home_address_record['postcode'] else ""
+        }
+
+        home_childcare_address_list = nanny_actions.list('childcare-address', params=home_address_filter).record
+
+        for address in home_childcare_address_list:
+            nanny_actions.delete('childcare-address', params={'childcare_address_id': address['childcare_address_id']})

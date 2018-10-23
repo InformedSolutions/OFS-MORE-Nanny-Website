@@ -1,16 +1,17 @@
 from django.http import HttpResponseRedirect
-from django.views import View
 from django.shortcuts import render
-from ..utils import build_url
-from ..address_helper import *
+from django.views import View
 
 from nanny.db_gateways import NannyGatewayActions
+from ..address_helper import *
+from ..utils import build_url
 
 
 class ChildcareAddressSummaryView(View):
     """
     Handle get and post requests to the summary view.
     """
+
     def get(self, request):
         app_id = request.GET['id']
         context = {
@@ -40,10 +41,9 @@ class ChildcareAddressSummaryView(View):
                     record['title'] = "Childcare address " + str(i)
 
                     record['address'] = AddressHelper.format_address(address_records[i - 1], "</br>")
-                    record['change_link'] = build_url('Childcare-Address-Manual-Entry',
+                    record['change_link'] = build_url('Childcare-Address-Details',
                                                       get={
                                                           'id': address_records[i - 1]['application_id'],
-                                                          'childcare_address_id': address_records[i - 1]['childcare_address_id']
                                                       })
                     data.append(record)
 
@@ -58,6 +58,8 @@ class ChildcareAddressSummaryView(View):
                     context['home_address'] = 'Yes'
                 else:
                     context['home_address'] = 'No'
+            else:
+                context['home_address'] = None
 
         return render(request, template_name='childcare-address-summary.html', context=context)
 
