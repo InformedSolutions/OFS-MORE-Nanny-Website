@@ -1,5 +1,6 @@
 from nanny.base_views import NannyFormView
 from nanny.db_gateways import NannyGatewayActions
+from nanny.utilities import app_id_finder
 from dbs_app.forms.dbs_update_service import DBSUpdateServiceForm
 
 
@@ -27,3 +28,12 @@ class DBSUpdateServiceFormView(NannyFormView):
         NannyGatewayActions().put('dbs-check', params=criminal_checks_record)
 
         return super(DBSUpdateServiceFormView, self).form_valid(form)
+
+    def get_initial(self):
+        initial = super().get_initial()
+
+        application_id = app_id_finder(self.request)
+        api_response = NannyGatewayActions().read('dbs-check', params={'application_id': application_id})
+        dbs_record = api_response.record
+        initial['on_dbs_update_service'] = dbs_record['on_dbs_update_service']
+        return initial
