@@ -8,7 +8,7 @@ from django.urls import resolve
 
 from dbs_app import forms as dbs_forms, views
 from nanny.db_gateways import NannyGatewayActions
-from nanny.test_utils import side_effect, mock_nanny_application
+from nanny.test_utils import side_effect
 from tasks_app.views import TaskListView
 
 
