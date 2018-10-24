@@ -4,13 +4,13 @@ from django.urls import reverse
 
 from nanny.utilities import build_url, app_id_finder
 from nanny import NannyGatewayActions
-from nanny.base_views import NannyTemplateView
+from nanny.base_views import NannyTemplateView, NannyFormView
 from your_children_app.forms.your_children_addresses import YourChildrenLivingWithYouForm
 
 
-class YourChildrenAddressesView(NannyTemplateView):
+class YourChildrenAddressesView(NannyFormView):
     """
-
+    Form view to render the 'your children's addresses' page
     """
 
     def get(self, request, *args, **kwargs):
@@ -22,7 +22,8 @@ class YourChildrenAddressesView(NannyTemplateView):
         :return:
         """
         application_id = app_id_finder(self.request)
-        form = YourChildrenLivingWithYouForm(id=application_id)
+        child_id = self.request.GET['child_id']
+        form = YourChildrenLivingWithYouForm(id=application_id, child_id=child_id)
 
         variables = {
             'form': form,
