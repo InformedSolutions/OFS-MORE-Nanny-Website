@@ -22,8 +22,7 @@ class YourChildrenAddressesView(NannyFormView):
         :return:
         """
         application_id = app_id_finder(self.request)
-        child_id = self.request.GET['child_id']
-        form = YourChildrenLivingWithYouForm(id=application_id, child_id=child_id)
+        form = YourChildrenLivingWithYouForm(id=application_id)
 
         variables = {
             'form': form,
@@ -42,7 +41,6 @@ class YourChildrenAddressesView(NannyFormView):
         """
         application_id = app_id_finder(self.request)
         form = YourChildrenLivingWithYouForm(request.POST, id=application_id)
-        api_response = NannyGatewayActions().read('your-children', params={'application_id': application_id})
 
         # Form does not pass validation
         if not form.is_valid():
@@ -54,6 +52,10 @@ class YourChildrenAddressesView(NannyFormView):
             return render(request, "your-children-addresses.html", variables)
 
         # Children selected in the list should be assigned the applicants address
+        api_response = NannyGatewayActions().list(
+            'your-children', params={'application_id': application_id, 'ordering': 'date_created'}
+        )
+
         children = api_response.record
 
         for child in children:
@@ -63,28 +65,28 @@ class YourChildrenAddressesView(NannyFormView):
 
             if child['lives_with_applicant']:
                 # get the existing address of the applicant from the personal details records
-                applicant_record = NannyGatewayActions().read('applicant_home_address', params={
+                applicant_record = NannyGatewayActions().read('applicant-home-address', params={
                     'application_id': application_id
                 })
 
                 # Define the address details for the child model
-                api_response.record['street_line1'] = applicant_record['street_line1']
-                api_response.record['street_line2'] = applicant_record['street_line2']
-                api_response.record['town'] = applicant_record['town']
-                api_response.record['county'] = applicant_record['county']
-                api_response.record['country'] = applicant_record['country']
-                api_response.record['postcode'] = applicant_record['postcode']
+                child['street_line1'] = applicant_record.record['street_line1']
+                child['street_line2'] = applicant_record.record['street_line2']
+                child['town'] = applicant_record.record['town']
+                child['county'] = applicant_record.record['county']
+                child['country'] = applicant_record.record['country']
+                child['postcode'] = applicant_record.record['postcode']
 
                 # Append the existing children, that are ticked in the form, with the address of the applicant
-                if api_response == 200:
-                    NannyGatewayActions().patch('your_children_details', params=api_response.record)
+                if api_response.status_code == 200:
+                    NannyGatewayActions().patch('your-children', params=child)
 
                 # The child record should always exist at this point, following the creation in child details
                 else:
                     raise ValueError('The API did not respond as expected')
 
         # Create a list of children who do not live with the applicant
-        children_not_living_with_applicant = [child for child in children if children['street_line1'] is None]
+        children_not_living_with_applicant = [child for child in children if child['street_line1'] is None]
 
         # If any children do not live with the applicant, the child address sub-task must be presented
         if len(children_not_living_with_applicant) > 0:
