@@ -26,18 +26,25 @@ class YourChildrenLivingWithYouForm(NannyForm):
         :param kwargs:
         """
         self.application_id_local = kwargs.pop('id')
-        super(YourChildrenLivingWithYouForm, self).__init__(*args, **kwargs)
 
         # Read the 'your children' endpoint to return details of the children
         api_response = NannyGatewayActions().list(
             'your-children', params={'application_id': self.application_id_local, 'ordering': 'date_created'}
         )
 
+        # Add a child number to each child and patch it into the record
+        for child in api_response.record:
+            child['child'] = api_response.record.index(child) + 1
+            NannyGatewayActions().patch('your-children', params=child)
+
+        # Initialise the form now that the 'child' number is assigned based on the date created
+        super(YourChildrenLivingWithYouForm, self).__init__(*args, **kwargs)
+
         children = api_response.record
         select_options = []
         previous_selections = []
 
-        # Iterate each child and push to tuple tuple
+        # Iterate each child and push to tuple
         for child in children:
             if child['lives_with_applicant']:
                 # Add the child to the previous selections list
