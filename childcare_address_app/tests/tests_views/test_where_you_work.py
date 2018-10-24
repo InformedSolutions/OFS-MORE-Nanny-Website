@@ -40,7 +40,8 @@ class WhereYouWorkTests(ChildcareAddressTests):
         """
         with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
             mock.patch('nanny.db_gateways.NannyGatewayActions.list') as nanny_api_list,\
-            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
+            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put, \
+            mock.patch('nanny.db_gateways.NannyGatewayActions.patch') as nanny_api_patch:
 
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
@@ -61,7 +62,8 @@ class WhereYouWorkTests(ChildcareAddressTests):
         """
         with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
             mock.patch('nanny.db_gateways.NannyGatewayActions.list') as nanny_api_list,\
-            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
+            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put, \
+            mock.patch('nanny.db_gateways.NannyGatewayActions.patch') as nanny_api_patch:
 
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
@@ -81,7 +83,8 @@ class WhereYouWorkTests(ChildcareAddressTests):
         """
         with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
             mock.patch('nanny.db_gateways.NannyGatewayActions.list') as nanny_api_list,\
-            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
+            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put, \
+            mock.patch('nanny.db_gateways.NannyGatewayActions.patch') as nanny_api_patch:
 
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
@@ -93,7 +96,7 @@ class WhereYouWorkTests(ChildcareAddressTests):
                                         {'address_to_be_provided': 'True'})
 
             self.assertEqual(response.status_code, 302)
-            self.assertTrue("/details/" in response.url)
+            self.assertTrue("/childcare-location/" in response.url)
 
     def test_can_submit_invalid_where_you_work_page(self):
         """
