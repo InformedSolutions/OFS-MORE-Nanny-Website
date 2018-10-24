@@ -1,5 +1,8 @@
 from datetime import datetime
 
+from django.http import HttpResponseRedirect
+
+from childcare_address_app.utils import build_url
 from nanny.db_gateways import NannyGatewayActions
 from .base import BaseFormView
 from ..forms.childcare_location import ChildcareLocationForm
@@ -85,6 +88,8 @@ class ChildcareLocationView(BaseFormView):
         if childcare_address_changed_to_false:
             # Delete all childcare addresses that are the same as the Applicant's home address.
             self.__delete_home_childcare_addresses(app_id)
+            redirect_url = build_url('Childcare-Address-Postcode-Entry', get={'id': app_id, 'add': '1'})
+            return HttpResponseRedirect(redirect_url)
 
         return super(ChildcareLocationView, self).form_valid(form)
 
@@ -109,6 +114,11 @@ class ChildcareLocationView(BaseFormView):
 
     @staticmethod
     def __delete_home_childcare_addresses(app_id):
+        """
+        Deletes childcare addresses that are the same as the home childcare address in all address fields.
+        :param app_id: Applicant's id
+        :return: None
+        """
         nanny_actions = NannyGatewayActions()
 
         home_address_record = nanny_actions.read('applicant-home-address', params={'application_id': app_id}).record

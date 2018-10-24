@@ -16,8 +16,11 @@ class WhereYouWorkView(BaseFormView):
         app_id = self.request.GET.get('id')
         nanny_actions = NannyGatewayActions()
         address_to_be_provided = form.cleaned_data['address_to_be_provided']
-        address_to_be_provided = address_to_be_provided == 'True' if type(
-            address_to_be_provided) == str else address_to_be_provided
+
+        # Convert address_to_be_provided to a boolean.
+        address_to_be_provided = address_to_be_provided == 'True' \
+            if type(address_to_be_provided) == str \
+            else address_to_be_provided
 
         application_record = nanny_actions.read('application', params={'application_id': app_id}).record
 
