@@ -51,8 +51,7 @@ class YourChildrenDetailsView(FormMixin, NannyTemplateView):
                     'birth_day': date_of_birth.day,
                     'birth_month': date_of_birth.month,
                     'birth_year': date_of_birth.year,
-                    'child': 123321,   # Fix these!
-                    'lives_with_applicant': False  # Fix these!
+                    'child': 123321,   # TODO: Correctly generate number
                 }
             )
 

@@ -12,7 +12,8 @@ class YourChildrenLivingWithYouForm(NannyForm):
     error_summary_title = 'There was a problem on this page'
     auto_replace_widgets = True
 
-    # Define the form characteristics
+    # Define the form characteristics, the choices are defined later as a generated field list so it can accomodate
+    # changes in the children known within the applicaiton
     children_living_with_applicant_selection = forms.MultipleChoiceField(
         label='Which of your children live with you?',
         widget=CheckboxSelectMultiple, required=True, error_messages={
@@ -24,24 +25,16 @@ class YourChildrenLivingWithYouForm(NannyForm):
         :param args:
         :param kwargs:
         """
-
         self.application_id_local = kwargs.pop('id')
-        child_id = kwargs.pop('child_id')
-
-        # instigate the associated form
         super(YourChildrenLivingWithYouForm, self).__init__(*args, **kwargs)
 
         # Read the 'your children' endpoint to return details of the children
         api_response = NannyGatewayActions().list(
-            'your-children', params={'application_id': self.application_id_local, 'ordering': 'child'}
+            'your-children', params={'application_id': self.application_id_local, 'ordering': 'date_created'}
         )
 
         children = api_response.record
-
-
-
-        # Create outer tuple to hold tuple of child names and ints
-        select_options = ()
+        select_options = []
         previous_selections = []
 
         # Iterate each child and push to tuple tuple
@@ -51,12 +44,12 @@ class YourChildrenLivingWithYouForm(NannyForm):
                 previous_selections.append(str(child['child']))
 
             # Add the child's full name to the select options list
-            select_options += (str(child['child'], child['first_name']))
+            select_options += ((str(child['child']), str(child['first_name']) + ' ' + str(child['middle_names']) + ' ' + str(child['last_name'])),)
 
         # Add none option to the end of the list, post loop
         select_options += (('none', 'None'),)
 
-        # If previous address selections are empty but addresses are present, it is safe to assume
+        # Find out if the user has previously answered the question. If any 'street line 1' is populated, they have
         prior_child_address_count = len([child for child in children if child['street_line1'] is not None])
 
         if (len(previous_selections) == 0) and (prior_child_address_count > 0):
