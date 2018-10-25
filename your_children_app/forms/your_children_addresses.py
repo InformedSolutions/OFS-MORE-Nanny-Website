@@ -12,8 +12,8 @@ class YourChildrenLivingWithYouForm(NannyForm):
     error_summary_title = 'There was a problem on this page'
     auto_replace_widgets = True
 
-    # Define the form characteristics, the choices are defined later as a generated field list so it can accomodate
-    # changes in the children known within the applicaiton
+    # Define the form characteristics, the choices are defined later as a generated field list so it can accommodate
+    # changes in the children known within the application
     children_living_with_applicant_selection = forms.MultipleChoiceField(
         label='Which of your children live with you?',
         widget=CheckboxSelectMultiple, required=True, error_messages={
@@ -21,13 +21,11 @@ class YourChildrenLivingWithYouForm(NannyForm):
 
     def __init__(self, *args, **kwargs):
         """
-
-        :param args:
-        :param kwargs:
+        Method to initialise the form form contents and get the list of names.
         """
         self.application_id_local = kwargs.pop('id')
 
-        # Read the 'your children' endpoint to return details of the children
+        # Read the 'your children' endpoint to return details of applicant's children
         api_response = NannyGatewayActions().list(
             'your-children', params={'application_id': self.application_id_local, 'ordering': 'date_created'}
         )
@@ -47,11 +45,14 @@ class YourChildrenLivingWithYouForm(NannyForm):
         # Iterate each child and push to tuple
         for child in children:
             if child['lives_with_applicant']:
-                # Add the child to the previous selections list
+                # Add the child to the previous selections list if they have the same address as the applicant
                 previous_selections.append(str(child['child']))
 
             # Add the child's full name to the select options list
-            select_options += ((str(child['child']), str(child['first_name']) + ' ' + str(child['middle_names']) + ' ' + str(child['last_name'])),)
+            select_options += ((str(child['child']),
+                                str(child['first_name']) + ' ' +
+                                str(child['middle_names']) + ' ' +
+                                str(child['last_name'])),)
 
         # Add none option to the end of the list, post loop
         select_options += (('none', 'None'),)
@@ -62,9 +63,9 @@ class YourChildrenLivingWithYouForm(NannyForm):
         if (len(previous_selections) == 0) and (prior_child_address_count > 0):
             previous_selections.append('none')
 
+        # Define the forms fields allowing a dynamic list of applicants children
         self.fields['children_living_with_applicant_selection'].choices = select_options
         self.fields['children_living_with_applicant_selection'].initial = previous_selections
-
         self.field_list = ['children_living_with_applicant_selection']
         self.pk = self.application_id_local
 
