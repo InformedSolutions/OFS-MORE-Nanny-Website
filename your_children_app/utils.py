@@ -309,6 +309,7 @@ def create_child_table(child):
 
     dob = datetime.date(child['birth_year'], child['birth_month'], child['birth_day'])
     child_name = str(child['first_name']) + " " + str(child['last_name'])
+    child_id = child.record['child_id']
 
     if not child['lives_with_applicant']:
         child_address = str(child['street_line1']) + ', ' + str(child['street_line2']) + ', ' \
@@ -327,7 +328,7 @@ def create_child_table(child):
             ('address', 'Same as your own')
         ]
 
-    table = Table([child['pk']])
+    table = Table([child_id])
     table.other_people_numbers = '&child=' + str(child['child'])
 
     child_table = ({
@@ -366,7 +367,9 @@ def create_children_living_with_applicant_table(application_id):
     else:
         children_living_with_you_response_string = ", ".join(children_living_with_applicant_temp_store)
 
-    table = Table([application.pk])  # TODO: Fix this!
+    application = NannyGatewayActions().read('application', params={'application_id': application_id})
+
+    table = Table([application_id])
 
     table.title = "Children living with you"
     table.error_summary_title = "There was a problem with your children's details"
@@ -381,12 +384,19 @@ def create_children_living_with_applicant_table(application_id):
 
 def create_tables(child_table_list):
     """
-    To be fair, you have to have a very high IQ to understand this function...
-
     Helper function to create a list of childrens tables for use within the 'Your Children' summary page
     :param child_table_list: List of tabkes if the children generated in the get request of the summary page
     :return: Table output list - populated list of tables to be presented on the summary page
     """
+
+    your_children_dict = [('full_name', 'Name'),
+                          ('date_of_birth', 'Date of birth'),
+                          ('address', 'Address')]
+
+    your_children_link_dict = [('full_name', 'your-children:Your-Children-Details'),
+                               ('date_of_birth', 'your-children:Your-Children-Details'),
+                               ('address', 'your-children:Your-Children-Manual-address')]
+
     table_output_list = []
 
     for table in child_table_list:
@@ -395,15 +405,17 @@ def create_tables(child_table_list):
         for key, value in table['fields'].items():
 
             # Create a row object using the data name as the key
-            if :
-                
+            if your_children_link_dict is not None and your_children_link_dict.get(key) is not None:
+                temp_row = Row(key, your_children_dict[key], value, your_children_dict[key], '',
+                               your_children_link_dict.get(key))
             else:
+                temp_row = Row(key, your_children_dict[key], value, your_children_dict[key], '')
 
             # Table object has rows added
             table['table_object'].add_row(temp_row)
 
         # Once all rows are added, get any errors for the rows
-        table['table_object'].get_errors() # TODO: Fix this get_errors()
+        table['table_object'].get_errors()
         table['table_object'].title = table['title']
         table['table_object'].error_summary_title = table['error_summary_title']
 
@@ -411,4 +423,3 @@ def create_tables(child_table_list):
         table_output_list.append(table['table_object'])
 
     return table_output_list
-
