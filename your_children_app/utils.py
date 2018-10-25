@@ -309,7 +309,7 @@ def create_child_table(child):
 
     dob = datetime.date(child['birth_year'], child['birth_month'], child['birth_day'])
     child_name = str(child['first_name']) + " " + str(child['last_name'])
-    child_id = child.record['child_id']
+    child_id = child['child_id']
 
     if not child['lives_with_applicant']:
         child_address = str(child['street_line1']) + ', ' + str(child['street_line2']) + ', ' \
@@ -373,10 +373,11 @@ def create_children_living_with_applicant_table(application_id):
 
     table.title = "Children living with you"
     table.error_summary_title = "There was a problem with your children's details"
+    change_link_description = 'which of your children live with you'
     back_link = 'your-children:Your-Children-addresses'
 
     row = Row('children_living_with_you', 'Which of your children live with you?',
-              children_living_with_you_response_string, back_link)
+              children_living_with_you_response_string, back_link, change_link_description)
     table.add_row(row)
 
     return table
@@ -389,25 +390,25 @@ def create_tables(child_table_list):
     :return: Table output list - populated list of tables to be presented on the summary page
     """
 
-    your_children_dict = [('full_name', 'Name'),
-                          ('date_of_birth', 'Date of birth'),
-                          ('address', 'Address')]
+    your_children_dict = {'full_name':'Name',
+                          'date_of_birth': 'Date of birth',
+                          'address': 'Address'}
 
-    your_children_link_dict = [('full_name', 'your-children:Your-Children-Details'),
-                               ('date_of_birth', 'your-children:Your-Children-Details'),
-                               ('address', 'your-children:Your-Children-Manual-address')]
+    your_children_link_dict = {'full_name': 'your-children:Your-Children-Details',
+                               'date_of_birth': 'your-children:Your-Children-Details',
+                               'address': 'your-children:Your-Children-Manual-address'}
 
     table_output_list = []
 
     for table in child_table_list:
 
         # Each iteration of a table will be a dictionary
-        for key, value in table['fields'].items():
+        for key, value in table['fields']:
 
             # Create a row object using the data name as the key
-            if your_children_link_dict is not None and your_children_link_dict.get(key) is not None:
+            if your_children_link_dict is not None:
                 temp_row = Row(key, your_children_dict[key], value, your_children_dict[key], '',
-                               your_children_link_dict.get(key))
+                               your_children_link_dict[key])
             else:
                 temp_row = Row(key, your_children_dict[key], value, your_children_dict[key], '')
 
@@ -415,7 +416,7 @@ def create_tables(child_table_list):
             table['table_object'].add_row(temp_row)
 
         # Once all rows are added, get any errors for the rows
-        table['table_object'].get_errors()
+        # table['table_object'].get_errors()
         table['table_object'].title = table['title']
         table['table_object'].error_summary_title = table['error_summary_title']
 
