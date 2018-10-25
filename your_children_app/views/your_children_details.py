@@ -1,5 +1,4 @@
 from datetime import datetime
-
 from your_children_app.forms.your_children_details_form import YourChildrenDetailsForm
 from nanny.utilities import build_url, app_id_finder
 from nanny.base_views import NannyTemplateView
@@ -44,7 +43,7 @@ class YourChildrenDetailsView(FormMixin, NannyTemplateView):
                 params={
                     'application_id': application_id,
                     'child_id': uuid.uuid4(),
-                    'date_created': datetime.today(),
+                    'date_created': datetime.datetime.today(),
                     'first_name': first_name,
                     'middle_names': middle_names,
                     'last_name': last_name,

@@ -28,6 +28,32 @@ class Table:
         self.application_id = application_id
         self.table_pk = table_pk
 
+    def add_row(self, row):
+        """
+        A method to add a row to a tables row list
+        :param row: The new row object
+        :return:
+        """
+        self.row_list.append(row)
+
+    def get_row_list(self):
+        """
+        Standar get method for row list
+        :return:
+        """
+        return self.row_list
+
+    def get_error_amount(self):
+        """
+        Method to collect the amount of errors that have occurred in a table
+        :return: Returns the amount of errors contained in thw rowlist
+        """
+        error_count = 0
+        for row in self.row_list:
+            if row.error != '':
+                error_count = error_count + 1
+        return error_count
+
 
 class Row:
     """

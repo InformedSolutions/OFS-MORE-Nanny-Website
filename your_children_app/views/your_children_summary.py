@@ -25,7 +25,7 @@ class YourChildrenSummaryView(NannyTemplateView):
         form = YourChildrenSummaryForm()
 
         # Form error summary initialisation from ARC return
-        if api_response['application_status'] == 'FURTHER_INFORMATION':
+        if api_response.record['application_status'] == 'FURTHER_INFORMATION':
             form.error_summary_template_name = 'returned-error-summary.html'
             form.error_summary_title = "There was a problem"
 
@@ -56,13 +56,16 @@ class YourChildrenSummaryView(NannyTemplateView):
         # Add the generated tables together to display both tables in the summary view
         table_list = [children_living_with_applicant_table] + child_table_list
 
+        # Redefine API response again so that you can access task status
+        api_response = NannyGatewayActions().read('application', params={'application_id': application_id})
+
         # Variables used for the population of the summary view
         variables = {
             'page_title': 'Check your answers: your children',
             'form': form,
             'application_id': application_id,
             'table_list': table_list,
-            'your_children_status': api_response['application_status'],
+            'your_children_status': api_response.record['application_status'],
         }
 
         application = NannyGatewayActions().read('application', params={'application_id': application_id})
