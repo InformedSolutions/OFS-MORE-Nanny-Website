@@ -6,11 +6,16 @@ from nanny import NannyGatewayActions
 from nanny.base_views import NannyTemplateView
 from your_children_app.forms.your_children_summary_form import YourChildrenSummaryForm
 
+from ..utils import *
+
+address_matches_childminder_text = 'Same as your own'
+
 
 class YourChildrenSummaryView(NannyTemplateView):
     """
     From view to handle GET and POST requests to the 'Your Children' task summary view
     """
+
     def get(self, request, *args, **kwargs):
         """
         Method for handling GET requests to the 'Your Children' summary page
@@ -32,23 +37,26 @@ class YourChildrenSummaryView(NannyTemplateView):
         children = api_response.record
         child_table_list = []
 
-        # Create a summary table for
+        # Create a summary table for the child. Returns formatted table depending on child address
         for child in children:
-            child_table = create_child_table(child) #TODO: Add and convert the helper method
+            child_table = create_child_table(child)
             child_table_list.append(child_table)
 
-        child_table_list = #TODO: Convert James's helper code here to return list of tables for applicant children
+        child_table_list = create_tables(child_table_list)
 
         for table in child_table_list:
             for row in table.get_row_list():
-                if row.data_name == 'address' and row.value == #TODO: Update this with helper methods and matching text
+                if row.data_name == 'address' and row.value == 'Same as your own':
                     row.back_link = 'your-children:Your-Children-addresses'
 
-        children_living_with_applicant_table = #TODO: Add helper function to create table
+        # Create table that contains content for the first section of the summary, where a list
+        # of children that live with the applicant is shown
+        children_living_with_applicant_table = create_children_living_with_applicant_table(application_id)
 
         # Add the generated tables together to display both tables in the summary view
         table_list = [children_living_with_applicant_table] + child_table_list
 
+        # Variables used for the population of the summary view
         variables = {
             'page_title': 'Check your answers: your children',
             'form': form,
@@ -57,7 +65,21 @@ class YourChildrenSummaryView(NannyTemplateView):
             'your_children_status': api_response['application_status'],
         }
 
-        variables = submit_link_setter(variables, table_list, 'your_children', application_id) #TODO: Add helper method
+        application = NannyGatewayActions().read('application', params={'application_id': application_id})
+
+        # This logic controls how the 'submit' button functions with the generated tables. This has been adapted from CM
+        # views/your_children.py', 'submit_link_setter' function in 'table_util.py'
+        for table in table_list:
+
+            if table.get_error_amount() != 0:
+                variables['submit_link'] = reverse('your-children:Your-Children-Details')
+            else:
+                variables['submit_link'] = reverse('Task-List')
+
+            if application.record['your_children_status'] != 'FURTHER_INFORMATION':
+                variables['back_link'] = reverse('your-children:Your-Children-Details')
+            else:
+                variables['back_link'] = reverse('Task-List')
 
         return render(request, 'generic-summary-template.html', variables)
 

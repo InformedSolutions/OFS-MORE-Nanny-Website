@@ -1,3 +1,5 @@
+import datetime
+
 from django.core.exceptions import ImproperlyConfigured
 from django.forms import models as model_forms
 from django.http import HttpResponseRedirect
@@ -6,6 +8,9 @@ from django.views.generic.base import ContextMixin, TemplateResponseMixin, View
 from django.views.generic.detail import (
     BaseDetailView, SingleObjectMixin, SingleObjectTemplateResponseMixin,
 )
+
+from nanny import NannyGatewayActions, reverse
+from nanny.table_util import Table, Row
 
 
 class FormMixin(ContextMixin):
@@ -167,6 +172,7 @@ class ProcessFormView(View):
     """
     A mixin that renders a form on GET and processes it on POST.
     """
+
     def get(self, request, *args, **kwargs):
         """
         Handles GET requests and instantiates a blank version of the form.
@@ -208,6 +214,7 @@ class BaseCreateView(ModelFormMixin, ProcessFormView):
 
     Using this base class requires subclassing to provide a response mixin.
     """
+
     def get(self, request, *args, **kwargs):
         self.object = None
         return super(BaseCreateView, self).get(request, *args, **kwargs)
@@ -231,6 +238,7 @@ class BaseUpdateView(ModelFormMixin, ProcessFormView):
 
     Using this base class requires subclassing to provide a response mixin.
     """
+
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
         return super(BaseUpdateView, self).get(request, *args, **kwargs)
@@ -290,3 +298,117 @@ class DeleteView(SingleObjectTemplateResponseMixin, BaseDeleteView):
     with a response rendered by template.
     """
     template_name_suffix = '_confirm_delete'
+
+
+def create_child_table(child):
+    """
+    Helper method to create a child table for the 'Your children' summary page
+    :param child: the child for which a summary table is to be produced
+    :return: table object that can be consumed by the generic summary page template
+    """
+
+    dob = datetime.date(child['birth_year'], child['birth_month'], child['birth_day'])
+    child_name = str(child['first_name']) + " " + str(child['last_name'])
+
+    if not child['lives_with_applicant']:
+        child_address = str(child['street_line1']) + ', ' + str(child['street_line2']) + ', ' \
+                        + str(child['town']) + ', ' + str(child['postcode'])
+
+        child_fields = [
+            ('full_name', child_name),
+            ('date_of_birth', dob),
+            ('address', child_address)
+        ]
+
+    else:
+        child_fields = [
+            ('full_name', child_name),
+            ('date_of_birth', dob),
+            ('address', 'Same as your own')
+        ]
+
+    table = Table([child['pk']])
+    table.other_people_numbers = '&child=' + str(child['child'])
+
+    child_table = ({
+        'table_object': table,
+        'fields': child_fields,
+        'title': child_name,
+        'error_summary_title': "There was a problem with Child {0}'s details".format(child_name)
+    })
+
+    return child_table
+
+
+def create_children_living_with_applicant_table(application_id):
+    """
+    Helper function to create a table of children that live with the applicant for the 'Your children' task
+    :return: Table of children that live with the applicant
+    """
+    children_living_with_applicant_temp_store = []
+
+    api_response = NannyGatewayActions().list(
+        'your-children', params={'application_id': application_id, 'ordering': 'date_created'}
+    )
+
+    # Define a list of children from the API response, ordered by the date they were created by the applicant
+    children = api_response.record
+    children_living_with_applicant = [child for child in children if child['lives_with_applicant']]
+
+    # Create a list of names of children that live with the applicant
+    for child in children_living_with_applicant:
+        child_name = str(child['first_name']) + " " + str(child['last_name'])
+        children_living_with_applicant_temp_store.append(child_name)
+
+    # Create list of names for the table row
+    if len(children_living_with_applicant_temp_store) == 0:
+        children_living_with_you_response_string = 'None'
+    else:
+        children_living_with_you_response_string = ", ".join(children_living_with_applicant_temp_store)
+
+    table = Table([application.pk])  # TODO: Fix this!
+
+    table.title = "Children living with you"
+    table.error_summary_title = "There was a problem with your children's details"
+    back_link = 'your-children:Your-Children-addresses'
+
+    row = Row('children_living_with_you', 'Which of your children live with you?',
+              children_living_with_you_response_string, back_link)
+    table.add_row(row)
+
+    return table
+
+
+def create_tables(child_table_list):
+    """
+    To be fair, you have to have a very high IQ to understand this function...
+
+    Helper function to create a list of childrens tables for use within the 'Your Children' summary page
+    :param child_table_list: List of tabkes if the children generated in the get request of the summary page
+    :return: Table output list - populated list of tables to be presented on the summary page
+    """
+    table_output_list = []
+
+    for table in child_table_list:
+
+        # Each iteration of a table will be a dictionary
+        for key, value in table['fields'].items():
+
+            # Create a row object using the data name as the key
+            if :
+                
+            else:
+
+            # Table object has rows added
+            table['table_object'].add_row(temp_row)
+
+        # Once all rows are added, get any errors for the rows
+        table['table_object'].get_errors() # TODO: Fix this get_errors()
+        table['table_object'].title = table['title']
+        table['table_object'].error_summary_title = table['error_summary_title']
+
+        # Append the list with the table
+        table_output_list.append(table['table_object'])
+
+    return table_output_list
+
