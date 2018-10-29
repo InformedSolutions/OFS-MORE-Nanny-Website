@@ -1,42 +1,39 @@
 from datetime import datetime
-
 from django.shortcuts import render
-
 from your_children_app.forms.your_children_details_form import YourChildrenDetailsForm
-from nanny.utilities import build_url, app_id_finder
+from nanny.utilities import app_id_finder
 from nanny.base_views import NannyFormView
 import uuid
 from ..utils import *
 from nanny.db_gateways import NannyGatewayActions
 
 
-class YourChildrenDetailsView(NannyFormView):  # Removed - FormMixin
+class YourChildrenDetailsView(NannyFormView):
     """
     Template view to  render the your children details view
     """
-
     def get(self, request, *args, **kwargs):
         application_id = app_id_finder(self.request)
-
         api_response = NannyGatewayActions().list(
-            'your-children', params={'application_id': application_id, 'ordering': 'date_created'}
-        )
-
+            'your-children', params={'application_id': application_id, 'ordering': 'date_created'})
         number_of_children_present_in_querystring = request.GET.get('children') is not None
 
         if number_of_children_present_in_querystring:
             number_of_children = int(request.GET["children"])
         else:
-            number_of_children = 0
+            if api_response.status_code == 200:
+                number_of_children = len(api_response.record)
+            else:
+                number_of_children = 0
 
         remove_request_querystring_present = (request.GET.get('remove') is not None)
-
         child_to_remove = 0
         remove_button = True
 
         if remove_request_querystring_present:
             child_to_remove = str(request.GET.get('remove'))
 
+        # If there are no children, set the number to 1 to initialise the first form
         if number_of_children == 0:
             number_of_children = 1
 
@@ -46,8 +43,8 @@ class YourChildrenDetailsView(NannyFormView):  # Removed - FormMixin
 
         # Remove the child from the record if the 'Remove' button is used, then update the
         # 'child' number based on the creation date of the record
-        if remove_request_querystring_present:
-            remove_child(child_to_remove)
+        if remove_request_querystring_present and child_to_remove != '0':
+            remove_child(child_to_remove, application_id)
             assign_child_numbers(api_response)
 
         # Generate a list of forms that will be iterated through when the page is initialised
@@ -57,9 +54,9 @@ class YourChildrenDetailsView(NannyFormView):  # Removed - FormMixin
 
             try:
                 child_id = NannyGatewayActions().list('your-children', params={
-                    'application_id': str(application_id),
-                    'ordering': 'date_created'}).record[i - 1]['child_id']
-            except AttributeError:
+                          'application_id': str(application_id),
+                          'ordering': 'date_created'}).record[i-1]['child_id']
+            except (IndexError, AttributeError):
                 child_id = None
 
             form = YourChildrenDetailsForm(
@@ -102,7 +99,7 @@ class YourChildrenDetailsView(NannyFormView):  # Removed - FormMixin
 
         # Initialise the page with an empty child representation
         if number_of_children == 0:
-            number_of_children == 1
+            number_of_children = 1
 
         if number_of_children == 1:
             remove_button = False
@@ -114,9 +111,9 @@ class YourChildrenDetailsView(NannyFormView):  # Removed - FormMixin
 
             try:
                 child_id = NannyGatewayActions().list('your-children', params={
-                    'application_id': str(application_id),
-                    'ordering': 'date_created'}).record[i - 1]['child_id']
-            except AttributeError:
+                          'application_id': str(application_id),
+                          'ordering': 'date_created'}).record[i-1]['child_id']
+            except (IndexError, AttributeError):
                 child_id = None
 
             form = YourChildrenDetailsForm(request.POST,
@@ -159,7 +156,7 @@ class YourChildrenDetailsView(NannyFormView):  # Removed - FormMixin
                     NannyGatewayActions().put('your-children', params=api_response.record)
 
                 else:
-                    api_response = NannyGatewayActions().create(
+                    NannyGatewayActions().create(
                         'your-children',
                         params={
                             'application_id': application_id,
@@ -173,6 +170,7 @@ class YourChildrenDetailsView(NannyFormView):  # Removed - FormMixin
                             'birth_year': date_of_birth.year,
                         }
                     )
+
                 valid_list.append(True)
 
             # form is not valid
@@ -184,11 +182,14 @@ class YourChildrenDetailsView(NannyFormView):  # Removed - FormMixin
         # Define the 'child' number based on the creation date of the record. Should account for added and removed
         api_response = NannyGatewayActions().list(
             'your-children', params={'application_id': application_id, 'ordering': 'date_created'})
+
         assign_child_numbers(api_response)
 
         if 'submit' in request.POST:
+
             if all(valid_list):
                 return HttpResponseRedirect(reverse('your-children:Your-Children-addresses') + '?id=' + application_id)
+
             # If there is an invalid form
             else:
                 variables = {
@@ -200,9 +201,11 @@ class YourChildrenDetailsView(NannyFormView):  # Removed - FormMixin
                     'remove_button': remove_button,
                     'your_children_status': application.record['your_children_status']
                 }
+
                 return render(request, 'your-children-details.html', variables)
 
         if 'add_person' in request.POST:
+
             if False not in valid_list:
                 variables = {
                     'application_id': application_id,
@@ -224,4 +227,5 @@ class YourChildrenDetailsView(NannyFormView):  # Removed - FormMixin
                     'remove_button': remove_button,
                     'your_children_status': application.record['your_children_status']
                 }
+
                 return render(request, 'your-children-details.html', variables)
