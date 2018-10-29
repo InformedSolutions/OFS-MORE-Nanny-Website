@@ -8,7 +8,7 @@ from nanny.db_gateways import NannyGatewayActions
 from nanny.forms_helper import full_stop_stripper
 
 
-class YourChildrenAddressForm(NannyForm):
+class YourChildrenPostcodeForm(NannyForm):
     """
     Form that presents a postcode lookup field within the 'Your children' task
     """
@@ -27,7 +27,7 @@ class YourChildrenAddressForm(NannyForm):
         """
         self.application_id_local = kwargs.pop('id')
         self.child = kwargs.pop('child')
-        super(YourChildrenAddressForm, self).__init__(*args, **kwargs)
+        super(YourChildrenPostcodeForm, self).__init__(*args, **kwargs)
         full_stop_stripper(self)
 
         # Set form initial postcode if one exists for the child number
@@ -115,3 +115,59 @@ class YourChildrenManualAddressForm(NannyForm):
         self.pk = child_record['child_id']
         self.field_list = ['street_line1', 'street_line2', 'town', 'county', 'postcode']
 
+    def clean_street_line1(self):
+        """
+        Street name and number validation
+        :return: string
+        """
+        street_line1 = self.cleaned_data['street_line1']
+        if len(street_line1) > 50:
+            raise forms.ValidationError('The first line of your address must be under 50 characters long')
+        return street_line1
+
+    def clean_street_line2(self):
+        """
+        Street name and number line 2 validation
+        :return: string
+        """
+        street_line2 = self.cleaned_data['street_line2']
+        if len(street_line2) > 50:
+            raise forms.ValidationError('The second line of your address must be under 50 characters long')
+        return street_line2
+
+    def clean_town(self):
+        """
+        Town validation
+        :return: string
+        """
+        town = self.cleaned_data['town']
+        if re.match(settings.REGEX['TOWN'], town) is None:
+            raise forms.ValidationError('Please spell out the name of the town or city using letters')
+        if len(town) > 50:
+            raise forms.ValidationError('The name of the town or city must be under 50 characters long')
+        return town
+
+    def clean_county(self):
+        """
+        County validation
+        :return: string
+        """
+        county = self.cleaned_data['county']
+        if county != '':
+            if re.match(settings.REGEX['COUNTY'], county) is None:
+                raise forms.ValidationError('Please spell out the name of the county using letters')
+            if len(county) > 50:
+                raise forms.ValidationError('The name of the county must be under 50 characters long')
+        return county
+
+    def clean_postcode(self):
+        """
+        Postcode validation
+        :return: string
+        """
+        postcode = self.cleaned_data['postcode']
+        postcode_no_space = postcode.replace(" ", "")
+        postcode_uppercase = postcode_no_space.upper()
+        if re.match(settings.REGEX['POSTCODE_UPPERCASE'], postcode_uppercase) is None:
+            raise forms.ValidationError('Please enter a valid postcode')
+        return postcode
