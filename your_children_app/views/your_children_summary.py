@@ -84,7 +84,7 @@ class YourChildrenSummaryView(NannyTemplateView):
             else:
                 variables['back_link'] = reverse('Task-List')
 
-        return render(request, 'generic-summary-template.html', variables)
+        return render(request, 'your-children-summary.html', variables)
 
     def post(self, request, *args, **kwargs):
         """
