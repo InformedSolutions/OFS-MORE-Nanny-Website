@@ -426,14 +426,26 @@ def create_tables(child_table_list):
     return table_output_list
 
 
-def remove_child(remove_person):
+def remove_child(remove_person, application_id):
     """
     Helper method to remove children from the 'Your Children details' subtask
     :param remove_person: child_id to be removed
+    :param application_id: ID of the applicant
     :return:
     """
-    NannyGatewayActions().delete('your-children',
-                                 params={'child_id': remove_person})
+    if remove_person != 0:
+        child_record = NannyGatewayActions().list('your-children', params={'application_id': application_id,
+                                                                       'ordering': 'date_created',
+                                                                       }).record
+        if int(remove_person) <= len(child_record):
+            child_id = child_record[int(remove_person) - 1]['child_id']
+
+            NannyGatewayActions().delete('your-children', params={
+                                         'application_id': application_id,
+                                         'child_id': child_id,
+                                     })
+    else:
+        pass
 
 
 def assign_child_numbers(api_response):

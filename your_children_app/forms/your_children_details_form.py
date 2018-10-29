@@ -1,10 +1,6 @@
-import re
-import datetime
 from datetime import date
 from nanny import NannyForm, CustomSplitDateFieldDOB
 from django import forms
-from django.conf import settings
-
 from nanny.db_gateways import NannyGatewayActions
 from your_children_app.utils import date_formatter
 
