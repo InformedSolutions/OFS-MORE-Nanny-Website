@@ -40,11 +40,11 @@ class CriminalRecordChecksSummaryView(NannyTemplateView):
         else:
             raise ValueError('The "is_ofsted_dbs" value does not equal either True or False.')
 
-        lived_abroad_row = Row('lived_abroad', 'Have you lived outside of the UK in the last 5 years?', dbs_record['lived_abroad'], 'dbs:Lived-Abroad-View', 'Change answer on lived abroad')
-        ofsted_dbs = Row('is_ofsted_dbs', 'Do you have an Ofsted DBS Check?', dbs_record['is_ofsted_dbs'], 'dbs:DBS-Type-View', "Change answer to having an Ofsted DBS Check")
-        dbs_update_service_row = Row('on_dbs_update_service', 'Are you on the DBS update service?', dbs_record['on_dbs_update_service'], 'dbs:DBS-Update-Service-Page', "Change answer to being on the DBS update service")
-        dbs_number_row = Row('dbs_number', 'DBS certificate number', dbs_record['dbs_number'], dbs_page_link, 'Change DBS certificate number')
-        convictions_row = Row('convictions', 'Do you have any criminal cautions or convictions?', dbs_record['convictions'], 'dbs:Capita-DBS-Details-View', 'Change answer on criminal cautions or convictions')
+        lived_abroad_row = Row('lived_abroad', 'Have you lived outside of the UK in the last 5 years?', dbs_record['lived_abroad'], 'dbs:Lived-Abroad-View', 'answer on lived abroad')
+        ofsted_dbs = Row('is_ofsted_dbs', 'Do you have an Ofsted DBS Check?', dbs_record['is_ofsted_dbs'], 'dbs:DBS-Type-View', "answer to having an Ofsted DBS Check")
+        dbs_update_service_row = Row('on_dbs_update_service', 'Are you on the DBS update service?', dbs_record['on_dbs_update_service'], 'dbs:DBS-Update-Service-Page', "answer to being on the DBS update service")
+        dbs_number_row = Row('dbs_number', 'DBS certificate number', dbs_record['dbs_number'], dbs_page_link, 'DBS certificate number')
+        convictions_row = Row('convictions', 'Do you have any criminal cautions or convictions?', dbs_record['convictions'], 'dbs:Capita-DBS-Details-View', 'answer on criminal cautions or convictions')
 
         if dbs_record['is_ofsted_dbs']:
             row_list = [lived_abroad_row, ofsted_dbs, dbs_number_row, convictions_row]
