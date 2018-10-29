@@ -44,7 +44,7 @@ class CriminalCautionsAndConvictionsFormFieldMixin(forms.Form):
         (False, 'No')
     )
 
-    has_convictions = forms.ChoiceField(
+    convictions = forms.ChoiceField(
         label='Do you have any criminal cautions or convictions?',
         choices=convictions_choices,
         error_messages={
