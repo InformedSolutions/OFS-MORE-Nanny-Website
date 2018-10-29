@@ -1,10 +1,12 @@
 import re
-from datetime import date, datetime
+import datetime
+from datetime import date
 from nanny import NannyForm, CustomSplitDateFieldDOB
 from django import forms
 from django.conf import settings
 
 from nanny.db_gateways import NannyGatewayActions
+from your_children_app.utils import date_formatter
 
 
 class YourChildrenDetailsForm(NannyForm):
@@ -51,36 +53,32 @@ class YourChildrenDetailsForm(NannyForm):
         :param args: arguments passed to the form
         :param kwargs: arguments passed to the form as keyword, such as the application ID
         """
-        if 'id' in kwargs['initial']:
-            self.application_id_local = kwargs['initial']['id']
-        elif 'data' in kwargs and 'id' in kwargs['data']:
-            self.application_id_local = kwargs['data']['id']
-
-        if 'child_id' in kwargs['initial']:
-            self.child_id = kwargs['initial']['child_id']
+        self.application_id_local = kwargs.pop('id')
+        self.child = kwargs.pop('child')
+        self.child_id = kwargs.pop('child_id')
 
         super(YourChildrenDetailsForm, self).__init__(*args, **kwargs)
 
-        if hasattr(self, 'child_id'):
-            response = NannyGatewayActions().read('your-children', params={
-                'child_id': self.child_id})
+        api_response = NannyGatewayActions().list('your-children', params={
+                'application_id': str(self.application_id_local),
+                'child_id': str(self.child_id),
+            })
 
-            # Can replace index with child number
-            if response.status_code == 200:
-                # application_id = response.record[0]['application_id']
-                # child_id = response.record[0]['child_id']
-                first_name = response.record[0]['first_name']
-                middle_names = response.record[0]['middle_names']
-                last_name = response.record[0]['last_name']
-                date_of_birth = datetime.datetime.strptime(
-                    response.record['date_of_birth'], '%Y-%m-%d')
+        # If there is an existing child record associated with the ID, fill in the details
+        if api_response.status_code == 200:
+            child_record = api_response.record[0]
+            birth_day, birth_month, birth_year = date_formatter(
+                child_record['birth_day'],
+                child_record['birth_month'],
+                child_record['birth_year']
+                )
 
-                self.pk = self.child_id
-
-                self.fields['first_name'].initial = first_name
-                self.fields['middle_names'].initial = middle_names
-                self.fields['last_name'].initial = last_name
-                self.fields['date_of_birth'].initial = date_of_birth
+            self.fields['first_name'].initial = child_record['first_name']
+            self.fields['middle_names'].initial = child_record['middle_names']
+            self.fields['last_name'].initial = child_record['last_name']
+            self.fields['date_of_birth'].initial = [birth_day, birth_month, birth_year]
+            self.pk = child_record['child_id']
+            self.field_list = 'first_name', 'middle_names', 'last_name', 'date_of_birth'
 
     def clean_first_name(self):
         """

@@ -424,3 +424,40 @@ def create_tables(child_table_list):
         table_output_list.append(table['table_object'])
 
     return table_output_list
+
+
+def remove_child(remove_person):
+    """
+    Helper method to remove children from the 'Your Children details' subtask
+    :param remove_person: child_id to be removed
+    :return:
+    """
+    NannyGatewayActions().delete('your-children',
+                                 params={'child_id': remove_person})
+
+
+def assign_child_numbers(api_response):
+    """
+    Helper method to assign numbers to children in the 'your chidren' task
+    :param api_response: Response when calling .list on the your-children endpoint
+    :return: Patches the API with the updated 'child' number
+    """
+    for child in api_response.record:
+        child['child'] = api_response.record.index(child) + 1
+        NannyGatewayActions().patch('your-children', params=child)
+
+
+def date_formatter(day, month, year):
+    """
+
+    :param day: The day of the date to be formatted (should be integer on arrival)
+    :param month: The month of the date to be formatted (should be integer on arrival)
+    :param year: The year of the date to be formatted (should be integer on arrival)
+    :return: The day, month, and year all formatted as strings with formatting specified in [CCN3-784]
+    """
+
+    output_day = str(day).zfill(2)
+    output_month = str(month).zfill(2)
+    output_year = str(year)
+
+    return output_day, output_month, output_year
