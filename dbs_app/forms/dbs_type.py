@@ -20,7 +20,7 @@ class DBSTypeForm(NannyForm):
     )
 
     is_ofsted_dbs = forms.ChoiceField(
-            label='Do you have an Ofsted DBS Check?',
+            label='Do you have an Ofsted DBS check?',
             choices=options,
             widget=InlineRadioSelect,
             required=True,
