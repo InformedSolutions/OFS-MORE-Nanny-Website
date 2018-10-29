@@ -148,7 +148,7 @@ class CriminalRecordChecksTest(TestCase):
         response = self.client.post(reverse('dbs:Capita-DBS-Details-View') + self.url_suffix,
                                     data={
                                         'dbs_number': '000000000012',
-                                        'has_convictions': True,
+                                        'convictions': True,
                                     })
 
         self.assertEqual(response.status_code, 302)
@@ -158,7 +158,7 @@ class CriminalRecordChecksTest(TestCase):
         response = self.client.post(reverse('dbs:Capita-DBS-Details-View') + self.url_suffix,
                                     data={
                                         'dbs_number': '000000000012',
-                                        'has_convictions': False,
+                                        'convictions': False,
                                     })
 
         self.assertEqual(response.status_code, 302)
@@ -303,7 +303,7 @@ class CriminalRecordFormsTest(SimpleTestCase):
             form.fields['is_ofsted_dbs'].clean('')
 
     def test_not_entering_cautions_and_convictions_raises_error(self):
-        form = dbs_forms.CaptiaDBSDetailsForm(data={'has_convictions': ''})
+        form = dbs_forms.CaptiaDBSDetailsForm(data={'convictions': ''})
 
         with self.assertRaisesMessage(ValidationError, 'Please say if you have any criminal cautions or convictions'):
-            form.fields['has_convictions'].clean('')
+            form.fields['convictions'].clean('')
