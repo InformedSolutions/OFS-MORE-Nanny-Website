@@ -98,7 +98,7 @@ class TaskListView(View):
                     'description': 'Your children',
                     'status_url': None,
                     'status_urls': {
-                        'COMPLETED/FLAGGED': 'your-children:Your-Children-Guidance',  #TODO: Change this to the summary page when done with testing
+                        'COMPLETED/FLAGGED': 'your-children:Your-Children-Summary', 
                         'NOT_COMPLETED': 'your-children:Your-Children-Guidance',
                     }
 

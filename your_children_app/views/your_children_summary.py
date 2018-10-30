@@ -44,6 +44,7 @@ class YourChildrenSummaryView(NannyTemplateView):
 
         child_table_list = create_tables(child_table_list)
 
+        # Set the change link in the 'children living with you' table to go back to the 'Your children's addresses' page
         for table in child_table_list:
             for row in table.get_row_list():
                 if row.data_name == 'address' and row.value == 'Same as your own':
@@ -59,6 +60,9 @@ class YourChildrenSummaryView(NannyTemplateView):
         # Redefine API response again so that you can access task status
         api_response = NannyGatewayActions().read('application', params={'application_id': application_id})
 
+        for table in table_list:
+            table.get_errors()
+
         # Variables used for the population of the summary view
         variables = {
             'page_title': 'Check your answers: your children',
@@ -68,32 +72,14 @@ class YourChildrenSummaryView(NannyTemplateView):
             'your_children_status': api_response.record['application_status'],
         }
 
-        application = NannyGatewayActions().read('application', params={'application_id': application_id})
-
-        # This logic controls how the 'submit' button functions with the generated tables. This has been adapted from CM
-        # views/your_children.py', 'submit_link_setter' function in 'table_util.py'
-        for table in table_list:
-
-            if table.get_error_amount() != 0:
-                variables['submit_link'] = reverse('your-children:Your-Children-Details')
-            else:
-                variables['submit_link'] = reverse('Task-List')
-
-            if application.record['your_children_status'] != 'FURTHER_INFORMATION':
-                variables['back_link'] = reverse('your-children:Your-Children-Details')
-            else:
-                variables['back_link'] = reverse('Task-List')
-
-        return render(request, 'your-children-summary.html', variables)
+        return render(request, 'generic-summary-template.html', variables)
 
     def post(self, request, *args, **kwargs):
         """
         Method for handling POST requests to the 'Your Children' task summary page
         """
-
         app_id = app_id_finder(self.request)
         app_api_response = NannyGatewayActions().read('application', params={'application_id': app_id})
-
         if app_api_response.status_code == 200:
             # Update the task status to 'Done'
             record = app_api_response.record
