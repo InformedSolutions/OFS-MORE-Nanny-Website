@@ -14,54 +14,6 @@ class ChildcareAddressSummaryView(View):
     Handle get and post requests to the summary view.
     """
     def get(self, request):
-
-        # context = {
-        #     'id': app_id
-        # }
-        #
-        # app_response = NannyGatewayActions().read('application', params={'application_id': app_id})
-        # if app_response.status_code == 200:
-        #
-        #     app_record = app_response.record
-        #     if app_record['address_to_be_provided']:
-        #         address_to_be_provided = 'Yes'
-        #     else:
-        #         address_to_be_provided = 'No'
-        #
-        #     context['address_to_be_provided'] = address_to_be_provided
-        #
-        #     address_response = NannyGatewayActions().list('childcare-address', params={'application_id': app_id})
-        #
-        #     if address_response.status_code == 200:
-        #         address_records = address_response.record
-        #
-        #         data = []
-        #
-        #         for i in range(1, len(address_records) + 1):
-        #             record = {}
-        #             record['title'] = "Childcare address " + str(i)
-        #
-        #             record['address'] = AddressHelper.format_address(address_records[i - 1], "</br>")
-        #             record['change_link'] = build_url('Childcare-Address-Details',
-        #                                               get={
-        #                                                   'id': address_records[i - 1]['application_id'],
-        #                                               })
-        #             data.append(record)
-        #
-        #         context['records'] = data
-        #
-        # # get home address
-        # home_address_resp = NannyGatewayActions().read('applicant-home-address', params={'application_id': app_id})
-        # if home_address_resp.status_code == 200:
-        #     home_address = home_address_resp.record['childcare_address']
-        #     if home_address is not None:
-        #         if home_address:
-        #             context['home_address'] = 'Yes'
-        #         else:
-        #             context['home_address'] = 'No'
-        #     else:
-        #         context['home_address'] = None
-
         return render(request, template_name='generic-summary-template.html', context=self.get_context_data())
 
     def post(self, request):
@@ -90,6 +42,43 @@ class ChildcareAddressSummaryView(View):
 
         childcare_address_summary_table = Table(application_id)
         childcare_address_summary_table.row_list = [known_childcare_location_row]
+
+        if app_record['address_to_be_provided']:
+            address_response = NannyGatewayActions().list('childcare-address', params={'application_id': application_id})
+            address_records  = address_response.record
+
+            for index, address in enumerate(address_records):
+                row = Row(
+                    'childcare_address',
+                    "Childcare address " + str(index + 1),
+                    AddressHelper.format_address(address_records[index], "</br>"),
+                    'Childcare-Address-Details',
+                    None
+                )
+
+                childcare_address_summary_table.row_list.append(row)
+
+            home_address_resp = NannyGatewayActions().read('applicant-home-address', params={'application_id': application_id})
+
+            home_address = home_address_resp.record['childcare_address']
+
+            if home_address:
+                home_address_value = 'Yes'
+
+            else:
+                home_address_value = 'No'
+
+            home_address_row = Row(
+                'both_work_and_home_address',
+                'Will you live and work at the same address?',
+                home_address_value,
+                'Childcare-Address-Location',
+                None
+            )
+
+            childcare_address_summary_table.row_list.insert(1, home_address_row)
+
+        # FIXME: The childcare address 2 row renders with the same ARC flag as address 1
         childcare_address_summary_table.get_errors()
 
         context['table_list'] = [childcare_address_summary_table]
