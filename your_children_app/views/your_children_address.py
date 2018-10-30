@@ -87,6 +87,7 @@ class YourChildrenAddressSelectionView(NannyFormView):
     """
     Template view to  render the your children address selection view
     """
+
     def get(self, request, *args, **kwargs):
         """
         Method to handle get requests to the 'your children' postcode results and address selection view
@@ -111,12 +112,12 @@ class YourChildrenAddressSelectionView(NannyFormView):
                 form.error_summary_template_name = 'returned-error-summary.html'
                 form.error_summary_title = 'There was a problem'
 
-            variables={
-            'form': form,
-            'application_id': application_id,
-            'postcode': postcode,
-            'name': name,
-            'child': child,
+            variables = {
+                'form': form,
+                'application_id': application_id,
+                'postcode': postcode,
+                'name': name,
+                'child': child,
             }
 
             return render(request, 'your-children-address-selection.html', variables)
@@ -183,9 +184,9 @@ class YourChildrenAddressSelectionView(NannyFormView):
                                             + '?id=' + application_id)
             else:
                 return HttpResponseRedirect(reverse('your-children:Your-Children-Postcode')
-                    + '?id=' + application_id
-                    + '&child=' + str(next_child)
-                )
+                                            + '?id=' + application_id
+                                            + '&child=' + str(next_child)
+                                            )
 
         else:
             form.error_summary_title = 'There was a problem finding your address'
@@ -204,10 +205,12 @@ class YourChildrenAddressSelectionView(NannyFormView):
 
             return render(request, 'your-children-address-selection.html', variables)
 
+
 class YourChildrenManualAddressView(NannyFormView):
     """
     Form view to  render the your children details view
     """
+
     def get(self, request, *args, **kwargs):
         """
         Method for handling get requests to the manual address entry page in the 'Your children' task
@@ -227,7 +230,7 @@ class YourChildrenManualAddressView(NannyFormView):
             form.error_summary_template_name = 'returned-error-summary.html'
             form.error_summary_title = 'There was a problem'
 
-        variables={
+        variables = {
 
             'form': form,
             'child': child,
@@ -252,9 +255,13 @@ class YourChildrenManualAddressView(NannyFormView):
         form = YourChildrenManualAddressForm(id=application_id, child=child)
 
         if form.is_valid():
-
-            # TODO - Set the address here - helper file? Convert the CM method? Check personal deets task?
-            # Set the address
+            # Patch the existing child record
+            child_record['street_line1'] = form.cleaned_data['street_line1']
+            child_record['street_line2'] = form.cleaned_data['street_line2']
+            child_record['town'] = form.cleaned_data['town']
+            child_record['county'] = form.cleaned_data['county']
+            child_record['postcode'] = form.cleaned_data['postcode']
+            NannyGatewayActions().patch('your-children', params={child_record})
 
             if application['application_status'] != 'COMPLETED':
                 application['application_status'] = 'IN_PROGRESS'
@@ -271,26 +278,21 @@ class YourChildrenManualAddressView(NannyFormView):
                 return HttpResponseRedirect(reverse('your-children:Your-Children-Summary')
                                             + '?id=' + application_id)
 
-            else:
-                return HttpResponseRedirect(reverse('your-children:Your-Children-Postcode')
-                    + '?id=' + application_id
-                    + '&child=' + str(next_child)
-                )
+            return HttpResponseRedirect(reverse('your-children:Your-Children-Postcode')
+                                        + '?id=' + application_id
+                                        + '&child=' + str(next_child)
+                                        )
 
         else:
             form.error_summary_title = 'There was a problem finding your address'
-
             if application['application_status'] == 'FURTHER_INFORMATION':
                 form.error_summary_template_name = 'returned-error-summary.html'
                 form.error_summary_title = 'There was a problem'
 
-            # TODO: Correct the address
             variables = {
-                'postcode': postcode,
                 'form': form,
                 'application_id': application_id,
                 'child': child,
                 'name': name,
             }
-
             return render(request, 'your-children-manual-address.html', variables)
