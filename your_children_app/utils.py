@@ -461,11 +461,7 @@ def assign_child_numbers(api_response):
 
 def date_formatter(day, month, year):
     """
-
-    :param day: The day of the date to be formatted (should be integer on arrival)
-    :param month: The month of the date to be formatted (should be integer on arrival)
-    :param year: The year of the date to be formatted (should be integer on arrival)
-    :return: The day, month, and year all formatted as strings with formatting specified in [CCN3-784]
+    helper function to format the date
     """
 
     output_day = str(day).zfill(2)
@@ -473,3 +469,20 @@ def date_formatter(day, month, year):
     output_year = str(year)
 
     return output_day, output_month, output_year
+
+
+def get_child_number_for_address_loop(application_id, child_list, current_child):
+    """
+    Helper function to allow for the 'child' number to be returned following address entry
+    """
+
+    if len(child_list.record) > int(current_child):
+        next_child = int(current_child) + 1
+        next_child_record = child_list.record[next_child - 1]
+        if not next_child_record['lives_with_applicant']:
+            return next_child
+        else:
+            return get_child_number_for_address_loop(application_id, child_list, next_child)
+    else:
+        return None
+
