@@ -12,7 +12,6 @@ class YourChildrenGuidanceView(NannyTemplateView):
     success_url_name = 'your-children:Your-Children-Details'
 
     def post(self, request):
-
         app_id = app_id_finder(self.request)
         # update task status to be done
         app_api_response = NannyGatewayActions().read('application', params={'application_id': app_id})

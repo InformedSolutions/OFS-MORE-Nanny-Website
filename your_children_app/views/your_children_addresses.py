@@ -77,6 +77,11 @@ class YourChildrenAddressesView(NannyFormView):
                 else:
                     raise ValueError('The API did not respond as expected')
 
+            else:
+                # Child does not live with applicant, or 'None' is selected
+                child['lives_with_applicant'] = False
+                NannyGatewayActions().patch('your-children', params=child)
+
         # Create a list of children who do not live with the applicant
         children_not_living_with_applicant = [child for child in children if child['lives_with_applicant'] is False]
 
@@ -85,7 +90,7 @@ class YourChildrenAddressesView(NannyFormView):
             # Child number is defined by the first child added by the applicant as it is ordered by date created
             child_number = children_not_living_with_applicant[0]['child']
 
-            return HttpResponseRedirect(reverse('your-children:Your-Children-address') + '?id=' +
+            return HttpResponseRedirect(reverse('your-children:Your-Children-Postcode') + '?id=' +
                                         application_id + '&child=' + str(child_number))
 
         # If all the children live with the applicant, return the summary table and skip the address selection
