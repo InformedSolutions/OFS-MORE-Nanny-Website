@@ -328,14 +328,14 @@ def create_child_table(child):
             ('address', 'Same as your own')
         ]
 
-    table = Table([child_id])
+    table = Table(child_id)
     table.other_people_numbers = '&child=' + str(child['child'])
 
     child_table = ({
         'table_object': table,
         'fields': child_fields,
         'title': child_name,
-        'error_summary_title': "There was a problem with Child {0}'s details".format(child_name)
+        'error_summary_title': "There was a problem with {0}'s details".format(child_name)
     })
 
     return child_table
@@ -367,12 +367,11 @@ def create_children_living_with_applicant_table(application_id):
     else:
         children_living_with_you_response_string = ", ".join(children_living_with_applicant_temp_store)
 
-    application = NannyGatewayActions().read('application', params={'application_id': application_id})
+    table = Table(application_id)
 
-    table = Table([application_id])
+    table.error_summary_title = "There was a problem with the children living with you"
 
     table.title = "Children living with you"
-    table.error_summary_title = "There was a problem with your children's details"
     change_link_description = 'which of your children live with you'
     back_link = 'your-children:Your-Children-addresses'
 
@@ -390,7 +389,7 @@ def create_tables(child_table_list):
     :return: Table output list - populated list of tables to be presented on the summary page
     """
 
-    your_children_dict = {'full_name':'Name',
+    your_children_dict = {'full_name': 'Name',
                           'date_of_birth': 'Date of birth',
                           'address': 'Address'}
 
@@ -404,13 +403,8 @@ def create_tables(child_table_list):
 
         # Each iteration of a table will be a dictionary
         for key, value in table['fields']:
-
             # Create a row object using the data name as the key
-            if your_children_link_dict is not None:
-                temp_row = Row(key, your_children_dict[key], value, your_children_dict[key], '',
-                               your_children_link_dict[key])
-            else:
-                temp_row = Row(key, your_children_dict[key], value, your_children_dict[key], '')
+            temp_row = Row(key, your_children_dict[key], value, your_children_link_dict[key], '')
 
             # Table object has rows added
             table['table_object'].add_row(temp_row)
@@ -420,7 +414,6 @@ def create_tables(child_table_list):
         table['table_object'].title = table['title']
         table['table_object'].error_summary_title = table['error_summary_title']
 
-        # Append the list with the table
         table_output_list.append(table['table_object'])
 
     return table_output_list

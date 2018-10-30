@@ -8,6 +8,15 @@ class Table:
     """
     error_summary_title = 'There was a problem'
 
+    def __init__(self, application_id, table_pk=None):
+        """
+        :attr: row_list: list of Row objects which comprise the table.
+        """
+        self.row_list = []
+        self.title = ''
+        self.application_id = application_id
+        self.table_pk = table_pk
+
     def get_errors(self):
         for row in self.row_list:
             api_response = NannyGatewayActions().list('arc-comments', params={'application_id': self.application_id, 'field_name': row.data_name})
@@ -18,15 +27,6 @@ class Table:
 
     def get_error_amount(self):
         return sum([1 for row in self.row_list if row.error is not None])
-
-    def __init__(self, application_id, table_pk=None):
-        """
-        :attr: row_list: list of Row objects which comprise the table.
-        """
-        self.row_list = []
-        self.title = ''
-        self.application_id = application_id
-        self.table_pk = table_pk
 
     def add_row(self, row):
         """
@@ -42,17 +42,6 @@ class Table:
         :return:
         """
         return self.row_list
-
-    def get_error_amount(self):
-        """
-        Method to collect the amount of errors that have occurred in a table
-        :return: Returns the amount of errors contained in thw rowlist
-        """
-        error_count = 0
-        for row in self.row_list:
-            if row.error != '':
-                error_count = error_count + 1
-        return error_count
 
 
 class Row:
