@@ -26,7 +26,7 @@ class ChildcareLocationView(BaseFormView):
         )
         if api_response.status_code == 200:
             record = api_response.record
-            initial['home_address'] = record['childcare_address']
+            initial['both_work_and_home_address'] = record['childcare_address']
             initial['home_address_id'] = record['home_address_id']
             initial['id'] = app_id
         return initial
@@ -47,15 +47,15 @@ class ChildcareLocationView(BaseFormView):
         # pull the applicant's home address from their personal details
         app_id = self.request.GET['id']
 
-        home_address = None
-        if form.cleaned_data['home_address'] == 'True':
-            home_address = True
+        both_work_and_home_address = None
+        if form.cleaned_data['both_work_and_home_address'] == 'True':
+            both_work_and_home_address = True
             self.success_url = 'Childcare-Address-Details'
-        elif form.cleaned_data['home_address'] == 'False':
-            home_address = False
+        elif form.cleaned_data['both_work_and_home_address'] == 'False':
+            both_work_and_home_address = False
             self.success_url = 'Childcare-Address-Postcode-Entry'
 
-        childcare_address_changed_to_false = self.__check_childcare_address_changed_to_false(app_id, home_address)
+        childcare_address_changed_to_false = self.__check_childcare_address_changed_to_false(app_id, both_work_and_home_address)
 
         apd_api_response = NannyGatewayActions().read('applicant-personal-details', params={'application_id': app_id})
 
@@ -70,7 +70,7 @@ class ChildcareLocationView(BaseFormView):
                 NannyGatewayActions().put('applicant-home-address', params=home_address_record)
 
                 # add new childcare address
-                if home_address:
+                if both_work_and_home_address:
                     NannyGatewayActions().create(
                         'childcare-address',
                         params={
