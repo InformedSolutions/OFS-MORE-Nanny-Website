@@ -66,7 +66,7 @@ class ChildcareLocationView(BaseFormView):
             if aha_api_response.status_code == 200:
 
                 home_address_record = aha_api_response.record
-                home_address_record['childcare_address'] = home_address
+                home_address_record['childcare_address'] = both_work_and_home_address
                 NannyGatewayActions().put('applicant-home-address', params=home_address_record)
 
                 # add new childcare address
@@ -124,6 +124,7 @@ class ChildcareLocationView(BaseFormView):
         home_address_record = nanny_actions.read('applicant-home-address', params={'application_id': app_id}).record
 
         home_address_filter = {
+            'application_id': app_id,
             'street_line1': home_address_record['street_line1'] if home_address_record['street_line1'] else "",
             'street_line2': home_address_record['street_line2'] if home_address_record['street_line2'] else "",
             'town': home_address_record['town'] if home_address_record['town'] else "",
