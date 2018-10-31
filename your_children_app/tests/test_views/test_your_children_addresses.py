@@ -41,4 +41,4 @@ class Addresses(YourChildrenTests):
         #
         #     self.assertEqual(response.status_code, 200)
         #     self.assertTrue('your-children/address/' in response.url)
-        pass
+        self.skipTest('Not yet implemented')

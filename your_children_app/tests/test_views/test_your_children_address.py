@@ -48,7 +48,10 @@ class PostcodeTest(YourChildrenTests):
         #     )
         #     self.assertEqual(response.status_code, 302)
         #     self.assertTrue('your-children-details/' in response.url)
-        pass
+        self.skipTest('Not yet implemented')
+
+    def test_can_submit_invalid_postcode_page(self):
+        self.skipTest('Not yet implemented')
 
 
 @mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)
@@ -73,7 +76,7 @@ class AddressSelectTest(YourChildrenTests):
         #         }
         #     )
         #     self.assertEqual(response.status_code, 200)
-        pass
+        self.skipTest('Not yet implemented')
 
 
 @mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)
