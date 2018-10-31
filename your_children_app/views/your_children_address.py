@@ -12,24 +12,25 @@ class YourChildrenPostcodeView(NannyFormView):
     """
     Template view to  render the your children postcode lookup view
     """
+
     def get(self, request, *args, **kwargs):
         """
         Method to handle get requests to the 'Your Children' postcode lookup page
         """
-        app_id = app_id_finder(self.request)
         application_id = request.GET["id"]
         child = request.GET["child"]
         form = YourChildrenPostcodeForm(id=application_id, child=child)
         child_record = NannyGatewayActions().list('your-children', params={
             'application_id': application_id,
             'ordering': 'child',
-            }).record[int(child)-1]
+        }).record[int(child) - 1]
 
         name = child_record['first_name'] + " " + child_record['last_name']
         variables = {
             'form': form,
             'name': name,
             'application_id': application_id,
+            'id': application_id,
             'child': child,
         }
 
@@ -45,7 +46,7 @@ class YourChildrenPostcodeView(NannyFormView):
         child_record = NannyGatewayActions().list('your-children', params={
             'application_id': application_id,
             'ordering': 'child',
-            }).record[int(child)-1]
+        }).record[int(child) - 1]
 
         application_api = NannyGatewayActions().read('application', params={'application_id': application_id})
 
@@ -64,7 +65,6 @@ class YourChildrenPostcodeView(NannyFormView):
                                             + '?id=' + application_id + '&child=' + str(child))
 
             else:
-                # Form is not valid
                 form.error_summary_title = 'There was a problem with your postcode'
 
                 if application_api.record['application_status'] == 'FURTHER_INFORMATION':
@@ -99,7 +99,7 @@ class YourChildrenAddressSelectionView(NannyFormView):
         child_record = NannyGatewayActions().list('your-children', params={
             'application_id': application_id,
             'ordering': 'child',
-            }).record[int(child)-1]
+        }).record[int(child) - 1]
 
         postcode = child_record['postcode']
         name = child_record['first_name'] + " " + child_record['last_name']
@@ -115,6 +115,7 @@ class YourChildrenAddressSelectionView(NannyFormView):
             variables = {
                 'form': form,
                 'application_id': application_id,
+                'id': application_id,
                 'postcode': postcode,
                 'name': name,
                 'child': child,
@@ -132,6 +133,7 @@ class YourChildrenAddressSelectionView(NannyFormView):
             variables = {
                 'form': form,
                 'application_id': application_id,
+                'id': application_id,
                 'child': child,
             }
 
@@ -148,7 +150,7 @@ class YourChildrenAddressSelectionView(NannyFormView):
         child_record = NannyGatewayActions().list('your-children', params={
             'application_id': application_id,
             'ordering': 'child',
-            }).record[int(child)-1]
+        }).record[int(child) - 1]
 
         postcode = child_record['postcode']
         name = child_record['first_name'] + " " + child_record['last_name']
@@ -179,7 +181,6 @@ class YourChildrenAddressSelectionView(NannyFormView):
 
             next_child = get_child_number_for_address_loop(application_id, child_list, child)
 
-            # If there is a next child,
             if next_child:
                 next_child = next_child[0]['child']
                 return HttpResponseRedirect(reverse('your-children:Your-Children-Postcode')
@@ -187,7 +188,6 @@ class YourChildrenAddressSelectionView(NannyFormView):
                                             + '&child=' + str(next_child)
                                             )
             else:
-                # All children have addresses
                 return HttpResponseRedirect(reverse('your-children:Your-Children-Summary')
                                             + '?id=' + application_id)
         else:
@@ -224,7 +224,7 @@ class YourChildrenManualAddressView(NannyFormView):
         child_record = NannyGatewayActions().list('your-children', params={
             'application_id': application_id,
             'ordering': 'child',
-            }).record[int(child)-1]
+        }).record[int(child) - 1]
         name = child_record['first_name'] + " " + child_record['last_name']
         form = YourChildrenManualAddressForm(id=application_id, child=child)
 
@@ -233,10 +233,10 @@ class YourChildrenManualAddressView(NannyFormView):
             form.error_summary_title = 'There was a problem'
 
         variables = {
-
             'form': form,
             'child': child,
             'name': name,
+            'id': application_id,
             'application_id': application_id,
         }
 
@@ -246,18 +246,18 @@ class YourChildrenManualAddressView(NannyFormView):
         """
         Method for handling get requests from the manual address entry page within the 'your children' task
         """
-        application_id = request.GET["id"]
-        child = request.GET["child"]
+        application_id = request.POST["id"]
+        child = request.POST["child"]
         application = NannyGatewayActions().read('application', params={'application_id': application_id})
         child_record = NannyGatewayActions().list('your-children', params={
             'application_id': application_id,
             'ordering': 'child',
-            }).record[int(child)-1]
+        }).record[int(child) - 1]
+
         name = child_record['first_name'] + " " + child_record['last_name']
         form = YourChildrenManualAddressForm(request.POST, id=application_id, child=child)
 
         if form.is_valid():
-            # Patch the existing child record
             child_record['street_line1'] = form.cleaned_data['street_line1']
             child_record['street_line2'] = form.cleaned_data['street_line2']
             child_record['town'] = form.cleaned_data['town']
@@ -275,7 +275,6 @@ class YourChildrenManualAddressView(NannyFormView):
 
             next_child = get_child_number_for_address_loop(application_id, child_list, child)
 
-            # If there is a next child,
             if next_child:
                 next_child = next_child[0]['child']
                 return HttpResponseRedirect(reverse('your-children:Your-Children-Postcode')
@@ -283,7 +282,6 @@ class YourChildrenManualAddressView(NannyFormView):
                                             + '&child=' + str(next_child)
                                             )
             else:
-                # All children have addresses
                 return HttpResponseRedirect(reverse('your-children:Your-Children-Summary')
                                             + '?id=' + application_id)
 

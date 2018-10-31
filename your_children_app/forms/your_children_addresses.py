@@ -30,11 +30,6 @@ class YourChildrenLivingWithYouForm(NannyForm):
             'your-children', params={'application_id': self.application_id_local, 'ordering': 'date_created'}
         )
 
-        # # Add a child number to each child and patch it into the record
-        # for child in api_response.record:
-        #     child['child'] = api_response.record.index(child) + 1
-        #     NannyGatewayActions().patch('your-children', params=child)
-
         # Initialise the form now that the 'child' number is assigned based on the date created
         super(YourChildrenLivingWithYouForm, self).__init__(*args, **kwargs)
 

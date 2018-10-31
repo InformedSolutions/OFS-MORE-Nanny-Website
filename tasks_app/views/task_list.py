@@ -98,7 +98,7 @@ class TaskListView(View):
                     'description': 'Your children',
                     'status_url': None,
                     'status_urls': {
-                        'COMPLETED/FLAGGED': 'your-children:Your-Children-Summary', 
+                        'COMPLETED/FLAGGED': 'your-children:Your-Children-Summary',
                         'NOT_COMPLETED': 'your-children:Your-Children-Guidance',
                     }
 
