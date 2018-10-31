@@ -17,7 +17,7 @@ class MasterSummary(NannyTemplateView):
     model_names = {"applicant_personal_details_section": ["applicant_personal_details", "applicant_home_address"],
                    "childcare_address_section": ["application", "applicant_home_address", "childcare_address"]
                    }
-    section_names = ["user_details", "applicant_personal_details_section", "childcare_address_section",
+    section_names = ["user_details", "applicant_personal_details_section", "your_children", "childcare_address_section",
                      "first_aid", "childcare_training", "dbs_check", "insurance_cover"]
 
     def get_context_data(self):
