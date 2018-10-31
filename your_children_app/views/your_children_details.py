@@ -13,7 +13,7 @@ class YourChildrenDetailsView(NannyFormView):
     Template view to  render the your children details view
     """
     def get(self, request, *args, **kwargs):
-        application_id = app_id_finder(self.request)
+        application_id = request.GET["id"]
         api_response = NannyGatewayActions().list(
             'your-children', params={'application_id': application_id, 'ordering': 'date_created'})
         number_of_children_present_in_querystring = request.GET.get('children') is not None

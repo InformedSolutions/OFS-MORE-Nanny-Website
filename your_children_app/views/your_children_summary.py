@@ -1,11 +1,7 @@
-from django.http import HttpResponseRedirect
 from django.shortcuts import render
-
 from nanny.utilities import build_url, app_id_finder
-from nanny import NannyGatewayActions
 from nanny.base_views import NannyTemplateView
 from your_children_app.forms.your_children_summary_form import YourChildrenSummaryForm
-
 from ..utils import *
 
 address_matches_childminder_text = 'Same as your own'
@@ -20,7 +16,7 @@ class YourChildrenSummaryView(NannyTemplateView):
         """
         Method for handling GET requests to the 'Your Children' summary page
         """
-        application_id = app_id_finder(self.request)
+        application_id = request.GET['id']
         api_response = NannyGatewayActions().read('application', params={'application_id': application_id})
         form = YourChildrenSummaryForm()
 
@@ -68,6 +64,7 @@ class YourChildrenSummaryView(NannyTemplateView):
             'page_title': 'Check your answers: your children',
             'form': form,
             'application_id': application_id,
+            'id': application_id,
             'table_list': table_list,
             'your_children_status': api_response.record['application_status'],
         }
@@ -78,7 +75,7 @@ class YourChildrenSummaryView(NannyTemplateView):
         """
         Method for handling POST requests to the 'Your Children' task summary page
         """
-        app_id = app_id_finder(self.request)
+        app_id = request.POST['id']
         app_api_response = NannyGatewayActions().read('application', params={'application_id': app_id})
         if app_api_response.status_code == 200:
             # Update the task status to 'Done'

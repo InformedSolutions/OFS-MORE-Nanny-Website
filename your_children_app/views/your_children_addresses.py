@@ -17,12 +17,13 @@ class YourChildrenAddressesView(NannyFormView):
         """
         Method for handling GET requests to the 'your children addresses' page
         """
-        application_id = app_id_finder(self.request)
+        application_id = request.GET["id"]
         form = YourChildrenLivingWithYouForm(id=application_id)
 
         variables = {
             'form': form,
             'application_id': application_id,
+            'id': application_id,
         }
 
         return render(request, "your-children-addresses.html", variables)
@@ -76,7 +77,6 @@ class YourChildrenAddressesView(NannyFormView):
                 # The child record should always exist at this point, following the creation in child details
                 else:
                     raise ValueError('The API did not respond as expected')
-
             else:
                 # Child does not live with applicant, or 'None' is selected
                 child['lives_with_applicant'] = False
