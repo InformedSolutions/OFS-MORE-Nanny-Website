@@ -187,6 +187,9 @@ class PersonalDetailManualAddressView(NannyFormView):
 
 
 class PersonalDetailSummaryAddressView(NannyTemplateView):
+    template_name = 'address-details.html'
+    success_url_name = 'personal-details:Personal-Details-Lived-Abroad'
+
     """
     Form view that controls the rendering and logic behind the summary view of the personal details task
     """
