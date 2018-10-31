@@ -51,6 +51,12 @@ class DetailsTest(YourChildrenTests):
         #     )
         #     self.assertEqual(response.status_code, 302)
         #     self.assertTrue('your-children/addresses/' in response.url)
+        self.skipTest('Not yet implemented')
+
+    def test_can_add_child(self):
+        pass
+
+    def test_can_remove_child(self):
         pass
 
     def test_can_submit_invalid_child_page(self):
@@ -76,4 +82,4 @@ class DetailsTest(YourChildrenTests):
         #
         #     self.assertEqual(response.status_code, 200)
         #     self.assertTrue(type(response) == TemplateResponse)
-        pass
+        self.skipTest('Not yet implemented')
