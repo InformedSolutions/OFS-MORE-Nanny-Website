@@ -3,12 +3,12 @@ from datetime import datetime
 from django.http import HttpResponseRedirect
 
 from childcare_address_app.utils import build_url
+from nanny import NannyFormView
 from nanny.db_gateways import NannyGatewayActions
-from .base import BaseFormView
 from ..forms.childcare_location import ChildcareLocationForm
 
 
-class ChildcareLocationView(BaseFormView):
+class ChildcareLocationView(NannyFormView):
     """
     Class containing the view(s) for handling the GET requests to the childcare location page.
     """
@@ -55,7 +55,8 @@ class ChildcareLocationView(BaseFormView):
             both_work_and_home_address = False
             self.success_url = 'Childcare-Address-Postcode-Entry'
 
-        childcare_address_changed_to_false = self.__check_childcare_address_changed_to_false(app_id, both_work_and_home_address)
+        childcare_address_changed_to_false = self.__check_childcare_address_changed_to_false(app_id,
+                                                                                             both_work_and_home_address)
 
         apd_api_response = NannyGatewayActions().read('applicant-personal-details', params={'application_id': app_id})
 

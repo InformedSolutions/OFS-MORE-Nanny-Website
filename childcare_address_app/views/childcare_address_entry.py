@@ -4,7 +4,6 @@ from datetime import datetime
 import inflect
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from nanny.db_gateways import NannyGatewayActions
 
 from .base import BaseFormView, BaseTemplateView
 from ..address_helper import *
@@ -41,6 +40,7 @@ def get_address_number(app_id, add):
 
     return str(addr_num), formatter.number_to_words(formatter.ordinal(addr_num)).title()
 
+
 class ChildcareAddressPostcodeView(BaseFormView):
     """
     Class containing the view(s) for handling the GET requests to the childcare address postcode page.
@@ -55,6 +55,7 @@ class ChildcareAddressPostcodeView(BaseFormView):
         """
         app_id = self.request.GET['id']
         add = self.request.GET.get('add')  # Returns none if 'add another' button is not used - User using back button
+        kwargs['add'] = add
         childcare_address_id = self.request.GET[
             'childcare_address_id'] if 'childcare_address_id' in self.request.GET else None
         self.initial = {
@@ -166,6 +167,7 @@ class ChildcareAddressLookupView(BaseFormView):
                                                   params={'application_id': app_id})
 
         add = self.request.GET.get('add')  # Returns none if 'add another' button is not used - User using back button
+        kwargs['add'] = add
 
         if api_response.status_code == 200:
             api_response.record = [address for address in api_response.record if address['street_line1'] is not None]
@@ -282,6 +284,7 @@ class ChildcareAddressManualView(BaseFormView):
         }
 
         kwargs['id'] = app_id
+        kwargs['add'] = add
         api_response = NannyGatewayActions().list('childcare-address',
                                                   params={'application_id': app_id})
 

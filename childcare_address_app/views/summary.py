@@ -4,7 +4,6 @@ from django.views import View
 
 from nanny.db_gateways import NannyGatewayActions
 from nanny.table_util import Row, Table
-
 from ..address_helper import *
 from ..utils import build_url
 
@@ -13,6 +12,7 @@ class ChildcareAddressSummaryView(View):
     """
     Handle get and post requests to the summary view.
     """
+
     def get(self, request):
         return render(request, template_name='generic-summary-template.html', context=self.get_context_data())
 
@@ -38,14 +38,16 @@ class ChildcareAddressSummaryView(View):
         else:
             address_to_be_provided = 'No'
 
-        known_childcare_location_row = Row('address_to_be_provided', 'Do you know where you\'ll be working?', address_to_be_provided, 'Childcare-Address-Where-You-Work', None)
+        known_childcare_location_row = Row('address_to_be_provided', 'Do you know where you\'ll be working?',
+                                           address_to_be_provided, 'Childcare-Address-Where-You-Work', None)
 
         childcare_address_summary_table = Table(application_id)
         childcare_address_summary_table.row_list = [known_childcare_location_row]
 
         if app_record['address_to_be_provided']:
-            address_response = NannyGatewayActions().list('childcare-address', params={'application_id': application_id})
-            address_records  = address_response.record
+            address_response = NannyGatewayActions().list('childcare-address',
+                                                          params={'application_id': application_id})
+            address_records = address_response.record
 
             for index, address in enumerate(address_records):
                 row = Row(
@@ -53,20 +55,17 @@ class ChildcareAddressSummaryView(View):
                     "Childcare address " + str(index + 1),
                     AddressHelper.format_address(address_records[index], "</br>"),
                     'Childcare-Address-Details',
-                    None
+                    None,
+                    row_pk=address['childcare_address_id']
                 )
 
                 childcare_address_summary_table.row_list.append(row)
 
-            home_address_resp = NannyGatewayActions().read('applicant-home-address', params={'application_id': application_id})
+            home_address_resp = NannyGatewayActions().read('applicant-home-address',
+                                                           params={'application_id': application_id})
 
             home_address = home_address_resp.record['childcare_address']
-
-            if home_address:
-                home_address_value = 'Yes'
-
-            else:
-                home_address_value = 'No'
+            home_address_value = 'Yes' if home_address else 'No'
 
             home_address_row = Row(
                 'both_work_and_home_address',
