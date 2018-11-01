@@ -1,10 +1,10 @@
 from django import forms
-
-from govuk_forms.forms import GOVUKForm
 from govuk_forms.widgets import InlineRadioSelect
 
+from nanny import NannyForm
 
-class ChildcareLocationForm(GOVUKForm):
+
+class ChildcareLocationForm(NannyForm):
     """
     GOV.UK form for 'Childcare-Location' page.
     """
@@ -21,7 +21,7 @@ class ChildcareLocationForm(GOVUKForm):
                                                    required=True,
                                                    widget=InlineRadioSelect,
                                                    error_messages={
-                                                        'required': "Please say if you'll work and live at the same address"}
+                                                       'required': "Please say if you'll work and live at the same address"}
                                                    )
 
     def __init__(self, *args, **kwargs):

@@ -1,12 +1,11 @@
 from django import forms
-
-from govuk_forms.forms import GOVUKForm
 from govuk_forms.widgets import InlineRadioSelect
 
+from nanny import NannyForm
 from nanny.db_gateways import NannyGatewayActions
 
 
-class WhereYouWorkForm(GOVUKForm):
+class WhereYouWorkForm(NannyForm):
     """
     GOV.UK form for 'Where-You-Work' page.
     """
