@@ -40,6 +40,7 @@ class YourChildrenAddressesView(NannyFormView):
             variables = {
                 'form': form,
                 'application_id': application_id,
+                'id': application_id,
             }
 
             return render(request, "your-children-addresses.html", variables)
