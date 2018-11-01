@@ -17,7 +17,8 @@ class YourChildrenLivingWithYouForm(NannyForm):
     children_living_with_applicant_selection = forms.MultipleChoiceField(
         label='Which of your children live with you?',
         widget=CheckboxSelectMultiple, required=True, error_messages={
-            'required': 'Please say if any of your children live with you'}, help_text="Tick all that apply")
+            'required': 'Please say if any of your children live with you'}, 
+        help_text="Tick all that apply")
 
     def __init__(self, *args, **kwargs):
         """

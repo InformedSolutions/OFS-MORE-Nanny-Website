@@ -183,7 +183,8 @@ class YourChildrenDetailsView(NannyFormView):
         api_response = NannyGatewayActions().list(
             'your-children', params={'application_id': application_id, 'ordering': 'date_created'})
 
-        assign_child_numbers(api_response)
+        if api_response.status_code == 200:
+            assign_child_numbers(api_response)
 
         if 'submit' in request.POST:
 
@@ -195,6 +196,7 @@ class YourChildrenDetailsView(NannyFormView):
                 variables = {
                     'form_list': form_list,
                     'application_id': application_id,
+                    'id': application_id,
                     'number_of_children': number_of_children,
                     'add_child': int(number_of_children) + 1,
                     'remove_child': int(number_of_children) - 1,
@@ -209,7 +211,8 @@ class YourChildrenDetailsView(NannyFormView):
             if False not in valid_list:
                 variables = {
                     'application_id': application_id,
-                    'your_children_status': application.record['your_children_status']
+                    'your_children_status': application.record['your_children_status'],
+                    'id': application_id,
                 }
                 add_child = int(number_of_children) + 1
                 add_child_string = str(add_child)
@@ -221,6 +224,7 @@ class YourChildrenDetailsView(NannyFormView):
                 variables = {
                     'form_list': form_list,
                     'application_id': application_id,
+                    'id': application_id,
                     'number_of_children': number_of_children,
                     'add_adult': int(number_of_children) + 1,
                     'remove_child': int(number_of_children) - 1,

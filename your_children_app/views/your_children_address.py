@@ -77,6 +77,7 @@ class YourChildrenPostcodeView(NannyFormView):
                     'form': form,
                     'name': name,
                     'application_id': application_id,
+                    'id': application_id,
                     'child': child,
                 }
 
@@ -200,6 +201,7 @@ class YourChildrenAddressSelectionView(NannyFormView):
             variables = {
                 'postcode': postcode,
                 'form': form,
+                'id': application_id,
                 'application_id': application_id,
                 'child': child,
                 'name': name,
@@ -294,6 +296,7 @@ class YourChildrenManualAddressView(NannyFormView):
             variables = {
                 'form': form,
                 'application_id': application_id,
+                'id': application_id,
                 'child': child,
                 'name': name,
             }
