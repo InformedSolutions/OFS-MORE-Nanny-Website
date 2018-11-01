@@ -15,22 +15,7 @@ class DBGatewayActions:
     target_url_prefix = None
     event_list = None
 
-    _endpoint_pk_dict = {
-        'childcare-address': 'childcare_address_id',
-        'arc-comments': 'review_id',
-        'applicant-home-address': 'application_id',
-        'applicant-personal-details': 'application_id',
-        'application': 'application_id',
-        'childcare-training': 'application_id',
-        'dbs-check': 'application_id',
-        'declaration': 'application_id',
-        'first-aid': 'application_id',
-        'insurance-cover': 'application_id',
-        'payment': 'application_id',
-        'summary': 'application_id',
-        'user': 'application_id',
-        'arc-search': 'application_id'
-    }
+    _endpoint_pk_dict = {}
 
     def __init__(self):
         # Register each of the REST verbs in DBGatewayActions as an event to be logged.
