@@ -14,23 +14,39 @@ class Table:
                                                                params={'application_id': self.application_id,
                                                                        'field_name': row.data_name})
             if arc_comments_response.status_code == 200:
-
+                # Handler dispatch for different relation types.
                 if self.__response_is_many_to_one(arc_comments_response.record):
-                    row.error = self.__get_errors_many_to_one(arc_comments_response, row)
+                    row.error = self.__get_errors_many_to_one_handler(arc_comments_response, row)
 
                 else:
-                    row.error = self.__get_errors_one_to_one(arc_comments_response)
+                    row.error = self.__get_errors_one_to_one_handler(arc_comments_response)
 
     @staticmethod
     def __response_is_many_to_one(response_record):
         return len(response_record) > 1
 
     @staticmethod
-    def __get_errors_one_to_one(api_response):
-        return api_response.record[0]['comment'] if bool(api_response.record[0]['flagged']) else None
+    def __get_errors_one_to_one_handler(arc_comments_response):
+        """
+        Handler for many-to-one arc comment relations.
+        :param arc_comments_response: A nanny_gateway response for ArcComments.
+            Assumed that the response.record contains a single dictionary.
+        :return: An error string, or None.
+        """
+        return arc_comments_response.record[0]['comment'] if bool(arc_comments_response.record[0]['flagged']) else None
 
     @staticmethod
-    def __get_errors_many_to_one(arc_comments_response, row):
+    def __get_errors_many_to_one_handler(arc_comments_response, row):
+        """
+        Handler for many-to-one arc comment relations.
+        :param arc_comments_response: A nanny_gateway response for ArcComments.
+            Assumed that the response.record contains multiple dictionaries.
+        :param row: The current table row.
+        :return: An error string, or None.
+        """
+        if row.row_pk in [None, '']:
+            raise ValueError('row_pk must not be left blank when a many_to_one error relation exists.')
+
         arc_comments_record_list = arc_comments_response.record
 
         for ac_record in arc_comments_record_list:
