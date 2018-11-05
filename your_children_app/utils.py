@@ -307,7 +307,7 @@ def create_child_table(child):
     :return: table object that can be consumed by the generic summary page template
     """
 
-    dob = datetime.date(child['birth_year'], child['birth_month'], child['birth_day'])
+    dob = datetime.date(child['birth_year'], child['birth_month'], child['birth_day']).strftime('%d %b %Y')
     child_name = str(child['first_name']) + " " + str(child['last_name'])
     child_id = child['child_id']
 
