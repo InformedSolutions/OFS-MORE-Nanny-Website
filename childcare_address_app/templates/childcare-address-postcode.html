@@ -58,8 +58,14 @@
     </div>
     {% endif %}
     {% csrf_token %}
-    <a href="{% url 'Childcare-Address-Manual-Entry' %}?id={{id}}" name="manual"
-       id="manual">Enter address manually</a>
+
+    {% if add %}
+        <a href="{% url 'Childcare-Address-Manual-Entry' %}?id={{id}}&add={{add}}" name="manual"
+           id="manual">Enter address manually</a>
+    {% else %}
+        <a href="{% url 'Childcare-Address-Manual-Entry' %}?id={{id}}" name="manual"
+           id="manual">Enter address manually</a>
+    {% endif %}
 </form>
 <br>
 

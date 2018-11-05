@@ -1,10 +1,10 @@
 from django import forms
-
-from govuk_forms.forms import GOVUKForm
 from govuk_forms.widgets import InlineRadioSelect
 
+from nanny import NannyForm
 
-class ChildcareLocationForm(GOVUKForm):
+
+class ChildcareLocationForm(NannyForm):
     """
     GOV.UK form for 'Childcare-Location' page.
     """
@@ -16,17 +16,18 @@ class ChildcareLocationForm(GOVUKForm):
         ('True', 'Yes'),
         ('False', 'No')
     )
-    home_address = forms.ChoiceField(choices=options,
-                                     label='Will you work and live at the same address?',
-                                     required=True,
-                                     widget=InlineRadioSelect,
-                                     error_messages={
-                                         'required': "Please say if you'll work and live at the same address"})
+    both_work_and_home_address = forms.ChoiceField(choices=options,
+                                                   label='Will you work and live at the same address?',
+                                                   required=True,
+                                                   widget=InlineRadioSelect,
+                                                   error_messages={
+                                                       'required': "Please say if you'll work and live at the same address"}
+                                                   )
 
     def __init__(self, *args, **kwargs):
         super(ChildcareLocationForm, self).__init__(*args, **kwargs)
 
-        if 'home_address' in kwargs['initial'] and 'home_address_id' in kwargs['initial']:
-            self.fields['home_address'].initial = kwargs['initial']['home_address']
+        if 'both_work_and_home_address' in kwargs['initial'] and 'home_address_id' in kwargs['initial']:
+            self.fields['both_work_and_home_address'].initial = kwargs['initial']['both_work_and_home_address']
             self.pk = kwargs['initial']['home_address_id']
-        self.field_list = ['home_address']
+        self.field_list = ['both_work_and_home_address']

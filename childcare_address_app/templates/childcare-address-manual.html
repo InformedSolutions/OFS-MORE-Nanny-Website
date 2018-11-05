@@ -28,8 +28,14 @@
 
     {{form.as_div}}
     {% csrf_token %}
-    <a href="{% url 'Childcare-Address-Postcode-Entry' %}?id={{id}}&childcare_address_id={{childcare_address_id}}" name="manual"
-       id="manual">Use postcode search</a>
+
+    {% if add %}
+        <a href="{% url 'Childcare-Address-Postcode-Entry' %}?id={{id}}&childcare_address_id={{childcare_address_id}}&add={{add}}" name="manual"
+           id="manual">Use postcode search</a>
+    {% else %}
+        <a href="{% url 'Childcare-Address-Postcode-Entry' %}?id={{id}}&childcare_address_id={{childcare_address_id}}" name="manual"
+           id="manual">Use postcode search</a>
+    {% endif %}
     <input type="submit" class="button" value="Save and continue">
     <input type="hidden" id="id" name="id" value="{{id}}"/>
 </form>

@@ -64,7 +64,7 @@
             {% elif row.value == False %}
                 No
             {% else %}
-                {{row.value}}
+                {{row.value | safe}}
             {% endif %}
         </td>
         {% if row.row_name != 'Health check status' %}

@@ -1,16 +1,17 @@
 import uuid
-from .base import BaseFormView, BaseTemplateView
-from ..forms.childcare_address import *
+from datetime import datetime
+
+import inflect
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from ..utils import *
+
+from .base import BaseFormView, BaseTemplateView
 from ..address_helper import *
-import inflect
-from datetime import datetime
-from nanny.db_gateways import NannyGatewayActions
+from ..forms.childcare_address import *
+from ..utils import *
 
 
-def get_address_number_postcode(app_id, add):
+def get_address_number(app_id, add):
     """
     A function that uses the API to find the number of complete and incomplete childcare addresses within the postcode
     lookup page.
@@ -19,8 +20,6 @@ def get_address_number_postcode(app_id, add):
                 details page.
                 *** This can be abused by using the 'add another' button, completing a second address, then using the
                     back button to return to the postcode lookup page
-    :param ord: Ordinal: A true/false value that is passed in to differentiate between a request for the number of
-                addresses and the ordinal required for the page title
     :return: Return tuple of the address number and the ordinal string for adaptable html content
     """
     formatter = inflect.engine()
@@ -42,44 +41,6 @@ def get_address_number_postcode(app_id, add):
     return str(addr_num), formatter.number_to_words(formatter.ordinal(addr_num)).title()
 
 
-def get_address_number_address_lookup(app_id, add, ord):
-    """
-    A function that uses the API to find the number of complete and incomplete childcare addresses within the address
-    lookup page.
-    :param app_id: The ID of the current applicant
-    :param add: A flag that is appended to the URL should a user use the 'add another address' button on the address
-                details page, which is then continued as a string (!) to this page, allowing formatting of the
-                address number if this is a new journey.
-    :param ord: Ordinal: A true/false value that is passed in to differentiate between a request for the number of
-                addresses and the ordinal required for the page title
-    :return: Return either the address number or the ordinal string for adaptable html content
-    """
-    formatter = inflect.engine()
-    api_response = NannyGatewayActions().list('childcare-address', params={'application_id': app_id})
-    complete_addresses = [address for address in api_response.record if address['street_line1'] is not None]
-    incomplete_addresses = [address for address in api_response.record if address['street_line1'] is None]
-
-    # Catch users coming back from the details page
-    if len(incomplete_addresses) != 0:
-        # Catch users on first journey
-        if len(complete_addresses) == 0:
-            addr_num = 1
-        # Catch users who have not used the 'add another' button
-        elif add != 'None':
-            addr_num = len(complete_addresses) + 1
-        # Catch users using the back button
-        else:
-            addr_num = len(complete_addresses)
-
-    else:
-        addr_num = len(complete_addresses)
-
-    if ord:
-        return formatter.number_to_words(formatter.ordinal(addr_num)).title()
-    else:
-        return str(addr_num)
-
-
 class ChildcareAddressPostcodeView(BaseFormView):
     """
     Class containing the view(s) for handling the GET requests to the childcare address postcode page.
@@ -94,6 +55,7 @@ class ChildcareAddressPostcodeView(BaseFormView):
         """
         app_id = self.request.GET['id']
         add = self.request.GET.get('add')  # Returns none if 'add another' button is not used - User using back button
+        kwargs['add'] = add
         childcare_address_id = self.request.GET[
             'childcare_address_id'] if 'childcare_address_id' in self.request.GET else None
         self.initial = {
@@ -114,7 +76,7 @@ class ChildcareAddressPostcodeView(BaseFormView):
 
         kwargs['fields'] = [kwargs['form'].render_field(name, field) for name, field in kwargs['form'].fields.items()]
         kwargs['id'] = app_id
-        kwargs['addr_num'], kwargs['ordinal'] = get_address_number_postcode(app_id, add)
+        kwargs['addr_num'], kwargs['ordinal'] = get_address_number(app_id, add)
         return super(ChildcareAddressPostcodeView, self).get_context_data(**kwargs)
 
     def form_valid(self, form):
@@ -205,6 +167,7 @@ class ChildcareAddressLookupView(BaseFormView):
                                                   params={'application_id': app_id})
 
         add = self.request.GET.get('add')  # Returns none if 'add another' button is not used - User using back button
+        kwargs['add'] = add
 
         if api_response.status_code == 200:
             api_response.record = [address for address in api_response.record if address['street_line1'] is not None]
@@ -218,9 +181,7 @@ class ChildcareAddressLookupView(BaseFormView):
 
             self.initial['choices'] = addresses
 
-            kwargs['ordinal'] = get_address_number_address_lookup(app_id, add, True)
-            kwargs['addr_num'] = get_address_number_address_lookup(app_id, add, False)
-
+            kwargs['addr_num'], kwargs['ordinal'] = get_address_number(app_id, add)
         if 'form' not in kwargs:
             kwargs['form'] = self.get_form()
 
@@ -323,6 +284,7 @@ class ChildcareAddressManualView(BaseFormView):
         }
 
         kwargs['id'] = app_id
+        kwargs['add'] = add
         api_response = NannyGatewayActions().list('childcare-address',
                                                   params={'application_id': app_id})
 
@@ -337,8 +299,7 @@ class ChildcareAddressManualView(BaseFormView):
             kwargs['form'] = self.get_form()
 
         kwargs['fields'] = [kwargs['form'].render_field(name, field) for name, field in kwargs['form'].fields.items()]
-        kwargs['ordinal'] = get_address_number_address_lookup(app_id, add, True)
-        kwargs['addr_num'] = get_address_number_address_lookup(app_id, add, False)
+        kwargs['addr_num'], kwargs['ordinal'] = get_address_number(app_id, add)
 
         return super(ChildcareAddressManualView, self).get_context_data(**kwargs)
 

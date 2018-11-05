@@ -1,9 +1,9 @@
+from nanny import NannyFormView
 from nanny.db_gateways import NannyGatewayActions
-from .base import BaseFormView
 from ..forms.where_you_work import WhereYouWorkForm
 
 
-class WhereYouWorkView(BaseFormView):
+class WhereYouWorkView(NannyFormView):
     """
     Class containing the view(s) for handling the GET requests to the where you work page.
     """
