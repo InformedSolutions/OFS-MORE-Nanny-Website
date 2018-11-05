@@ -51,7 +51,6 @@ class YourChildrenDetailsView(NannyFormView):
         form_list = []
 
         for i in range(1, number_of_children + 1):
-
             try:
                 child_id = NannyGatewayActions().list('your-children', params={
                           'application_id': str(application_id),

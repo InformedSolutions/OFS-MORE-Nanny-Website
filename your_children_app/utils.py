@@ -430,7 +430,7 @@ def remove_child(remove_person, application_id):
         api_response = NannyGatewayActions().list('your-children', params={'application_id': application_id,
                                                                        'ordering': 'date_created'})
 
-        if api_response.status_code == "200":
+        if api_response.status_code == 200:
             child_record = api_response.record
 
             if int(remove_person) <= len(child_record):
@@ -451,14 +451,9 @@ def assign_child_numbers(api_response):
     :param api_response: Response when calling .list on the your-children endpoint
     :return: Patches the API with the updated 'child' number
     """
-    if api_response.status_code == "200":
-        for child in api_response.record:
-            child['child'] = api_response.record.index(child) + 1
-            NannyGatewayActions().patch('your-children', params=child)
-
-    else:
-        pass
-
+    for child in api_response.record:
+        child['child'] = api_response.record.index(child) + 1
+        NannyGatewayActions().patch('your-children', params=child)
 
 
 def date_formatter(day, month, year):
