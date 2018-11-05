@@ -81,6 +81,12 @@ class YourChildrenAddressesView(NannyFormView):
             else:
                 # Child does not live with applicant, or 'None' is selected
                 child['lives_with_applicant'] = False
+                child['street_line1'] = ''
+                child['street_line2'] = ''
+                child['town'] = ''
+                child['county'] = ''
+                child['country'] = ''
+                child['postcode'] = ''
                 NannyGatewayActions().patch('your-children', params=child)
 
         # Create a list of children who do not live with the applicant

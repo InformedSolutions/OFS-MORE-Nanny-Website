@@ -23,7 +23,7 @@ class YourChildrenPostcodeView(NannyFormView):
         child_record = NannyGatewayActions().list('your-children', params={
             'application_id': application_id,
             'ordering': 'child',
-        }).record[int(child) - 1]
+        }).record[0]
 
         name = child_record['first_name'] + " " + child_record['last_name']
         variables = {
@@ -45,8 +45,8 @@ class YourChildrenPostcodeView(NannyFormView):
         form = YourChildrenPostcodeForm(request.POST, id=application_id, child=child)
         child_record = NannyGatewayActions().list('your-children', params={
             'application_id': application_id,
-            'ordering': 'child',
-        }).record[int(child) - 1]
+            'child': child,
+        }).record
 
         application_api = NannyGatewayActions().read('application', params={'application_id': application_id})
 
@@ -65,7 +65,7 @@ class YourChildrenPostcodeView(NannyFormView):
                                             + '?id=' + application_id + '&child=' + str(child))
 
             else:
-                form.error_summary_title = 'There was a problem with your postcode'
+                form.error_summary_title = 'There was a problem with the postcode'
 
                 if application_api.record['application_status'] == 'FURTHER_INFORMATION':
                     form.error_summary_template_name = 'returned-error-summary.html'

@@ -307,7 +307,7 @@ def create_child_table(child):
     :return: table object that can be consumed by the generic summary page template
     """
 
-    dob = datetime.date(child['birth_year'], child['birth_month'], child['birth_day'])
+    dob = datetime.date(child['birth_year'], child['birth_month'], child['birth_day']).strftime('%d %b %Y')
     child_name = str(child['first_name']) + " " + str(child['last_name'])
     child_id = child['child_id']
 
@@ -427,16 +427,20 @@ def remove_child(remove_person, application_id):
     :return:
     """
     if remove_person != 0:
-        child_record = NannyGatewayActions().list('your-children', params={'application_id': application_id,
-                                                                       'ordering': 'date_created',
-                                                                       }).record
-        if int(remove_person) <= len(child_record):
-            child_id = child_record[int(remove_person) - 1]['child_id']
+        api_response = NannyGatewayActions().list('your-children', params={'application_id': application_id,
+                                                                       'ordering': 'date_created'})
 
-            NannyGatewayActions().delete('your-children', params={
-                                         'application_id': application_id,
-                                         'child_id': child_id,
-                                     })
+        if api_response.status_code == 200:
+            child_record = api_response.record
+
+            if int(remove_person) <= len(child_record):
+                child_id = child_record[int(remove_person) - 1]['child_id']
+
+                NannyGatewayActions().delete('your-children', params={
+                                             'application_id': application_id,
+                                             'child_id': child_id,
+                                         })
+
     else:
         pass
 

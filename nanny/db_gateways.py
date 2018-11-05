@@ -14,7 +14,6 @@ class DBGatewayActions:
     """
     target_url_prefix = None
     event_list = None
-
     _endpoint_pk_dict = {}
 
     def __init__(self):

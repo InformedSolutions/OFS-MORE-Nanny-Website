@@ -4,18 +4,25 @@ Generic helper functions
 import json
 import random
 import re
-import requests
 import string
 import time
-
 from urllib.parse import urlencode
 
+import requests
 from django import forms
 from django.conf import settings
 from django.shortcuts import reverse
-
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import never_cache
 from govuk_forms.forms import GOVUKForm
+
 from nanny.db_gateways import NannyGatewayActions
+
+
+class NeverCacheMixin(object):
+    @method_decorator(never_cache)
+    def dispatch(self, *args, **kwargs):
+        return super(NeverCacheMixin, self).dispatch(*args, **kwargs)
 
 
 class NannyForm(GOVUKForm):
@@ -23,6 +30,7 @@ class NannyForm(GOVUKForm):
     Parent class from which all others will late inherit. Contains logic for checking the existence of ARC comments on
     fields.
     """
+
     def check_flags(self, application_id):
         """
         For a class to call this method it must set self.pk - this is the primary key of the entry against which the
@@ -30,7 +38,8 @@ class NannyForm(GOVUKForm):
         This method simply checks whether or not a field is flagged, raising a validation error if it is.
         """
         for field in self.fields:
-            arc_comments_filter = NannyGatewayActions().list('arc-comments', params={'application_id': application_id, 'field_name': field})
+            arc_comments_filter = NannyGatewayActions().list('arc-comments', params={'application_id': application_id,
+                                                                                     'field_name': field})
             if arc_comments_filter.status_code == 200 and bool(arc_comments_filter.record[0]['flagged']):
                 comment = arc_comments_filter.record[0]['comment']
                 self.cleaned_data = ''
@@ -42,7 +51,8 @@ class NannyForm(GOVUKForm):
 
     def remove_flags(self, application_id):
         for field in self.fields:
-            arc_comments_filter = NannyGatewayActions().list('arc-comments', params={'application_id': application_id, 'field_name': field})
+            arc_comments_filter = NannyGatewayActions().list('arc-comments', params={'application_id': application_id,
+                                                                                     'field_name': field})
             if arc_comments_filter.status_code == 200 and bool(arc_comments_filter.record[0]['flagged']):
                 arc_record = arc_comments_filter.record[0]
                 arc_record['flagged'] = False
@@ -124,7 +134,8 @@ def app_id_finder(request):
     if request.POST.get('id'):
         app_id = request.POST.get('id')
 
-    return(app_id)
+    return (app_id)
+
 
 # TEST UTILTIIES #
 
@@ -138,9 +149,9 @@ class CustomResponse:
 
 def authenticate(application_id):
     record = {
-            'application_id': application_id,
-            'email': 'test@informed.com'
-        }
+        'application_id': application_id,
+        'email': 'test@informed.com'
+    }
     return CustomResponse(record)
 
 
