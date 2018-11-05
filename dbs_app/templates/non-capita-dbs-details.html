@@ -1,0 +1,27 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Your criminal record (DBS) check details{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+{{ form.error_summary }}
+
+<h1 class="form-title heading-large">
+    Your criminal record (DBS) check details
+</h1>
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <p>Please give us details of your DBS certificate.</p>
+
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" name="action" class="button" value="Save and continue">
+
+</form>
+<br>
+
+{% include 'return-to-list.html' %}
+
+{% endblock %}

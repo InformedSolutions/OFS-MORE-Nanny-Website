@@ -427,7 +427,6 @@ def remove_child(remove_person, application_id):
     :return:
     """
     if remove_person != 0:
-
         api_response = NannyGatewayActions().list('your-children', params={'application_id': application_id,
                                                                        'ordering': 'date_created'})
 
@@ -441,6 +440,7 @@ def remove_child(remove_person, application_id):
                                              'application_id': application_id,
                                              'child_id': child_id,
                                          })
+
     else:
         pass
 
@@ -458,6 +458,7 @@ def assign_child_numbers(api_response):
 
     else:
         pass
+
 
 
 def date_formatter(day, month, year):

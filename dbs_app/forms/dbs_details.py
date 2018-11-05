@@ -5,22 +5,13 @@ from govuk_forms.widgets import NumberInput, InlineRadioSelect
 from nanny.utilities import NannyForm
 
 
-class DBSDetailsForm(NannyForm):
+class DBSNumberFormFieldMixin(forms.Form):
     """
-    GOV.UK form for the DBS Details Page
+    Mixin for the 'DBS certificate number' ChoiceField.
     """
-    field_label_classes = 'form-label-bold'
-    error_summary_template_name = 'standard-error-summary.html'
-    error_summary_title = 'There was a problem'
-    auto_replace_widgets = True
-
     # Overrides standard NumberInput widget too give wider field
     widget_instance = NumberInput()
     widget_instance.input_classes = 'form-control form-control-1-4'
-
-    convictions_choices = (
-        (True, 'Yes'), (False, 'No')
-    )
 
     dbs_number = forms.IntegerField(
         label='DBS certificate number',
@@ -29,16 +20,6 @@ class DBSDetailsForm(NannyForm):
             'required': 'Please enter your DBS certificate number',
         },
         widget=widget_instance,
-    )
-
-    convictions = forms.ChoiceField(
-        label='Do you have any criminal cautions or convictions?',
-        help_text='Include any information recorded on your certificate',
-        choices=convictions_choices,
-        error_messages={
-            'required': 'Please say if you have any criminal cautions or convictions',
-        },
-        widget=InlineRadioSelect
     )
 
     def clean_dbs_number(self):
@@ -52,3 +33,42 @@ class DBSDetailsForm(NannyForm):
             raise forms.ValidationError('Check your certificate: the number should be 12 digits long')
 
         return dbs_number
+
+
+class CriminalCautionsAndConvictionsFormFieldMixin(forms.Form):
+    """
+    Mixin for the 'Do you have any criminal cautions or convictions?' ChoiceField.
+    """
+    convictions_choices = (
+        (True, 'Yes'),
+        (False, 'No')
+    )
+
+    convictions = forms.ChoiceField(
+        label='Do you have any criminal cautions or convictions?',
+        choices=convictions_choices,
+        error_messages={
+            'required': 'Please say if you have any criminal cautions or convictions',
+        },
+        widget=InlineRadioSelect
+    )
+
+
+class NonCapitaDBSDetailsForm(DBSNumberFormFieldMixin, NannyForm):
+    """
+    GOV.UK form for the Captia DBS Details Page
+    """
+    field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'standard-error-summary.html'
+    error_summary_title = 'There was a problem'
+    auto_replace_widgets = True
+
+
+class CaptiaDBSDetailsForm(CriminalCautionsAndConvictionsFormFieldMixin, DBSNumberFormFieldMixin, NannyForm):
+    """
+    GOV.UK form for the Non-Capita DBS Details Page
+    """
+    field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'standard-error-summary.html'
+    error_summary_title = 'There was a problem'
+    auto_replace_widgets = True

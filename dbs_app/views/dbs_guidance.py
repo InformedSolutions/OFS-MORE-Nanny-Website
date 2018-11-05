@@ -1,9 +1,9 @@
 from nanny.base_views import NannyTemplateView
 
 
-class DBSGuidance(NannyTemplateView):
+class DBSGuidanceView(NannyTemplateView):
     """
-    Template view to  render the guidance page from first access of task from task list
+    Template view to render the DBS guidance page.
     """
-    template_name = "dbs-guidance.html"
-    success_url_name = 'dbs:Details'
+    template_name = 'dbs-guidance.html'
+    success_url_name = 'dbs:DBS-Type-View'

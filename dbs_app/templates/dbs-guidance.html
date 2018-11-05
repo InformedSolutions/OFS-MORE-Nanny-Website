@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Criminal record (DBS) check{% endblock %}
+{% block page_title %}UK criminal record check{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -8,21 +8,15 @@
 {% include "back-button.html" %}
 
 <h1 class="form-title heading-large">
-    Criminal Record (DBS) Check
+    UK criminal record (DBS) check
 </h1>
 
-<p>You will need to <a href="http://ofsteddbsapplication.co.uk/step-one.aspx" target="_blank">apply for a criminal record (DBS) check</a>.</p>
+<p>You need to have a Disclosure and Barring Service (DBS) check.</p>
 <p>This must be an enhanced check for a home-based childcare role.</p>
+<p>You can <a href="http://ofsteddbsapplication.co.uk/step-one.aspx" target="_blank">apply for an Ofsted DBS check</a>.</p>
 <p>It can take about 6 weeks to get your certificate.</p>
-
-<p>We will accept an existing enhanced check if one of the following apply:</p>
-<ul class="list list-bullet">
-    <li>the certificate is dated within the last 3 months</li>
-    <li>you are signed up to the DBS update service.</li>
-</ul>
+<p>You might be able to <a href="https://www.gov.uk/guidance/criminal-record-checks-for-childminders-and-childcare-workers#if-you-already-have-a-dbs-certificate" target="_blank">use an existing check</a>.</p>
 
 <a href="{{ link_url }}" class="button">Continue</a>
-<br>
-<br>
 
 {% endblock %}

@@ -1,12 +1,11 @@
 from django import forms
-
-from govuk_forms.forms import GOVUKForm
 from govuk_forms.widgets import InlineRadioSelect
 
+from nanny import NannyForm
 from nanny.db_gateways import NannyGatewayActions
 
 
-class WhereYouWorkForm(GOVUKForm):
+class WhereYouWorkForm(NannyForm):
     """
     GOV.UK form for 'Where-You-Work' page.
     """
@@ -15,8 +14,8 @@ class WhereYouWorkForm(GOVUKForm):
     error_summary_title = 'There was a problem'
     auto_replace_widgets = True
     options = (
-        ('True', 'Yes'),
-        ('False', 'No')
+        (True, 'Yes'),
+        (False, 'No')
     )
     address_to_be_provided = forms.ChoiceField(choices=options,
                                                label='Do you know where you will be working?', required=True,

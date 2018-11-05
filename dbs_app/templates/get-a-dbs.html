@@ -1,0 +1,25 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Get an Ofsted DBS check{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+<h1 class="form-title heading-large">
+    Get an Ofsted DBS check
+</h1>
+
+<p>You can finish this section after you <a href="http://ofsteddbsapplication.co.uk/step-one.aspx" target="_blank">apply for an Ofsted DBS check</a>.</p>
+
+<form method="post">
+    {% csrf_token %}
+    <input type="submit" class="button" value="Continue" alt="continue" id="id_continue">
+</form>
+
+<br>
+
+{% include "return-to-list.html" %}
+
+{% endblock %}

@@ -48,7 +48,7 @@ APP_IDENTITY_URL = os.environ.get('APP_IDENTITY_URL')
 
 PUBLIC_APPLICATION_URL = os.environ.get('PUBLIC_APPLICATION_URL')
 
-EXECUTING_AS_TEST = os.environ.get('EXECUTING_AS_TEST')
+EXECUTING_AS_TEST = os.environ.get('EXECUTING_AS_TEST', False)
 
 TEST_NOTIFY_CONNECTION = True
 
@@ -196,7 +196,7 @@ LOGGING = {
     },
     'handlers': {
         'file': {
-            'level': 'WARNING',
+            'level': 'INFO',
             'class': 'logging.handlers.TimedRotatingFileHandler',
             'filename': os.path.join(BASE_DIR, 'logs/output.log'),
             'formatter': 'console',

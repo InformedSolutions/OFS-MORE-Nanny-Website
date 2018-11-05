@@ -13,8 +13,7 @@
     Your criminal record (DBS) check details
 </h1>
 <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-    <p>Please give us details of your Disclosure and Barring Service (DBS) certificate.</p>
-    <p>We need the details to check that you’re suitable to care for children.</p>
+    <p>Please give us details of your DBS certificate.</p>
 
     {% csrf_token %}
     {{ form }}
@@ -22,7 +21,7 @@
 
 </form>
 <br>
-<br>
+
 {% include 'return-to-list.html' %}
 
 {% endblock %}

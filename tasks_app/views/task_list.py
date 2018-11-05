@@ -141,11 +141,11 @@ class TaskListView(View):
                     'name': 'criminal_record',
                     'status': application['dbs_status'],
                     'arc_flagged': application['dbs_arc_flagged'],
-                    'description': 'Criminal record (DBS) check',
+                    'description': 'Criminal record checks',
                     'status_url': None,
                     'status_urls': {
-                        'COMPLETED/FLAGGED': 'dbs:Summary',
-                        'NOT_COMPLETED': 'dbs:Guidance'
+                        'COMPLETED/FLAGGED': 'dbs:Criminal-Record-Check-Summary-View',
+                        'NOT_COMPLETED': 'dbs:Criminal-Record-Checks-Guidance-View'
                     }
                 },
                 {

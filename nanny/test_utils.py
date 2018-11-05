@@ -41,8 +41,11 @@ mock_childcare_training_record = {
 }
 
 mock_dbs_record = {
+    'lived_abroad': 'False',
     'dbs_number': '000000000012',
-    'convictions': False,
+    'convictions': 'False',
+    'is_ofsted_dbs': 'True',
+    'on_dbs_update_service': None
 }
 
 mock_home_address = {
@@ -132,6 +135,9 @@ identity_response = HttpResponse()
 identity_response.status_code = 200
 identity_response.record = mock_identity_record
 
+arc_comments_response = HttpResponse()
+arc_comments_response.status_code = 404
+
 
 mock_endpoint_return_values = {
     'application': nanny_application_response,
@@ -144,6 +150,7 @@ mock_endpoint_return_values = {
     'insurance-cover': insurance_cover_response,
     'declaration': declaration_response,
     'user': identity_response,
+    'arc-comments': arc_comments_response,
 }
 
 
