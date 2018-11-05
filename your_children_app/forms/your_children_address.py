@@ -17,7 +17,7 @@ class YourChildrenPostcodeForm(NannyForm):
     error_summary_title = 'There was a problem'
     auto_replace_widgets = True
 
-    postcode = forms.CharField(label='Postcode', error_messages={'required': 'Please enter your child''s postcode'})
+    postcode = forms.CharField(label='Postcode', error_messages={'required': "Please enter your child's postcode"})
 
     def __init__(self, *args, **kwargs):
         """
@@ -88,7 +88,7 @@ class YourChildrenManualAddressForm(NannyForm):
                            error_messages={'required': 'Please enter the name of the town or city'})
     county = forms.CharField(label='County (optional)', required=False)
     postcode = forms.CharField(label='Postcode', required=True,
-                               error_messages={'required': 'Please enter your postcode'})
+                               error_messages={'required': 'Please enter a valid postcode'})
 
     def __init__(self, *args, **kwargs):
         """
