@@ -91,16 +91,15 @@ class TaskListView(View):
                     }
 
                 },
-                {  # This is using placeholder details to populate fields as the task is not yet created
-                    # and this currently mirrors the links and status of the 'childcare address' task
+                {
                     'name': 'your_children',
                     'status': application['your_children_status'],
                     'arc_flagged': application['your_children_arc_flagged'],
                     'description': 'Your children',
                     'status_url': None,
                     'status_urls': {
-                        'COMPLETED/FLAGGED': 'Your-Children-Guidance',
-                        'NOT_COMPLETED': 'Your-Children-Guidance',
+                        'COMPLETED/FLAGGED': 'your-children:Your-Children-Summary',
+                        'NOT_COMPLETED': 'your-children:Your-Children-Guidance',
                     }
 
                 },

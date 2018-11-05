@@ -1,8 +1,12 @@
+import logging
 import os
 import json
 
 import requests
 from django.conf import settings
+
+
+logger = logging.getLogger()
 
 
 def send_email(email, personalisation, template_id):
@@ -24,6 +28,8 @@ def send_email(email, personalisation, template_id):
             # If executing login function in test mode set env variable for later retrieval by test code
             os.environ['EMAIL_VALIDATION_URL'] = personalisation.get('link')
             print(personalisation['link'])
+
+    logger.info('Dispatching email request to Notify Gateway with email: {} and template_id: {} for service: Nannies'.format(email, template_id))
 
     notification_request = {
         'service_name': 'Nannies',

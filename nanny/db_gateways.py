@@ -1,6 +1,6 @@
-import json
 import logging
 import os
+import json
 from unittest.mock import MagicMock
 
 import requests
@@ -43,7 +43,6 @@ class DBGatewayActions:
         :param func: Function to be decorated.
         :return: log_wrapper: Decorated function.
         """
-
         def log_wrapper(*args, **kwargs):
             response = func(*args, **kwargs)
             expected_db_api_responses = (200, 201, 204, 404)
@@ -163,7 +162,8 @@ class NannyGatewayActions(DBGatewayActions):
         'insurance-cover': 'application_id',
         'payment': 'application_id',
         'summary': 'application_id',
-        'arc-search': 'application_id'
+        'arc-search': 'application_id',
+        'your-children': 'child_id'
     }
 
     target_url_prefix = os.environ.get('APP_NANNY_GATEWAY_URL') + '/api/v1/'

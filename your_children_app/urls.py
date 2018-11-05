@@ -1,12 +1,20 @@
 from django.conf import settings
 from django.conf.urls import url, include
-from django.views.generic import TemplateView
 
-from .views import YourChildrenGuidance
+from your_children_app.views import YourChildrenGuidanceView
+from your_children_app.views.your_children_address import *
+from your_children_app.views.your_children_addresses import YourChildrenAddressesView
+from your_children_app.views.your_children_details import YourChildrenDetailsView
+from your_children_app.views.your_children_summary import YourChildrenSummaryView
 
 urlpatterns = [
-    url(r'^your_children/your_children/', YourChildrenGuidance.as_view(), name='Your-Children-Guidance'),
-
+    url(r'^your-children/your-children/', YourChildrenGuidanceView.as_view(), name='Your-Children-Guidance'),
+    url(r'^your-children-details/', YourChildrenDetailsView.as_view(), name='Your-Children-Details'),
+    url(r'^your-children/addresses/', YourChildrenAddressesView.as_view(), name='Your-Children-addresses'),
+    url(r'^your-children/address/', YourChildrenPostcodeView.as_view(), name='Your-Children-Postcode'),
+    url(r'^your-children/address-selection/', YourChildrenAddressSelectionView.as_view(), name='Your-Children-Address-Selection'),
+    url(r'^your-children/enter-address/', YourChildrenManualAddressView.as_view(), name='Your-Children-Manual-address'),
+    url(r'^your-children/check-answers/', YourChildrenSummaryView.as_view(), name='Your-Children-Summary'),
 ]
 
 # Django toolbar settings for development environments

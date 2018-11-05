@@ -48,7 +48,7 @@ APP_IDENTITY_URL = os.environ.get('APP_IDENTITY_URL')
 
 PUBLIC_APPLICATION_URL = os.environ.get('PUBLIC_APPLICATION_URL')
 
-EXECUTING_AS_TEST = os.environ.get('EXECUTING_AS_TEST')
+EXECUTING_AS_TEST = os.environ.get('EXECUTING_AS_TEST', False)
 
 TEST_NOTIFY_CONNECTION = True
 
@@ -102,7 +102,8 @@ PROJECT_APPS = [
     'insurance_cover_app.apps.InsuranceCoverAppConfig',
     'dbs_app.apps.DbsAppConfig',
     'payment_app.apps.PaymentAppConfig',
-    'declaration_app.apps.DeclarationPaymentAppConfig'
+    'declaration_app.apps.DeclarationPaymentAppConfig',
+    'your_children_app.apps.YourChildrenAppConfig'
 ]
 
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
@@ -195,7 +196,7 @@ LOGGING = {
     },
     'handlers': {
         'file': {
-            'level': 'WARNING',
+            'level': 'INFO',
             'class': 'logging.handlers.TimedRotatingFileHandler',
             'filename': os.path.join(BASE_DIR, 'logs/output.log'),
             'formatter': 'console',

@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Your Children{% endblock %}
+{% block page_title %}Check your answers: your children{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -10,12 +10,10 @@
 <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
 
 <h1 class="form-title heading-large">
-    Your children
+    Check your answers: your children
 </h1>
 
-<p>You need to tell us about your children who are under 16.</p>
-<p>Council social services will carry out checks on them.</p>
-<p>This to make sure that you’re suitable to look after children.</p>
+<p>TASK SUMMARY FORM</p>
 
     {% csrf_token %}
     <input type="hidden" value="{{id}}" name="id"/>

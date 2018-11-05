@@ -8,6 +8,15 @@ class Table:
     """
     error_summary_title = 'There was a problem'
 
+    def __init__(self, application_id, table_pk=None):
+        """
+        :attr: row_list: list of Row objects which comprise the table.
+        """
+        self.row_list = []
+        self.title = ''
+        self.application_id = application_id
+        self.table_pk = table_pk
+
     def get_errors(self):
         for row in self.row_list:
             arc_comments_response = NannyGatewayActions().list('arc-comments',
@@ -73,14 +82,20 @@ class Table:
     def get_error_amount(self):
         return sum([1 for row in self.row_list if row.error is not None])
 
-    def __init__(self, application_id, table_pk=None):
+    def add_row(self, row):
         """
-        :attr: row_list: list of Row objects which comprise the table.
+        A method to add a row to a tables row list
+        :param row: The new row object
+        :return:
         """
-        self.row_list = []
-        self.title = ''
-        self.application_id = application_id
-        self.table_pk = table_pk
+        self.row_list.append(row)
+
+    def get_row_list(self):
+        """
+        Standar get method for row list
+        :return:
+        """
+        return self.row_list
 
 
 class Row:
