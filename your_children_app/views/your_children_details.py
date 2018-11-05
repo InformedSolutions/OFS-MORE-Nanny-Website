@@ -74,6 +74,7 @@ class YourChildrenDetailsView(NannyFormView):
         variables = {
             'form_list': form_list,
             'application_id': application_id,
+            'id': application_id,
             'number_of_children': number_of_children,
             'add_child': number_of_children + 1,
             'remove_child': number_of_children - 1,
