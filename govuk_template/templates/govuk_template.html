@@ -42,18 +42,12 @@
             <ul id="proposition-links">
                {% if id and AUTHENTICATED %}
                    <li>
-                       <a href="{% url 'Costs' %}?id={{ id }}">Costs</a>
-                   </li>
-                   <li>
                       <a href="{% url 'Help-And-Contact' %}?id={{ id }}">Help and contacts</a>
                    </li>
                    <li>
                       <a href="{% url 'Application-Saved' %}">Sign out</a>
                    </li>
                {% else %}
-                    <li>
-                      <a href="{% url 'Costs' %}">Costs</a>
-                    </li>
                    <li>
                       <a href="{% url 'Help-And-Contact' %}">Help and contacts</a>
                    </li>
