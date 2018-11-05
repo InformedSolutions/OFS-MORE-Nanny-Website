@@ -8,7 +8,7 @@ from your_children_app.views.your_children_details import YourChildrenDetailsVie
 from your_children_app.views.your_children_summary import YourChildrenSummaryView
 
 urlpatterns = [
-    url(r'^your-children/your-children/', YourChildrenGuidanceView.as_view(), name='Your-Children-Guidance'),
+    url(r'^your-children/', YourChildrenGuidanceView.as_view(), name='Your-Children-Guidance'),
     url(r'^your-children-details/', YourChildrenDetailsView.as_view(), name='Your-Children-Details'),
     url(r'^your-children/addresses/', YourChildrenAddressesView.as_view(), name='Your-Children-addresses'),
     url(r'^your-children/address/', YourChildrenPostcodeView.as_view(), name='Your-Children-Postcode'),
