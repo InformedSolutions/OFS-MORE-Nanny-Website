@@ -8,7 +8,6 @@
 {% include "back-button.html" %}
 
 <!-- Initialise error summary for page -->
-<div class="two-thirds">
 {% for form in form_list %}
     {{form.error_summary}}
 {% endfor %}
@@ -17,7 +16,7 @@
     Details of your children
 </h1>
 <p>Please give details of your children who are under 16.</p>
-</div>
+
 
 <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
     {% for form in form_list %}
@@ -43,6 +42,7 @@
     <input type="submit" class="button" name="submit" value="Save and continue" id="child-details-save">
 </form>
 <br>
+
 
 {% include 'return-to-list.html' %}
 

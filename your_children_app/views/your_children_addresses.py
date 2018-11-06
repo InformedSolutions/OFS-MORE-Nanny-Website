@@ -6,6 +6,7 @@ from nanny.utilities import app_id_finder
 from nanny import NannyGatewayActions
 from nanny.base_views import NannyFormView
 from your_children_app.forms.your_children_addresses import YourChildrenLivingWithYouForm
+from your_children_app.utils import child_lives_with_applicant_handling
 
 
 class YourChildrenAddressesView(NannyFormView):
@@ -53,47 +54,19 @@ class YourChildrenAddressesView(NannyFormView):
         children = api_response.record
 
         for child in children:
-            # Add True or False to the child's 'lives_with_applicant' status
-            child['lives_with_applicant'] = str(child['child']) in form.cleaned_data[
-                'children_living_with_applicant_selection']
-
-            if child['lives_with_applicant']:
-                # get the existing address of the applicant from the personal details records
-                applicant_record = NannyGatewayActions().read('applicant-home-address', params={
-                    'application_id': application_id
-                })
-
-                # Define the address details for the child model
-                child['street_line1'] = applicant_record.record['street_line1']
-                child['street_line2'] = applicant_record.record['street_line2']
-                child['town'] = applicant_record.record['town']
-                child['county'] = applicant_record.record['county']
-                child['country'] = applicant_record.record['country']
-                child['postcode'] = applicant_record.record['postcode']
-
-                # Append the existing children, that are ticked in the form, with the address of the applicant
-                if api_response.status_code == 200:
-                    NannyGatewayActions().patch('your-children', params=child)
-
-                # The child record should always exist at this point, following the creation in child details
-                else:
-                    raise ValueError('The API did not respond as expected')
-            else:
-                # Child does not live with applicant, or 'None' is selected
-                child['lives_with_applicant'] = False
-                child['street_line1'] = ''
-                child['street_line2'] = ''
-                child['town'] = ''
-                child['county'] = ''
-                child['country'] = ''
-                child['postcode'] = ''
-                NannyGatewayActions().patch('your-children', params=child)
+            child_lives_with_applicant_handling(application_id, child, form, api_response)
 
         # Create a list of children who do not live with the applicant
-        children_not_living_with_applicant = [child for child in children if child['lives_with_applicant'] is False]
+        children_not_living_with_applicant = [child for child in children if not child['lives_with_applicant'] and
+                                              child['street_line1'] is '' or not child['street_line1']]
 
         # If any children do not live with the applicant, the child address sub-task must be presented
         if len(children_not_living_with_applicant) > 0:
+            app_api_response = NannyGatewayActions().read('application', params={'application_id': application_id})
+            if app_api_response.status_code == 200:
+                record = app_api_response.record
+                record['your_children_status'] = 'IN_PROGRESS'
+                NannyGatewayActions().put('application', params=record)
             # Child number is defined by the first child added by the applicant as it is ordered by date created
             child_number = children_not_living_with_applicant[0]['child']
 
@@ -102,5 +75,10 @@ class YourChildrenAddressesView(NannyFormView):
 
         # If all the children live with the applicant, return the summary table and skip the address selection
         else:
+            app_api_response = NannyGatewayActions().read('application', params={'application_id': application_id})
+            if app_api_response.status_code == 200:
+                record = app_api_response.record
+                record['your_children_status'] = 'IN_PROGRESS'
+                NannyGatewayActions().put('application', params=record)
             return HttpResponseRedirect(reverse('your-children:Your-Children-Summary') + '?id=' +
                                         application_id)

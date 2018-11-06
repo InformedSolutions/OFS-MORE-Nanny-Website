@@ -371,7 +371,7 @@ def create_children_living_with_applicant_table(application_id):
 
     table.error_summary_title = "There was a problem with the children living with you"
 
-    table.title = "Children living with you"
+    table.title = "Your children's addresses"
     change_link_description = 'which of your children live with you'
     back_link = 'your-children:Your-Children-addresses'
 
@@ -397,6 +397,10 @@ def create_tables(child_table_list):
                                'date_of_birth': 'your-children:Your-Children-Details',
                                'address': 'your-children:Your-Children-Manual-address'}
 
+    your_children_change_link_dict = {'full_name': 'name',
+                                      'date_of_birth': 'date of birth',
+                                      'address': 'address'}
+
     table_output_list = []
 
     for table in child_table_list:
@@ -404,7 +408,8 @@ def create_tables(child_table_list):
         # Each iteration of a table will be a dictionary
         for key, value in table['fields']:
             # Create a row object using the data name as the key
-            temp_row = Row(key, your_children_dict[key], value, your_children_link_dict[key], '')
+            temp_row = Row(key, your_children_dict[key], value, your_children_link_dict[key],
+                           your_children_change_link_dict[key])
 
             # Table object has rows added
             table['table_object'].add_row(temp_row)
@@ -482,4 +487,113 @@ def get_child_number_for_address_loop(application_id, child_list, current_child)
             return get_child_number_for_address_loop(application_id, child_list, next_child)
     else:
         return None
+
+
+def child_lives_with_applicant_handling(application_id, child, form, api_response):
+    """
+    Helper function that handles logic and API methods to update/create/delete address records for exisitng and
+    new children following post requests on the 'Your children' addresses page.
+    """
+    if child['lives_with_applicant'] is True:
+        # Add True or False to the child's 'lives_with_applicant' status
+        child['lives_with_applicant'] = str(child['child']) in form.cleaned_data[
+            'children_living_with_applicant_selection']
+
+        if child['lives_with_applicant']:
+            # get the existing address of the applicant from the personal details records
+            applicant_record = NannyGatewayActions().read('applicant-home-address', params={
+                'application_id': application_id
+            })
+
+            # Define the address details for the child model
+            child['street_line1'] = applicant_record.record['street_line1']
+            child['street_line2'] = applicant_record.record['street_line2']
+            child['town'] = applicant_record.record['town']
+            child['county'] = applicant_record.record['county']
+            child['country'] = applicant_record.record['country']
+            child['postcode'] = applicant_record.record['postcode']
+
+            # Append the existing children, that are ticked in the form, with the address of the applicant
+            if api_response.status_code == 200:
+                NannyGatewayActions().patch('your-children', params=child)
+
+            # The child record should always exist at this point, following the creation in child details
+            else:
+                raise ValueError('The API did not respond as expected')
+        else:
+            # Child does not live with applicant, or 'None' is selected
+            child['lives_with_applicant'] = False
+            child['street_line1'] = ''
+            child['street_line2'] = ''
+            child['town'] = ''
+            child['county'] = ''
+            child['country'] = ''
+            child['postcode'] = ''
+            NannyGatewayActions().patch('your-children', params=child)
+
+    # If the child already exists and doesn't live with the applicant
+    elif child['lives_with_applicant'] is False:
+        # Add True or False to the child's 'lives_with_applicant' status
+        child['lives_with_applicant'] = str(child['child']) in form.cleaned_data[
+            'children_living_with_applicant_selection']
+
+        if child['lives_with_applicant']:
+            # get the existing address of the applicant from the personal details records
+            applicant_record = NannyGatewayActions().read('applicant-home-address', params={
+                'application_id': application_id
+            })
+
+            # Define the address details for the child model
+            child['street_line1'] = applicant_record.record['street_line1']
+            child['street_line2'] = applicant_record.record['street_line2']
+            child['town'] = applicant_record.record['town']
+            child['county'] = applicant_record.record['county']
+            child['country'] = applicant_record.record['country']
+            child['postcode'] = applicant_record.record['postcode']
+
+            # Append the existing children, that are ticked in the form, with the address of the applicant
+            if api_response.status_code == 200:
+                NannyGatewayActions().patch('your-children', params=child)
+
+            # The child record should always exist at this point, following the creation in child details
+            else:
+                raise ValueError('The API did not respond as expected')
+
+    # If the child did not previously exist
+    elif child['lives_with_applicant'] is None:
+        # Add True or False to the child's 'lives_with_applicant' status
+        child['lives_with_applicant'] = str(child['child']) in form.cleaned_data[
+            'children_living_with_applicant_selection']
+
+        if child['lives_with_applicant']:
+            # get the existing address of the applicant from the personal details records
+            applicant_record = NannyGatewayActions().read('applicant-home-address', params={
+                'application_id': application_id
+            })
+
+            # Define the address details for the child model
+            child['street_line1'] = applicant_record.record['street_line1']
+            child['street_line2'] = applicant_record.record['street_line2']
+            child['town'] = applicant_record.record['town']
+            child['county'] = applicant_record.record['county']
+            child['country'] = applicant_record.record['country']
+            child['postcode'] = applicant_record.record['postcode']
+
+            # Append the existing children, that are ticked in the form, with the address of the applicant
+            if api_response.status_code == 200:
+                NannyGatewayActions().patch('your-children', params=child)
+
+            # The child record should always exist at this point, following the creation in child details
+            else:
+                raise ValueError('The API did not respond as expected')
+        else:
+            # Child does not live with applicant, or 'None' is selected
+            child['lives_with_applicant'] = False
+            child['street_line1'] = ''
+            child['street_line2'] = ''
+            child['town'] = ''
+            child['county'] = ''
+            child['country'] = ''
+            child['postcode'] = ''
+            NannyGatewayActions().patch('your-children', params=child)
 

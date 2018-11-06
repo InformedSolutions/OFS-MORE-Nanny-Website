@@ -17,7 +17,7 @@ class YourChildrenPostcodeForm(NannyForm):
     error_summary_title = 'There was a problem'
     auto_replace_widgets = True
 
-    postcode = forms.CharField(label='Postcode', error_messages={'required': "Please enter your child's postcode"})
+    postcode = forms.CharField(label='Postcode', error_messages={'required': "Please enter your postcode"})
 
     def __init__(self, *args, **kwargs):
         """
@@ -45,7 +45,7 @@ class YourChildrenPostcodeForm(NannyForm):
         postcode_no_space = postcode.replace(" ", "")
         postcode_uppercase = postcode_no_space.upper()
         if re.match(settings.REGEX['POSTCODE_UPPERCASE'], postcode_uppercase) is None:
-            raise forms.ValidationError('Please enter a valid postcode')
+            raise forms.ValidationError('Please enter your postcode')
         return postcode
 
 
@@ -88,7 +88,7 @@ class YourChildrenManualAddressForm(NannyForm):
                            error_messages={'required': 'Please enter the name of the town or city'})
     county = forms.CharField(label='County (optional)', required=False)
     postcode = forms.CharField(label='Postcode', required=True,
-                               error_messages={'required': 'Please enter a valid postcode'})
+                               error_messages={'required': 'Please enter your postcode'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -169,5 +169,5 @@ class YourChildrenManualAddressForm(NannyForm):
         postcode_no_space = postcode.replace(" ", "")
         postcode_uppercase = postcode_no_space.upper()
         if re.match(settings.REGEX['POSTCODE_UPPERCASE'], postcode_uppercase) is None:
-            raise forms.ValidationError('Please enter a valid postcode')
+            raise forms.ValidationError('Please enter your postcode')
         return postcode
