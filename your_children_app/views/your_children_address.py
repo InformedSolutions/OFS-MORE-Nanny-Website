@@ -22,7 +22,7 @@ class YourChildrenPostcodeView(NannyFormView):
         form = YourChildrenPostcodeForm(id=application_id, child=child)
         child_record = NannyGatewayActions().list('your-children', params={
             'application_id': application_id,
-            'ordering': 'child',
+            'child': child,
         }).record[0]
 
         name = child_record['first_name'] + " " + child_record['last_name']
@@ -46,7 +46,7 @@ class YourChildrenPostcodeView(NannyFormView):
         child_record = NannyGatewayActions().list('your-children', params={
             'application_id': application_id,
             'child': child,
-        }).record
+        }).record[0]
 
         application_api = NannyGatewayActions().read('application', params={'application_id': application_id})
 
@@ -99,8 +99,8 @@ class YourChildrenAddressSelectionView(NannyFormView):
         application = NannyGatewayActions().read('application', params={'application_id': application_id})
         child_record = NannyGatewayActions().list('your-children', params={
             'application_id': application_id,
-            'ordering': 'child',
-        }).record[int(child) - 1]
+            'child': child,
+        }).record[0]
 
         postcode = child_record['postcode']
         name = child_record['first_name'] + " " + child_record['last_name']
@@ -183,7 +183,6 @@ class YourChildrenAddressSelectionView(NannyFormView):
             next_child = get_child_number_for_address_loop(application_id, child_list, child)
 
             if next_child:
-                next_child = next_child[0]['child']
                 return HttpResponseRedirect(reverse('your-children:Your-Children-Postcode')
                                             + '?id=' + application_id
                                             + '&child=' + str(next_child)
@@ -192,7 +191,7 @@ class YourChildrenAddressSelectionView(NannyFormView):
                 return HttpResponseRedirect(reverse('your-children:Your-Children-Summary')
                                             + '?id=' + application_id)
         else:
-            form.error_summary_title = 'There was a problem finding your address'
+            form.error_summary_title = 'There was a problem with your address'
 
             if application.record['application_status'] == 'FURTHER_INFORMATION':
                 form.error_summary_template_name = 'returned-error-summary.html'
@@ -288,7 +287,7 @@ class YourChildrenManualAddressView(NannyFormView):
                                             + '?id=' + application_id)
 
         else:
-            form.error_summary_title = 'There was a problem finding your address'
+            form.error_summary_title = 'There was a problem with your address'
             if application.record['application_status'] == 'FURTHER_INFORMATION':
                 form.error_summary_template_name = 'returned-error-summary.html'
                 form.error_summary_title = 'There was a problem'
