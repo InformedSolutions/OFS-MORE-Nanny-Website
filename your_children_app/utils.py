@@ -371,7 +371,7 @@ def create_children_living_with_applicant_table(application_id):
 
     table.error_summary_title = "There was a problem with the children living with you"
 
-    table.title = "Children living with you"
+    table.title = "Your children's addresses"
     change_link_description = 'which of your children live with you'
     back_link = 'your-children:Your-Children-addresses'
 
@@ -397,6 +397,10 @@ def create_tables(child_table_list):
                                'date_of_birth': 'your-children:Your-Children-Details',
                                'address': 'your-children:Your-Children-Manual-address'}
 
+    your_children_change_link_dict = {'full_name': 'name',
+                                      'date_of_birth': 'date of birth',
+                                      'address': 'address'}
+
     table_output_list = []
 
     for table in child_table_list:
@@ -404,7 +408,8 @@ def create_tables(child_table_list):
         # Each iteration of a table will be a dictionary
         for key, value in table['fields']:
             # Create a row object using the data name as the key
-            temp_row = Row(key, your_children_dict[key], value, your_children_link_dict[key], '')
+            temp_row = Row(key, your_children_dict[key], value, your_children_link_dict[key],
+                           your_children_change_link_dict[key])
 
             # Table object has rows added
             table['table_object'].add_row(temp_row)
