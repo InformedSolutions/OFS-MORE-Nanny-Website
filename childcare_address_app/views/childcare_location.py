@@ -134,7 +134,10 @@ class ChildcareLocationView(NannyFormView):
             'postcode': home_address_record['postcode'] if home_address_record['postcode'] else ""
         }
 
-        home_childcare_address_list = nanny_actions.list('childcare-address', params=home_address_filter).record
+        home_childcare_address_response = nanny_actions.list('childcare-address', params=home_address_filter)
 
-        for address in home_childcare_address_list:
-            nanny_actions.delete('childcare-address', params={'childcare_address_id': address['childcare_address_id']})
+        if home_childcare_address_response.status_code == 200:
+            home_childcare_address_list = home_childcare_address_response.record
+
+            for address in home_childcare_address_list:
+                nanny_actions.delete('childcare-address', params={'childcare_address_id': address['childcare_address_id']})
