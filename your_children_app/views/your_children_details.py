@@ -190,6 +190,12 @@ class YourChildrenDetailsView(NannyFormView):
         if 'submit' in request.POST:
 
             if all(valid_list):
+                app_api_response = NannyGatewayActions().read('application', params={'application_id': application_id})
+                if app_api_response.status_code == 200:
+                    record = app_api_response.record
+                    record['your_children_status'] = 'IN_PROGRESS'
+                    NannyGatewayActions().put('application', params=record)
+
                 return HttpResponseRedirect(reverse('your-children:Your-Children-addresses') + '?id=' + application_id)
 
             # If there is an invalid form
