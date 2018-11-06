@@ -293,11 +293,16 @@ class YourChildrenManualAddressView(NannyFormView):
             next_child = get_child_number_for_address_loop(application_id, child_list, child)
 
             if next_child:
-                next_child = next_child[0]['child']
+                app_api_response = NannyGatewayActions().read('application', params={'application_id': application_id})
+                if app_api_response.status_code == 200:
+                    record = app_api_response.record
+                    record['your_children_status'] = 'IN_PROGRESS'
+                    NannyGatewayActions().put('application', params=record)
                 return HttpResponseRedirect(reverse('your-children:Your-Children-Postcode')
                                             + '?id=' + application_id
                                             + '&child=' + str(next_child)
                                             )
+
             else:
                 return HttpResponseRedirect(reverse('your-children:Your-Children-Summary')
                                             + '?id=' + application_id)
