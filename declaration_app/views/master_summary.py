@@ -25,7 +25,7 @@ class MasterSummary(NeverCacheMixin, NannyTemplateView):
         context = super().get_context_data()
         app_id = self.request.GET["id"]
 
-        self.section_names = self.__update_section_names(self.section_names, app_id)
+        self.section_names = self.__update_section_names(app_id)
         json = self.load_json(app_id, '', self.section_names, False)
 
         context['json'] = json
@@ -34,17 +34,19 @@ class MasterSummary(NeverCacheMixin, NannyTemplateView):
         return context
 
     @staticmethod
-    def __update_section_names(section_names, app_id):
+    def __update_section_names(app_id):
         """
         Updates section_names to include childcare address if the your_children task is present.
         :return: New section_names list
         """
         applicant_person_details_record = NannyGatewayActions().read('applicant-personal-details',
                                                                      params={'application_id': app_id}).record
-        if applicant_person_details_record.get('your_children') and 'your_children' not in section_names:
-            section_names.insert(2, 'your_children')
-
-        return section_names
+        if applicant_person_details_record.get('your_children'):
+            return ["user_details", "applicant_personal_details_section", "your_children" "childcare_address_section",
+                             "first_aid", "childcare_training", "dbs_check", "insurance_cover"]
+        else:
+            return ["user_details", "applicant_personal_details_section", "childcare_address_section",
+                             "first_aid", "childcare_training", "dbs_check", "insurance_cover"]
 
     def post(self, request):
         return HttpResponseRedirect(build_url(self.success_url_name, get={'id': request.GET['id']}))
