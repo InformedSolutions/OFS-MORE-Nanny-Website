@@ -42,11 +42,11 @@ class MasterSummary(NeverCacheMixin, NannyTemplateView):
         applicant_person_details_record = NannyGatewayActions().read('applicant-personal-details',
                                                                      params={'application_id': app_id}).record
         if applicant_person_details_record.get('your_children'):
-            return ["user_details", "applicant_personal_details_section", "your_children" "childcare_address_section",
-                             "first_aid", "childcare_training", "dbs_check", "insurance_cover"]
+            return ["user_details", "applicant_personal_details_section", "your_children", "childcare_address_section",
+                    "first_aid", "childcare_training", "dbs_check", "insurance_cover"]
         else:
             return ["user_details", "applicant_personal_details_section", "childcare_address_section",
-                             "first_aid", "childcare_training", "dbs_check", "insurance_cover"]
+                    "first_aid", "childcare_training", "dbs_check", "insurance_cover"]
 
     def post(self, request):
         return HttpResponseRedirect(build_url(self.success_url_name, get={'id': request.GET['id']}))
