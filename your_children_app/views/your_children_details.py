@@ -45,7 +45,8 @@ class YourChildrenDetailsView(NannyFormView):
         # 'child' number based on the creation date of the record
         if remove_request_querystring_present and child_to_remove != '0':
             remove_child(child_to_remove, application_id)
-            assign_child_numbers(api_response)
+            if api_response == 200:
+                assign_child_numbers(api_response)
 
         # Generate a list of forms that will be iterated through when the page is initialised
         form_list = []
