@@ -373,11 +373,13 @@ class ChildcareAddressDetailsView(BaseTemplateView):
 
         #  Redefine API response so that incorrect address records can be removed
         api_response = NannyGatewayActions().list('childcare-address', params={'application_id': app_id})
-        incomplete_addresses = [address for address in api_response.record if address['street_line1'] is None]
+        if api_response.status_code == 200:
+            incomplete_addresses = [address for address in api_response.record if address['street_line1'] is None]
 
-        # Delete record that have not being completed
-        for address in incomplete_addresses:
-            NannyGatewayActions().delete('childcare-address', params=address)
+            # Delete record that have not being completed
+            for address in incomplete_addresses:
+                NannyGatewayActions().delete('childcare-address', params=address)
+
         # If clicking on Remove this address link
         if 'childcare-address-id' in self.request.GET:
             childcare_address_id = self.request.GET['childcare-address-id']
