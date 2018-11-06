@@ -94,6 +94,11 @@ class YourChildrenAddressesView(NannyFormView):
 
         # If any children do not live with the applicant, the child address sub-task must be presented
         if len(children_not_living_with_applicant) > 0:
+            app_api_response = NannyGatewayActions().read('application', params={'application_id': application_id})
+            if app_api_response.status_code == 200:
+                record = app_api_response.record
+                record['your_children_status'] = 'IN_PROGRESS'
+                NannyGatewayActions().put('application', params=record)
             # Child number is defined by the first child added by the applicant as it is ordered by date created
             child_number = children_not_living_with_applicant[0]['child']
 
@@ -102,5 +107,10 @@ class YourChildrenAddressesView(NannyFormView):
 
         # If all the children live with the applicant, return the summary table and skip the address selection
         else:
+            app_api_response = NannyGatewayActions().read('application', params={'application_id': application_id})
+            if app_api_response.status_code == 200:
+                record = app_api_response.record
+                record['your_children_status'] = 'IN_PROGRESS'
+                NannyGatewayActions().put('application', params=record)
             return HttpResponseRedirect(reverse('your-children:Your-Children-Summary') + '?id=' +
                                         application_id)
