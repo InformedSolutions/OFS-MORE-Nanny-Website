@@ -310,35 +310,36 @@ def create_child_table(child):
     dob = datetime.date(child['birth_year'], child['birth_month'], child['birth_day']).strftime('%d %b %Y')
     child_name = str(child['first_name']) + " " + str(child['last_name'])
     child_id = child['child_id']
+    application_id = child['application_id']
 
     if not child['lives_with_applicant']:
         child_address = str(child['street_line1']) + ', ' + str(child['street_line2']) + ', ' \
                         + str(child['town']) + ', ' + str(child['postcode'])
 
         child_fields = [
-            ('full_name', child_name),
+            ('name', child_name),
             ('date_of_birth', dob),
             ('address', child_address)
         ]
 
     else:
         child_fields = [
-            ('full_name', child_name),
+            ('name', child_name),
             ('date_of_birth', dob),
             ('address', 'Same as your own')
         ]
 
-    table = Table(child_id)
+    table = Table(application_id)
     table.other_people_numbers = '&child=' + str(child['child'])
 
     child_table = ({
         'table_object': table,
         'fields': child_fields,
         'title': child_name,
-        'error_summary_title': "There was a problem with {0}'s details".format(child_name)
+        'error_summary_title': "There was a problem with {0}'s details".format(child_name),
     })
 
-    return child_table
+    return child_table, child_id
 
 
 def create_children_living_with_applicant_table(application_id):
@@ -375,41 +376,42 @@ def create_children_living_with_applicant_table(application_id):
     change_link_description = 'which of your children live with you'
     back_link = 'your-children:Your-Children-addresses'
 
-    row = Row('children_living_with_you', 'Which of your children live with you?',
+    row = Row('children_living_with_applicant_selection', 'Which of your children live with you?',
               children_living_with_you_response_string, back_link, change_link_description)
     table.add_row(row)
 
     return table
 
 
-def create_tables(child_table_list):
+def create_tables(child_table_list_tuple):
     """
     Helper function to create a list of childrens tables for use within the 'Your Children' summary page
     :param child_table_list: List of tabkes if the children generated in the get request of the summary page
     :return: Table output list - populated list of tables to be presented on the summary page
     """
 
-    your_children_dict = {'full_name': 'Name',
+    your_children_dict = {'name': 'Name',
                           'date_of_birth': 'Date of birth',
                           'address': 'Address'}
 
-    your_children_link_dict = {'full_name': 'your-children:Your-Children-Details',
+    your_children_link_dict = {'name': 'your-children:Your-Children-Details',
                                'date_of_birth': 'your-children:Your-Children-Details',
                                'address': 'your-children:Your-Children-Manual-address'}
 
-    your_children_change_link_dict = {'full_name': 'name',
+    your_children_change_link_dict = {'name': 'name',
                                       'date_of_birth': 'date of birth',
                                       'address': 'address'}
 
     table_output_list = []
 
-    for table in child_table_list:
+    for child_tuple in child_table_list_tuple:
+        table, child_id = child_tuple
 
         # Each iteration of a table will be a dictionary
         for key, value in table['fields']:
             # Create a row object using the data name as the key
             temp_row = Row(key, your_children_dict[key], value, your_children_link_dict[key],
-                           your_children_change_link_dict[key])
+                           your_children_change_link_dict[key], row_pk=child_id, use_many_to_one=True)
 
             # Table object has rows added
             table['table_object'].add_row(temp_row)

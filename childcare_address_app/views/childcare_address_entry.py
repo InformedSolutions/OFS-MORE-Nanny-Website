@@ -314,7 +314,7 @@ class ChildcareAddressManualView(BaseFormView):
         else:
             return self.form_invalid(form)
 
-
+# TODO: Check field names how will flagging work here???
 class ChildcareAddressDetailsView(BaseTemplateView):
     """
     Class containing the view(s) for handling the GET requests to the childcare address details page.

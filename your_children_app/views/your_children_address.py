@@ -222,46 +222,53 @@ class YourChildrenAddressSelectionView(NannyFormView):
             return render(request, 'your-children-address-selection.html', variables)
 
 
+# TODO: Update the get and post methods to match the methods used in the 'Your children's addresses' page
 class YourChildrenManualAddressView(NannyFormView):
     """
-    Form view to  render the your children details view
+    Form view to render the your children details view
     """
+    template_name = 'your-children-manual-address.html'
+    form_class = YourChildrenManualAddressForm
 
-    def get(self, request, *args, **kwargs):
+    def get_context_data(self, **kwargs):
         """
-        Method for handling get requests to the manual address entry page in the 'Your children' task
+        Method for handling GET requests to the 'Your children address manual entry page'
         """
-        application_id = request.GET["id"]
-        child = request.GET["child"]
 
-        application = NannyGatewayActions().read('application', params={'application_id': application_id})
+        application_id = self.request.GET["id"]
+        child = self.request.GET["child"]
+
         child_record = NannyGatewayActions().list('your-children', params={
             'application_id': application_id,
-            'ordering': 'child',
-        }).record[int(child) - 1]
-        name = child_record['first_name'] + " " + child_record['last_name']
-        form = YourChildrenManualAddressForm(id=application_id, child=child)
-
-        if application.record['application_status'] == 'FURTHER_INFORMATION':
-            form.error_summary_template_name = 'returned-error-summary.html'
-            form.error_summary_title = 'There was a problem'
-
-        variables = {
-            'form': form,
             'child': child,
-            'name': name,
-            'id': application_id,
+        }).record[0]
+
+        name = child_record['first_name'] + " " + child_record['last_name']
+
+        context = {
             'application_id': application_id,
+            'id': application_id,
+            'name': name,
+            'child': child,
         }
+        kwargs.update(context)
 
-        return render(request, 'your-children-manual-address.html', variables)
+        return super().get_context_data(**kwargs)
 
-    def post(self, request, *args, **kwargs):
-        """
-        Method for handling get requests from the manual address entry page within the 'your children' task
-        """
-        application_id = request.POST["id"]
-        child = request.POST["child"]
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        app_id = self.request.GET.get('id')
+        child = self.request.GET.get('child')
+
+        kwargs['id'] = app_id
+        kwargs['child'] = child
+
+        return kwargs
+
+    def form_valid(self, form):
+
+        application_id = self.request.POST["id"]
+        child = self.request.POST["child"]
         application = NannyGatewayActions().read('application', params={'application_id': application_id})
         child_record = NannyGatewayActions().list('your-children', params={
             'application_id': application_id,
@@ -269,7 +276,7 @@ class YourChildrenManualAddressView(NannyFormView):
         }).record[int(child) - 1]
 
         name = child_record['first_name'] + " " + child_record['last_name']
-        form = YourChildrenManualAddressForm(request.POST, id=application_id, child=child)
+        form = YourChildrenManualAddressForm(self.request.POST, id=application_id, child=child)
 
         if form.is_valid():
             child_record['street_line1'] = form.cleaned_data['street_line1']
@@ -320,4 +327,109 @@ class YourChildrenManualAddressView(NannyFormView):
                 'child': child,
                 'name': name,
             }
-            return render(request, 'your-children-manual-address.html', variables)
+            return render(self.request, 'your-children-manual-address.html', variables)
+
+
+
+
+
+
+
+
+
+
+
+    # def get(self, request, *args, **kwargs):
+    #     """
+    #     Method for handling get requests to the manual address entry page in the 'Your children' task
+    #     """
+    #     application_id = request.GET["id"]
+    #     child = request.GET["child"]
+    #
+    #     application = NannyGatewayActions().read('application', params={'application_id': application_id})
+    #     child_record = NannyGatewayActions().list('your-children', params={
+    #         'application_id': application_id,
+    #         'ordering': 'child',
+    #     }).record[int(child) - 1]
+    #     name = child_record['first_name'] + " " + child_record['last_name']
+    #     form = YourChildrenManualAddressForm(id=application_id, child=child)
+    #
+    #     if application.record['application_status'] == 'FURTHER_INFORMATION':
+    #         form.error_summary_template_name = 'returned-error-summary.html'
+    #         form.error_summary_title = 'There was a problem'
+    #
+    #     variables = {
+    #         'form': form,
+    #         'child': child,
+    #         'name': name,
+    #         'id': application_id,
+    #         'application_id': application_id,
+    #     }
+    #
+    #     return render(request, 'your-children-manual-address.html', variables)
+    #
+    # def post(self, request, *args, **kwargs):
+    #     """
+    #     Method for handling get requests from the manual address entry page within the 'your children' task
+    #     """
+    #     application_id = request.POST["id"]
+    #     child = request.POST["child"]
+    #     application = NannyGatewayActions().read('application', params={'application_id': application_id})
+    #     child_record = NannyGatewayActions().list('your-children', params={
+    #         'application_id': application_id,
+    #         'ordering': 'child',
+    #     }).record[int(child) - 1]
+    #
+    #     name = child_record['first_name'] + " " + child_record['last_name']
+    #     form = YourChildrenManualAddressForm(request.POST, id=application_id, child=child)
+    #
+    #     if form.is_valid():
+    #         child_record['street_line1'] = form.cleaned_data['street_line1']
+    #         child_record['street_line2'] = form.cleaned_data['street_line2']
+    #         child_record['town'] = form.cleaned_data['town']
+    #         child_record['county'] = form.cleaned_data['county']
+    #         child_record['postcode'] = form.cleaned_data['postcode']
+    #         NannyGatewayActions().patch('your-children', params=child_record)
+    #
+    #         app_api_response = NannyGatewayActions().read('application', params={'application_id': application_id})
+    #         if app_api_response.status_code == 200:
+    #             record = app_api_response.record
+    #             record['your_children_status'] = 'IN_PROGRESS'
+    #             NannyGatewayActions().put('application', params=record)
+    #
+    #         child_list = NannyGatewayActions().list('your-children', params={
+    #             'application_id': application_id,
+    #             'ordering': 'child'
+    #         })
+    #
+    #         next_child = get_child_number_for_address_loop(application_id, child_list, child)
+    #
+    #         if next_child:
+    #             app_api_response = NannyGatewayActions().read('application', params={'application_id': application_id})
+    #             if app_api_response.status_code == 200:
+    #                 record = app_api_response.record
+    #                 record['your_children_status'] = 'IN_PROGRESS'
+    #                 NannyGatewayActions().put('application', params=record)
+    #             return HttpResponseRedirect(reverse('your-children:Your-Children-Postcode')
+    #                                         + '?id=' + application_id
+    #                                         + '&child=' + str(next_child)
+    #                                         )
+    #
+    #         else:
+    #             return HttpResponseRedirect(reverse('your-children:Your-Children-Summary')
+    #                                         + '?id=' + application_id)
+    #
+    #     else:
+    #         form.error_summary_title = 'There was a problem with your address'
+    #         if application.record['application_status'] == 'FURTHER_INFORMATION':
+    #             form.error_summary_template_name = 'returned-error-summary.html'
+    #             form.error_summary_title = 'There was a problem'
+    #
+    #         variables = {
+    #             'form': form,
+    #             'application_id': application_id,
+    #             'id': application_id,
+    #             'child': child,
+    #             'name': name,
+    #         }
+    #         return render(request, 'your-children-manual-address.html', variables)

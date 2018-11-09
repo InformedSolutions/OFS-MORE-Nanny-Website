@@ -55,9 +55,12 @@ class NannyFormView(FormView):
         Method to instantiate the form for rendering in the view.
         If it is a GET request, perform check for ARC comments.
         If it is a POST, remove any existing ARC comments.
+        The primary key for the ARC comments record is also passed in, so flags can be removed or added
+        from specific form instances in many to one relationships
         """
         form = super(NannyFormView, self).get_form(form_class)
         id = app_id_finder(self.request)
+        field_name = super(NannyFormView, self).arc_comments_field_name
         if self.request.method == 'GET':
             if getattr(form, 'check_flags', None):
                 form.check_flags(id)

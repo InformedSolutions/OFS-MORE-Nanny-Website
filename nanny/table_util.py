@@ -17,14 +17,6 @@ class Table:
         self.application_id = application_id
         self.table_pk = table_pk
 
-    def get_errors(self):
-        for row in self.row_list:
-            api_response = NannyGatewayActions().list('arc-comments', params={'application_id': self.application_id, 'field_name': row.data_name})
-            if api_response.status_code == 200 and bool(api_response.record[0]['flagged']):
-                row.error = api_response.record[0]['comment']
-            else:
-                row.error = None
-
     def get_error_amount(self):
         return sum([1 for row in self.row_list if row.error is not None])
 
@@ -51,15 +43,15 @@ class Table:
                                                                        'field_name': row.data_name})
             if arc_comments_response.status_code == 200:
                 # Handler dispatch for different relation types.
-                if self.__response_is_many_to_one(arc_comments_response.record):
+                if self.__response_is_many_to_one(arc_comments_response.record, row.use_many_to_one):
                     row.error = self.__get_errors_many_to_one_handler(arc_comments_response, row)
 
                 else:
                     row.error = self.__get_errors_one_to_one_handler(arc_comments_response)
 
     @staticmethod
-    def __response_is_many_to_one(response_record):
-        return len(response_record) > 1
+    def __response_is_many_to_one(response_record, use_many_to_one):
+        return use_many_to_one
 
     @staticmethod
     def __get_errors_one_to_one_handler(arc_comments_response):
@@ -130,7 +122,7 @@ class Row:
     Class to contain a specific row rendered in a table on the generic summary template.
     """
 
-    def __init__(self, data_name, row_name, value, back_link, change_link_description, error=None, row_pk=None):
+    def __init__(self, data_name, row_name, value, back_link, change_link_description, error=None, row_pk=None, use_many_to_one=None):
         """
         :param data_name: The name of the field as stored in the database
         :param row_name: The name of the field as rendered on the template
@@ -146,3 +138,4 @@ class Row:
         self.change_link_description = change_link_description
         self.error = error
         self.row_pk = row_pk
+        self.use_many_to_one = use_many_to_one
