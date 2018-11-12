@@ -15,6 +15,7 @@ class YourChildrenAddressesView(NannyFormView):
     """
     template_name = "your-children-addresses.html"
     form_class = YourChildrenLivingWithYouForm
+    endpoint = 'application'
 
     def get_context_data(self, **kwargs):
         """
@@ -36,6 +37,23 @@ class YourChildrenAddressesView(NannyFormView):
         kwargs['id'] = app_id
 
         return kwargs
+
+    def get_form(self, form_class=None):
+        """
+        Method to instantiate the form for rendering in the view.
+        If it is a GET request, perform check for ARC comments.
+        If it is a POST, remove any existing ARC comments.
+        """
+        form = super(NannyFormView, self).get_form(form_class)
+        endpoint = self.endpoint
+        id = app_id_finder(self.request)
+        if self.request.method == 'GET':
+            if getattr(form, 'check_flags', None):
+                form.check_flags(id, endpoint, id)
+        elif self.request.method == 'POST':
+            if getattr(form, 'remove_flags', None):
+                form.remove_flags(id, endpoint, id)
+        return form
 
     def form_valid(self, form):
         """

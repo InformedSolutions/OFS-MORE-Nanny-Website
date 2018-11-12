@@ -12,6 +12,8 @@ class YourChildrenDetailsView(NannyFormView):
     """
     Template view to  render the your children details view
     """
+    endpoint = 'your-children'
+
     def get(self, request, *args, **kwargs):
         application_id = request.GET["id"]
         api_response = NannyGatewayActions().list(
@@ -66,7 +68,7 @@ class YourChildrenDetailsView(NannyFormView):
                 prefix=i,
             )
 
-            # ARC return/flagging here
+            form.check_flags(application_id, self.endpoint, child_id)
 
             # Add each form to the form list
             form_list.append(form)
@@ -153,6 +155,8 @@ class YourChildrenDetailsView(NannyFormView):
                     api_response.record['birth_day'] = date_of_birth.day
                     api_response.record['birth_month'] = date_of_birth.month
                     api_response.record['birth_year'] = date_of_birth.year
+
+                    form.remove_flags(application_id, self.endpoint, child_id)
 
                     NannyGatewayActions().put('your-children', params=api_response.record)
 

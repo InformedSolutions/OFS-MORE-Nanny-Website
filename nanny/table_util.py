@@ -36,18 +36,23 @@ class Table:
         """
         return self.row_list
 
-    def get_errors(self):
-        for row in self.row_list:
-            arc_comments_response = NannyGatewayActions().list('arc-comments',
-                                                               params={'application_id': self.application_id,
-                                                                       'field_name': row.data_name})
-            if arc_comments_response.status_code == 200:
-                # Handler dispatch for different relation types.
-                if self.__response_is_many_to_one(arc_comments_response.record, row.use_many_to_one):
-                    row.error = self.__get_errors_many_to_one_handler(arc_comments_response, row)
+    def get_errors(self, endpoint=None):
+        if isinstance(endpoint, list):
+            for e in endpoint:
+                self.get_errors(e)
+        else:
+            for row in self.row_list:
+                arc_comments_response = NannyGatewayActions().list('arc-comments',
+                                                   params={'application_id': self.application_id,
+                                                           'field_name': row.data_name,
+                                                           'endpoint_name': endpoint if endpoint is not None else ''})
+                if arc_comments_response.status_code == 200:
+                    # Handler dispatch for different relation types.
+                    if self.__response_is_many_to_one(arc_comments_response.record, row.use_many_to_one):
+                        row.error = self.__get_errors_many_to_one_handler(arc_comments_response, row)
 
-                else:
-                    row.error = self.__get_errors_one_to_one_handler(arc_comments_response)
+                    else:
+                        row.error = self.__get_errors_one_to_one_handler(arc_comments_response)
 
     @staticmethod
     def __response_is_many_to_one(response_record, use_many_to_one):

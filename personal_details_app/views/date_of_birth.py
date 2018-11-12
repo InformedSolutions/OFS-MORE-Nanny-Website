@@ -11,6 +11,7 @@ class PersonalDetailDOBView(NannyFormView):
     template_name = 'dob.html'
     form_class = PersonalDetailsDOBForm
     success_url = 'personal-details:Personal-Details-Home-Address'
+    endpoint = 'applicant-personal-details'
 
     def get_initial(self):
         """

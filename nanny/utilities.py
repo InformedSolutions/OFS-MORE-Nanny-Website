@@ -30,9 +30,20 @@ class NannyForm(GOVUKForm):
     Parent class from which all others will late inherit. Contains logic for checking the existence of ARC comments on
     fields.
     """
-    pk = None  # Needed for many-to-one relationships. API request in form initialisation then pass through
 
-    def check_flags(self, application_id):
+    def get_pk(self, pk):
+        if pk:
+            return pk
+        else:
+            return ''
+
+    def get_endpoint(self, endpoint):
+        if endpoint:
+            return endpoint
+        else:
+            return ''
+
+    def check_flags(self, application_id, endpoint=None, pk=None):
         """
         For a class to call this method it must set self.pk - this is the primary key of the entry against which the
         ArcComments table is being filtered.
@@ -40,30 +51,36 @@ class NannyForm(GOVUKForm):
         """
         for field in self.fields:
             arc_comments_filter = NannyGatewayActions().list('arc-comments', params={'application_id': application_id,
-                                                                                     'field_name': field})
+                                                                                     'field_name': field,
+                                                                                     'endpoint_name': self.get_endpoint(
+                                                                                         endpoint),
+                                                                                     'table_pk': self.get_pk(pk)})
             if arc_comments_filter.status_code == 200 and bool(arc_comments_filter.record[0]['flagged']):
                 comment = arc_comments_filter.record[0]['comment']
                 self.cleaned_data = ''
                 self.add_error(field, forms.ValidationError(comment))
             # If fields cannot be flagged individually, check for flags using the bespoke methods.
             else:
-                self.if_name(application_id, field, True)
-                self.if_home_address(application_id, field, True)
+                self.if_name(application_id, field, True, pk)
+                self.if_home_address(application_id, field, True, endpoint, pk)
 
-    def remove_flags(self, application_id):
+    def remove_flags(self, application_id, endpoint=None, pk=None):
         for field in self.fields:
             arc_comments_filter = NannyGatewayActions().list('arc-comments', params={'application_id': application_id,
-                                                                                     'field_name': field})
+                                                                                     'field_name': field,
+                                                                                     'endpoint_name': self.get_endpoint(
+                                                                                         endpoint),
+                                                                                     'table_pk': self.get_pk(pk)})
             if arc_comments_filter.status_code == 200 and bool(arc_comments_filter.record[0]['flagged']):
                 arc_record = arc_comments_filter.record[0]
                 arc_record['flagged'] = False
                 NannyGatewayActions().put('arc-comments', params=arc_record)
             # If fields cannot be flagged individually, check for flags using the bespoke methods.
             else:
-                self.if_name(application_id, field, False)
-                self.if_home_address(application_id, field, False)
+                self.if_name(application_id, field, False, pk)
+                self.if_home_address(application_id, field, False, endpoint, pk)
 
-    def if_name(self, application_id, field, enabled):
+    def if_name(self, application_id, field, enabled, pk=None):
         """
         This checks if a name has been flagged, as first, middle or last cannot be flagged individually.
         It will be called on every field during the call to check_flags and remove_flags.
@@ -72,7 +89,7 @@ class NannyForm(GOVUKForm):
         :return: None
         """
         if field in ('first_name', 'middle_names', 'last_name'):
-            query_params = {'application_id': application_id, 'field_name': 'name'}
+            query_params = {'application_id': application_id, 'field_name': 'name', 'table_pk': self.get_pk(pk)}
             arc_comments_filter = NannyGatewayActions().list('arc-comments', params=query_params)
             if arc_comments_filter.status_code == 200 and bool(arc_comments_filter.record[0]['flagged']):
                 if enabled and field == 'first_name':
@@ -86,7 +103,7 @@ class NannyForm(GOVUKForm):
                     arc_record['flagged'] = False
                     NannyGatewayActions().put('arc-comments', params=arc_record)
 
-    def if_home_address(self, application_id, field, enabled):
+    def if_home_address(self, application_id, field, enabled, endpoint=None, pk=None):
         """
         This checks if an address has been flagged, as constituent fields cannot be flagged individually.
         It will be called on every field during the call to check_flags and remove_flags.
@@ -94,56 +111,47 @@ class NannyForm(GOVUKForm):
         :param enabled: Specify if you are setting the 'flagged' column to True or False.
         :return: None
         """
+        if endpoint == 'your-children':
+            arc_comments_filter = NannyGatewayActions().list('arc-comments', params={
+                'application_id': application_id,
+                'endpoint_name': self.get_endpoint(endpoint),
+                'field_name': 'address',
+                'table_pk': self.get_pk(pk),
+            })
+            self.mtn_address_handler(arc_comments_filter, field, enabled)
 
-        field_name_list = ['address', 'home_address', 'childcare_address']
+        elif endpoint == 'childcare-address':
+            arc_comments_filter = NannyGatewayActions().list('arc-comments', params={
+                'application_id': application_id,
+                'endpoint_name': self.get_endpoint(endpoint),
+                'field_name': 'childcare_address',
+            })
+            self.mtn_address_handler(arc_comments_filter, field, enabled)
 
-        if field in ['street_line1', 'street_line2', 'town', 'county', 'country', 'postcode']:
+        elif endpoint == 'applicant-home-address':
+            arc_comments_filter = NannyGatewayActions().list('arc-comments', params={
+                'application_id': application_id,
+                'endpoint_name': self.get_endpoint(endpoint),
+                'field_name': 'home_address'
+            })
+            self.mtn_address_handler(arc_comments_filter, field, enabled)
 
-            for field_name in field_name_list:
-                arc_comments_filter = NannyGatewayActions().list('arc-comments', params={
-                    'application_id': application_id,
-                    'field_name': field_name,
-                })
+        else:
+            pass
 
-                if arc_comments_filter.status_code == 200:
-                    arc_comments = arc_comments_filter.record
-
-
-
-
-
-
-
-
-
-
-
-        # if field in ['street_line1', 'street_line2', 'town', 'county', 'country', 'postcode']:
-        #     query_params = {'application_id': application_id, 'field_name': 'home_address'}
-        #     arc_comments_filter = NannyGatewayActions().list('arc-comments', params=query_params)
-        #     if arc_comments_filter.status_code == 200 and bool(arc_comments_filter.record[0]['flagged']):
-        #         if enabled and field == 'street_line1':
-        #             comment = arc_comments_filter.record[0]['comment']
-        #             self.cleaned_data = ''
-        #             self.add_error(field, forms.ValidationError(comment))
-        #         elif enabled and field != 'street_line1':
-        #             self.cleaned_data = ''
-        #             self.add_error(field, forms.ValidationError(''))
-        #         else:
-        #             arc_record = arc_comments_filter.record[0]
-        #             arc_record['flagged'] = False
-        #             NannyGatewayActions().put('arc-comments', params=arc_record)
-        #
-        #     # Check for the existence of 'Your children' addresses
-        #     if arc_comments_filter.status_code != 200:
-        #         query_params = {'application_id': application_id, 'field_name': 'address',
-        #                         'endpoint_name': 'your-children'}
-        #         arc_comments_filter = NannyGatewayActions().list('arc-comments', params=query_params)
-        #         if arc_comments_filter.status_code == 200:
-        #             1 + 1
-        #             # Check the record displayed on the manual address entry for flags
-
-
+    def mtn_address_handler(self, arc_comments_filter, field, enabled):
+        if arc_comments_filter.status_code == 200 and bool(arc_comments_filter.record[0]['flagged']):
+            if enabled and field == 'street_line1':
+                comment = arc_comments_filter.record[0]['comment']
+                self.cleaned_data = ''
+                self.add_error(field, forms.ValidationError(comment))
+            elif enabled and field != 'street_line1':
+                self.cleaned_data = ''
+                self.add_error(field, forms.ValidationError(''))
+            else:
+                arc_record = arc_comments_filter.record[0]
+                arc_record['flagged'] = False
+                NannyGatewayActions().put('arc-comments', params=arc_record)
 
 
 def show_django_debug_toolbar(request):
