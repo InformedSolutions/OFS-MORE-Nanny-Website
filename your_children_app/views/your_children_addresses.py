@@ -13,38 +13,53 @@ class YourChildrenAddressesView(NannyFormView):
     """
     Form view to render the 'your children's addresses' page
     """
+    template_name = "your-children-addresses.html"
+    form_class = YourChildrenLivingWithYouForm
+    endpoint = 'application'
 
-    def get(self, request, *args, **kwargs):
+    def get_context_data(self, **kwargs):
         """
         Method for handling GET requests to the 'your children addresses' page
         """
-        application_id = request.GET["id"]
-        form = YourChildrenLivingWithYouForm(id=application_id)
+        application_id = self.request.GET["id"]
 
-        variables = {
-            'form': form,
+        context = {
             'application_id': application_id,
             'id': application_id,
         }
+        kwargs.update(context)
 
-        return render(request, "your-children-addresses.html", variables)
+        return super().get_context_data(**kwargs)
 
-    def post(self, request, *args, **kwargs):
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        app_id = self.request.GET.get('id')
+        kwargs['id'] = app_id
+
+        return kwargs
+
+    def get_form(self, form_class=None):
+        """
+        Method to instantiate the form for rendering in the view.
+        If it is a GET request, perform check for ARC comments.
+        If it is a POST, remove any existing ARC comments.
+        """
+        form = super(NannyFormView, self).get_form(form_class)
+        endpoint = self.endpoint
+        id = app_id_finder(self.request)
+        if self.request.method == 'GET':
+            if getattr(form, 'check_flags', None):
+                form.check_flags(id, endpoint, id)
+        elif self.request.method == 'POST':
+            if getattr(form, 'remove_flags', None):
+                form.remove_flags(id, endpoint, id)
+        return form
+
+    def form_valid(self, form):
         """
         Method for handling a POST request from the 'your children addresses' page
         """
         application_id = app_id_finder(self.request)
-        form = YourChildrenLivingWithYouForm(request.POST, id=application_id)
-
-        # Form does not pass validation, present the page with validation errors
-        if not form.is_valid():
-            variables = {
-                'form': form,
-                'application_id': application_id,
-                'id': application_id,
-            }
-
-            return render(request, "your-children-addresses.html", variables)
 
         api_response = NannyGatewayActions().list(
             'your-children', params={'application_id': application_id, 'ordering': 'date_created'}

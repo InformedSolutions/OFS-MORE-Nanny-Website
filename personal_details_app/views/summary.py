@@ -57,7 +57,7 @@ class Summary(View):
         personal_details_table = Table(application_id)
         personal_details_table.row_list = [name_row, date_of_birth_row, home_address_row,
                                            lived_abroad_row, your_children_row]
-        personal_details_table.get_errors()
+        personal_details_table.get_errors(['applicant-personal-details', 'applicant-home-address'])
 
         context['table_list'] = [personal_details_table]
         context['id'] = application_id

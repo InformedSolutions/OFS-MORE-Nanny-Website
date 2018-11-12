@@ -35,8 +35,8 @@ class YourChildrenSummaryView(NannyTemplateView):
 
         # Create a summary table for the child. Returns formatted table depending on child address
         for child in children:
-            child_table = create_child_table(child)
-            child_table_list.append(child_table)
+            child_table, child_id = create_child_table(child)
+            child_table_list.append((child_table, child_id))
 
         child_table_list = create_tables(child_table_list)
 
@@ -57,6 +57,7 @@ class YourChildrenSummaryView(NannyTemplateView):
         api_response = NannyGatewayActions().read('application', params={'application_id': application_id})
 
         for table in table_list:
+            # Set get_errors as True as this uses many to one
             table.get_errors()
 
         # Variables used for the population of the summary view
