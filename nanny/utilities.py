@@ -160,10 +160,12 @@ def test_notify():
     if settings.EXECUTING_AS_TEST == 'True':
         return True
 
-    if test_notify_connection():
-        return True
-    else:
-        return False
+    return True
+    #
+    # if test_notify_connection():
+    #     return True
+    # else:
+    #     return False
 
 
 def test_notify_settings():

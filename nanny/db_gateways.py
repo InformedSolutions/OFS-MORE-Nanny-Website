@@ -1,9 +1,11 @@
 import logging
-import os
 import json
 from unittest.mock import MagicMock
 
 import requests
+
+from django.conf import settings
+
 
 logger = logging.getLogger()
 
@@ -141,7 +143,7 @@ class IdentityGatewayActions(DBGatewayActions):
         'summary': 'application_id'
     }
 
-    target_url_prefix = os.environ.get('APP_IDENTITY_URL') + 'api/v1/'
+    target_url_prefix = settings.APP_IDENTITY_URL + 'api/v1/'
 
 
 class NannyGatewayActions(DBGatewayActions):
@@ -165,4 +167,4 @@ class NannyGatewayActions(DBGatewayActions):
         'your-children': 'child_id'
     }
 
-    target_url_prefix = os.environ.get('APP_NANNY_GATEWAY_URL') + '/api/v1/'
+    target_url_prefix = settings.APP_NANNY_GATEWAY_URL + '/api/v1/'

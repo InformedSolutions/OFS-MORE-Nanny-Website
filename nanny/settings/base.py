@@ -93,17 +93,7 @@ THIRD_PARTY_APPS = [
 ]
 
 PROJECT_APPS = [
-    'login_app.apps.LoginAppConfig',
-    'tasks_app.apps.TasksAppConfig',
-    'personal_details_app.apps.PersonalDetailsAppConfig',
-    'childcare_address_app.apps.ChildcareAddressAppConfig',
-    'first_aid_app.apps.FirstAidAppConfig',
-    'childcare_training_task_app.apps.ChildcareTrainingTaskAppConfig',
-    'insurance_cover_app.apps.InsuranceCoverAppConfig',
-    'dbs_app.apps.DbsAppConfig',
-    'payment_app.apps.PaymentAppConfig',
-    'declaration_app.apps.DeclarationPaymentAppConfig',
-    'your_children_app.apps.YourChildrenAppConfig'
+    'application.apps.ApplicationAppConfig',
 ]
 
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
