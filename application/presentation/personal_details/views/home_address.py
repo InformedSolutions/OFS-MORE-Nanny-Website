@@ -12,6 +12,7 @@ class PersonalDetailHomeAddressView(NannyFormView):
     template_name = 'personal-details-home-address.html'
     form_class = HomeAddressForm
     success_url = 'personal-details:Personal-Details-Select-Address'
+    endpoint = 'applicant-home-address'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
@@ -123,6 +124,7 @@ class PersonalDetailManualAddressView(NannyFormView):
     template_name = 'personal-details-home-address-manual.html'
     success_url = 'personal-details:Personal-Details-Address-Summary'
     form_class = HomeAddressManualForm
+    endpoint = 'applicant-home-address'
 
     def get_initial(self):
         initial = super().get_initial()
@@ -145,6 +147,23 @@ class PersonalDetailManualAddressView(NannyFormView):
         application_record = NannyGatewayActions().read('application', params={'application_id': application_id}).record
         context['personal_details_status'] = application_record['personal_details_status']
         return context
+
+    def get_form(self, form_class=None):
+        """
+        Method to instantiate the form for rendering in the view.
+        If it is a GET request, perform check for ARC comments.
+        If it is a POST, remove any existing ARC comments.
+        """
+        form = super(NannyFormView, self).get_form(form_class)
+        endpoint = self.endpoint
+        id = app_id_finder(self.request)
+        if self.request.method == 'GET':
+            if getattr(form, 'check_flags', None):
+                form.check_flags(id, endpoint, id)
+        elif self.request.method == 'POST':
+            if getattr(form, 'remove_flags', None):
+                form.remove_flags(id, endpoint, id)
+        return form
 
     def form_valid(self, form):
         app_id = app_id_finder(self.request)

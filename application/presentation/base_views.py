@@ -1,7 +1,7 @@
 from django.core.exceptions import ImproperlyConfigured
 from django.views.generic import FormView, TemplateView
-
 from .utilities import app_id_finder, build_url
+
 
 
 class NannyFormView(FormView):
@@ -65,6 +65,7 @@ class NannyFormView(FormView):
             if getattr(form, 'remove_flags', None):
                 form.remove_flags(id)
         return form
+
 
 
 class NannyTemplateView(TemplateView):

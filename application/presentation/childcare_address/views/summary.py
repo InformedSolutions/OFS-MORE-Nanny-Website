@@ -56,7 +56,8 @@ class ChildcareAddressSummaryView(View):
                     AddressHelper.format_address(address_records[index], "</br>"),
                     'Childcare-Address-Details',
                     None,
-                    row_pk=address['childcare_address_id']
+                    row_pk=address['childcare_address_id'],
+                    use_many_to_one=True
                 )
 
                 childcare_address_summary_table.row_list.append(row)
