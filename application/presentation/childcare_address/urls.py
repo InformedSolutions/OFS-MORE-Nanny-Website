@@ -1,7 +1,8 @@
 from django.conf import settings
 from django.conf.urls import url, include
 
-from childcare_address_app import views
+from application.presentation.childcare_address import views
+
 
 # Django toolbar settings for development environments
 urlpatterns = [
@@ -16,6 +17,8 @@ urlpatterns = [
     url(r'^childcare-address/check-answers/', views.ChildcareAddressSummaryView.as_view(), name='Childcare-Address-Summary'),
     url(r'^childcare-address/', views.GuidanceView.as_view(), name='Childcare-Address-Guidance')
 ]
+
+
 if settings.DEBUG:
     import debug_toolbar
 

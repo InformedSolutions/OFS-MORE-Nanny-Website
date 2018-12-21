@@ -93,7 +93,7 @@ THIRD_PARTY_APPS = [
 ]
 
 PROJECT_APPS = [
-    'application.apps.ApplicationAppConfig',
+    'application.apps.ApplicationConfig',
 ]
 
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"

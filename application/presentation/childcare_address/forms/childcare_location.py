@@ -1,7 +1,7 @@
 from django import forms
 from govuk_forms.widgets import InlineRadioSelect
 
-from nanny import NannyForm
+from application.presentation.utilities import NannyForm
 
 
 class ChildcareLocationForm(NannyForm):

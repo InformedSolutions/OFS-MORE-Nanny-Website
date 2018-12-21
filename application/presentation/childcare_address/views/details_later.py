@@ -2,7 +2,7 @@ from .base import BaseTemplateView
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 
-from nanny.db_gateways import NannyGatewayActions
+from application.services.db_gateways import NannyGatewayActions
 
 
 class AddressDetailsLaterView(BaseTemplateView):

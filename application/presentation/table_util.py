@@ -1,4 +1,4 @@
-from .db_gateways import NannyGatewayActions
+from application.services.db_gateways import NannyGatewayActions
 
 
 class Table:

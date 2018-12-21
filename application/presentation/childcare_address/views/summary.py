@@ -2,9 +2,9 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views import View
 
-from nanny.db_gateways import NannyGatewayActions
-from nanny.table_util import Row, Table
-from ..address_helper import *
+from application.services.db_gateways import NannyGatewayActions
+from application.presentation.table_util import Row, Table
+from application.services.address_helper import *
 from ..utils import build_url
 
 

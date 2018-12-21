@@ -4,7 +4,7 @@ from django import forms
 from django.conf import settings
 from govuk_forms.forms import GOVUKForm
 
-from nanny.db_gateways import NannyGatewayActions
+from application.services.db_gateways import NannyGatewayActions
 
 
 class ChildcareAddressForm(GOVUKForm):
