@@ -29,5 +29,5 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'ezn^k@w45@&zncvn)fzsrnke-e04s#+3$$ol$
 
 # Custom django debug toolbar settings
 DEBUG_TOOLBAR_CONFIG = {
-    'SHOW_TOOLBAR_CALLBACK': 'nanny.utilities.show_django_debug_toolbar',
+    'SHOW_TOOLBAR_CALLBACK': 'application.presentation.utilities.show_django_debug_toolbar',
 }
