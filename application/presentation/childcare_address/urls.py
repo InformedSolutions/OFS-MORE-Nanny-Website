@@ -1,5 +1,4 @@
-from django.conf import settings
-from django.conf.urls import url, include
+from django.conf.urls import url
 
 from application.presentation.childcare_address import views
 
@@ -17,11 +16,3 @@ urlpatterns = [
     url(r'^childcare-address/check-answers/', views.ChildcareAddressSummaryView.as_view(), name='Childcare-Address-Summary'),
     url(r'^childcare-address/', views.GuidanceView.as_view(), name='Childcare-Address-Guidance')
 ]
-
-
-if settings.DEBUG:
-    import debug_toolbar
-
-    urlpatterns = [
-        url(r'^__debug__/', include(debug_toolbar.urls)),
-    ] + urlpatterns

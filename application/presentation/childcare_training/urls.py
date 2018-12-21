@@ -1,5 +1,4 @@
-from django.conf import settings
-from django.conf.urls import url, include
+from django.conf.urls import url
 
 from . import views
 
@@ -11,11 +10,3 @@ urlpatterns = [
     url(r'^childcare-training-course/', views.ChildcareTrainingCourseView.as_view(), name='Childcare-Training-Course'),
     url(r'^childcare-training-certificate/', views.ChildcareTrainingCertificateView.as_view(), name='Childcare-Training-Certificate'),
 ]
-
-# Django toolbar settings for development environments
-if settings.DEBUG:
-    import debug_toolbar
-
-    urlpatterns = [
-        url(r'^__debug__/', include(debug_toolbar.urls)),
-    ] + urlpatterns

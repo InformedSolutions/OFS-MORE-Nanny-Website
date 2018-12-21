@@ -1,5 +1,4 @@
-from django.conf import settings
-from django.conf.urls import url, include
+from django.conf.urls import url
 
 from .views import *
 
@@ -17,11 +16,3 @@ urlpatterns = [
     url(r'^abroad/', CriminalRecordsFromAbroadView.as_view(), name='Criminal-Records-Abroad-View'),
     url(r'^email-certificates/', EmailGoodConductCertificatesView.as_view(), name='Email-Good-Conduct-Certificates-View'),
 ]
-
-# Django toolbar settings for development environments
-if settings.DEBUG:
-    import debug_toolbar
-
-    urlpatterns = [
-        url(r'^__debug__/', include(debug_toolbar.urls)),
-    ] + urlpatterns

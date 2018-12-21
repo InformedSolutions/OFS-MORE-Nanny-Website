@@ -1,5 +1,4 @@
-from django.conf import settings
-from django.conf.urls import url, include
+from django.conf.urls import url
 
 from .views import YourChildrenGuidanceView
 from .views.your_children_address import *
@@ -16,11 +15,3 @@ urlpatterns = [
     url(r'^your-children/enter-address/', YourChildrenManualAddressView.as_view(), name='Your-Children-Manual-address'),
     url(r'^your-children/check-answers/', YourChildrenSummaryView.as_view(), name='Your-Children-Summary'),
 ]
-
-# Django toolbar settings for development environments
-if settings.DEBUG:
-    import debug_toolbar
-
-    urlpatterns = [
-        url(r'^__debug__/', include(debug_toolbar.urls)),
-    ] + urlpatterns

@@ -1,4 +1,4 @@
-from django.conf.urls import url, include
+from django.conf.urls import url
 from .views import *
 
 
@@ -12,11 +12,3 @@ urlpatterns = [
     url(r'^help-contacts/', HelpAndContactView.as_view(), name='Help-And-Contact'),
 
 ]
-
-# Django toolbar settings for development environments
-if settings.DEBUG:
-    import debug_toolbar
-
-    urlpatterns = [
-        url(r'^__debug__/', include(debug_toolbar.urls)),
-    ] + urlpatterns

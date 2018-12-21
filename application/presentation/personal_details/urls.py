@@ -1,6 +1,4 @@
-from django.conf import settings
-from django.conf.urls import url, include
-from django.views.generic import TemplateView
+from django.conf.urls import url
 
 from .views import PersonalDetailNameView, PersonalDetailDOBView, PersonalDetailHomeAddressView, \
     PersonalDetailSelectAddressView, PersonalDetailManualAddressView, PersonalDetailSummaryAddressView, \
@@ -21,11 +19,3 @@ urlpatterns = [
     url(r'^personal-details/your-children/', PersonalDetailsYourChildrenView.as_view(), name='Personal-Details-Your-Children'),
     url(r'^personal-details/check-answers/', Summary.as_view(), name='Personal-Details-Summary')
 ]
-
-# Django toolbar settings for development environments
-if settings.DEBUG:
-    import debug_toolbar
-
-    urlpatterns = [
-        url(r'^__debug__/', include(debug_toolbar.urls)),
-    ] + urlpatterns
