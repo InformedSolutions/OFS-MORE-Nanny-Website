@@ -3,7 +3,6 @@ from django.conf.urls import url
 from application.presentation.childcare_address import views
 
 
-# Django toolbar settings for development environments
 urlpatterns = [
     url(r'^service-unavailable/', views.ServiceUnavailableView.as_view(), name='Service-Unavailable'),
     url(r'^childcare-address/where-you-work/', views.WhereYouWorkView.as_view(), name='Childcare-Address-Where-You-Work'),
