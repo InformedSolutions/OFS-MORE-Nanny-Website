@@ -116,11 +116,16 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            BASE_DIR,
-            os.path.join(BASE_DIR, 'nanny/generic_templates'),
+            os.path.join(BASE_DIR, 'application/presentation/base_templates'),
+            os.path.join(BASE_DIR, 'govuk_template/templates'),
         ],
-        'APP_DIRS': True,
         'OPTIONS': {
+            'loaders': [
+                ('django.template.loaders.cached.Loader', [
+                    'django.template.loaders.filesystem.Loader',
+                    'django.template.loaders.app_directories.Loader',
+                ]),
+            ],
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
@@ -133,6 +138,24 @@ TEMPLATES = [
         },
     },
 ]
+
+TEMPLATES[0]['DIRS'] += [os.path.join(BASE_DIR, 'application/presentation', folder_name, 'templates') for folder_name in os.listdir(os.path.join(BASE_DIR, 'application/presentation/')) if os.path.isdir(os.path.join(BASE_DIR, 'application/presentation/', folder_name))]
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/2.0/howto/static-files/
+
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+]
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'application/presentation/static'),
+    os.path.join(BASE_DIR, 'govuk_template', 'static'),
+    os.path.join(BASE_DIR, 'govuk_template', 'static-src'),
+]
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 WSGI_APPLICATION = 'nanny.wsgi.application'
 
@@ -153,20 +176,6 @@ USE_TZ = True
 SECURE_BROWSER_XSS_FILTER = True
 CSRF_COOKIE_HTTPONLY = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/2.0/howto/static-files/
-
-STATICFILES_FINDERS = [
-    'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-]
-
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'nanny', 'static'),
-)
-
-STATIC_ROOT = os.path.join(BASE_DIR, 'nanny', 'staticfiles')
 
 # Test outputs
 TEST_RUNNER = 'xmlrunner.extra.djangotestrunner.XMLTestRunner'
