@@ -1,8 +1,8 @@
 from django import forms
 
-from nanny.utilities import NannyForm
+from application.presentation.utilities import NannyForm
 
-from first_aid_app.widgets.customfields import CustomSplitDateField
+from application.presentation.customfields import CustomSplitDateField
 
 
 class FirstAidTrainingDetailsForm(NannyForm):

@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.conf.urls import url, include
 
-from first_aid_app.views import Guidance, FirstAidDetailsView, Declaration, Summary
+from .views import Guidance, FirstAidDetailsView, Declaration, Summary
 
 urlpatterns = [
     url(r'^first-aid-training/', Guidance.as_view(), name='First-Aid-Guidance'),

@@ -2,8 +2,8 @@ from django.views.generic import FormView
 from django.shortcuts import reverse
 from django.http import HttpResponseRedirect
 
-from login_app.forms import AcccountSelectionForm
-from nanny.utilities import test_notify
+from ..forms import AcccountSelectionForm
+from application.presentation.utilities import test_notify
 
 
 class AccountSelectionFormView(FormView):

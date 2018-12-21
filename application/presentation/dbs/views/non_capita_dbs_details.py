@@ -1,7 +1,7 @@
-from nanny.db_gateways import NannyGatewayActions
-from nanny.base_views import NannyFormView
-from nanny.utilities import app_id_finder
-from dbs_app.forms.dbs_details import NonCapitaDBSDetailsForm
+from application.services.db_gateways import NannyGatewayActions
+from application.presentation.base_views import NannyFormView
+from application.presentation.utilities import app_id_finder
+from ..forms.dbs_details import NonCapitaDBSDetailsForm
 
 
 class NonCapitaDBSDetailsFormView(NannyFormView):

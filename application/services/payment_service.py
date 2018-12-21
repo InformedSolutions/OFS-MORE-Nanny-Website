@@ -9,13 +9,13 @@ import json
 import logging
 import time
 from urllib.parse import quote
-from nanny.notify import send_email
+from .notify import send_email
 
 import requests
 
 from django.conf import settings
 
-from nanny.db_gateways import NannyGatewayActions
+from application.services.db_gateways import NannyGatewayActions
 
 
 logger = logging.getLogger()

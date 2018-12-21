@@ -1,11 +1,12 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from nanny import NannyGatewayActions, reverse, app_id_finder
-from nanny.base_views import NannyFormView
-from your_children_app import address_helper
-from your_children_app.forms.your_children_address import YourChildrenPostcodeForm, YourChildrenAddressSelectionForm, \
+from application.services.db_gateways import NannyGatewayActions
+from application.presentation.utilities import reverse, app_id_finder
+from application.presentation.base_views import NannyFormView
+from application.services import address_helper
+from ..forms.your_children_address import YourChildrenPostcodeForm, YourChildrenAddressSelectionForm, \
     YourChildrenManualAddressForm
-from your_children_app.utils import get_child_number_for_address_loop
+from ..utils import get_child_number_for_address_loop
 
 
 class YourChildrenPostcodeView(NannyFormView):

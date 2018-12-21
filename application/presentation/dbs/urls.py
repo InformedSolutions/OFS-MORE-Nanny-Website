@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.conf.urls import url, include
 
-from dbs_app.views import *
+from .views import *
 
 urlpatterns = [
     url(r'^your-details/', CapitaDBSDetailsFormView.as_view(), name='Capita-DBS-Details-View'),

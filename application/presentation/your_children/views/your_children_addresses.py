@@ -1,12 +1,11 @@
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
 from django.urls import reverse
 
-from nanny.utilities import app_id_finder
-from nanny import NannyGatewayActions
-from nanny.base_views import NannyFormView
-from your_children_app.forms.your_children_addresses import YourChildrenLivingWithYouForm
-from your_children_app.utils import child_lives_with_applicant_handling
+from application.presentation.utilities import app_id_finder
+from application.services.db_gateways import NannyGatewayActions
+from application.presentation.base_views import NannyFormView
+from ..forms.your_children_addresses import YourChildrenLivingWithYouForm
+from ..utils import child_lives_with_applicant_handling
 
 
 class YourChildrenAddressesView(NannyFormView):

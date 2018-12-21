@@ -1,10 +1,10 @@
 import datetime
 
-from first_aid_app.forms.training_details import FirstAidTrainingDetailsForm
+from ..forms.training_details import FirstAidTrainingDetailsForm
 
-from nanny.utilities import app_id_finder
-from nanny.base_views import NannyFormView
-from nanny.db_gateways import NannyGatewayActions
+from application.presentation.utilities import app_id_finder
+from application.presentation.base_views import NannyFormView
+from application.services.db_gateways import NannyGatewayActions
 
 
 class FirstAidDetailsView(NannyFormView):

@@ -11,10 +11,10 @@ from django.shortcuts import render
 from django.core.urlresolvers import reverse
 from django.views.decorators.cache import never_cache
 
-from nanny.db_gateways import NannyGatewayActions, IdentityGatewayActions
+from application.services.db_gateways import NannyGatewayActions, IdentityGatewayActions
 
-from payment_app.services import payment_service
-from payment_app.forms.payment import PaymentDetailsForm
+from application.services import payment_service
+from ..forms.payment import PaymentDetailsForm
 
 logger = logging.getLogger()
 

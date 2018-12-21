@@ -1,7 +1,7 @@
-from nanny.base_views import NannyFormView
-from nanny.db_gateways import NannyGatewayActions
-from nanny.utilities import app_id_finder
-from dbs_app.forms.dbs_update_service import DBSUpdateServiceForm
+from application.presentation.base_views import NannyFormView
+from application.services.db_gateways import NannyGatewayActions
+from application.presentation.utilities import app_id_finder
+from ..forms.dbs_update_service import DBSUpdateServiceForm
 
 
 class DBSUpdateServiceFormView(NannyFormView):

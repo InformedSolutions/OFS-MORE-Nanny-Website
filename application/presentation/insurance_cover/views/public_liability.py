@@ -1,8 +1,8 @@
-from nanny.base_views import *
-from nanny.utilities import *
+from application.presentation.base_views import *
+from application.presentation.utilities import *
 from ..forms.public_liability import PublicLiabilityForm
 
-from nanny.db_gateways import NannyGatewayActions
+from application.services.db_gateways import NannyGatewayActions
 
 
 class PublicLiabilityView(NannyFormView):

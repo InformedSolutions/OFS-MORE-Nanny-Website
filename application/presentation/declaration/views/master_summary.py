@@ -3,9 +3,9 @@ from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import reverse
 
-from nanny import NannyGatewayActions
-from nanny.base_views import NannyTemplateView
-from nanny.utilities import build_url, NeverCacheMixin
+from application.services.db_gateways import NannyGatewayActions
+from application.presentation.base_views import NannyTemplateView
+from application.presentation.utilities import build_url, NeverCacheMixin
 
 
 class MasterSummary(NeverCacheMixin, NannyTemplateView):

@@ -2,11 +2,11 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.shortcuts import HttpResponseRedirect, reverse
 
-from nanny.base_views import NannyFormView
-from nanny.db_gateways import NannyGatewayActions
-from nanny.utilities import build_url
+from application.presentation.base_views import NannyFormView
+from application.services.db_gateways import NannyGatewayActions
+from application.presentation.utilities import build_url
 
-from childcare_training_task_app.forms import TypeOfChildcareTrainingForm
+from ..forms import TypeOfChildcareTrainingForm
 
 
 class TypeOfChildcareTrainingFormView(NannyFormView):

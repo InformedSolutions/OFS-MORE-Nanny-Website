@@ -2,7 +2,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, reverse
 from django.views import View
 
-from nanny.db_gateways import NannyGatewayActions
+from application.services.db_gateways import NannyGatewayActions
 
 
 class ChildcareTrainingCourseView(View):

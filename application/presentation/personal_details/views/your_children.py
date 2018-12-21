@@ -1,8 +1,8 @@
 from ..forms.your_children import PersonalDetailsYourChildrenForm  # Create form with this name
 
-from nanny.base_views import NannyFormView
-from nanny.db_gateways import NannyGatewayActions
-from nanny.utilities import app_id_finder
+from application.presentation.base_views import NannyFormView
+from application.services.db_gateways import NannyGatewayActions
+from application.presentation.utilities import app_id_finder
 
 
 class PersonalDetailsYourChildrenView(NannyFormView):

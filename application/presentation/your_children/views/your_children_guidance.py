@@ -1,7 +1,7 @@
 from django.http import HttpResponseRedirect
-from nanny.utilities import build_url, app_id_finder
-from nanny import NannyGatewayActions
-from nanny.base_views import NannyTemplateView
+from application.presentation.utilities import build_url, app_id_finder
+from application.services.db_gateways import NannyGatewayActions
+from application.presentation.base_views import NannyTemplateView
 
 
 class YourChildrenGuidanceView(NannyTemplateView):

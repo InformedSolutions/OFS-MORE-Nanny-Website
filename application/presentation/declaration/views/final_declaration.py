@@ -1,11 +1,11 @@
 import datetime
 
-from nanny.base_views import NannyFormView
-from nanny.notify import send_email
-from nanny.utilities import app_id_finder
+from application.presentation.base_views import NannyFormView
+from application.services.notify import send_email
+from application.presentation.utilities import app_id_finder
 from ..forms.declaration import DeclarationForm
 
-from nanny.db_gateways import NannyGatewayActions, IdentityGatewayActions
+from application.services.db_gateways import NannyGatewayActions, IdentityGatewayActions
 
 
 def generate_list_of_updated_tasks(application):

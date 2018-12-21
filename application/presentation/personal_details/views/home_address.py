@@ -1,11 +1,11 @@
 from ..forms.home_address import HomeAddressForm, HomeAddressLookupForm, HomeAddressManualForm
-from ..address_helper import *
+from application.services.address_helper import *
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
-from nanny.base_views import NannyFormView, NannyTemplateView
-from nanny.db_gateways import NannyGatewayActions
-from nanny.utilities import app_id_finder
+from application.presentation.base_views import NannyFormView, NannyTemplateView
+from application.services.db_gateways import NannyGatewayActions
+from application.presentation.utilities import app_id_finder
 
 
 class PersonalDetailHomeAddressView(NannyFormView):

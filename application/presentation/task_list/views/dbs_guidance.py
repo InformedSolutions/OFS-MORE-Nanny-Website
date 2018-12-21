@@ -1,4 +1,4 @@
-from nanny.base_views import NannyTemplateView
+from application.presentation.base_views import NannyTemplateView
 
 
 class DBSGuidance(NannyTemplateView):

@@ -2,9 +2,10 @@ from django.shortcuts import render
 from django.views import View
 from django.conf import settings
 
-from nanny import notify, utilities
+from application.services import notify
+from application.presentation import utilities
 
-from nanny.db_gateways import IdentityGatewayActions, NannyGatewayActions
+from application.services.db_gateways import IdentityGatewayActions, NannyGatewayActions
 
 from .change_email import send_change_email_email
 

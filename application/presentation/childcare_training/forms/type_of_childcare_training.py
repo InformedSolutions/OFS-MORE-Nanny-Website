@@ -2,7 +2,7 @@ from django import forms
 
 from govuk_forms.widgets import CheckboxSelectMultiple
 
-from nanny.utilities import NannyForm
+from application.presentation.utilities import NannyForm
 
 
 class TypeOfChildcareTrainingForm(NannyForm):

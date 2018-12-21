@@ -1,9 +1,10 @@
 from django.shortcuts import render
 from django.views import View
 
-from nanny import notify, utilities
+from application.services import notify
+from application.presentation import utilities
 
-from nanny.db_gateways import IdentityGatewayActions
+from application.services.db_gateways import IdentityGatewayActions
 
 
 class ResendEmail(View):

@@ -2,11 +2,11 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views import View
 
-from nanny.utilities import build_url
+from application.presentation.utilities import build_url
 
 from .validate_magic_link import ValidateMagicLinkView
 
-from nanny.db_gateways import IdentityGatewayActions
+from application.services.db_gateways import IdentityGatewayActions
 
 
 class ResendSecurityCodeView(View):

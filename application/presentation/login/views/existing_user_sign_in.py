@@ -3,12 +3,12 @@ import uuid
 from django.http import HttpResponseRedirect
 from django.shortcuts import reverse
 
-from login_app.forms import ContactEmailForm
-from nanny import notify
-from nanny import utilities
+from ..forms import ContactEmailForm
+from application.services import notify
+from application.presentation import utilities
 from .base import BaseFormView
 
-from nanny.db_gateways import IdentityGatewayActions
+from application.services.db_gateways import IdentityGatewayActions
 
 
 class ExistingUserSignInFormView(BaseFormView):

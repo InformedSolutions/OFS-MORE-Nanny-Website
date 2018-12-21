@@ -1,9 +1,9 @@
-from nanny.base_views import NannyTemplateView
+from application.presentation.base_views import NannyTemplateView
 from django.http import HttpResponseRedirect
-from nanny.utilities import *
+from application.presentation.utilities import *
 
-from nanny.db_gateways import NannyGatewayActions
-from nanny.table_util import Row, Table
+from application.services.db_gateways import NannyGatewayActions
+from application.presentation.table_util import Row, Table
 
 
 class SummaryView(NannyTemplateView):

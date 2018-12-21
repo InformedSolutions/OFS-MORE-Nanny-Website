@@ -9,8 +9,8 @@ from django.views.generic.detail import (
     BaseDetailView, SingleObjectMixin, SingleObjectTemplateResponseMixin,
 )
 
-from nanny import NannyGatewayActions, reverse
-from nanny.table_util import Table, Row
+from application.services.db_gateways import NannyGatewayActions
+from application.presentation.table_util import Table, Row
 
 
 class FormMixin(ContextMixin):

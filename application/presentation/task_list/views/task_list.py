@@ -4,7 +4,7 @@ from django.shortcuts import render, reverse
 from django.views import View
 from django.views.decorators.cache import never_cache
 
-from nanny.db_gateways import NannyGatewayActions
+from application.services.db_gateways import NannyGatewayActions
 
 
 def show_hide_tasks(context, application, application_id):

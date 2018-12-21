@@ -1,7 +1,7 @@
 from django.shortcuts import HttpResponseRedirect, render, reverse
 from django.views.generic import TemplateView, View
 
-from nanny.db_gateways import NannyGatewayActions, IdentityGatewayActions
+from application.services.db_gateways import NannyGatewayActions, IdentityGatewayActions
 from nanny.middleware import CustomAuthenticationHandler
 
 

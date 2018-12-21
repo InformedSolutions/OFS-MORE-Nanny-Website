@@ -1,4 +1,4 @@
-from first_aid_app.views import NannyTemplateView
+from application.presentation.first_aid.views import NannyTemplateView
 
 
 class FirstAidGuidanceView(NannyTemplateView):

@@ -1,8 +1,8 @@
 from django.http import HttpResponseRedirect
 
-from nanny.base_views import NannyTemplateView
-from nanny.db_gateways import NannyGatewayActions
-from nanny.utilities import app_id_finder, build_url
+from application.presentation.base_views import NannyTemplateView
+from application.services.db_gateways import NannyGatewayActions
+from application.presentation.utilities import app_id_finder, build_url
 
 
 class CriminalRecordsCheckGuidanceView(NannyTemplateView):

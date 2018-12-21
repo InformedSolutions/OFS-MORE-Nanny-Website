@@ -1,11 +1,11 @@
 from datetime import datetime
-from django.shortcuts import render
-from your_children_app.forms.your_children_details_form import YourChildrenDetailsForm
-from nanny.utilities import app_id_finder
-from nanny.base_views import NannyFormView
+from django.shortcuts import render, reverse
+from ..forms.your_children_details_form import YourChildrenDetailsForm
+from application.presentation.utilities import app_id_finder
+from application.presentation.base_views import NannyFormView
 import uuid
 from ..utils import *
-from nanny.db_gateways import NannyGatewayActions
+from application.services.db_gateways import NannyGatewayActions
 
 
 class YourChildrenDetailsView(NannyFormView):

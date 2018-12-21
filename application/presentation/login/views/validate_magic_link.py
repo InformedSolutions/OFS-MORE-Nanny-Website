@@ -4,10 +4,10 @@ from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import reverse
 from django.views import View
-from nanny import notify
-from nanny import utilities
+from application.services import notify
+from application.presentation import utilities
 from nanny.middleware import CustomAuthenticationHandler
-from nanny.db_gateways import IdentityGatewayActions
+from application.services.db_gateways import IdentityGatewayActions
 
 
 class ValidateMagicLinkView(View):

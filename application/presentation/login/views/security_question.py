@@ -1,11 +1,11 @@
 from nanny.middleware import CustomAuthenticationHandler
-from login_app import login_redirect_helper
+from . import login_redirect_helper
 
-from login_app.forms import DBSSecurityQuestionForm, PersonalDetailsSecurityQuestionForm, MobileNumberSecurityQuestionForm
+from ..forms import DBSSecurityQuestionForm, PersonalDetailsSecurityQuestionForm, MobileNumberSecurityQuestionForm
 
 from .base import BaseFormView
 
-from nanny.db_gateways import IdentityGatewayActions, NannyGatewayActions
+from application.services.db_gateways import IdentityGatewayActions, NannyGatewayActions
 
 
 class SecurityQuestionFormView(BaseFormView):

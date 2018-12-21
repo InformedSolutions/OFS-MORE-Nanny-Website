@@ -1,12 +1,10 @@
 from django.http import HttpResponseRedirect
-from django.urls import reverse
 from django.views import View
 from django.shortcuts import render
-from django.conf import settings
 
-from nanny.utilities import build_url
+from application.presentation.utilities import build_url
 
-from nanny.db_gateways import IdentityGatewayActions, NannyGatewayActions
+from application.services.db_gateways import IdentityGatewayActions, NannyGatewayActions
 
 
 class ContactDetailsSummaryView(View):

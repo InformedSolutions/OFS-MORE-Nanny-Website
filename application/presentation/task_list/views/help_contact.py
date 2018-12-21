@@ -1,5 +1,5 @@
 from .base import BaseTemplateView
-from ..utils import *
+from application.presentation.utilities import *
 
 
 class HelpAndContactView(BaseTemplateView):

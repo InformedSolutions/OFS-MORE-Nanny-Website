@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.conf.urls import url, include
 
-from childcare_training_task_app import views
+from . import views
 
 
 urlpatterns = [

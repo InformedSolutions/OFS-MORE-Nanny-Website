@@ -1,11 +1,11 @@
 from django.conf import settings
 from django.conf.urls import url, include
 
-from your_children_app.views import YourChildrenGuidanceView
-from your_children_app.views.your_children_address import *
-from your_children_app.views.your_children_addresses import YourChildrenAddressesView
-from your_children_app.views.your_children_details import YourChildrenDetailsView
-from your_children_app.views.your_children_summary import YourChildrenSummaryView
+from .views import YourChildrenGuidanceView
+from .views.your_children_address import *
+from .views.your_children_addresses import YourChildrenAddressesView
+from .views.your_children_details import YourChildrenDetailsView
+from .views.your_children_summary import YourChildrenSummaryView
 
 urlpatterns = [
     url(r'^your-children/$', YourChildrenGuidanceView.as_view(), name='Your-Children-Guidance'),

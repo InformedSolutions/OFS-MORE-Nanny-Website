@@ -1,7 +1,7 @@
-from nanny.base_views import NannyTemplateView
-from nanny.utilities import *
+from application.presentation.base_views import NannyTemplateView
+from application.presentation.utilities import *
 
-from nanny.db_gateways import NannyGatewayActions
+from application.services.db_gateways import NannyGatewayActions
 
 
 class Confirmation(NannyTemplateView):

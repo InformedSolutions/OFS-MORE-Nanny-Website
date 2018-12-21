@@ -4,9 +4,9 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views import View
 
-from nanny.db_gateways import NannyGatewayActions
-from nanny.table_util import Row, Table
-from nanny.utilities import build_url
+from application.services.db_gateways import NannyGatewayActions
+from application.presentation.table_util import Row, Table
+from application.presentation.utilities import build_url
 
 
 class Summary(View):
