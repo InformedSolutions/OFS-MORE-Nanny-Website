@@ -83,6 +83,7 @@ BUILTIN_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.forms'
 ]
 
 THIRD_PARTY_APPS = [
@@ -112,6 +113,10 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'nanny.urls'
 
+# FORM_RENDERER does not use TEMPLATES settings by default - instead looks in application/templates directory.
+# Use TemplateSettings to render forms such that error template can be found within non-Django application structure.
+FORM_RENDERER = 'django.forms.renderers.TemplatesSetting'
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -119,13 +124,8 @@ TEMPLATES = [
             os.path.join(BASE_DIR, 'application/presentation/base_templates'),
             os.path.join(BASE_DIR, 'govuk_template/templates'),
         ],
+        'APP_DIRS': True,
         'OPTIONS': {
-            'loaders': [
-                ('django.template.loaders.cached.Loader', [
-                    'django.template.loaders.filesystem.Loader',
-                    'django.template.loaders.app_directories.Loader',
-                ]),
-            ],
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
@@ -139,10 +139,11 @@ TEMPLATES = [
     },
 ]
 
-TEMPLATES[0]['DIRS'] += [os.path.join(BASE_DIR, 'application/presentation', folder_name, 'templates') for folder_name in os.listdir(os.path.join(BASE_DIR, 'application/presentation/')) if os.path.isdir(os.path.join(BASE_DIR, 'application/presentation/', folder_name))]
+# Generate list of folders in which to look for templates.
+presentation_tier = [f for f in os.listdir(os.path.join(BASE_DIR, 'application/presentation/'))]
+folders = [folder_name for folder_name in presentation_tier if os.path.isdir(os.path.join(BASE_DIR, 'application/presentation/', folder_name))]
+TEMPLATES[0]['DIRS'] += [os.path.join(BASE_DIR, 'application/presentation', folder, 'templates') for folder in folders]
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',
