@@ -7,6 +7,8 @@ from django.urls import reverse
 
 from application.tests.test_utils import mock_nanny_application, mock_personal_details_record, mock_identity_record
 
+from application.services.db_gateways import IdentityGatewayActions, NannyGatewayActions
+
 from django.test import modify_settings
 
 @modify_settings(MIDDLEWARE={
@@ -72,8 +74,8 @@ class ChangeEmailTests(TestCase):
 
 @patch('login_app.views.change_email.ChangeEmailTemplateView.send_change_email_email')
 @patch('login_app.views.change_email.NannyGatewayActions.read')
-@patch('login_app.views.change_email.IdentityGatewayActions.read')
-@patch('login_app.views.change_email.IdentityGatewayActions.put')
+@patch.object(IdentityGatewayActions, 'read')
+@patch.object(IdentityGatewayActions, 'put')
 @patch('login_app.views.change_email.utilities.generate_email_validation_link')
 def testing_change_email_email_sent(client, mock_personal_details_response,
                                     gen_magic_link=None,

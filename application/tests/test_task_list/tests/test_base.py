@@ -3,6 +3,9 @@ from unittest import mock
 from http.cookies import SimpleCookie
 import uuid
 
+from application.services.db_gateways import IdentityGatewayActions
+
+
 class CustomResponse:
     record = None
 
@@ -18,7 +21,7 @@ def authenticate(application_id):
     return CustomResponse(record)
 
 
-@mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)
+@mock.patch.object(IdentityGatewayActions, "read", authenticate)
 class TaskListTestsAuth(TestCase):
     application_id = uuid.UUID
     sample_app = {

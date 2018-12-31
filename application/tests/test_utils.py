@@ -91,7 +91,7 @@ mock_declaration_record = {
     'follow_rules': True,
     'share_info_declare': True,
     'information_correct_declare': True,
-    'change_declare': True,
+    'confirm_declare': True,
 }
 
 

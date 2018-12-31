@@ -3,8 +3,8 @@ from unittest import mock
 from django.core.urlresolvers import reverse
 from django.http import SimpleCookie
 from django.test import TestCase
-from django.urls import resolve
 
+from application.services.db_gateways import NannyGatewayActions, IdentityGatewayActions
 from application.tests.test_utils import side_effect, mock_identity_record
 
 
@@ -20,7 +20,7 @@ def authenticate(application_id, *args, **kwargs):
     return CustomResponse(record)
 
 
-@mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)
+@mock.patch.object(IdentityGatewayActions, "read", authenticate)
 class FirstAidTrainingTests(TestCase):
     app_id = '3575d19f-5bfc-4fcc-a7cf-229323876043'
 
@@ -32,9 +32,9 @@ class FirstAidTrainingTests(TestCase):
         self.assertEqual(r.status_code, 200)
 
     def test_can_access_details(self):
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
-                mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put, \
-                mock.patch('nanny.db_gateways.NannyGatewayActions.list'):
+        with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
+                mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put, \
+                mock.patch.object(NannyGatewayActions, 'list'):
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
 
@@ -46,9 +46,9 @@ class FirstAidTrainingTests(TestCase):
         self.assertEqual(r.status_code, 200)
 
     def test_can_access_summary(self):
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
-                mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put, \
-                mock.patch('nanny.db_gateways.NannyGatewayActions.list'):
+        with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
+                mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put, \
+                mock.patch.object(NannyGatewayActions, 'list'):
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
 
@@ -58,11 +58,11 @@ class FirstAidTrainingTests(TestCase):
             self.assertEqual(p.status_code, 302)
 
     def test_can_submit_details_form(self):
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
-                mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put, \
-                mock.patch('nanny.db_gateways.NannyGatewayActions.patch') as nanny_api_patch, \
-                mock.patch('nanny.db_gateways.NannyGatewayActions.create') as nanny_api_create, \
-                mock.patch('nanny.db_gateways.NannyGatewayActions.list'):
+        with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
+                mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put, \
+                mock.patch.object(NannyGatewayActions, 'patch') as nanny_api_patch, \
+                mock.patch.object(NannyGatewayActions, 'create') as nanny_api_create, \
+                mock.patch.object(NannyGatewayActions, 'list'):
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
             nanny_api_patch.side_effect = side_effect
@@ -81,9 +81,9 @@ class FirstAidTrainingTests(TestCase):
             self.assertEqual(r.status_code, 200)
 
     def test_invalid_course_date_stopped(self):
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
-                mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put, \
-                mock.patch('nanny.db_gateways.NannyGatewayActions.list'):
+        with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
+                mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put, \
+                mock.patch.object(NannyGatewayActions, 'list'):
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
 

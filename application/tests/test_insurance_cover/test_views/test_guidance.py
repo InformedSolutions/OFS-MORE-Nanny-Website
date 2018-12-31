@@ -1,6 +1,8 @@
 from ..test_base import *
 from django.urls import resolve
 from application.presentation.insurance_cover.views.guidance import *
+from application.services.db_gateways import IdentityGatewayActions
+
 
 class CustomResponse:
     record = None
@@ -17,7 +19,7 @@ def authenticate(application_id, *args, **kwargs):
     return CustomResponse(record)
 
 
-@mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)
+@mock.patch.object(IdentityGatewayActions, "read", authenticate)
 class GuidanceTests(InsuranceCoverTests):
 
     def test_guidance_url_resolves_to_page(self):

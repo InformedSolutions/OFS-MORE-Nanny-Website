@@ -17,7 +17,7 @@ def authenticate(application_id, *args, **kwargs):
     return CustomResponse(record)
 
 
-@mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)
+@mock.patch.object(IdentityGatewayActions, "read", authenticate)
 class SummaryTests(InsuranceCoverTests):
 
     def test_summary_url_resolves_to_page(self):
@@ -31,8 +31,8 @@ class SummaryTests(InsuranceCoverTests):
         """
         Test to assert that the summary page can be rendered
         """
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_get, \
-            mock.patch('nanny.db_gateways.NannyGatewayActions.list'):
+        with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_get, \
+            mock.patch.object(NannyGatewayActions, 'list'):
             response = self.client.get(build_url('insurance:Summary', get={
                 'id': self.application_id
             }))
@@ -43,8 +43,8 @@ class SummaryTests(InsuranceCoverTests):
         """
         Test to assert that the summary page can be rendered
         """
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_get_app, \
-            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put_app:
+        with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_get_app, \
+            mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put_app:
 
             nanny_api_get_app.return_value.status_code = 200
             nanny_api_get_app.return_value.record = self.sample_app

@@ -8,6 +8,7 @@ from django.urls import resolve, reverse
 from application.presentation.declaration import views
 
 from application.tests.test_utils  import side_effect
+from application.services.db_gateways import IdentityGatewayActions, NannyGatewayActions
 
 
 @modify_settings(MIDDLEWARE={
@@ -79,8 +80,8 @@ class DeclarationTests(TestCase):
         """
         Test to assert that the 'Master-Summary' page can be rendered.
         """
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
-            mock.patch('nanny.db_gateways.IdentityGatewayActions.read') as identity_api_read:
+        with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
+            mock.patch.object(IdentityGatewayActions, 'read') as identity_api_read:
             nanny_api_read.side_effect = side_effect
             identity_api_read.side_effect = side_effect
 
@@ -107,8 +108,8 @@ class DeclarationTests(TestCase):
         """
         Test to assert that the 'Master-Summary' page can be rendered.
         """
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
-            mock.patch('nanny.db_gateways.IdentityGatewayActions.read') as identity_api_read:
+        with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
+            mock.patch.object(IdentityGatewayActions, 'read') as identity_api_read:
             nanny_api_read.side_effect = side_effect
             identity_api_read.side_effect = side_effect
 
@@ -122,8 +123,8 @@ class DeclarationTests(TestCase):
         """
         Test to assert that the 'Final-Declaration' page can be rendered.
         """
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
-            mock.patch('nanny.db_gateways.IdentityGatewayActions.read') as identity_api_read:
+        with mock.patch.object(NannyGatewayActions,'read') as nanny_api_read, \
+            mock.patch.object(IdentityGatewayActions, 'read') as identity_api_read:
             nanny_api_read.side_effect = side_effect
             identity_api_read.side_effect = side_effect
 
@@ -138,8 +139,8 @@ class DeclarationTests(TestCase):
         Test to assert that the Final Declaration form can be completed and a POST request redirects to the
         'Payment-Details' page.
         """
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
-            mock.patch('nanny.db_gateways.IdentityGatewayActions.read') as identity_api_read:
+        with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
+            mock.patch.object(IdentityGatewayActions, 'read') as identity_api_read:
             nanny_api_read.side_effect = side_effect
             identity_api_read.side_effect = side_effect
 

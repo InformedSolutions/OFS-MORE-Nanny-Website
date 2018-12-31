@@ -9,6 +9,8 @@ from nanny.middleware import CustomAuthenticationHandler
 
 from application.presentation.task_list.views import ApplicationCancelledTemplateView, CancelApplicationTemplateView
 
+from application.services.db_gateways import IdentityGatewayActions, NannyGatewayActions
+
 
 @modify_settings(MIDDLEWARE={
         'remove': [
@@ -38,8 +40,8 @@ class TestCancelApplication(TestCase):
         """
         Test applicant can cancel their application and remove all information supplied by that point.
         """
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.delete') as nanny_api_delete, \
-            mock.patch('nanny.db_gateways.IdentityGatewayActions.delete') as identity_api_delete:
+        with mock.patch.object(NannyGatewayActions, 'delete') as nanny_api_delete, \
+            mock.patch.object(IdentityGatewayActions, 'delete') as identity_api_delete:
 
             nanny_api_delete.return_value.status_code = 204
             identity_api_delete.return_value.status_code = 204
@@ -56,8 +58,8 @@ class TestCancelApplication(TestCase):
         """
         Test applicant has their session cookies destroyed upon cancelling their application.
         """
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.delete'), \
-            mock.patch('nanny.db_gateways.IdentityGatewayActions.delete'):
+        with mock.patch.object(NannyGatewayActions, 'delete'), \
+            mock.patch.object(IdentityGatewayActions, 'delete'):
 
             response = self.client.post(reverse('Cancel-Application') + '?id=' + self.example_uuid)
             cookie_key = CustomAuthenticationHandler.get_cookie_identifier()

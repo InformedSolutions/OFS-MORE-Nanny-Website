@@ -4,8 +4,10 @@ from django.urls import resolve
 from application.presentation.task_list.views import *
 from application.presentation.utilities import *
 
+from application.services.db_gateways import IdentityGatewayActions
 
-@mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)
+
+@mock.patch.object(IdentityGatewayActions, "read", authenticate)
 class HelpContactTests(TaskListTestsAuth):
 
     def test_can_resolve_help_contact_page(self):
