@@ -12,7 +12,6 @@ class HomeAddressForm(NannyForm):
     GOV.UK form for childcare address postcode search
     """
     field_label_classes = 'form-label-bold'
-    error_summary_template_name = 'standard-error-summary.html'
     error_summary_title = 'There was a problem'
     auto_replace_widgets = True
 
@@ -46,7 +45,6 @@ class HomeAddressManualForm(NannyForm):
     GOV.UK form for the Your personal details: home address page for manual entry
     """
     field_label_classes = 'form-label-bold'
-    error_summary_template_name = 'standard-error-summary.html'
     error_summary_title = 'There was a problem'
     auto_replace_widgets = True
 
@@ -149,7 +147,6 @@ class HomeAddressLookupForm(NannyForm):
     GOV.UK form for the childcare address page for postcode search results
     """
     field_label_classes = 'form-label-bold'
-    error_summary_template_name = 'standard-error-summary.html'
     error_summary_title = 'There was a problem'
     auto_replace_widgets = True
 

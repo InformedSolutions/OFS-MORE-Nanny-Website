@@ -13,7 +13,6 @@ class YourChildrenPostcodeForm(NannyForm):
     Form that presents a postcode lookup field within the 'Your children' task
     """
     field_label_classes = 'form-label-bold'
-    error_summary_template_name = 'standard-error-summary.html'
     error_summary_title = 'There was a problem'
     auto_replace_widgets = True
 

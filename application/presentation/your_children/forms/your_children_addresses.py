@@ -9,7 +9,6 @@ class YourChildrenLivingWithYouForm(NannyForm):
     GOV.UK form for the your children addresses page
     """
     field_label_classes = 'form-label-bold'
-    error_summary_template_name = 'standard-error-summary.html'
     error_summary_title = 'There was a problem on this page'
     auto_replace_widgets = True
 

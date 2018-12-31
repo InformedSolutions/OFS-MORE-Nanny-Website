@@ -10,7 +10,6 @@ class PersonalDetailsYourChildrenForm(NannyForm):
     GOV.UK form for specifying whether or not the applicant has children of their own who are under 16 years old.
     """
     field_label_classes = 'form-label-bold'
-    error_summary_template_name = 'standard-error-summary.html'
     error_summary_title = 'There was a problem'
     auto_replace_widgets = True
 

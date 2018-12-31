@@ -10,7 +10,6 @@ class WhereYouWorkForm(NannyForm):
     GOV.UK form for 'Where-You-Work' page.
     """
     field_label_classes = 'form-label-bold'
-    error_summary_template_name = 'error-summary.html'
     error_summary_title = 'There was a problem'
     auto_replace_widgets = True
     options = (

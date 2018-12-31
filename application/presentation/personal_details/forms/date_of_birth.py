@@ -11,7 +11,6 @@ class PersonalDetailsDOBForm(NannyForm):
     GOV.UK form for the Your personal details: date of birth page
     """
     field_label_classes = 'form-label-bold'
-    error_summary_template_name = 'standard-error-summary.html'
     error_summary_title = 'There was a problem'
     auto_replace_widgets = True
 

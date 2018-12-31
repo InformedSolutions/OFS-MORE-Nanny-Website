@@ -10,7 +10,6 @@ class PersonalDetailsLivedAbroadForm(NannyForm):
     GOV.UK form for specifying whether or not the applicant has lived abroad in the past 5 years.
     """
     field_label_classes = 'form-label-bold'
-    error_summary_template_name = 'standard-error-summary.html'
     error_summary_title = 'There was a problem'
     auto_replace_widgets = True
 

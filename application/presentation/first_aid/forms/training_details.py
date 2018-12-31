@@ -10,7 +10,6 @@ class FirstAidTrainingDetailsForm(NannyForm):
     GOV.UK form for the First aid training: details page
     """
     field_label_classes = 'form-label-bold'
-    error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
     error_summary_title = 'There was a problem'
 

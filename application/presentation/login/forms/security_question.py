@@ -16,7 +16,6 @@ class DBSSecurityQuestionForm(GOVUKForm):
     GOV.UK form for the dbs number security question.
     """
     field_label_classes = 'form-label-bold'
-    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
     error_summary_title = 'There was a problem'
     help_text = 'Please enter your DBS certificate number.'
@@ -40,7 +39,6 @@ class PersonalDetailsSecurityQuestionForm(GOVUKForm):
     GOV.UK form for the personal details security question.
     """
     field_label_classes = 'form-label-bold'
-    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
     error_summary_title = 'There was a problem'
     help_text = 'Please enter your postcode and date of birth'
@@ -77,7 +75,6 @@ class MobileNumberSecurityQuestionForm(GOVUKForm):
     GOV.UK form for the mobile phone security question.
     """
     field_label_classes = 'form-label-bold'
-    error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
     error_summary_title = 'There was a problem'
     help_text = 'Please enter your mobile number.'
