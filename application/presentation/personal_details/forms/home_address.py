@@ -173,5 +173,5 @@ class HomeAddressLookupForm(NannyForm):
             self.choices = kwargs['initial']['choices']
             self.fields['home_address'].choices = self.choices
 
-    def clean_address(self):
-        return int(self.cleaned_data['address'])
+    def clean_home_address(self):
+        return int(self.cleaned_data['home_address'])
