@@ -1,7 +1,7 @@
 from ..base_tests import PersonalDetailsTests, authenticate
 from django.urls import resolve
 from unittest import mock
-from ...views import *
+from application.presentation.personal_details.views import *
 import uuid
 
 

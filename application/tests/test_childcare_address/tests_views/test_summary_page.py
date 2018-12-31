@@ -1,10 +1,10 @@
 from ..tests import ChildcareAddressTests, authenticate
-from ...views import *
+from application.presentation.childcare_address.views import *
 from django.urls import resolve
 from unittest import mock
 import uuid
 
-from nanny.test_utils import side_effect, side_effect_childcare_address_list
+from application.tests.test_utils import side_effect, side_effect_childcare_address_list
 
 
 @mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)

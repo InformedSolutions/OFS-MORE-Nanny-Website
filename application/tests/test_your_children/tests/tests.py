@@ -2,8 +2,8 @@ from http.cookies import SimpleCookie
 from unittest import mock
 import uuid
 from django.test import TestCase
-from nanny.db_gateways import NannyGatewayActions
-from nanny.test_utils import mock_nanny_application, mock_personal_details_record, mock_identity_record
+from application.services.db_gateways import NannyGatewayActions
+from application.tests.test_utils import mock_nanny_application, mock_personal_details_record, mock_identity_record
 
 
 class CustomResponse:

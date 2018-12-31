@@ -1,9 +1,9 @@
 from ..test_base import *
 from django.urls import resolve
-from ...views.public_liability import *
+from application.presentation.insurance_cover.views.public_liability import *
 from django.template.response import TemplateResponse
 
-from nanny.test_utils import side_effect
+from application.tests.test_utils import side_effect
 
 
 class CustomResponse:

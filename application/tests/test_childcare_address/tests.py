@@ -2,7 +2,7 @@ from django.test import TestCase
 from unittest import mock
 from http.cookies import SimpleCookie
 
-from nanny.test_utils import mock_home_address, mock_nanny_application, mock_identity_record
+from application.tests.test_utils import mock_home_address, mock_nanny_application, mock_identity_record
 
 
 class CustomResponse:

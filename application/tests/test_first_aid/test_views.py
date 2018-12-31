@@ -5,7 +5,7 @@ from django.http import SimpleCookie
 from django.test import TestCase
 from django.urls import resolve
 
-from nanny.test_utils import side_effect, mock_identity_record
+from application.tests.test_utils import side_effect, mock_identity_record
 
 
 class CustomResponse:

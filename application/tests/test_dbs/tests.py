@@ -6,10 +6,10 @@ from django.shortcuts import reverse
 from django.test import Client, modify_settings, SimpleTestCase, TestCase
 from django.urls import resolve
 
-from dbs_app import forms as dbs_forms, views
-from nanny.db_gateways import NannyGatewayActions
-from nanny.test_utils import side_effect
-from tasks_app.views import TaskListView
+from application.presentation.dbs import forms as dbs_forms, views
+from application.services.db_gateways import NannyGatewayActions
+from application.tests.test_utils import side_effect
+from application.presentation.task_list.views import TaskListView
 
 
 @modify_settings(MIDDLEWARE={

@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from django.test import TestCase, tag, Client
 from django.urls import reverse
 
-from nanny.test_utils import mock_nanny_application, mock_personal_details_record, mock_identity_record
+from application.tests.test_utils import mock_nanny_application, mock_personal_details_record, mock_identity_record
 
 from django.test import modify_settings
 

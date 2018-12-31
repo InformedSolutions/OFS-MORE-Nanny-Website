@@ -1,10 +1,10 @@
 from ..base_tests import PersonalDetailsTests, authenticate
 from django.urls import resolve
 from unittest import mock
-from ...views import *
+from application.presentation.personal_details.views import *
 import uuid
 
-from nanny.test_utils import side_effect
+from application.tests.test_utils  import side_effect
 
 
 @mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)

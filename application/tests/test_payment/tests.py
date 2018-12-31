@@ -4,7 +4,7 @@ from unittest import mock
 
 from django.test import TestCase
 
-from payment_app.services.payment_service import create_formatted_payment_reference
+from application.services.payment_service import create_formatted_payment_reference
 
 
 class PaymentTests(TestCase):

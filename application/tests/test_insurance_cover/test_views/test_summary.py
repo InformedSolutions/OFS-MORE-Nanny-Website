@@ -1,6 +1,6 @@
 from ..test_base import *
 from django.urls import resolve
-from ...views.summary import *
+from application.presentation.insurance_cover.views.summary import *
 
 class CustomResponse:
     record = None

@@ -5,9 +5,9 @@ from http.cookies import SimpleCookie
 from django.test import TestCase, modify_settings
 from django.urls import resolve, reverse
 
-from nanny.test_utils import side_effect
-from tasks_app.views import TaskListView
-from childcare_training_task_app import views
+from application.tests.test_utils import side_effect
+from application.presentation.task_list.views import TaskListView
+from application.presentation.childcare_training import views
 
 
 @modify_settings(MIDDLEWARE={

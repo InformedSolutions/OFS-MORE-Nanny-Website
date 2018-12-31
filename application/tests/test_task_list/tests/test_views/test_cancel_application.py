@@ -7,7 +7,7 @@ from django.urls import resolve, reverse
 
 from nanny.middleware import CustomAuthenticationHandler
 
-from tasks_app.views import ApplicationCancelledTemplateView, CancelApplicationTemplateView
+from application.presentation.task_list.views import ApplicationCancelledTemplateView, CancelApplicationTemplateView
 
 
 @modify_settings(MIDDLEWARE={

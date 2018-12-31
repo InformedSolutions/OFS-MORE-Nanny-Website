@@ -3,7 +3,7 @@ from unittest import mock
 from django.urls import resolve
 
 from ..tests import ChildcareAddressTests, authenticate
-from ...views import *
+from application.presentation.childcare_address.views import *
 
 
 @mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)

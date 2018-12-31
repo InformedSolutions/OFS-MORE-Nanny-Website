@@ -4,9 +4,9 @@ from unittest import mock
 from django.template.response import TemplateResponse
 from django.urls import resolve
 
-from nanny.test_utils import side_effect
+from application.tests.test_utils import side_effect
 from ..tests import ChildcareAddressTests, authenticate
-from ...views import *
+from application.presentation.childcare_address.views import *
 
 
 @mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)

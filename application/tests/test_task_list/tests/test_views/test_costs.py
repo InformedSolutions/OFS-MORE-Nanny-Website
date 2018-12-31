@@ -1,8 +1,8 @@
 from ..test_base import TaskListTestsAuth, authenticate
 from unittest import mock
 from django.urls import resolve
-from ...views import *
-from ...utils import *
+from application.presentation.task_list.views import *
+from application.presentation.utilities import *
 
 
 @mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)

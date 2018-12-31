@@ -1,6 +1,6 @@
 from ..test_base import *
 from django.urls import resolve
-from ...views.insurance_cover import *
+from application.presentation.insurance_cover.views.insurance_cover import *
 
 
 class CustomResponse:

@@ -4,8 +4,8 @@ from unittest import mock
 from django.test import TestCase
 from django.urls import resolve, reverse
 
-from nanny.test_utils import side_effect, mock_nanny_application, mock_personal_details_record, mock_identity_record
-from login_app import views
+from application.tests.test_utils import side_effect, mock_nanny_application, mock_personal_details_record, mock_identity_record
+from application.presentation.login import views
 
 
 class LoginTests(TestCase):
