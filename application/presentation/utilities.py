@@ -30,6 +30,7 @@ class NannyForm(GOVUKForm):
     Parent class from which all others will late inherit. Contains logic for checking the existence of ARC comments on
     fields.
     """
+    error_summary_template_name = 'standard-error-summary.html'
 
     def get_pk(self, pk):
         if pk:
