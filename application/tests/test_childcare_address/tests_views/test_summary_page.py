@@ -6,8 +6,10 @@ import uuid
 
 from application.tests.test_utils import side_effect, side_effect_childcare_address_list
 
+from application.services.db_gateways import IdentityGatewayActions, NannyGatewayActions
 
-@mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)
+
+@mock.patch.object(IdentityGatewayActions, "read", authenticate)
 class ManualEntryTests(ChildcareAddressTests):
 
     def test_summary_url_resolves_to_page(self):
@@ -19,8 +21,12 @@ class ManualEntryTests(ChildcareAddressTests):
         Test to assert that the summary page can be rendered.
         """
         self.skipTest('FIXME')
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
-            mock.patch('nanny.db_gateways.NannyGatewayActions.list') as nanny_api_list:
+        with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
+            mock.patch.object(NannyGatewayActions, 'list') as nanny_api_list,\
+            mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put, \
+            mock.patch.object(NannyGatewayActions, 'delete') as nanny_api_delete, \
+            mock.patch.object(NannyGatewayActions, 'create') as nanny_api_create:
+
             nanny_api_read.side_effect = side_effect
             nanny_api_list.side_effect = side_effect_childcare_address_list
 

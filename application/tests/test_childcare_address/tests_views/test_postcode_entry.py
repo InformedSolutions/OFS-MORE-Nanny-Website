@@ -6,9 +6,10 @@ from unittest import mock
 import uuid
 
 from application.tests.test_utils import side_effect
+from application.services.db_gateways import IdentityGatewayActions, NannyGatewayActions
 
 
-@mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)
+@mock.patch.object(IdentityGatewayActions, "read", authenticate)
 class PostcodeEntryTests(ChildcareAddressTests):
 
     def test_postcode_entry_url_resolves_to_page(self):
@@ -19,9 +20,11 @@ class PostcodeEntryTests(ChildcareAddressTests):
         """
         Test to assert that the 'postcode entry' page can be rendered.
         """
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
-            mock.patch('nanny.db_gateways.NannyGatewayActions.list') as nanny_api_list,\
-            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
+        with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
+            mock.patch.object(NannyGatewayActions, 'list') as nanny_api_list,\
+            mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put, \
+            mock.patch.object(NannyGatewayActions, 'delete') as nanny_api_delete, \
+            mock.patch.object(NannyGatewayActions, 'create') as nanny_api_create:
 
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
@@ -36,8 +39,11 @@ class PostcodeEntryTests(ChildcareAddressTests):
         """
         Test submission of a valid postcode for a new address.
         """
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
-            mock.patch('nanny.db_gateways.NannyGatewayActions.create') as nanny_api_create:
+        with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
+            mock.patch.object(NannyGatewayActions, 'list') as nanny_api_list,\
+            mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put, \
+            mock.patch.object(NannyGatewayActions, 'delete') as nanny_api_delete, \
+            mock.patch.object(NannyGatewayActions, 'create') as nanny_api_create:
 
             nanny_api_create.return_value.status_code = 201
             nanny_api_create.return_value.record = {
@@ -54,9 +60,11 @@ class PostcodeEntryTests(ChildcareAddressTests):
         """
         Test submission of a valid postcode for a new address.
         """
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
-            mock.patch('nanny.db_gateways.NannyGatewayActions.list') as nanny_api_list,\
-            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
+        with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
+            mock.patch.object(NannyGatewayActions, 'list') as nanny_api_list,\
+            mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put, \
+            mock.patch.object(NannyGatewayActions, 'delete') as nanny_api_delete, \
+            mock.patch.object(NannyGatewayActions, 'create') as nanny_api_create:
 
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
@@ -74,9 +82,11 @@ class PostcodeEntryTests(ChildcareAddressTests):
         """
         Test submission of a valid postcode for a new address.
         """
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
-            mock.patch('nanny.db_gateways.NannyGatewayActions.list') as nanny_api_list,\
-            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
+        with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
+            mock.patch.object(NannyGatewayActions, 'list') as nanny_api_list,\
+            mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put, \
+            mock.patch.object(NannyGatewayActions, 'delete') as nanny_api_delete, \
+            mock.patch.object(NannyGatewayActions, 'create') as nanny_api_create:
 
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect

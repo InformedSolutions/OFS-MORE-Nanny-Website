@@ -5,8 +5,10 @@ from django.urls import resolve
 from ..tests import ChildcareAddressTests, authenticate
 from application.presentation.childcare_address.views import *
 
+from application.services.db_gateways import IdentityGatewayActions
 
-@mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)
+
+@mock.patch.object(IdentityGatewayActions, "read", authenticate)
 class RoutingTests(ChildcareAddressTests):
 
     def test_service_unavailable_resolves_to_page(self):

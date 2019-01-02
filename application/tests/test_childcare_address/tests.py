@@ -4,6 +4,8 @@ from http.cookies import SimpleCookie
 
 from application.tests.test_utils import mock_home_address, mock_nanny_application, mock_identity_record
 
+from application.services.db_gateways import IdentityGatewayActions
+
 
 class CustomResponse:
     record = None
@@ -17,7 +19,7 @@ def authenticate(application_id, *args, **kwargs):
     return CustomResponse(record)
 
 
-@mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)
+@mock.patch.object(IdentityGatewayActions, "read", authenticate)
 class ChildcareAddressTests(TestCase):
 
     sample_app = mock_nanny_application

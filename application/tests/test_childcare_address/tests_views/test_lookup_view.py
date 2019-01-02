@@ -7,8 +7,10 @@ import uuid
 
 from application.tests.test_utils import side_effect
 
+from application.services.db_gateways import NannyGatewayActions, IdentityGatewayActions
 
-@mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)
+
+@mock.patch.object(IdentityGatewayActions, "read", authenticate)
 class LookupViewTests(ChildcareAddressTests):
 
     def test_select_address_url_resolves_to_page(self):
@@ -19,9 +21,10 @@ class LookupViewTests(ChildcareAddressTests):
         """
         Test to assert that the 'address lookup' page can be rendered.
         """
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
-            mock.patch('nanny.db_gateways.NannyGatewayActions.list') as nanny_api_list,\
-            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
+        with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
+            mock.patch.object(NannyGatewayActions, 'list') as nanny_api_list,\
+            mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put, \
+            mock.patch.object(NannyGatewayActions, 'delete') as nanny_api_delete:
 
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
@@ -39,9 +42,10 @@ class LookupViewTests(ChildcareAddressTests):
         """
         Test to assert that the 'address lookup' page can be rendered.
         """
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
-            mock.patch('nanny.db_gateways.NannyGatewayActions.list') as nanny_api_list,\
-            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
+        with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
+            mock.patch.object(NannyGatewayActions, 'list') as nanny_api_list,\
+            mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put, \
+            mock.patch.object(NannyGatewayActions, 'delete') as nanny_api_delete:
 
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
@@ -60,9 +64,10 @@ class LookupViewTests(ChildcareAddressTests):
         """
         Test to assert that the 'address lookup' page can be rendered.
         """
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
-            mock.patch('nanny.db_gateways.NannyGatewayActions.list') as nanny_api_list,\
-            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
+        with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
+            mock.patch.object(NannyGatewayActions, 'list') as nanny_api_list,\
+            mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put, \
+            mock.patch.object(NannyGatewayActions, 'delete') as nanny_api_delete:
 
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect

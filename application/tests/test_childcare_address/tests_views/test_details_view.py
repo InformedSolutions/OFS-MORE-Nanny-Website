@@ -6,6 +6,8 @@ import uuid
 
 from application.tests.test_utils import side_effect, mock_childcare_address_record
 
+from application.services.db_gateways import NannyGatewayActions
+
 
 @mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)
 class ManualEntryTests(ChildcareAddressTests):
@@ -17,9 +19,9 @@ class ManualEntryTests(ChildcareAddressTests):
         """
         Test to assert that the 'address details' page can be rendered.
         """
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
-            mock.patch('nanny.db_gateways.NannyGatewayActions.list') as nanny_api_list,\
-            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
+        with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
+            mock.patch.object(NannyGatewayActions, 'list') as nanny_api_list,\
+            mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put:
 
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
@@ -37,9 +39,9 @@ class ManualEntryTests(ChildcareAddressTests):
         """
         Test to assert that another address can be added.
         """
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
-            mock.patch('nanny.db_gateways.NannyGatewayActions.list') as nanny_api_list,\
-            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
+        with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
+            mock.patch.object(NannyGatewayActions, 'list') as nanny_api_list,\
+            mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put:
 
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
@@ -57,9 +59,9 @@ class ManualEntryTests(ChildcareAddressTests):
         """
         Test to assert that another address cannot be added if you already have five.
         """
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
-            mock.patch('nanny.db_gateways.NannyGatewayActions.list') as nanny_api_list,\
-            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
+        with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
+            mock.patch.object(NannyGatewayActions, 'list') as nanny_api_list,\
+            mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put:
 
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
@@ -83,10 +85,10 @@ class ManualEntryTests(ChildcareAddressTests):
         """
         Test to assert that the applicant is redirected to the Where you work page if they have removed the last address
         """
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
-            mock.patch('nanny.db_gateways.NannyGatewayActions.list') as nanny_api_list,\
-            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put,\
-            mock.patch('nanny.db_gateways.NannyGatewayActions.delete') as nanny_api_delete:
+        with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
+            mock.patch.object(NannyGatewayActions, 'list') as nanny_api_list,\
+            mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put, \
+            mock.patch.object(NannyGatewayActions, 'delete') as nanny_api_delete:
 
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
@@ -107,10 +109,10 @@ class ManualEntryTests(ChildcareAddressTests):
         """
         Test to assert that a childcare address can be removed
         """
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
-            mock.patch('nanny.db_gateways.NannyGatewayActions.list') as nanny_api_list,\
-            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put,\
-            mock.patch('nanny.db_gateways.NannyGatewayActions.delete') as nanny_api_delete:
+        with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
+            mock.patch.object(NannyGatewayActions, 'list') as nanny_api_list,\
+            mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put, \
+            mock.patch.object(NannyGatewayActions, 'delete') as nanny_api_delete:
 
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
