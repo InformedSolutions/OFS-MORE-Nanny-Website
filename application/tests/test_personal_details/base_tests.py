@@ -1,4 +1,4 @@
-from django.test import TestCase
+from django.test import TestCase, modify_settings
 from unittest import mock
 from http.cookies import SimpleCookie
 import uuid
@@ -21,6 +21,11 @@ def authenticate(application_id, *args, **kwargs):
 
 
 @mock.patch.object(IdentityGatewayActions, "read", authenticate)
+@modify_settings(MIDDLEWARE={
+        'remove': [
+            'nanny.middleware.CustomAuthenticationHandler',
+        ]
+    })
 class PersonalDetailsTests(TestCase):
 
     sample_app = {
