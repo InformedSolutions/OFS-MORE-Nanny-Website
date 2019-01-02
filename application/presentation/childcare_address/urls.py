@@ -4,7 +4,6 @@ from application.presentation.childcare_address import views
 
 
 urlpatterns = [
-    url(r'^service-unavailable/', views.ServiceUnavailableView.as_view(), name='Service-Unavailable'),
     url(r'^childcare-address/where-you-work/', views.WhereYouWorkView.as_view(), name='Childcare-Address-Where-You-Work'),
     url(r'^childcare-address/details-later/', views.AddressDetailsLaterView.as_view(), name='Childcare-Address-Details-Later'),
     url(r'^childcare-address/childcare-location/', views.ChildcareLocationView.as_view(), name='Childcare-Address-Location'),
