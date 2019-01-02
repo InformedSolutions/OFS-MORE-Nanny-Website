@@ -4,8 +4,10 @@ from unittest import mock
 from application.presentation.personal_details.views import *
 import uuid
 
+from application.services.db_gateways import IdentityGatewayActions, NannyGatewayActions
 
-@mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)
+
+@mock.patch.object(IdentityGatewayActions, "read", authenticate)
 class CertificateTests(PersonalDetailsTests):
 
     def test_conduct_certificates_url_resolves_to_page(self):

@@ -6,17 +6,24 @@ import uuid
 from django.template.response import TemplateResponse
 
 from application.tests.test_utils import side_effect
+from application.services.db_gateways import IdentityGatewayActions, NannyGatewayActions
 
 
-@mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)
+@mock.patch.object(IdentityGatewayActions, "read", authenticate)
 class PostcodeEntryTests(PersonalDetailsTests):
 
     def test_postcode_entry_url_resolves_to_page(self):
         """
         Test to assert that the 'postcode entry' page can be resolved.
         """
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
-                mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
+        with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
+            mock.patch.object(NannyGatewayActions, 'list') as nanny_api_list,\
+            mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put, \
+            mock.patch.object(NannyGatewayActions, 'delete') as nanny_api_delete, \
+            mock.patch.object(NannyGatewayActions, 'create') as nanny_api_create, \
+            mock.patch.object(NannyGatewayActions, 'patch') as nanny_api_patch, \
+            mock.patch.object(IdentityGatewayActions, 'read') as identity_api_read:
+
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
 
@@ -28,10 +35,15 @@ class PostcodeEntryTests(PersonalDetailsTests):
         """
         Test to assert that the 'postcode entry' page can be rendered.
         """
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_get_pd, \
-                mock.patch('nanny.db_gateways.NannyGatewayActions.patch') as nanny_api_patch,\
-                mock.patch('nanny.db_gateways.NannyGatewayActions.list'):
-            nanny_api_get_pd.side_effect = side_effect
+        with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
+            mock.patch.object(NannyGatewayActions, 'list') as nanny_api_list,\
+            mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put, \
+            mock.patch.object(NannyGatewayActions, 'delete') as nanny_api_delete, \
+            mock.patch.object(NannyGatewayActions, 'create') as nanny_api_create, \
+            mock.patch.object(NannyGatewayActions, 'patch') as nanny_api_patch, \
+            mock.patch.object(IdentityGatewayActions, 'read') as identity_api_read:
+
+            nanny_api_read.side_effect = side_effect
             nanny_api_patch.side_effect = side_effect
 
             response = self.client.post(build_url('personal-details:Personal-Details-Home-Address', get={
@@ -44,8 +56,14 @@ class PostcodeEntryTests(PersonalDetailsTests):
         """
         Test to assert that the 'name' page can be rendered.
         """
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
-            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
+        with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
+            mock.patch.object(NannyGatewayActions, 'list') as nanny_api_list,\
+            mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put, \
+            mock.patch.object(NannyGatewayActions, 'delete') as nanny_api_delete, \
+            mock.patch.object(NannyGatewayActions, 'create') as nanny_api_create, \
+            mock.patch.object(NannyGatewayActions, 'patch') as nanny_api_patch, \
+            mock.patch.object(IdentityGatewayActions, 'read') as identity_api_read:
+
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
 
@@ -62,8 +80,14 @@ class PostcodeEntryTests(PersonalDetailsTests):
         """
         Test to assert that the 'name' page can be rendered.
         """
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
-            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
+        with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
+            mock.patch.object(NannyGatewayActions, 'list') as nanny_api_list,\
+            mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put, \
+            mock.patch.object(NannyGatewayActions, 'delete') as nanny_api_delete, \
+            mock.patch.object(NannyGatewayActions, 'create') as nanny_api_create, \
+            mock.patch.object(NannyGatewayActions, 'patch') as nanny_api_patch, \
+            mock.patch.object(IdentityGatewayActions, 'read') as identity_api_read:
+
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
 
@@ -80,8 +104,14 @@ class PostcodeEntryTests(PersonalDetailsTests):
         """
         Test to assert that the 'name' page can be rendered.
         """
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
-            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put:
+        with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
+            mock.patch.object(NannyGatewayActions, 'list') as nanny_api_list,\
+            mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put, \
+            mock.patch.object(NannyGatewayActions, 'delete') as nanny_api_delete, \
+            mock.patch.object(NannyGatewayActions, 'create') as nanny_api_create, \
+            mock.patch.object(NannyGatewayActions, 'patch') as nanny_api_patch, \
+            mock.patch.object(IdentityGatewayActions, 'read') as identity_api_read:
+
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
 

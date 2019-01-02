@@ -5,9 +5,10 @@ from application.presentation.personal_details.views import *
 import uuid
 
 from application.tests.test_utils import side_effect
+from application.services.db_gateways import NannyGatewayActions, IdentityGatewayActions
 
 
-@mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)
+@mock.patch.objecT(IdentityGatewayActions, "read", authenticate)
 class AddressSummaryTests(PersonalDetailsTests):
 
     def test_address_summary_url_resolves_to_page(self):
@@ -18,7 +19,7 @@ class AddressSummaryTests(PersonalDetailsTests):
         """
         Test to assert that the 'manual entry' page can be rendered.
         """
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_get_addr:
+        with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_get_addr:
             nanny_api_get_addr.side_effect = side_effect
             response = self.client.get(build_url('personal-details:Personal-Details-Address-Summary', get={
                 'id': uuid.UUID
@@ -30,7 +31,7 @@ class AddressSummaryTests(PersonalDetailsTests):
         """
         Test to assert that the 'manual entry' page can be rendered.
         """
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_get_addr:
+        with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_get_addr:
             nanny_api_get_addr.side_effect = side_effect
 
             response = self.client.post(build_url('personal-details:Personal-Details-Address-Summary', get={

@@ -7,8 +7,10 @@ from django.template.response import TemplateResponse
 
 from application.tests.test_utils  import side_effect
 
+from application.services.db_gateways import NannyGatewayActions, IdentityGatewayActions
 
-@mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)
+
+@mock.patch.object(IdentityGatewayActions, "read", authenticate)
 class LivedAbroadTests(PersonalDetailsTests):
 
     def test_lived_abroad_url_resolves_to_page(self):
@@ -19,8 +21,12 @@ class LivedAbroadTests(PersonalDetailsTests):
         """
         Test to assert that the 'lived abroad' page can be rendered.
         """
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
-            mock.patch('nanny.db_gateways.NannyGatewayActions.list'):
+        with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
+            mock.patch.object(NannyGatewayActions, 'list') as nanny_api_list,\
+            mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put, \
+            mock.patch.object(NannyGatewayActions, 'delete') as nanny_api_delete, \
+            mock.patch.object(NannyGatewayActions, 'create') as nanny_api_create:
+
             nanny_api_read.side_effect = side_effect
             response = self.client.get(build_url('personal-details:Personal-Details-Lived-Abroad', get={
                 'id': uuid.UUID
@@ -32,10 +38,12 @@ class LivedAbroadTests(PersonalDetailsTests):
         """
         Test to assert that the 'lived abroad' page can be submitted.
         """
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
-            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put, \
-            mock.patch('nanny.db_gateways.NannyGatewayActions.patch') as nanny_api_patch, \
-            mock.patch('nanny.db_gateways.NannyGatewayActions.list'):
+        with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
+            mock.patch.object(NannyGatewayActions, 'list') as nanny_api_list,\
+            mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put, \
+            mock.patch.object(NannyGatewayActions, 'delete') as nanny_api_delete, \
+            mock.patch.object(NannyGatewayActions, 'create') as nanny_api_create:
+
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
 
@@ -52,10 +60,12 @@ class LivedAbroadTests(PersonalDetailsTests):
         """
         Test to assert that the 'lived abroad' page can be submitted.
         """
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
-            mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put, \
-            mock.patch('nanny.db_gateways.NannyGatewayActions.patch') as nanny_api_patch, \
-            mock.patch('nanny.db_gateways.NannyGatewayActions.list'):
+        with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
+            mock.patch.object(NannyGatewayActions, 'list') as nanny_api_list,\
+            mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put, \
+            mock.patch.object(NannyGatewayActions, 'delete') as nanny_api_delete, \
+            mock.patch.object(NannyGatewayActions, 'create') as nanny_api_create:
+
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
 
@@ -72,8 +82,12 @@ class LivedAbroadTests(PersonalDetailsTests):
         """
         Test to assert that the 'lived abroad' page can be submitted.
         """
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
-            mock.patch('nanny.db_gateways.NannyGatewayActions.list'):
+        with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
+            mock.patch.object(NannyGatewayActions, 'list') as nanny_api_list,\
+            mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put, \
+            mock.patch.object(NannyGatewayActions, 'delete') as nanny_api_delete, \
+            mock.patch.object(NannyGatewayActions, 'create') as nanny_api_create:
+
             nanny_api_read.side_effect = side_effect
 
             response = self.client.post(build_url('personal-details:Personal-Details-Lived-Abroad', get={

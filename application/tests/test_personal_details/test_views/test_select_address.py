@@ -6,9 +6,10 @@ import uuid
 from django.template.response import TemplateResponse
 
 from application.tests.test_utils import side_effect
+from application.services.db_gateways import IdentityGatewayActions, NannyGatewayActions
 
 
-@mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)
+@mock.patch.object(IdentityGatewayActions, "read", authenticate)
 class SelectAddressTests(PersonalDetailsTests):
 
     def test_select_address_url_resolves_to_page(self):
@@ -19,7 +20,14 @@ class SelectAddressTests(PersonalDetailsTests):
         """
         Test to assert that the 'select address' page can be rendered.
         """
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read:
+        with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
+            mock.patch.object(NannyGatewayActions, 'list') as nanny_api_list,\
+            mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put, \
+            mock.patch.object(NannyGatewayActions, 'delete') as nanny_api_delete, \
+            mock.patch.object(NannyGatewayActions, 'create') as nanny_api_create, \
+            mock.patch.object(NannyGatewayActions, 'patch') as nanny_api_patch, \
+            mock.patch.object(IdentityGatewayActions, 'read') as identity_api_read:
+
             nanny_api_read.side_effect = side_effect
 
             response = self.client.get(build_url('personal-details:Personal-Details-Select-Address', get={
@@ -32,9 +40,14 @@ class SelectAddressTests(PersonalDetailsTests):
         """
         Test to assert that the 'select address' page can be rendered.
         """
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
-                mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put, \
-            mock.patch('nanny.db_gateways.NannyGatewayActions.list'):
+        with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
+            mock.patch.object(NannyGatewayActions, 'list') as nanny_api_list,\
+            mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put, \
+            mock.patch.object(NannyGatewayActions, 'delete') as nanny_api_delete, \
+            mock.patch.object(NannyGatewayActions, 'create') as nanny_api_create, \
+            mock.patch.object(NannyGatewayActions, 'patch') as nanny_api_patch, \
+            mock.patch.object(IdentityGatewayActions, 'read') as identity_api_read:
+
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
 
@@ -50,9 +63,14 @@ class SelectAddressTests(PersonalDetailsTests):
         """
         Test to assert that the 'select address' page can be rendered.
         """
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
-                mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put, \
-            mock.patch('nanny.db_gateways.NannyGatewayActions.list'):
+        with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
+            mock.patch.object(NannyGatewayActions, 'list') as nanny_api_list,\
+            mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put, \
+            mock.patch.object(NannyGatewayActions, 'delete') as nanny_api_delete, \
+            mock.patch.object(NannyGatewayActions, 'create') as nanny_api_create, \
+            mock.patch.object(NannyGatewayActions, 'patch') as nanny_api_patch, \
+            mock.patch.object(IdentityGatewayActions, 'read') as identity_api_read:
+
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
 
