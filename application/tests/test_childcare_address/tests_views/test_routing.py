@@ -11,13 +11,6 @@ from application.services.db_gateways import IdentityGatewayActions
 @mock.patch.object(IdentityGatewayActions, "read", authenticate)
 class RoutingTests(ChildcareAddressTests):
 
-    def test_service_unavailable_resolves_to_page(self):
-        """
-        Test to assert that the 'service unavailable' page can be rendered.
-        """
-        found = resolve(reverse('Service-Unavailable'))
-        self.assertEqual(found.func.__name__, ServiceUnavailableView.__name__)
-
     def test_guidance_url_resolves_to_page(self):
         """
         Test to assert that the 'guidance' page can be rendered.
