@@ -8,7 +8,7 @@ from application.tests.test_utils import side_effect
 from application.services.db_gateways import NannyGatewayActions, IdentityGatewayActions
 
 
-@mock.patch.objecT(IdentityGatewayActions, "read", authenticate)
+@mock.patch.object(IdentityGatewayActions, "read", authenticate)
 class AddressSummaryTests(PersonalDetailsTests):
 
     def test_address_summary_url_resolves_to_page(self):
