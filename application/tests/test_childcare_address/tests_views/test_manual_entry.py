@@ -73,7 +73,9 @@ class ManualEntryTests(ChildcareAddressTests):
             mock.patch.object(NannyGatewayActions, 'list') as nanny_api_list,\
             mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put, \
             mock.patch.object(NannyGatewayActions, 'delete') as nanny_api_delete, \
-            mock.patch.object(NannyGatewayActions, 'create') as nanny_api_create:
+            mock.patch.object(NannyGatewayActions, 'create') as nanny_api_create, \
+            mock.patch.object(NannyGatewayActions, 'patch') as nanny_api_patch, \
+            mock.patch.object(IdentityGatewayActions, 'read') as identity_api_read:
 
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
