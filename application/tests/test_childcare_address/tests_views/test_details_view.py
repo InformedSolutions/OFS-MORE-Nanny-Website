@@ -6,10 +6,10 @@ import uuid
 
 from application.tests.test_utils import side_effect, mock_childcare_address_record
 
-from application.services.db_gateways import NannyGatewayActions
+from application.services.db_gateways import NannyGatewayActions, IdentityGatewayActions
 
 
-@mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)
+@mock.patch.object(IdentityGatewayActions, "read", authenticate)
 class ManualEntryTests(ChildcareAddressTests):
     def test_address_details_url_resolves_to_page(self):
         found = resolve(reverse('Childcare-Address-Details'))
