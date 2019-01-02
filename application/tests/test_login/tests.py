@@ -8,6 +8,8 @@ from application.tests.test_utils import side_effect, mock_nanny_application, mo
 from application.presentation.login import views
 
 from application.services.db_gateways import NannyGatewayActions, IdentityGatewayActions
+from application.services import notify
+from application.presentation import utilities
 
 
 class LoginTests(TestCase):
@@ -100,7 +102,7 @@ class LoginTests(TestCase):
         Test that a user is redirected to the 'Service-Unavailable' page if test_notify() returns false during either
         the new user of existing user login.
         """
-        with mock.patch('nanny.utilities.test_notify') as test_notify:
+        with mock.patch.object(utilities, 'test_notify') as test_notify:
             test_notify.return_value = False
 
             views_to_test = (
@@ -182,7 +184,7 @@ class LoginTests(TestCase):
         """
         with mock.patch.object(IdentityGatewayActions, 'read') as identity_api_get, \
                 mock.patch.object(IdentityGatewayActions, 'put') as identity_api_put, \
-                mock.patch('nanny.notify.send_email') as notify_email:
+                mock.patch.object(notify, 'send_email') as notify_email:
 
             identity_api_get.side_effect = side_effect
             identity_api_put.side_effect = side_effect
@@ -201,7 +203,7 @@ class LoginTests(TestCase):
         """
         with mock.patch.object(IdentityGatewayActions, 'read') as identity_api_get, \
                 mock.patch.object(IdentityGatewayActions, 'put') as identity_api_put, \
-                mock.patch('nanny.notify.send_email') as notify_email:
+                mock.patch.object(notify, 'send_email') as notify_email:
 
             identity_api_get.side_effect = side_effect
             identity_api_put.side_effect = side_effect
@@ -220,7 +222,7 @@ class LoginTests(TestCase):
         with mock.patch.object(IdentityGatewayActions, 'read') as identity_api_get, \
                 mock.patch.object(IdentityGatewayActions, 'put') as identity_api_put, \
                 mock.patch.object(IdentityGatewayActions, 'list') as identity_api_list, \
-                mock.patch('nanny.notify.send_email') as notify_email:
+                mock.patch.object(notify, 'send_email') as notify_email:
 
             identity_api_get.side_effect = side_effect
             identity_api_put.side_effect = side_effect
@@ -243,7 +245,7 @@ class LoginTests(TestCase):
         """
         with mock.patch.object(IdentityGatewayActions, 'list') as identity_api_list, \
                 mock.patch.object(IdentityGatewayActions, 'put') as identity_api_put, \
-                mock.patch('nanny.notify.send_email') as notify_email:
+                mock.patch.object(notify, 'send_email') as notify_email:
 
             identity_api_list.return_value.record = [self.user_details_record]
             identity_api_put.side_effect = side_effect
@@ -281,7 +283,7 @@ class LoginTests(TestCase):
         with mock.patch.object(IdentityGatewayActions, 'read') as identity_api_get, \
                 mock.patch.object(IdentityGatewayActions, 'put') as identity_api_put, \
                 mock.patch.object(IdentityGatewayActions, 'list') as identity_api_list, \
-                mock.patch('nanny.notify.send_text') as notify_send_text, \
+                mock.patch.object(notify, 'send_text') as notify_send_text, \
                 mock.patch('login_app.views.ValidateMagicLinkView.link_has_expired') as link_expired:
 
             identity_api_list.return_value.record = [self.user_details_record]
@@ -303,7 +305,7 @@ class LoginTests(TestCase):
         with mock.patch.object(IdentityGatewayActions, 'read') as identity_api_get, \
                 mock.patch.object(IdentityGatewayActions, 'put') as identity_api_put, \
                 mock.patch.object(IdentityGatewayActions, 'list') as identity_api_list, \
-                mock.patch('nanny.notify.send_text') as notify_send_text, \
+                mock.patch.object(notify, 'send_text') as notify_send_text, \
                 mock.patch('login_app.views.ValidateMagicLinkView.link_has_expired') as link_expired:
 
             identity_api_list.return_value.record = [self.user_details_record]
