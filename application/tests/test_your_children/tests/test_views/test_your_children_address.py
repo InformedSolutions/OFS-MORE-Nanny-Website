@@ -6,8 +6,10 @@ import uuid
 
 from application.tests.test_utils import side_effect
 
+from application.services.db_gateways import IdentityGatewayActions, NannyGatewayActions
 
-@mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)
+
+@mock.patch.object(IdentityGatewayActions, "read", authenticate)
 class PostcodeTest(YourChildrenTests):
 
     def test_name_resolves_to_page(self):
@@ -15,9 +17,12 @@ class PostcodeTest(YourChildrenTests):
         self.assertCountEqual(found.func.__name__, YourChildrenPostcodeView.__name__)
 
     def test_can_render_postcode_page(self):
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
-                mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put, \
-                mock.patch('nanny.db_gateways.NannyGatewayActions.list'):
+        with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
+            mock.patch.object(NannyGatewayActions, 'list') as nanny_api_list,\
+            mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put, \
+            mock.patch.object(NannyGatewayActions, 'delete') as nanny_api_delete, \
+            mock.patch.object(NannyGatewayActions, 'create') as nanny_api_create:
+
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
             response = self.client.get(
@@ -54,7 +59,7 @@ class PostcodeTest(YourChildrenTests):
         self.skipTest('Not yet implemented')
 
 
-@mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)
+@mock.patch.object(IdentityGatewayActions, "read", authenticate)
 class AddressSelectTest(YourChildrenTests):
 
     def test_name_resolves_to_page(self):
@@ -79,7 +84,7 @@ class AddressSelectTest(YourChildrenTests):
         self.skipTest('Not yet implemented')
 
 
-@mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)
+@mock.patch.object(IdentityGatewayActions, "read", authenticate)
 class ManualAddressTest(YourChildrenTests):
 
     def test_name_resolves_to_page(self):
@@ -87,9 +92,12 @@ class ManualAddressTest(YourChildrenTests):
         self.assertCountEqual(found.func.__name__, YourChildrenManualAddressView.__name__)
 
     def test_can_render_manual_address_page(self):
-        with mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read, \
-                mock.patch('nanny.db_gateways.NannyGatewayActions.put') as nanny_api_put, \
-                mock.patch('nanny.db_gateways.NannyGatewayActions.list'):
+        with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
+            mock.patch.object(NannyGatewayActions, 'list') as nanny_api_list,\
+            mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put, \
+            mock.patch.object(NannyGatewayActions, 'delete') as nanny_api_delete, \
+            mock.patch.object(NannyGatewayActions, 'create') as nanny_api_create:
+
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
             response = self.client.get(

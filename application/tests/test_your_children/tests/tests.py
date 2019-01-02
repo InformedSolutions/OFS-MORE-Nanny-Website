@@ -2,7 +2,7 @@ from http.cookies import SimpleCookie
 from unittest import mock
 import uuid
 from django.test import TestCase
-from application.services.db_gateways import NannyGatewayActions
+from application.services.db_gateways import NannyGatewayActions, IdentityGatewayActions
 from application.tests.test_utils import mock_nanny_application, mock_personal_details_record, mock_identity_record
 
 
@@ -22,7 +22,7 @@ def authenticate(application_id, *args, **kwargs):
     return CustomResponse(record)
 
 
-@mock.patch("nanny.db_gateways.IdentityGatewayActions.read", authenticate)
+@mock.patch.object(IdentityGatewayActions, "read", authenticate)
 class YourChildrenTests(TestCase):
 
     def setUp(self):
