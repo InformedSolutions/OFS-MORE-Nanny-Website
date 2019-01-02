@@ -284,7 +284,7 @@ class LoginTests(TestCase):
                 mock.patch.object(IdentityGatewayActions, 'put') as identity_api_put, \
                 mock.patch.object(IdentityGatewayActions, 'list') as identity_api_list, \
                 mock.patch.object(notify, 'send_text') as notify_send_text, \
-                mock.patch('login_app.views.ValidateMagicLinkView.link_has_expired') as link_expired:
+                mock.patch.object(views.ValidateMagicLinkView, 'link_has_expired') as link_expired:
 
             identity_api_list.return_value.record = [self.user_details_record]
             identity_api_list.return_value.status_code = 200
@@ -306,7 +306,7 @@ class LoginTests(TestCase):
                 mock.patch.object(IdentityGatewayActions, 'put') as identity_api_put, \
                 mock.patch.object(IdentityGatewayActions, 'list') as identity_api_list, \
                 mock.patch.object(notify, 'send_text') as notify_send_text, \
-                mock.patch('login_app.views.ValidateMagicLinkView.link_has_expired') as link_expired:
+                mock.patch.object(views.ValidateMagicLinkView, 'link_has_expired') as link_expired:
 
             identity_api_list.return_value.record = [self.user_details_record]
             identity_api_list.return_value.status_code = 200
@@ -425,7 +425,7 @@ class LoginTests(TestCase):
         with mock.patch.object(IdentityGatewayActions, 'read') as identity_api_get, \
                 mock.patch.object(IdentityGatewayActions, 'put') as identity_api_put, \
                 mock.patch.object(NannyGatewayActions, 'read') as nanny_api_get, \
-                mock.patch('login_app.views.ValidateMagicLinkView.link_has_expired') as link_expired:
+                mock.patch.object(views.ValidateMagicLinkView, 'link_has_expired') as link_expired:
 
             identity_api_get.side_effect = side_effect
 
@@ -451,7 +451,7 @@ class LoginTests(TestCase):
         with mock.patch.object(IdentityGatewayActions, 'read') as identity_api_get, \
                 mock.patch.object(IdentityGatewayActions, 'put') as identity_api_put, \
                 mock.patch.object(NannyGatewayActions, 'read') as nanny_api_get, \
-                mock.patch('login_app.views.ValidateMagicLinkView.link_has_expired') as link_expired:
+                mock.patch.object(views.ValidateMagicLinkView, 'link_has_expired') as link_expired:
 
             identity_api_get.side_effect = side_effect
 
@@ -477,7 +477,7 @@ class LoginTests(TestCase):
         with mock.patch.object(IdentityGatewayActions, 'read') as identity_api_get, \
                 mock.patch.object(IdentityGatewayActions, 'put') as identity_api_put, \
                 mock.patch.object(NannyGatewayActions, 'read') as nanny_api_get, \
-                mock.patch('login_app.views.ValidateMagicLinkView.link_has_expired') as link_expired:
+                mock.patch.object(views.ValidateMagicLinkView, 'link_has_expired') as link_expired:
 
             identity_api_get.side_effect = side_effect
 
@@ -506,7 +506,7 @@ class LoginTests(TestCase):
         with mock.patch.object(IdentityGatewayActions, 'read') as identity_api_get, \
                 mock.patch.object(IdentityGatewayActions, 'put') as identity_api_put, \
                 mock.patch.object(NannyGatewayActions, 'read') as nanny_api_get, \
-                mock.patch('login_app.views.ValidateMagicLinkView.link_has_expired') as link_expired:
+                mock.patch.object(views.ValidateMagicLinkView, 'link_has_expired') as link_expired:
 
             identity_api_get.side_effect = side_effect
             link_expired  = False
