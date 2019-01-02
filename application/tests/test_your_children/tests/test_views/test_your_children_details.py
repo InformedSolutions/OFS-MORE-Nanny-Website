@@ -7,6 +7,8 @@ from django.template.response import TemplateResponse
 
 from application.tests.test_utils import side_effect
 
+from application.services.db_gateways import IdentityGatewayActions, NannyGatewayActions
+
 
 @mock.patch.object(IdentityGatewayActions, "read", authenticate)
 class DetailsTest(YourChildrenTests):
