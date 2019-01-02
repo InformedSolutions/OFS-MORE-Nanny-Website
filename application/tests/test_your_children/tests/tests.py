@@ -29,7 +29,6 @@ class YourChildrenTests(TestCase):
         self.user_details_record = mock_identity_record
         self.nanny_application_record = mock_nanny_application
         self.personal_details_record = mock_personal_details_record
-        self.nanny_actions = NannyGatewayActions()
         self.client.cookies = SimpleCookie({'_ofs': 'test@informed.com'})
 
     sample_pd = {
