@@ -5,6 +5,7 @@ from django.http import HttpResponse
 
 mock_nanny_application = {
     'application_status': 'DRAFTING',
+    'application_reference': 'NA0000000001',
     'application_id': '998fd8ec-b96b-4a71-a1a1-a7a3ae186729',
     'date_submitted': '2018-07-31 17:20:46.011717+00',
     'date_updated': '2018-07-31 17:20:46.011717+00',
@@ -87,6 +88,14 @@ mock_identity_record = {
     'add_phone_number': '',
 }
 
+mock_payment_record = {
+    'payment_id': 'a4e6633f-6339-4de5-ae03-69c71fd008b3',
+    'application_id': 'a4e6633f-5339-4de5-ae03-69c71fd008b3',
+    'payment_reference': 'NA0000000001',
+    'payment_submitted': True,
+    'payment_authorised': True
+}
+
 mock_declaration_record = {
     'follow_rules': True,
     'share_info_declare': True,
@@ -131,6 +140,10 @@ declaration_response = HttpResponse()
 declaration_response.status_code = 200
 declaration_response.record = mock_declaration_record
 
+payment_response = HttpResponse()
+payment_response.status_code = 200
+payment_response.record = mock_payment_record
+
 identity_response = HttpResponse()
 identity_response.status_code = 200
 identity_response.record = mock_identity_record
@@ -151,6 +164,7 @@ mock_endpoint_return_values = {
     'declaration': declaration_response,
     'user': identity_response,
     'arc-comments': arc_comments_response,
+    'payment': payment_response
 }
 
 
