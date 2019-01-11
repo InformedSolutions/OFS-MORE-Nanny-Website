@@ -83,6 +83,7 @@ BUILTIN_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.forms'
 ]
 
 THIRD_PARTY_APPS = [
@@ -93,17 +94,7 @@ THIRD_PARTY_APPS = [
 ]
 
 PROJECT_APPS = [
-    'login_app.apps.LoginAppConfig',
-    'tasks_app.apps.TasksAppConfig',
-    'personal_details_app.apps.PersonalDetailsAppConfig',
-    'childcare_address_app.apps.ChildcareAddressAppConfig',
-    'first_aid_app.apps.FirstAidAppConfig',
-    'childcare_training_task_app.apps.ChildcareTrainingTaskAppConfig',
-    'insurance_cover_app.apps.InsuranceCoverAppConfig',
-    'dbs_app.apps.DbsAppConfig',
-    'payment_app.apps.PaymentAppConfig',
-    'declaration_app.apps.DeclarationPaymentAppConfig',
-    'your_children_app.apps.YourChildrenAppConfig'
+    'application.apps.ApplicationConfig',
 ]
 
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
@@ -122,12 +113,16 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'nanny.urls'
 
+# FORM_RENDERER does not use TEMPLATES settings by default - instead looks in application/templates directory.
+# Use TemplateSettings to render forms such that error template can be found within non-Django application structure.
+FORM_RENDERER = 'django.forms.renderers.TemplatesSetting'
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            BASE_DIR,
-            os.path.join(BASE_DIR, 'nanny/generic_templates'),
+            os.path.join(BASE_DIR, 'application/presentation/base_templates'),
+            os.path.join(BASE_DIR, 'govuk_template/templates'),
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -143,6 +138,25 @@ TEMPLATES = [
         },
     },
 ]
+
+# Generate list of folders in which to look for templates.
+presentation_tier = [f for f in os.listdir(os.path.join(BASE_DIR, 'application/presentation/'))]
+folders = [folder_name for folder_name in presentation_tier if os.path.isdir(os.path.join(BASE_DIR, 'application/presentation/', folder_name))]
+TEMPLATES[0]['DIRS'] += [os.path.join(BASE_DIR, 'application/presentation', folder, 'templates') for folder in folders]
+
+
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+]
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'application/presentation/static'),
+    os.path.join(BASE_DIR, 'govuk_template', 'static'),
+    os.path.join(BASE_DIR, 'govuk_template', 'static-src'),
+]
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 WSGI_APPLICATION = 'nanny.wsgi.application'
 
@@ -163,20 +177,6 @@ USE_TZ = True
 SECURE_BROWSER_XSS_FILTER = True
 CSRF_COOKIE_HTTPONLY = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/2.0/howto/static-files/
-
-STATICFILES_FINDERS = [
-    'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-]
-
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'nanny', 'static'),
-)
-
-STATIC_ROOT = os.path.join(BASE_DIR, 'nanny', 'staticfiles')
 
 # Test outputs
 TEST_RUNNER = 'xmlrunner.extra.djangotestrunner.XMLTestRunner'

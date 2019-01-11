@@ -5,18 +5,9 @@ import re
 
 
 urlpatterns = [
-    url(r'^', include('login_app.urls')),
-    url(r'^', include('tasks_app.urls')),
-    url(r'^', include('personal_details_app.urls', namespace="personal-details")),
-    url(r'^', include('childcare_address_app.urls')),
-    url(r'^', include('your_children_app.urls', namespace='your-children')),
-    url(r'^', include('childcare_training_task_app.urls')),
-    url(r'^', include('payment_app.urls', namespace="payment")),
-    url(r'^', include('declaration_app.urls', namespace="declaration")),
-    url(r'^', include('first_aid_app.urls', namespace='first-aid')),
-    url(r'^insurance/', include('insurance_cover_app.urls', namespace='insurance')),
-    url(r'^criminal-record/', include('dbs_app.urls', namespace='dbs')),
+    url(r'^', include('application.urls')),
 ]
+
 
 if hasattr(settings, 'URL_PREFIX'):
     prefixed_url_pattern = []
