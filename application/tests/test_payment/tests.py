@@ -15,7 +15,8 @@ from application.tests.test_utils import side_effect
 valid_payment_data ={
     'card_type': 'visa',
     'card_number': '4545454545454545',
-    'expiry_date': ['20', '20'],
+    'expiry_date_0': '10',
+    'expiry_date_1': '22',
     'cardholders_name': 'AUTHORISED',
     'card_security_code' : '123'
 }
@@ -132,6 +133,7 @@ class PaymentFormValidation(SimpleTestCase):
 
         for key, value in invalid_card_numbers.items():
             form = PaymentDetailsForm(data={'card_type': key, 'card_number': value})
+            form.cleaned_data = form.data  # Manually set cleaned_data so that clean method can be tested - else failure is caught by forms.Form
 
             with self.assertRaisesMessage(ValidationError, 'Please check the number on your card'):
                 form.clean_card_number()
@@ -143,7 +145,8 @@ class PaymentFormValidation(SimpleTestCase):
             form.fields['card_number'].clean('')
 
     def test_expiry_date_in_the_past_raises_error(self):
-        form = PaymentDetailsForm(data={'expiry_date': [10, 10]})
+        form = PaymentDetailsForm(data={'expiry_date_0': 10, 'expiry_date_1': 10})
+        form.cleaned_data = {'expiry_date': [form.data['expiry_date_0'], form.data['expiry_date_1']]}
 
         with self.assertRaisesMessage(ValidationError, 'Check the expiry date or use a new card'):
             form.clean_expiry_date()
@@ -155,7 +158,8 @@ class PaymentFormValidation(SimpleTestCase):
             form.fields['expiry_date'].clean('')
 
     def test_entering_more_than_50_character_cardholder_name_raises_error(self):
-        form = PaymentDetailsForm(data={'cardholders_name': '01234567890123456789012345678901234567890123456789'})
+        form = PaymentDetailsForm(data={'cardholders_name': '012345678901234567890123456789012345678901234567890'})
+        form.cleaned_data = form.data
 
         with self.assertRaisesMessage(ValidationError, 'Please enter 50 characters or less'):
             form.clean_cardholders_name()
@@ -171,6 +175,7 @@ class PaymentFormValidation(SimpleTestCase):
 
         for v in test_values:
             form = PaymentDetailsForm(data={'card_security_code': v})
+            form.cleaned_data = form.data
 
             with self.assertRaisesMessage(ValidationError, 'The code should be 3 or 4 digits long'):
                 form.clean_card_security_code()
