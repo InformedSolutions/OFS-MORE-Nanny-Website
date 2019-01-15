@@ -8,7 +8,7 @@ from django.test import Client, modify_settings, SimpleTestCase, TestCase
 from application.services.db_gateways import NannyGatewayActions
 from application.services import payment_service
 from application.presentation.payment.forms import PaymentDetailsForm
-from application.presentation.payment import views as payment_views
+from application.presentation.payment.views import payment as payment_views
 from application.tests.test_utils import side_effect
 
 
@@ -80,36 +80,13 @@ class PaymentTests(TestCase):
         self.skipTest('NotImplemented')
 
     def test_post_to_payment_page_renders_payment_details_if_form_invalid(self, *args):
-        post_data = deepcopy(valid_payment_data)
-        post_data.update({'id': self.test_app_id})
-
-        response = self.client.post(reverse('payment:payment-details'), data=post_data)
+        response = self.client.post(reverse('payment:payment-details'), data={'id': self.test_app_id})
 
         self.assertEquals(response.status_code, 200)
         self.assertTemplateUsed(response, 'payment-details.html')
 
-    def test_assign_application_reference_called_upon_post_request(self, *args):
-        post_data = deepcopy(valid_payment_data)
-        post_data.update({'id': self.test_app_id})
-
-        response = self.client.post(reverse('payment:payment-details'), data=post_data)
-
-        with mock.patch.object(payment_views, '__assign_application_reference') as mocked_application_response:
-            mocked_application_response.return_value = 'NA0000002'
-
-            self.assertTrue(mocked_application_response.called)
-
     def test_resubmission_handler_called_if_not_prior_payment_exists(self, *args):
         self.skipTest('NotImplemented')
-
-        overridden_payment_record_exists = lambda x: True
-        payment_service.payment_record_exists = overridden_payment_record_exists
-
-        # mock.patch(payment_views, resubmission_handler)
-        #
-        # response = self.client.post(reverse('payment-details'), data=valid_payment_data)
-        #
-        # self.assertTrue()
 
 
 class PaymentFormValidation(SimpleTestCase):
