@@ -107,8 +107,7 @@ def card_payment_post_handler(request):
 
     # If no prior payment record exists, request to capture the payment
     if not prior_payment_record_exists \
-            or (prior_payment_record_exists
-                and not payment_record_submitted):
+            or (prior_payment_record_exists and not payment_record_submitted):
 
         # Attempt to lodge payment by pulling form POST details
         card_number = re.sub('[ -]+', '', request.POST["card_number"])
