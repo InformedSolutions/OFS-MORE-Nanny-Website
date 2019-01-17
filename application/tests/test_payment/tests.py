@@ -5,7 +5,7 @@ from django.forms import ValidationError
 from django.shortcuts import reverse
 from django.test import Client, modify_settings, SimpleTestCase, TestCase
 
-from application.services.db_gateways import NannyGatewayActions
+from application.services.db_gateways import NannyGatewayActions, IdentityGatewayActions
 from application.services import payment_service
 from application.presentation.payment.forms import PaymentDetailsForm
 from application.presentation.payment.views import payment as payment_views
@@ -27,7 +27,8 @@ valid_payment_data ={
             'nanny.middleware.CustomAuthenticationHandler',
         ]
     })
-@mock.patch.object(payment_service, 'check_payment')
+@mock.patch.object(payment_service, 'make_payment')
+@mock.patch.object(IdentityGatewayActions, 'read',   side_effect=side_effect)
 @mock.patch.object(NannyGatewayActions, 'create', side_effect=side_effect)
 @mock.patch.object(NannyGatewayActions, 'read',   side_effect=side_effect)
 @mock.patch.object(NannyGatewayActions, 'list',   side_effect=side_effect)
@@ -42,42 +43,45 @@ class PaymentTests(TestCase):
         self.client = Client()
         self.test_app_id = ''
 
-    def test_get_card_payment_details(self, *args):
-        self.skipTest('NotImplemented')
-
-    def test_post_card_payment_details(self, *args):
-        self.skipTest('NotImplemented')
-
     def test_get_to_payment_page_renders_payment_details_if_no_prior_payment_record_exists(self, *args):
-        overridden_payment_record_exists = lambda x: False
-        payment_service.payment_record_exists = overridden_payment_record_exists
+        with mock.patch.object(payment_service, 'payment_record_exists', side_effect=lambda x: False):
 
-        response = self.client.get(
-            reverse('payment:payment-details'),
-            data={
-                'id': self.test_app_id
-            }
-        )
+            response = self.client.get(
+                reverse('payment:payment-details'),
+                data={
+                    'id': self.test_app_id
+                }
+            )
 
-        self.assertEquals(response.status_code, 200)
-        self.assertTemplateUsed(response, 'payment-details.html')
+            self.assertEquals(response.status_code, 200)
+            self.assertTemplateUsed(response, 'payment-details.html')
 
     def test_get_to_payment_page_renders_paid_page_if_prior_payment_previously_authorised(self, *args):
-        overridden_payment_record_exists = lambda x: True
-        payment_service.payment_record_exists = overridden_payment_record_exists
+        with mock.patch.object(payment_service, 'payment_record_exists', side_effect=lambda x: True):
 
-        response = self.client.get(
-            reverse('payment:payment-details'),
-            data={
-                'id': self.test_app_id
-            }
-        )
+            response = self.client.get(
+                reverse('payment:payment-details'),
+                data={
+                    'id': self.test_app_id
+                }
+            )
 
-        self.assertEquals(response.status_code, 200)
-        self.assertTemplateUsed(response, 'paid.html')
+            self.assertEquals(response.status_code, 200)
+            self.assertTemplateUsed(response, 'paid.html')
 
     def test_get_to_payment_page_redirects_renders_payment_details_if_payment_not_previously_authorised(self, *args):
-        self.skipTest('NotImplemented')
+        with mock.patch.object(payment_service, 'payment_record_exists', side_effect=lambda x : True), \
+                mock.patch.object(payment_service, 'get_payment_record', side_effect=lambda x : {'payment_authorised': False}):
+
+            response = self.client.get(
+                reverse('payment:payment-details'),
+                data={
+                    'id': self.test_app_id
+                }
+            )
+
+            self.assertEquals(response.status_code, 200)
+            self.assertTemplateUsed(response, 'payment-details.html')
 
     def test_post_to_payment_page_renders_payment_details_if_form_invalid(self, *args):
         response = self.client.post(reverse('payment:payment-details'), data={'id': self.test_app_id})
@@ -85,7 +89,31 @@ class PaymentTests(TestCase):
         self.assertEquals(response.status_code, 200)
         self.assertTemplateUsed(response, 'payment-details.html')
 
-    def test_resubmission_handler_called_if_not_prior_payment_exists(self, *args):
+    def test_payment_attempted_if_no_prior_payment_exists(self, *args):
+        self.skipTest('NotImplemented')
+
+    def test_payment_attempted_if_prior_payment_record_but_not_submitted(self, *args):
+        self.skipTest('NotImplemented')
+
+    def test_redirect_to_payment_success_page_if_201_worldpay_response_and_lastevent_authorised(self, *args):
+        self.skipTest('NotImplemented')
+
+    def test_payment_details_page_rendered_if_201_worldpay_response_and_lastevent_refused(self, *args):
+        self.skipTest('NotImplemented')
+
+    def test_payment_details_page_rendered_if_201_worldpay_response_and_lastevent_error(self, *args):
+        self.skipTest('NotImplemented')
+
+    def test_payment_details_page_rendered_called_if_not_201_worldpay_response(self, *args):
+        self.skipTest('NotImplemented')
+
+    def test_resubmission_handler_called_if_payment_submitted(self, *args):
+        self.skipTest('NotImplemented')
+
+    def test_payment_marked_as_authorised_if_successful(self, *args):
+        self.skipTest('NotImplemented')
+
+    def test_payment_email_sent_if_payment_successful(self, *args):
         self.skipTest('NotImplemented')
 
 
