@@ -123,6 +123,10 @@ class ApplyAsANanny(LiveServerTestCase):
         If the HEADLESS_CHROME value in Environment variables is set to true then it will launch chrome headless
         browser, else it will launch firefox.
         """
+        # Steps to get the IP required previously required for remote execution.
+        # ip = os.popen("ifconfig enp0s3 | grep 'inet ' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' | cut -d ' ' -f 2").read()
+        # ip = ip.strip('\n')
+
         if os.environ.get('HEADLESS_CHROME') == 'True':
             chrome_options = webdriver.ChromeOptions()
             URL = os.environ['SELENIUM_HOST']
@@ -341,37 +345,6 @@ class ApplyAsANanny(LiveServerTestCase):
 
         self.assertEqual("Link used already",
                          self.web_util.get_driver().find_element_by_class_name("form-title").text)
-
-    @try_except_method
-    def test_error_message_for_invalid_mobile_security_question(self):
-        """
-        Test that invalid response to mobile number security question form raises validation error.
-            * App has user mobile number
-            * If app doesn't have DBS number  then it ask for user's phone number.
-        """
-        self.web_util.navigate_to_base_url()
-        test_email = faker.email()
-        test_phone_number = self.web_util.generate_random_mobile_number()
-        test_alt_phone_number = self.web_util.generate_random_mobile_number()
-
-        self.registration.register_email_address(test_email)
-
-        self.login.login_to_the_application(test_phone_number, test_alt_phone_number)
-        self.web_util.click_element_by_link_text('Sign out')
-        self.login.navigate_to_SMS_validation_page(test_email)
-
-        # Select 'Don't have your phone?' to trigger security question.
-        self.web_util.get_driver().find_element_by_link_text('Don\'t have your phone?').click()
-        self.assertTrue("Your mobile number ",
-                        self.web_util.get_driver().find_element_by_id("id_mobile_number-label").text)
-
-        # Test no number, too short a mobile number, too long a mobile number and incorrect mobile number.
-        test_numbers = ['', '0', '123456789012', '07754000001']
-        for test_number in test_numbers:
-            self.web_util.send_keys_by_id("id_mobile_number", test_number)
-            self.web_util.click_element_by_xpath("//input[@value='Continue']")
-            self.assertIn("problem",
-                          self.web_util.get_driver().find_element_by_class_name("error-summary").text)
 
     @classmethod
     def tearDownClass(cls):
