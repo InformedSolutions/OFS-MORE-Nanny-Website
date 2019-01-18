@@ -183,22 +183,22 @@ class ApplyAsANanny(LiveServerTestCase):
 
         self.web_util.click_element_by_link_text('Sign out')
 
-    @try_except_method
-    def test_submit_application_with_lived_abroad_option(self):
-        """
-        Test that a user can complete personal details task with lived abroad option
-        """
-        self.web_util.navigate_to_base_url()
-        test_email = faker.email()
-        test_phone_number = self.web_util.generate_random_mobile_number()
-        test_alt_phone_number = self.web_util.generate_random_mobile_number()
-        self.registration.register_email_address(test_email)
-
-        self.login.login_to_the_application(test_phone_number, test_alt_phone_number)
-
-        self.personal_details_task.complete_details_with_lived_abroad_option(faker.first_name(), faker.last_name())
-
-        self.web_util.click_element_by_link_text('Sign out')
+    # @try_except_method
+    # def test_submit_application_with_lived_abroad_option(self):
+    #     """
+    #     Test that a user can complete personal details task with lived abroad option
+    #     """
+    #     self.web_util.navigate_to_base_url()
+    #     test_email = faker.email()
+    #     test_phone_number = self.web_util.generate_random_mobile_number()
+    #     test_alt_phone_number = self.web_util.generate_random_mobile_number()
+    #     self.registration.register_email_address(test_email)
+    #
+    #     self.login.login_to_the_application(test_phone_number, test_alt_phone_number)
+    #
+    #     self.personal_details_task.complete_details_with_lived_abroad_option(faker.first_name(), faker.last_name())
+    #
+    #     self.web_util.click_element_by_link_text('Sign out')
 
     # @try_except_method
     # def test_can_access_costs_without_authenticating(self):
@@ -263,88 +263,88 @@ class ApplyAsANanny(LiveServerTestCase):
     #     self.web_util.assert_page_title("Register as a nanny")
     #
     #     self.web_util.click_element_by_link_text('Sign out')
-
-    @try_except_method
-    def test_user_should_not_be_able_to_submit_the_application(self):
-        """
-        Test to make sure that the user can't be able to submit application when selected none for type of course
-        """
-        self.web_util.navigate_to_base_url()
-        test_email = faker.email()
-        test_phone_number = self.web_util.generate_random_mobile_number()
-        test_alt_phone_number = self.web_util.generate_random_mobile_number()
-        self.registration.register_email_address(test_email)
-
-        self.login.login_to_the_application(test_phone_number, test_alt_phone_number)
-        self.childcare_training_task.childcare_training_with_none_option_for_type_of_course()
-
-        self.web_util.click_element_by_link_text('Sign out')
-
-    @try_except_method
-    def test_can_cancel_application(self):
-        """
-        Test that cancel application functionality is working
-        """
-        self.web_util.navigate_to_base_url()
-
-        test_email = faker.email()
-        test_phone_number = self.web_util.generate_random_mobile_number()
-        test_alt_phone_number = self.web_util.generate_random_mobile_number()
-        self.registration.register_email_address(test_email)
-
-        self.login.login_to_the_application(test_phone_number, test_alt_phone_number)
-
-        self.web_util.click_element_by_link_text("Cancel application")
-        self.web_util.click_element_by_xpath("//input[@value='Cancel application']")
-        self.web_util.assert_page_title("Application cancelled")
-
-        # verifying the deletion was successful by using the same email id for re registration
-        # if the cancellation was not successful then the application will land on sms page
-        # as existing user where our tests will fail
-        test_phone_number = self.web_util.generate_random_mobile_number()
-        test_alt_phone_number = self.web_util.generate_random_mobile_number()
-        self.web_util.navigate_to_base_url()
-        self.registration.register_email_address(test_email)
-        self.login.login_to_the_application(test_phone_number, test_alt_phone_number)
-        self.web_util.click_element_by_link_text('Sign out')
-
-    @try_except_method
-    def test_user_cannot_resend_sms_code_more_than_three_times(self):
-        """
-        Test to ensure that, if the user requests to resend their SMS security code a fourth time, they are instead
-        asked to enter their security question details.
-        """
-        self.web_util.navigate_to_base_url()
-        test_email = faker.email()
-        test_phone_number = self.web_util.generate_random_mobile_number()
-        test_alt_phone_number = self.web_util.generate_random_mobile_number()
-
-        self.registration.register_email_address(test_email)
-
-        self.login.login_to_the_application(test_phone_number, test_alt_phone_number)
-        self.web_util.click_element_by_link_text('Sign out')
-        self.login.navigate_to_SMS_validation_page(test_email)
-
-        for n in range(3):
-            self.web_util.click_element_by_link_text("Didn't get a code?")
-            self.web_util.click_element_by_id("id_send_new_code_button")
-
-        self.web_util.get_driver().find_element_by_link_text("Still didn't get a code?").click()
-        self.assertEqual("Sign in question", self.web_util.get_driver().title)
-
-    @try_except_method
-    def test_user_can_not_use_email_link_twice(self):
-        """
-        Tests that using email link for sign-in more than once returns a 'bad link' page.
-        """
-        self.web_util.navigate_to_base_url()
-        test_email = faker.email()
-        self.registration.register_email_address(test_email)
-        self.web_util.navigate_to_email_validation_url()
-        self.web_util.navigate_to_email_validation_url()
-
-        self.assertEqual("Link used already",
-                         self.web_util.get_driver().find_element_by_class_name("form-title").text)
+    #
+    # @try_except_method
+    # def test_user_should_not_be_able_to_submit_the_application(self):
+    #     """
+    #     Test to make sure that the user can't be able to submit application when selected none for type of course
+    #     """
+    #     self.web_util.navigate_to_base_url()
+    #     test_email = faker.email()
+    #     test_phone_number = self.web_util.generate_random_mobile_number()
+    #     test_alt_phone_number = self.web_util.generate_random_mobile_number()
+    #     self.registration.register_email_address(test_email)
+    #
+    #     self.login.login_to_the_application(test_phone_number, test_alt_phone_number)
+    #     self.childcare_training_task.childcare_training_with_none_option_for_type_of_course()
+    #
+    #     self.web_util.click_element_by_link_text('Sign out')
+    #
+    # @try_except_method
+    # def test_can_cancel_application(self):
+    #     """
+    #     Test that cancel application functionality is working
+    #     """
+    #     self.web_util.navigate_to_base_url()
+    #
+    #     test_email = faker.email()
+    #     test_phone_number = self.web_util.generate_random_mobile_number()
+    #     test_alt_phone_number = self.web_util.generate_random_mobile_number()
+    #     self.registration.register_email_address(test_email)
+    #
+    #     self.login.login_to_the_application(test_phone_number, test_alt_phone_number)
+    #
+    #     self.web_util.click_element_by_link_text("Cancel application")
+    #     self.web_util.click_element_by_xpath("//input[@value='Cancel application']")
+    #     self.web_util.assert_page_title("Application cancelled")
+    #
+    #     # verifying the deletion was successful by using the same email id for re registration
+    #     # if the cancellation was not successful then the application will land on sms page
+    #     # as existing user where our tests will fail
+    #     test_phone_number = self.web_util.generate_random_mobile_number()
+    #     test_alt_phone_number = self.web_util.generate_random_mobile_number()
+    #     self.web_util.navigate_to_base_url()
+    #     self.registration.register_email_address(test_email)
+    #     self.login.login_to_the_application(test_phone_number, test_alt_phone_number)
+    #     self.web_util.click_element_by_link_text('Sign out')
+    #
+    # @try_except_method
+    # def test_user_cannot_resend_sms_code_more_than_three_times(self):
+    #     """
+    #     Test to ensure that, if the user requests to resend their SMS security code a fourth time, they are instead
+    #     asked to enter their security question details.
+    #     """
+    #     self.web_util.navigate_to_base_url()
+    #     test_email = faker.email()
+    #     test_phone_number = self.web_util.generate_random_mobile_number()
+    #     test_alt_phone_number = self.web_util.generate_random_mobile_number()
+    #
+    #     self.registration.register_email_address(test_email)
+    #
+    #     self.login.login_to_the_application(test_phone_number, test_alt_phone_number)
+    #     self.web_util.click_element_by_link_text('Sign out')
+    #     self.login.navigate_to_SMS_validation_page(test_email)
+    #
+    #     for n in range(3):
+    #         self.web_util.click_element_by_link_text("Didn't get a code?")
+    #         self.web_util.click_element_by_id("id_send_new_code_button")
+    #
+    #     self.web_util.get_driver().find_element_by_link_text("Still didn't get a code?").click()
+    #     self.assertEqual("Sign in question", self.web_util.get_driver().title)
+    #
+    # @try_except_method
+    # def test_user_can_not_use_email_link_twice(self):
+    #     """
+    #     Tests that using email link for sign-in more than once returns a 'bad link' page.
+    #     """
+    #     self.web_util.navigate_to_base_url()
+    #     test_email = faker.email()
+    #     self.registration.register_email_address(test_email)
+    #     self.web_util.navigate_to_email_validation_url()
+    #     self.web_util.navigate_to_email_validation_url()
+    #
+    #     self.assertEqual("Link used already",
+    #                      self.web_util.get_driver().find_element_by_class_name("form-title").text)
 
     @classmethod
     def tearDownClass(cls):
