@@ -1,8 +1,23 @@
-import socket
-
 from .base import *
 
 DEBUG = True
+
+PAYMENT_URL = os.environ.get('APP_PAYMENT_URL', 'http://localhost:8001/payment-gateway')
+
+ADDRESSING_URL = os.environ.get('APP_ADDRESSING_URL', 'http://localhost:8002/addressing-service')
+
+NOTIFY_URL = os.environ.get('APP_NOTIFY_URL', 'http://localhost:8003/notify-gateway')
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': os.environ.get('POSTGRES_DB', 'nanny_db'),
+        'USER': os.environ.get('POSTGRES_USER', 'ofs'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'ofs'),
+        'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
+        'PORT': os.environ.get('POSTGRES_PORT', '5432')
+    }
+}
 
 TEST_NOTIFY_CONNECTION = False
 
