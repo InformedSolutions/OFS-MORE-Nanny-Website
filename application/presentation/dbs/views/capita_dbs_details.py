@@ -2,6 +2,8 @@ from application.services.db_gateways import NannyGatewayActions
 from application.presentation.base_views import NannyFormView
 from application.presentation.utilities import app_id_finder
 from ..forms.dbs_details import CaptiaDBSDetailsForm
+from application.services.dbs import read_dbs, dbs_within_three_months
+
 
 
 class CapitaDBSDetailsFormView(NannyFormView):
@@ -11,20 +13,27 @@ class CapitaDBSDetailsFormView(NannyFormView):
 
     def form_valid(self, form):
         application_id = self.request.GET['id']
-        criminal_checks_record = NannyGatewayActions().read('dbs-check', params={'application_id': application_id}).record
-
+        criminal_checks_record = {'application_id': application_id}
         dbs_number = form.cleaned_data['dbs_number']
-        convictions = form.cleaned_data['convictions']
-
-        if convictions == 'True':
-            self.success_url = 'dbs:Post-DBS-Certificate'
-        elif convictions == 'False':
-            self.success_url = 'dbs:Criminal-Record-Check-Summary-View'
+        response = read_dbs(dbs_number)
+        if response.status_code == 200:
+            dbs_record = getattr(read_dbs(dbs_number), 'record', None)
+            if dbs_record is not None:
+                if dbs_within_three_months(dbs_record):
+                    if (dbs_record['certificate_information'] == None) or (dbs_record['certificate_information'] == ''):
+                        self.success_url = 'dbs:Criminal-Record-Check-Summary-View'
+                    else:
+                        self.success_url = 'dbs:Post-DBS-Certificate'
+                    criminal_checks_record['dbs_within_three_months'] = True
+                else:
+                    self.success_url = 'dbs:DBS-Type-View'
+                    criminal_checks_record['dbs_within_three_months'] = False
+                criminal_checks_record['dbs_number'] = dbs_number
+                criminal_checks_record['is_ofsted_dbs'] = True
         else:
-            raise ValueError('The field "convictions" is not equal to either "True" or "False".')
-
-        criminal_checks_record['dbs_number'] = dbs_number
-        criminal_checks_record['convictions'] = convictions
+            self.success_url = 'dbs:DBS-Type-View'
+            criminal_checks_record['dbs_number'] = dbs_number
+            criminal_checks_record['is_ofsted_dbs'] = False
 
         NannyGatewayActions().put('dbs-check', params=criminal_checks_record)
 
@@ -42,4 +51,5 @@ class CapitaDBSDetailsFormView(NannyFormView):
         dbs_record = api_response.record
         initial['dbs_number'] = dbs_record['dbs_number']
         initial['convictions'] = dbs_record['convictions']
+        initial['application_id'] = application_id
         return initial

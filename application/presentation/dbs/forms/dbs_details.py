@@ -3,6 +3,7 @@ from django import forms
 from govuk_forms.widgets import NumberInput, InlineRadioSelect
 
 from application.presentation.utilities import NannyForm
+from application.services.dbs import read_dbs, dbs_date_of_birth_no_match
 
 
 class DBSNumberFormFieldMixin(forms.Form):
@@ -31,7 +32,13 @@ class DBSNumberFormFieldMixin(forms.Form):
         dbs_number = self.data['dbs_number']
         if len(str(dbs_number)) != 12:
             raise forms.ValidationError('Check your certificate: the number should be 12 digits long')
-
+        application_id = self.initial['application_id']
+        response = read_dbs(dbs_number)
+        if response.status_code == 200:
+            if dbs_date_of_birth_no_match(response.record, application_id):
+                raise forms.ValidationError(
+                    'Birth date does not match the date given on the \'Your date of birth\' page: '
+                    'Check your DBS certificate. The number you entered does not match your number held by DBS. ')
         return dbs_number
 
 
@@ -63,10 +70,13 @@ class NonCapitaDBSDetailsForm(DBSNumberFormFieldMixin, NannyForm):
     auto_replace_widgets = True
 
 
-class CaptiaDBSDetailsForm(CriminalCautionsAndConvictionsFormFieldMixin, DBSNumberFormFieldMixin, NannyForm):
+class CaptiaDBSDetailsForm(DBSNumberFormFieldMixin, NannyForm):
     """
     GOV.UK form for the Non-Capita DBS Details Page
     """
     field_label_classes = 'form-label-bold'
     error_summary_title = 'There was a problem'
     auto_replace_widgets = True
+
+
+
