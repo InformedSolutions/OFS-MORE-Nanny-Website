@@ -111,10 +111,10 @@ class CriminalRecordChecksTest(TestCase):
         self.assertEqual(response.resolver_match.func.__name__, views.DBSGuidanceView.__name__)
         self.assertTemplateUsed('dbs-guidance.html')
 
-    def test_dbs_guidance_page_contains_link_to_dbs_type_page(self, *args):
+    def test_dbs_guidance_page_contains_link_to_dbs_details_page(self, *args):
         response = self.client.get(reverse('dbs:DBS-Guidance-View') + self.url_suffix)
 
-        expected_link = reverse('dbs:DBS-Type-View') + self.url_suffix
+        expected_link = reverse('dbs:Capita-DBS-Details-View') + self.url_suffix
 
         self.assertContains(response, '<a href="%s" class="button">Continue</a>' % expected_link, html=True)
 
@@ -144,25 +144,19 @@ class CriminalRecordChecksTest(TestCase):
         self.assertEqual(response.resolver_match.func.__name__, views.CapitaDBSDetailsFormView.__name__)
         self.assertTemplateUsed('capita-dbs-details.html')
 
-    def test_cautions_and_convictions_on_capita_dbs_details_page_redirects_to_post_dbs_certificate_page(self, *args):
-        response = self.client.post(reverse('dbs:Capita-DBS-Details-View') + self.url_suffix,
-                                    data={
-                                        'dbs_number': '000000000012',
-                                        'convictions': True,
-                                    })
 
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(resolve(response.url).func.__name__, views.PostDBSCertificateView.__name__)
+    def test_capita_dbs_details_no_capita_redirect(self):
+        self.skipTest('testNotImplemented')
 
-    def test_no_cautions_and_convictions_on_capita_dbs_details_page_redirects_to_summmary_page(self, *args):
-        response = self.client.post(reverse('dbs:Capita-DBS-Details-View') + self.url_suffix,
-                                    data={
-                                        'dbs_number': '000000000012',
-                                        'convictions': False,
-                                    })
+    def test_capita_dbs_details_capita_not_within_three_months_redirect(self):
+        self.skipTest('testNotImplemented')
 
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(resolve(response.url).func.__name__, views.CriminalRecordChecksSummaryView.__name__)
+    def test_capita_dbs_details_capita_within_three_months_no_info_redirect(self):
+        self.skipTest('testNotImplemented')
+
+    def test_capita_dbs_details_capita_within_three_months_info_redirect(self):
+        self.skipTest('testNotImplemented')
+
 
     def test_can_render_post_dbs_certificate_page(self, *args):
         response = self.client.get(reverse('dbs:Post-DBS-Certificate') + self.url_suffix)
@@ -230,15 +224,6 @@ class CriminalRecordChecksTest(TestCase):
         self.assertEqual(response.resolver_match.func.__name__, views.NonCapitaDBSDetailsFormView.__name__)
         self.assertTemplateUsed('non-capita-dbs-details.html')
 
-    def test_post_to_non_captita_dbs_details_page_redirects_to_post_dbs_certificate_page(self, *args):
-        response = self.client.post(reverse('dbs:Non-Capita-DBS-Details-View') + self.url_suffix,
-                                    data={
-                                        'dbs_number': '000000000012'
-                                    })
-
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(resolve(response.url).func.__name__, views.PostDBSCertificateView.__name__)
-
     def test_can_render_summary_page(self, *args):
         response = self.client.get(reverse('dbs:Criminal-Record-Check-Summary-View') + self.url_suffix)
 
@@ -260,50 +245,8 @@ class CriminalRecordChecksTest(TestCase):
         patch_mock.assert_called_once_with('application', params={'application_id': self.app_id, 'dbs_status': 'COMPLETED'})
 
 
-class CriminalRecordFormsTest(SimpleTestCase):
-    def test_less_than_12_digit_dbs_raises_error(self):
-        form = dbs_forms.NonCapitaDBSDetailsForm(data={'dbs_number': '1'})
 
-        with self.assertRaisesMessage(ValidationError, 'Check your certificate: the number should be 12 digits long'):
-            form.clean_dbs_number()
 
-    def test_more_than_12_digit_dbs_raises_error(self):
-        form = dbs_forms.NonCapitaDBSDetailsForm(data={'dbs_number': '0000000000013'})
 
-        with self.assertRaisesMessage(ValidationError, 'Check your certificate: the number should be 12 digits long'):
-            form.clean_dbs_number()
 
-    def test_not_entering_a_dbs_number_rasies_error(self):
-        form = dbs_forms.NonCapitaDBSDetailsForm(data={'dbs_number': ''})
 
-        with self.assertRaisesMessage(ValidationError, 'Please enter your DBS certificate number'):
-            form.fields['dbs_number'].clean('')
-
-    def test_entering_a_12_digit_dbs_number_does_not_raise_error(self):
-        form = dbs_forms.NonCapitaDBSDetailsForm(data={'dbs_number': '012345678912'})
-
-        self.assertTrue(form.is_valid())
-
-    def test_not_entering_an_option_for_lived_abroad_raises_error(self):
-        form = dbs_forms.LivedAbroadForm(data={'lived_abroad': ''})
-
-        with self.assertRaisesMessage(ValidationError, 'Please say if you have lived outside of the UK in the last 5 years'):
-            form.fields['lived_abroad'].clean('')
-
-    def test_not_entering_an_option_for_on_update_raises_error(self):
-        form = dbs_forms.DBSUpdateServiceForm(data={'on_update_service': ''})
-
-        with self.assertRaisesMessage(ValidationError, 'Please say if you are on the DBS update service'):
-            form.fields['on_dbs_update_service'].clean('')
-
-    def test_not_entering_an_option_for_dbs_type_raises_error(self):
-        form = dbs_forms.DBSTypeForm(data={'is_ofsted_dbs': ''})
-
-        with self.assertRaisesMessage(ValidationError, 'Please say if you have an Ofsted DBS check'):
-            form.fields['is_ofsted_dbs'].clean('')
-
-    def test_not_entering_cautions_and_convictions_raises_error(self):
-        form = dbs_forms.CaptiaDBSDetailsForm(data={'convictions': ''})
-
-        with self.assertRaisesMessage(ValidationError, 'Please say if you have any criminal cautions or convictions'):
-            form.fields['convictions'].clean('')

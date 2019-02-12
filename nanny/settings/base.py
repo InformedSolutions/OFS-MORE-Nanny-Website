@@ -48,6 +48,8 @@ APP_IDENTITY_URL = os.environ.get('APP_IDENTITY_URL')
 
 PUBLIC_APPLICATION_URL = os.environ.get('PUBLIC_APPLICATION_URL')
 
+DBS_URL = os.environ.get('DBS_APP_URL')
+
 EXECUTING_AS_TEST = os.environ.get('EXECUTING_AS_TEST', False)
 
 TEST_NOTIFY_CONNECTION = True
