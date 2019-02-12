@@ -4,6 +4,7 @@ from govuk_forms.widgets import NumberInput, InlineRadioSelect
 
 from application.presentation.utilities import NannyForm
 from application.services.dbs import read_dbs, dbs_date_of_birth_no_match
+from application.services.db_gateways import NannyGatewayActions
 
 
 class DBSNumberFormFieldMixin(forms.Form):
@@ -35,7 +36,8 @@ class DBSNumberFormFieldMixin(forms.Form):
         application_id = self.initial['application_id']
         response = read_dbs(dbs_number)
         if response.status_code == 200:
-            if dbs_date_of_birth_no_match(response.record, application_id):
+            app_details = NannyGatewayActions().read('applicant-personal-details', {'application_id': application_id})
+            if dbs_date_of_birth_no_match(response.record, app_details.record):
                 raise forms.ValidationError(
                     'Birth date does not match the date given on the \'Your date of birth\' page: '
                     'Check your DBS certificate. The number you entered does not match your number held by DBS. ')
