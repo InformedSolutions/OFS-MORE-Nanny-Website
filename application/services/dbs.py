@@ -16,17 +16,16 @@ def read_dbs(dbs_certificate_number):
     return response
 
 
-def dbs_date_of_birth_no_match(record, application_id):
+def dbs_date_of_birth_no_match(dbs_record, applicant_record ):
     """
     :param application: the application to be tested against
     :param record: the record from the dbs api
     :return: a boolean to represent if there is no match between the applicant dob and the dbs dob
     """
-    if record is None:
+    if dbs_record is None:
         return False
 
-    app_details = NannyGatewayActions().read('applicant-personal-details', {'application_id':application_id})
-    return not _dbs_dob_matches(record, app_details.record['date_of_birth'])
+    return not _dbs_dob_matches(dbs_record, applicant_record['date_of_birth'])
 
 
 def _dbs_dob_matches(record, applicant_date_of_birth):
