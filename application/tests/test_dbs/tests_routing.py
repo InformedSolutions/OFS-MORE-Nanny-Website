@@ -10,6 +10,7 @@ from application.presentation.dbs import forms as dbs_forms, views
 from application.services.db_gateways import NannyGatewayActions
 from application.tests.test_utils import side_effect
 from application.presentation.task_list.views import TaskListView
+from django.http import HttpResponse
 
 
 @modify_settings(MIDDLEWARE={
@@ -144,18 +145,21 @@ class CriminalRecordChecksTest(TestCase):
         self.assertEqual(response.resolver_match.func.__name__, views.CapitaDBSDetailsFormView.__name__)
         self.assertTemplateUsed('capita-dbs-details.html')
 
+    def test_capita_dbs_details_no_capita_redirect(self, *args):
+        from application.presentation.dbs.forms import dbs_details as form_dbs
+        from application.presentation.dbs.views import capita_dbs_details as view_dbs
 
-    def test_capita_dbs_details_no_capita_redirect(self):
-        self.skipTest('testNotImplemented')
+        http_response = HttpResponse()
+        http_response.status_code = 404
 
-    def test_capita_dbs_details_capita_not_within_three_months_redirect(self):
-        self.skipTest('testNotImplemented')
+        with mock.patch.object(form_dbs, 'read_dbs') as mock_form_read:
+            with mock.patch.object(view_dbs, 'read_dbs') as mock_view_read:
+                mock_form_read.return_value = http_response
+                mock_view_read.return_value = http_response
 
-    def test_capita_dbs_details_capita_within_three_months_no_info_redirect(self):
-        self.skipTest('testNotImplemented')
-
-    def test_capita_dbs_details_capita_within_three_months_info_redirect(self):
-        self.skipTest('testNotImplemented')
+                response = self.client.post(reverse('dbs:Capita-DBS-Details-View') + self.url_suffix, data={'dbs_number':'123456789101'})
+                self.assertEqual(response.status_code, 302)
+                self.assertEqual(resolve(response.url).func.__name__, views.DBSTypeFormView.__name__)
 
 
     def test_can_render_post_dbs_certificate_page(self, *args):
@@ -243,6 +247,9 @@ class CriminalRecordChecksTest(TestCase):
 
         self.assertTrue(patch_mock.called)
         patch_mock.assert_called_once_with('application', params={'application_id': self.app_id, 'dbs_status': 'COMPLETED'})
+
+
+
 
 
 

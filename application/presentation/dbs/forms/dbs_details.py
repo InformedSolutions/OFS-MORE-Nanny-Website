@@ -40,7 +40,7 @@ class DBSNumberFormFieldMixin(forms.Form):
             if dbs_date_of_birth_no_match(response.record, app_details.record):
                 raise forms.ValidationError(
                     'Birth date does not match the date given on the \'Your date of birth\' page: '
-                    'Check your DBS certificate. The number you entered does not match your number held by DBS. ')
+                    'Check your DBS certificate. The number you entered does not match your number held by DBS.')
         return dbs_number
 
 
