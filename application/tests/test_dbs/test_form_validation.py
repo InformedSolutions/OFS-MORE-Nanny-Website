@@ -40,6 +40,5 @@ class CriminalRecordFormsTest(SimpleTestCase):
         with self.assertRaisesMessage(ValidationError, 'Please say if you have an Ofsted DBS check'):
             form.fields['is_ofsted_dbs'].clean('')
 
-    def test_dob_no_match_raises_error(self):
-        self.skipTest('testNotImplemented')
+
 
