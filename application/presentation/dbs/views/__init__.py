@@ -10,3 +10,6 @@ from .dbs_update_service import *
 from .get_a_dbs import *
 from .criminal_record_abroad import *
 from .email_good_conduct_certificates import *
+from .dbs_apply import *
+from .dbs_update_check import *
+from .dbs_sign_up import *
