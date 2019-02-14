@@ -44,8 +44,8 @@ mock_dbs_record = {
     'lived_abroad': 'False',
     'dbs_number': '000000000012',
     'convictions': 'False',
-    'is_ofsted_dbs': 'True',
-    'enhanced_check': 'True',
+    'is_ofsted_dbs': 'False',
+    'enhanced_check': None,
     'on_dbs_update_service': None
 }
 
