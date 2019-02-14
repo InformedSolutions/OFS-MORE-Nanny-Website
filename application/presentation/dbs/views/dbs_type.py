@@ -10,7 +10,7 @@ class DBSTypeFormView(NannyFormView):
     template_name = 'dbs-type.html'
 
     def get_success_url(self):
-        enhanced_check = self.criminal_checks_record['is_ofsted_dbs']
+        enhanced_check = self.criminal_checks_record['enhanced_check']
         on_update = self.request.POST['on_dbs_update_service']
         if not enhanced_check:
             self.success_url = 'dbs:DBS-Update-Service-Page'
@@ -28,7 +28,7 @@ class DBSTypeFormView(NannyFormView):
 
         self.criminal_checks_record = api_response.record
         if self.criminal_checks_record['is_ofsted_dbs'] != True:
-            self.criminal_checks_record['enhanced_check'] = self.request.POST['is_ofsted_dbs']
+            self.criminal_checks_record['enhanced_check'] = self.request.POST['enhanced_check']
         self.criminal_checks_record['on_dbs_update_service'] = self.request.POST['on_dbs_update_service']
 
         NannyGatewayActions().put('dbs-check', params=self.criminal_checks_record)
@@ -41,6 +41,7 @@ class DBSTypeFormView(NannyFormView):
         api_response = NannyGatewayActions().read('dbs-check', params={'application_id': application_id})
         dbs_record = api_response.record
         initial['is_ofsted_dbs'] = dbs_record['is_ofsted_dbs']
+        initial['enhanced_check'] = dbs_record['enhanced_check']
         initial['on_dbs_update_service'] = dbs_record['on_dbs_update_service']
         return initial
 
