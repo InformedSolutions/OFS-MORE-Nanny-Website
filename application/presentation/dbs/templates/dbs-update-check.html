@@ -1,0 +1,26 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Apply for a new DBS check{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+{{ form.error_summary }}
+
+<h1 class="form-title heading-large">
+    DBS Update check
+</h1>
+
+<p>We’ll check that you are on the Update Service after you submit.</p>
+
+<p>Your application will be returned if you are not signed up to it.</p>
+
+<a href="{{ link_url }}" class="button">Continue</a>
+
+<br>
+
+{% include "return-to-list.html" %}
+
+{% endblock %}

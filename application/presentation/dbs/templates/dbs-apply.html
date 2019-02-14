@@ -1,0 +1,31 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Apply for a new DBS check{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+{{ form.error_summary }}
+
+<h1 class="form-title heading-large">
+    Apply for new DBS check
+</h1>
+
+<p>You do not have an enhanced home-based check.</p>
+
+<p>You can finish this section after you apply for a new check using the
+    <a href="http://ofsteddbsapplication.co.uk/step-one.aspx" target="_blank">
+        Ofsted DBS application website
+    </a>
+    .
+</p>
+
+<a href="{{ link_url }}" class="button">Continue</a>
+
+<br>
+
+{% include "return-to-list.html" %}
+
+{% endblock %}
