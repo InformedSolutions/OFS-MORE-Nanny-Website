@@ -120,27 +120,30 @@ class CriminalRecordChecksTest(TestCase):
         self.assertContains(response, '<a href="%s" class="button">Continue</a>' % expected_link, html=True)
 
     def test_can_render_dbs_type_page(self, *args):
-        response = self.client.get(reverse('dbs:DBS-Type-View') + self.url_suffix)
+        response = self.client.get(reverse('dbs:DBS-Type-View') + self.url_suffix, data={'is_ofsted_dbs': True})
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.resolver_match.func.__name__, views.DBSTypeFormView.__name__)
         self.assertTemplateUsed('dbs-type.html')
 
-    def test_capita_dbs_to_dbs_type_page_redirects_to_capita_dbs_details_page(self, *args):
-        response = self.client.post(reverse('dbs:DBS-Type-View') + self.url_suffix, data={'is_ofsted_dbs': True})
+    def test_dbs_type_no_redirect_if_no_data(self, *args):
+        response = self.client.post(reverse('dbs:DBS-Type-View') + self.url_suffix, data={'on_dbs_update_service': ''})
 
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(resolve(response.url).func.__name__, views.CapitaDBSDetailsFormView.__name__)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.resolver_match.func.__name__, views.DBSTypeFormView.__name__)
+        self.assertTemplateUsed('dbs-type.html')
 
-    def test_non_capita_dbs_to_dbs_type_page_redirects_to_dbs_update_service_page(self, *args):
-        response = self.client.post(reverse('dbs:DBS-Type-View') + self.url_suffix, data={'is_ofsted_dbs': False})
+    def test_dbs_type_capita_redirect(self, *args):
+        response = self.client.post(reverse('dbs:DBS-Type-View') + self.url_suffix, data={'on_dbs_update_service': ''})
 
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(resolve(response.url).func.__name__, views.DBSUpdateServiceFormView.__name__)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.resolver_match.func.__name__, views.DBSTypeFormView.__name__)
+        self.assertTemplateUsed('dbs-type.html')
+
 
     def test_can_render_capita_dbs_details_page(self, *args):
         response = self.client.get(reverse('dbs:Capita-DBS-Details-View') + self.url_suffix)
-
+        
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.resolver_match.func.__name__, views.CapitaDBSDetailsFormView.__name__)
         self.assertTemplateUsed('capita-dbs-details.html')
@@ -247,6 +250,8 @@ class CriminalRecordChecksTest(TestCase):
 
         self.assertTrue(patch_mock.called)
         patch_mock.assert_called_once_with('application', params={'application_id': self.app_id, 'dbs_status': 'COMPLETED'})
+        
+
 
     def test_get_request_to_apply_page_sets_task_status_to_started(self, *args):
         self.client.get(reverse('dbs:DBS-Apply-View') + self.url_suffix)
