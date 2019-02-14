@@ -4,7 +4,7 @@ from application.presentation.utilities import app_id_finder
 from ..forms.dbs_details import CaptiaDBSDetailsForm
 from application.services.dbs import read_dbs, dbs_within_three_months
 
-
+NO_ADDITIONAL_CERTIFICATE_INFORMATION = ['Certificate contains no information']
 
 class CapitaDBSDetailsFormView(NannyFormView):
     template_name = 'capita-dbs-details.html'
@@ -19,17 +19,19 @@ class CapitaDBSDetailsFormView(NannyFormView):
         if response.status_code == 200:
             dbs_record = getattr(read_dbs(dbs_number), 'record', None)
             if dbs_record is not None:
+                info = dbs_record['certificate_information']
                 if dbs_within_three_months(dbs_record):
-                    if (dbs_record['certificate_information'] == None) or (dbs_record['certificate_information'] == ''):
+                    if not info in NO_ADDITIONAL_CERTIFICATE_INFORMATION:
                         self.success_url = 'dbs:Criminal-Record-Check-Summary-View'
                     else:
                         self.success_url = 'dbs:Post-DBS-Certificate'
-                    criminal_checks_record['dbs_within_three_months'] = True
+                    criminal_checks_record['within_three_months'] = True
                 else:
                     self.success_url = 'dbs:DBS-Type-View'
-                    criminal_checks_record['dbs_within_three_months'] = False
+                    criminal_checks_record['within_three_months'] = False
                 criminal_checks_record['dbs_number'] = dbs_number
                 criminal_checks_record['is_ofsted_dbs'] = True
+                criminal_checks_record['certificate_information'] = info
         else:
             self.success_url = 'dbs:DBS-Type-View'
             criminal_checks_record['dbs_number'] = dbs_number
