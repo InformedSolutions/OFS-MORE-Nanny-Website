@@ -119,28 +119,6 @@ class CriminalRecordChecksTest(TestCase):
 
         self.assertContains(response, '<a href="%s" class="button">Continue</a>' % expected_link, html=True)
 
-    def test_can_render_dbs_type_page(self, *args):
-        response = self.client.get(reverse('dbs:DBS-Type-View') + self.url_suffix, data={'is_ofsted_dbs': True})
-
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.resolver_match.func.__name__, views.DBSTypeFormView.__name__)
-        self.assertTemplateUsed('dbs-type.html')
-
-    def test_dbs_type_no_redirect_if_no_data(self, *args):
-        response = self.client.post(reverse('dbs:DBS-Type-View') + self.url_suffix, data={'on_dbs_update_service': ''})
-
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.resolver_match.func.__name__, views.DBSTypeFormView.__name__)
-        self.assertTemplateUsed('dbs-type.html')
-
-    def test_dbs_type_capita_redirect(self, *args):
-        response = self.client.post(reverse('dbs:DBS-Type-View') + self.url_suffix, data={'on_dbs_update_service': ''})
-
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.resolver_match.func.__name__, views.DBSTypeFormView.__name__)
-        self.assertTemplateUsed('dbs-type.html')
-
-
     def test_can_render_capita_dbs_details_page(self, *args):
         response = self.client.get(reverse('dbs:Capita-DBS-Details-View') + self.url_suffix)
         
@@ -250,22 +228,62 @@ class CriminalRecordChecksTest(TestCase):
 
         self.assertTrue(patch_mock.called)
         patch_mock.assert_called_once_with('application', params={'application_id': self.app_id, 'dbs_status': 'COMPLETED'})
-        
-
 
     def test_get_request_to_apply_page_sets_task_status_to_started(self, *args):
         self.client.get(reverse('dbs:DBS-Apply-View') + self.url_suffix)
         patch_mock = args[2]
-
+        print(patch_mock.called)
         self.assertTrue(patch_mock.called)
         patch_mock.assert_called_once_with('application', params={'application_id': self.app_id, 'dbs_status': 'IN_PROGRESS'})
 
     def test_get_request_to_sign_up_page_sets_task_status_to_started(self, *args):
         self.client.get(reverse('dbs:DBS-Sign-Up-View') + self.url_suffix)
         patch_mock = args[2]
+        print(patch_mock.called)
 
         self.assertTrue(patch_mock.called)
         patch_mock.assert_called_once_with('application', params={'application_id': self.app_id, 'dbs_status': 'IN_PROGRESS'})
+
+    def test_can_render_dbs_type_page(self, *args):
+        response = self.client.get(reverse('dbs:DBS-Type-View') + self.url_suffix)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.resolver_match.func.__name__, views.DBSTypeFormView.__name__)
+        self.assertTemplateUsed('dbs-type.html')
+
+    def test_dbs_type_no_redirect_if_no_data(self, *args):
+        response = self.client.post(reverse('dbs:DBS-Type-View') + self.url_suffix, data={'enhanced_check':'', 'on_dbs_update_service': ''})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.resolver_match.func.__name__, views.DBSTypeFormView.__name__)
+        self.assertTemplateUsed('dbs-type.html')
+
+    def test_dbs_type_no_redirect_if_enhanced_yes_data(self, *args):
+        response = self.client.post(reverse('dbs:DBS-Type-View') + self.url_suffix, data={'enhanced_check': True})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.resolver_match.func.__name__, views.DBSTypeFormView.__name__)
+        self.assertTemplateUsed('dbs-type.html')
+
+    def test_dbs_type_no_capita_yes_yes_redirect(self, *args):
+        response = self.client.post(reverse('dbs:DBS-Type-View') + self.url_suffix,
+                                    data={'enhanced_check': True, 'on_dbs_update_service': True})
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(resolve(response.url).func.__name__, views.DBSUpdateCheckView.__name__)
+        self.assertTemplateUsed('dbs-update-check.html')
+
+    def test_dbs_type_no_capita_yes_no_redirect(self, *args):
+        response = self.client.post(reverse('dbs:DBS-Type-View') + self.url_suffix,
+                                    data={'enhanced_check': True, 'on_dbs_update_service': False})
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(resolve(response.url).func.__name__, views.DBSSignUpView.__name__)
+        self.assertTemplateUsed('dbs-sign-up.html')
+        
+    
+
+
 
 
 

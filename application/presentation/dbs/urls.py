@@ -18,7 +18,7 @@ urlpatterns = [
         name='Email-Good-Conduct-Certificates-View'),
     url(r'^apply-new/', DBSApplyView.as_view(),
         name='DBS-Apply-View'),
-    url(r'^sign-up-update/', DBSUpdateCheckView.as_view(),
+    url(r'^DBS-update-check/', DBSUpdateCheckView.as_view(),
         name='DBS-Update-Check-View'),
     url(r'^sign-up-update/', DBSSignUpView.as_view(),
         name='DBS-Sign-Up-View'),

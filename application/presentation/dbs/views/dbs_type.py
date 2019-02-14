@@ -11,15 +11,15 @@ class DBSTypeFormView(NannyFormView):
 
     def get_success_url(self):
         enhanced_check = self.criminal_checks_record['enhanced_check']
-        on_update = self.request.POST['on_dbs_update_service']
-        if not enhanced_check:
-            self.success_url = 'dbs:DBS-Update-Service-Page'
-        elif enhanced_check and (on_update == 'True'):
-            self.success_url = 'dbs:DBS-Update-Service-Page'
-        elif enhanced_check and (on_update == 'False'):
-            self.success_url = 'dbs:DBS-Update-Service-Page'
+        on_update = self.criminal_checks_record['on_dbs_update_service']
+        if enhanced_check == 'False':
+            self.success_url = 'dbs:DBS-Apply-View'
+        elif on_update == 'True':
+            self.success_url = 'dbs:DBS-Update-Check-View'
+        elif on_update == 'False':
+            self.success_url = 'dbs:DBS-Sign-Up-View'
         else:
-            raise ValueError('The field "is_ofsted_dbs" is not equal to one of "True" or "False".')
+            raise ValueError('The field "enhanced_check" is not equal to one of "True" or "False".')
 
         return super(DBSTypeFormView, self).get_success_url()
 
@@ -29,7 +29,10 @@ class DBSTypeFormView(NannyFormView):
         self.criminal_checks_record = api_response.record
         if self.criminal_checks_record['is_ofsted_dbs'] != True:
             self.criminal_checks_record['enhanced_check'] = self.request.POST['enhanced_check']
-        self.criminal_checks_record['on_dbs_update_service'] = self.request.POST['on_dbs_update_service']
+            if self.criminal_checks_record['enhanced_check'] == 'True':
+                self.criminal_checks_record['on_dbs_update_service'] = self.request.POST['on_dbs_update_service']
+        else:
+            self.criminal_checks_record['on_dbs_update_service'] = self.request.POST['on_dbs_update_service']
 
         NannyGatewayActions().put('dbs-check', params=self.criminal_checks_record)
 
