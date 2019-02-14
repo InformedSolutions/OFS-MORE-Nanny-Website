@@ -1,0 +1,36 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Sign up to the Update Service{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+{{ form.error_summary }}
+
+<h1 class="form-title heading-large">
+    Sign up to DBS update
+</h1>
+
+<p>You need to sign up to the
+    <a href="https://secure.crbonline.gov.uk/crsc/apply?execution=e1s1" target="_blank">
+        DBS update service
+    </a>
+    .
+</p>
+
+<p>If you cannot do that, you must apply for a new DBS through the
+    <a href="http://ofsteddbsapplication.co.uk/step-one.aspx" target="_blank">
+        Ofsted DBS application website
+    </a>
+    .
+</p>
+
+<a href="{{ link_url }}" class="button">Continue</a>
+
+<br>
+
+{% include "return-to-list.html" %}
+
+{% endblock %}
