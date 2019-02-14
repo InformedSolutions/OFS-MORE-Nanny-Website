@@ -7,7 +7,7 @@ from .post_dbs import *
 from .criminal_record_checks_summary import *
 from .non_capita_dbs_details import *
 from .dbs_update_service import *
-from .get_a_dbs import *
+from .dbs_apply import *
 from .criminal_record_abroad import *
 from .email_good_conduct_certificates import *
 from .dbs_apply import *

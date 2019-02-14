@@ -173,35 +173,6 @@ class CriminalRecordChecksTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(resolve(response.url).func.__name__, views.NonCapitaDBSDetailsFormView.__name__)
 
-    def test_no_to_dbs_update_page_redirects_to_get_a_dbs_page(self, *args):
-        response = self.client.post(reverse('dbs:DBS-Update-Service-Page') + self.url_suffix,
-                                    data={
-                                        'on_dbs_update_service': False
-                                    })
-
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(resolve(response.url).func.__name__, views.GetDBSView.__name__)
-
-    def test_can_render_get_a_dbs_page(self, *args):
-        response = self.client.get(reverse('dbs:Get-A-DBS-View') + self.url_suffix)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.resolver_match.func.__name__, views.GetDBSView.__name__)
-        self.assertTemplateUsed('get-a-dbs.html')
-
-    def test_post_request_to_get_a_dbs_page_redirects_to_task_list(self, *args):
-        response = self.client.post(reverse('dbs:Get-A-DBS-View') + self.url_suffix)
-
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(resolve(response.url).func.__name__, TaskListView.__name__)
-
-    def test_post_request_to_get_a_dbs_page_sets_task_status_to_in_progress(self, *args):
-        self.client.post(reverse('dbs:Get-A-DBS-View') + self.url_suffix)
-        patch_mock = args[2]
-
-        self.assertTrue(patch_mock.called)
-        patch_mock.assert_called_once_with('application', params={'application_id': self.app_id, 'dbs_status': 'IN_PROGRESS'})
-
     def test_can_render_non_captita_dbs_details_page(self, *args):
         response = self.client.get(reverse('dbs:Non-Capita-DBS-Details-View') + self.url_suffix)
 
@@ -280,8 +251,24 @@ class CriminalRecordChecksTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(resolve(response.url).func.__name__, views.DBSSignUpView.__name__)
         self.assertTemplateUsed('dbs-sign-up.html')
-        
-    
+
+    def test_dbs_apply_redirect_to_task_list(self, *args):
+        response = self.client.post(reverse('dbs:DBS-Apply-View') + self.url_suffix)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(resolve(response.url).func.__name__, views.TaskList.__name__)
+
+    def test_dbs_sign_up_redirect_to_task_list(self, *args):
+        response = self.client.post(reverse('dbs:DBS-Sign-Up-View') + self.url_suffix)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(resolve(response.url).func.__name__, views.TaskList.__name__)
+
+    def test_dbs_sign_up_redirect_to_task_list(self, *args):
+        response = self.client.post(reverse('dbs:DBS-Update-Check-View') + self.url_suffix)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(resolve(response.url).func.__name__, views.CriminalRecordCheckSummaryView.__name__)
 
 
 

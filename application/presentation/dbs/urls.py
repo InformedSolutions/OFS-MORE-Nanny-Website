@@ -12,7 +12,6 @@ urlpatterns = [
     url(r'^DBS-check-type/', DBSTypeFormView.as_view(), name='DBS-Type-View'),
     url(r'^DBS-details/', NonCapitaDBSDetailsFormView.as_view(), name='Non-Capita-DBS-Details-View'),
     url(r'^update/', DBSUpdateServiceFormView.as_view(), name='DBS-Update-Service-Page'),
-    url(r'^Ofsted-check/', GetDBSView.as_view(), name='Get-A-DBS-View'),
     url(r'^abroad/', CriminalRecordsFromAbroadView.as_view(), name='Criminal-Records-Abroad-View'),
     url(r'^email-certificates/', EmailGoodConductCertificatesView.as_view(),
         name='Email-Good-Conduct-Certificates-View'),
