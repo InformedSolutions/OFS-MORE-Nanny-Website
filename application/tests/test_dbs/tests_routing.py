@@ -248,6 +248,22 @@ class CriminalRecordChecksTest(TestCase):
         self.assertTrue(patch_mock.called)
         patch_mock.assert_called_once_with('application', params={'application_id': self.app_id, 'dbs_status': 'COMPLETED'})
 
+    def test_get_request_to_apply_page_sets_task_status_to_started(self, *args):
+        self.client.get(reverse('dbs:DBS-Apply-View') + self.url_suffix)
+        patch_mock = args[2]
+
+        self.assertTrue(patch_mock.called)
+        patch_mock.assert_called_once_with('application', params={'application_id': self.app_id, 'dbs_status': 'IN_PROGRESS'})
+
+    def test_get_request_to_sign_up_page_sets_task_status_to_started(self, *args):
+        self.client.get(reverse('dbs:DBS-Sign-Up-View') + self.url_suffix)
+        patch_mock = args[2]
+
+        self.assertTrue(patch_mock.called)
+        patch_mock.assert_called_once_with('application', params={'application_id': self.app_id, 'dbs_status': 'IN_PROGRESS'})
+
+
+
 
 
 
