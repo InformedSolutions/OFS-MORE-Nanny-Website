@@ -22,7 +22,10 @@
     .
 </p>
 
-<a href="{{ link_url }}" class="button">Continue</a>
+<form method="post">
+    {% csrf_token %}
+    <input type="submit" class="button" value="Continue" alt="continue" id="id_continue">
+</form>
 
 <br><br>
 

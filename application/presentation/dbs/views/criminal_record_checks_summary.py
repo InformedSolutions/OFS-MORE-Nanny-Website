@@ -33,23 +33,23 @@ class CriminalRecordChecksSummaryView(NannyTemplateView):
         application_id = app_id_finder(self.request)
         dbs_record = NannyGatewayActions().read('dbs-check', params={'application_id': application_id}).record
 
-        if dbs_record['is_ofsted_dbs']:
-            dbs_page_link = 'dbs:Capita-DBS-Details-View'
-        elif not dbs_record['is_ofsted_dbs']:
-            dbs_page_link = 'dbs:Non-Capita-DBS-Details-View'
-        else:
-            raise ValueError('The "is_ofsted_dbs" value does not equal either True or False.')
+        dbs_page_link = 'dbs:Capita-DBS-Details-View'
 
-        lived_abroad_row = Row('lived_abroad', 'Have you lived outside of the UK in the last 5 years?', dbs_record['lived_abroad'], 'dbs:Lived-Abroad-View', 'answer on lived abroad')
-        ofsted_dbs = Row('is_ofsted_dbs', 'Do you have an Ofsted DBS Check?', dbs_record['is_ofsted_dbs'], 'dbs:DBS-Type-View', "answer to having an Ofsted DBS Check")
-        dbs_update_service_row = Row('on_dbs_update_service', 'Are you on the DBS update service?', dbs_record['on_dbs_update_service'], 'dbs:DBS-Update-Service-Page', "answer to being on the DBS update service")
+
+        lived_abroad_row = Row('lived abroad', 'Have you lived outside of the UK in the last 5 years?', dbs_record['lived_abroad'], 'dbs:Lived-Abroad-View', 'answer on lived abroad')
         dbs_number_row = Row('dbs_number', 'DBS certificate number', dbs_record['dbs_number'], dbs_page_link, 'DBS certificate number')
-        convictions_row = Row('convictions', 'Do you have any criminal cautions or convictions?', dbs_record['convictions'], 'dbs:Capita-DBS-Details-View', 'answer on criminal cautions or convictions')
-
+        dbs_enhanced_check_row = Row('enhanced_check', 'Is it an enhanced DBS check for home-based childcare?',
+                                     dbs_record['enhanced_check'], 'dbs:DBS-Type-View', 'answer to DBS being enhanced and home-based')
+        dbs_update_service_row = Row('on_dbs_update_service', 'Are you on the DBS update service?',
+                                     dbs_record['on_dbs_update_service'], 'dbs:DBS-Type-View',
+                                     "answer to DBS being on update service")
         if dbs_record['is_ofsted_dbs']:
-            row_list = [lived_abroad_row, ofsted_dbs, dbs_number_row, convictions_row]
+            if dbs_record['within_three_months']:
+                row_list = [lived_abroad_row, dbs_number_row]
+            else:
+                row_list = [lived_abroad_row, dbs_number_row, dbs_update_service_row]
         elif not dbs_record['is_ofsted_dbs']:
-            row_list = [lived_abroad_row, ofsted_dbs, dbs_update_service_row, dbs_number_row]
+            row_list = [lived_abroad_row, dbs_number_row, dbs_enhanced_check_row, dbs_update_service_row,]
 
         dbs_summary_table = Table(application_id)
         dbs_summary_table.row_list = row_list
