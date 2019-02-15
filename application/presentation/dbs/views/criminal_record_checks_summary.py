@@ -39,10 +39,10 @@ class CriminalRecordChecksSummaryView(NannyTemplateView):
         lived_abroad_row = Row('lived abroad', 'Have you lived outside of the UK in the last 5 years?', dbs_record['lived_abroad'], 'dbs:Lived-Abroad-View', 'answer on lived abroad')
         dbs_number_row = Row('dbs_number', 'DBS certificate number', dbs_record['dbs_number'], dbs_page_link, 'DBS certificate number')
         dbs_enhanced_check_row = Row('enhanced_check', 'Is it an enhanced DBS check for home-based childcare?',
-                                     dbs_record['enhanced_check'], 'dbs:DBS-Type-View', 'answer to DBS being enhanced and home-based')
+                                     dbs_record['enhanced_check'], 'dbs:DBS-Type-View', 'Change answer to DBS being enhanced and home-based')
         dbs_update_service_row = Row('on_dbs_update_service', 'Are you on the DBS update service?',
                                      dbs_record['on_dbs_update_service'], 'dbs:DBS-Type-View',
-                                     "answer to DBS being on update service")
+                                     "Change answer to DBS being on update service")
         if dbs_record['is_ofsted_dbs']:
             if dbs_record['within_three_months']:
                 row_list = [lived_abroad_row, dbs_number_row]
