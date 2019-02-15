@@ -200,15 +200,15 @@ class CriminalRecordChecksTest(TestCase):
         self.assertTrue(patch_mock.called)
         patch_mock.assert_called_once_with('application', params={'application_id': self.app_id, 'dbs_status': 'COMPLETED'})
 
-    def test_get_request_to_apply_page_sets_task_status_to_started(self, *args):
-        self.client.get(reverse('dbs:DBS-Apply-View') + self.url_suffix)
+    def test_post_request_to_apply_page_sets_task_status_to_started(self, *args):
+        self.client.post(reverse('dbs:DBS-Apply-View') + self.url_suffix)
         patch_mock = args[2]
         print(patch_mock.called)
         self.assertTrue(patch_mock.called)
         patch_mock.assert_called_once_with('application', params={'application_id': self.app_id, 'dbs_status': 'IN_PROGRESS'})
 
-    def test_get_request_to_sign_up_page_sets_task_status_to_started(self, *args):
-        self.client.get(reverse('dbs:DBS-Sign-Up-View') + self.url_suffix)
+    def test_post_request_to_sign_up_page_sets_task_status_to_started(self, *args):
+        self.client.post(reverse('dbs:DBS-Sign-Up-View') + self.url_suffix)
         patch_mock = args[2]
         print(patch_mock.called)
 
@@ -256,19 +256,20 @@ class CriminalRecordChecksTest(TestCase):
         response = self.client.post(reverse('dbs:DBS-Apply-View') + self.url_suffix)
 
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(resolve(response.url).func.__name__, views.TaskList.__name__)
+        self.assertEqual(resolve(response.url).func.__name__, TaskListView.__name__)
 
     def test_dbs_sign_up_redirect_to_task_list(self, *args):
         response = self.client.post(reverse('dbs:DBS-Sign-Up-View') + self.url_suffix)
 
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(resolve(response.url).func.__name__, views.TaskList.__name__)
+        self.assertEqual(resolve(response.url).func.__name__, TaskListView.__name__)
 
-    def test_dbs_sign_up_redirect_to_task_list(self, *args):
-        response = self.client.post(reverse('dbs:DBS-Update-Check-View') + self.url_suffix)
+    def test_dbs_update_check_redirect_post_dbs(self, *args):
+        response = self.client.get(reverse('dbs:DBS-Update-Check-View') + self.url_suffix)
 
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(resolve(response.url).func.__name__, views.CriminalRecordCheckSummaryView.__name__)
+        expected_link = reverse('dbs:Post-DBS-Certificate') + self.url_suffix
+
+        self.assertContains(response, '<a href="%s" class="button">Continue</a>' % expected_link, html=True)
 
 
 

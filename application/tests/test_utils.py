@@ -45,6 +45,7 @@ mock_dbs_record = {
     'dbs_number': '000000000012',
     'convictions': 'False',
     'is_ofsted_dbs': 'False',
+    'within_three_months': None,
     'enhanced_check': None,
     'on_dbs_update_service': None
 }
