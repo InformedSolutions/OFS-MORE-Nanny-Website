@@ -118,7 +118,7 @@ def create_formatted_payment_reference(application_reference):
     :return: a formatted payment reference
     """
     logger.debug('Generating payment reference for application with reference: ' + application_reference)
-    prefix = 'MORE'
+    prefix = settings.PAYMENT_REFERENCE_PREFIX
     timestamp = time.strftime("%Y%m%d%H%M%S")
     formatted_payment_reference = str(prefix + ':' + application_reference + ':' + timestamp)
     logger.debug('Generated payment reference: ' + formatted_payment_reference)

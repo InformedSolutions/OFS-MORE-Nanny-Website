@@ -404,8 +404,8 @@ def __build_message_body(application, amount):
     :return: an SQS request that can be consumed up by the Integration Adapter component
     """
 
-    application_reference = application.application_reference
-    applicant_personal_details = NannyGatewayActions().read('applicant-personal-details', params={'application_id': application.application_id}).record
+    application_reference = application['application_reference']
+    applicant_personal_details = NannyGatewayActions().read('applicant-personal-details', params={'application_id': application['application_id']}).record
 
     if len(applicant_personal_details['middle_names']):
         applicant_name = applicant_personal_details['last_name'] + ',' + applicant_personal_details['first_name'] \
@@ -413,7 +413,7 @@ def __build_message_body(application, amount):
     else:
         applicant_name = applicant_personal_details['last_name'] + ',' + applicant_personal_details['first_name']
 
-    payment_record = payment_service.get_payment_record(application.application_id)
+    payment_record = payment_service.get_payment_record(application['application_id'])
     payment_reference = payment_record['payment_reference']
 
     return {

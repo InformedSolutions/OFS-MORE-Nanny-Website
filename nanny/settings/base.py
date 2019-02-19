@@ -37,6 +37,12 @@ PAYMENT_STATUS_QUERY_INTERVAL_IN_SECONDS = os.environ.get('PAYMENT_STATUS_QUERY_
 
 PAYMENT_HTTP_REQUEST_TIMEOUT = 60
 
+# The prefix added before a URN for finance system reconciliation purposes
+PAYMENT_URN_PREFIX = 'EY'
+
+# The prefix used to distinguish Worldpay payment entries for MORE
+PAYMENT_REFERENCE_PREFIX = 'MO'
+
 SQS_QUEUE_PREFIX = os.environ.get('SQS_QUEUE_PREFIX', 'DEV')
 
 PAYMENT_NOTIFICATIONS_QUEUE_NAME = SQS_QUEUE_PREFIX + '_PAYMENT_NOTIFICATIONS'
