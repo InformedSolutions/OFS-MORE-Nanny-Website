@@ -22,9 +22,9 @@ class CapitaDBSDetailsFormView(NannyFormView):
                 info = dbs_record['certificate_information']
                 if dbs_within_three_months(dbs_record):
                     if not info in NO_ADDITIONAL_CERTIFICATE_INFORMATION:
-                        self.success_url = 'dbs:Criminal-Record-Check-Summary-View'
-                    else:
                         self.success_url = 'dbs:Post-DBS-Certificate'
+                    else:
+                        self.success_url = 'dbs:Criminal-Record-Check-Summary-View'
                     criminal_checks_record['within_three_months'] = True
                 else:
                     self.success_url = 'dbs:DBS-Type-View'
