@@ -26,9 +26,9 @@ mock_nanny_application = {
 }
 
 mock_personal_details_record = {
-    'first_name': 'The Dark Lord',
+    'first_name': 'John',
     'middle_names': '',
-    'last_name': 'Selenium',
+    'last_name': 'Smith',
     'date_of_birth': '2000-01-01',
     'lived_abroad': True,
     'your_children': False,
@@ -51,7 +51,7 @@ mock_dbs_record = {
 mock_home_address = {
     'street_line1': 'Test',
     'street_line2': None,
-    'town': 'Middle Earth',
+    'town': 'Altrincham',
     'county': None,
     'postcode': 'WA14 4PA',
     'childcare_address': False,
