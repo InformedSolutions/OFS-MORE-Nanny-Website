@@ -1,5 +1,4 @@
 import datetime
-import json
 import logging
 import re
 import requests
@@ -18,7 +17,7 @@ from ....services.db_gateways import IdentityGatewayActions, NannyGatewayActions
 from ....services import payment_service
 
 logger = logging.getLogger()
-sqs_handler = SQSHandler(os.environ.get('SQS_QUEUE_PREFIX') + '_NA_APPLICATION_QUEUE')
+sqs_handler = SQSHandler(settings.PAYMENT_NOTIFICATIONS_QUEUE_NAME)
 
 
 @never_cache
@@ -86,6 +85,8 @@ def card_payment_post_handler(request):
     application_id = request.POST["id"]
     form = PaymentDetailsForm(request.POST)
 
+    amount = 10300
+
     # If form is erroneous due to an invalid form, simply return form to user as an early return
     if not form.is_valid():
         variables = {
@@ -120,7 +121,7 @@ def card_payment_post_handler(request):
         expiry_year = '20' + request.POST["expiry_date_1"]
 
         # Invoke Payment Gateway API
-        create_payment_response = payment_service.make_payment(10300, cardholders_name, card_number, card_security_code,
+        create_payment_response = payment_service.make_payment(amount, cardholders_name, card_number, card_security_code,
                                                                expiry_month, expiry_year, 'GBP', payment_reference,
                                                                'Ofsted Fees')
 
@@ -135,7 +136,7 @@ def card_payment_post_handler(request):
 
             if parsed_payment_response.get('lastEvent') == "AUTHORISED":
                 # If payment response is immediately authorised, yield success page
-                return __handle_authorised_payment(application_id)
+                return __handle_authorised_payment(application_id, amount)
 
             if parsed_payment_response.get('lastEvent') == "REFUSED":
                 # If payment has been marked as a REFUSED by Worldpay then payment has
@@ -152,10 +153,10 @@ def card_payment_post_handler(request):
 
     # If above logic gates have not been triggered, this indicates a form re-submission whilst processing
     # was taking place
-    return resubmission_handler(request, payment_reference, form, application_id)
+    return resubmission_handler(request, payment_reference, form, application_id, amount)
 
 
-def resubmission_handler(request, payment_reference, form, application):
+def resubmission_handler(request, payment_reference, form, application, amount):
     """
     Handling logic for managing page re-submissions to avoid duplicate payments being created
     :param request: Inbound HTTP post request
@@ -181,7 +182,7 @@ def resubmission_handler(request, payment_reference, form, application):
     if parsed_payment_response.get('lastEvent') == "AUTHORISED":
         # If payment has been marked as a AUTHORISED by Worldpay then payment has been captured
         # meaning user can be safely progressed to confirmation page
-        return __handle_authorised_payment(application)
+        return __handle_authorised_payment(application, amount)
     if parsed_payment_response.get('lastEvent') == "REFUSED":
         # If payment has been marked as a REFUSED by Worldpay then payment has
         # been attempted but was not successful in which case a new order should be attempted.
@@ -279,7 +280,7 @@ def __create_payment_record(application, application_reference):
         return payment_record['payment_reference']
 
 
-def __handle_authorised_payment(application_id):
+def __handle_authorised_payment(application_id, amount):
     """
     Private helper function for managing a rejected payment
     :param application: application associated with the payment attempting to be made
@@ -299,8 +300,10 @@ def __handle_authorised_payment(application_id):
     # Dispatch payment confirmation email to user
     __send_payment_confirmation_email(application_record)
 
-    export = create_full_application_export(application_id)
-    sqs_handler.send_message(export)
+    # Send ad-hoc payment to NOO
+    app_cost_float = float(amount / 100)
+    msg_body = __build_message_body(application_record, format(app_cost_float, '.4f'))
+    sqs_handler.send_message(msg_body)
 
     application_reference = application_record['application_reference']
 
@@ -392,6 +395,36 @@ def __redirect_to_payment_confirmation(application_reference, application_id):
     )
 
 
+def __build_message_body(application, amount):
+    """
+    Helper method to build an SQS request to be picked up by the Integration Adapter component
+    for relay to NOO
+    :param application: the application for which a payment request is to be generated
+    :param amount: the amount that the payment was for
+    :return: an SQS request that can be consumed up by the Integration Adapter component
+    """
+
+    application_reference = application.application_reference
+    applicant_personal_details = NannyGatewayActions().read('applicant-personal-details', params={'application_id': application.application_id}).record
+
+    if len(applicant_personal_details['middle_names']):
+        applicant_name = applicant_personal_details['last_name'] + ',' + applicant_personal_details['first_name'] \
+                         + " " + applicant_personal_details['middle_names']
+    else:
+        applicant_name = applicant_personal_details['last_name'] + ',' + applicant_personal_details['first_name']
+
+    payment_record = payment_service.get_payment_record(application.application_id)
+    payment_reference = payment_record['payment_reference']
+
+    return {
+        "payment_action": "SC1",
+        "payment_ref": payment_reference,
+        "payment_amount": amount,
+        "urn": str(settings.PAYMENT_URN_PREFIX) + application_reference,
+        "setting_name": applicant_name
+    }
+
+
 def payment_confirmation(request):
     """
     Method returning the template for the Payment confirmation page (for a given application)
@@ -415,52 +448,3 @@ def payment_confirmation(request):
     NannyGatewayActions().put('application', params=local_app)
 
     return render(request, 'payment-confirmation.html', variables)
-
-
-def create_full_application_export(application_id):
-    """
-    Method for exporting a full application in a dictionary format
-    :param application_id: the identifier of the application to be exported
-    :return: a dictionary export of an application
-    """
-
-    export = {}
-
-    application = NannyGatewayActions().read('application', params={'application_id': application_id}).record
-
-    export['application'] = json.dumps(application)
-
-    try:
-        childcare_addresses = NannyGatewayActions().list('childcare-address',
-                                                         params={'application_id': application_id}).record
-        export['childcare_addresses'] = json.dumps(childcare_addresses)
-    except AttributeError:
-        pass
-
-    applicant_personal_details = NannyGatewayActions().read('applicant-personal-details',
-                                                            params={'application_id': application_id}).record
-    export['applicant_personal_details'] = json.dumps(applicant_personal_details)
-
-    applicant_home_address = NannyGatewayActions().read('applicant-home-address',
-                                                        params={'application_id': application_id}).record
-    export['applicant_home_address'] = json.dumps(applicant_home_address)
-
-    childcare_training = NannyGatewayActions().read('childcare-training',
-                                                    params={'application_id': application_id}).record
-    export['childcare_training'] = json.dumps(childcare_training)
-
-    criminal_record_check = NannyGatewayActions().read('dbs-check',
-                                                       params={'application_id': application_id}).record
-    export['criminal_record_check'] = json.dumps(criminal_record_check)
-
-    first_aid_training = NannyGatewayActions().read('first-aid', params={'application_id': application_id}).record
-    export['first_aid_training'] = json.dumps(first_aid_training)
-
-    insurance_declaration = NannyGatewayActions().read('insurance-cover',
-                                                       params={'application_id': application_id}).record
-    export['insurance_declaration'] = json.dumps(insurance_declaration)
-
-    user_details = IdentityGatewayActions().read('user', params={'application_id': application_id}).record
-    export['user_details'] = json.dumps(user_details)
-
-    return export
