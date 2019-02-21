@@ -7,10 +7,9 @@ from django.urls import resolve
 from application.presentation.personal_details.views import *
 from application.services.db_gateways import IdentityGatewayActions, NannyGatewayActions
 from application.tests.test_utils import side_effect
-from .test_utils import PersonalDetailsTests, authenticate
+from .test_utils import PersonalDetailsTests
 
 
-@mock.patch.object(IdentityGatewayActions, "read", authenticate)
 class AddressSummaryTests(PersonalDetailsTests):
 
     def test_address_summary_url_resolves_to_page(self):
@@ -44,7 +43,6 @@ class AddressSummaryTests(PersonalDetailsTests):
             self.assertTrue('/lived-abroad/' in response.url)
 
 
-@mock.patch.object(IdentityGatewayActions, "read", authenticate)
 class CertificateTests(PersonalDetailsTests):
 
     def test_conduct_certificates_url_resolves_to_page(self):
@@ -76,7 +74,6 @@ class CertificateTests(PersonalDetailsTests):
         self.assertEqual(response.status_code, 200)
 
 
-@mock.patch.object(IdentityGatewayActions, "read", authenticate)
 class DateOfBirthTests(PersonalDetailsTests):
 
     def test_dob_url_resolves_to_page(self):
@@ -152,7 +149,6 @@ class DateOfBirthTests(PersonalDetailsTests):
             self.assertTrue(type(response) == TemplateResponse)
 
 
-@mock.patch.object(IdentityGatewayActions, "read", authenticate)
 class LivedAbroadTests(PersonalDetailsTests):
 
     def test_lived_abroad_url_resolves_to_page(self):
@@ -247,7 +243,6 @@ class LivedAbroadTests(PersonalDetailsTests):
             self.assertTrue(type(response) == TemplateResponse)
 
 
-@mock.patch.object(IdentityGatewayActions, "read", authenticate)
 class ManualEntryTests(PersonalDetailsTests):
 
     def test_manual_entry_url_resolves_to_page(self):
@@ -356,7 +351,6 @@ class ManualEntryTests(PersonalDetailsTests):
             self.assertTrue(type(response) == TemplateResponse)
 
 
-@mock.patch.object(IdentityGatewayActions, "read", authenticate)
 class NameTests(PersonalDetailsTests):
 
     def test_name_url_resolves_to_page(self):
@@ -433,7 +427,6 @@ class NameTests(PersonalDetailsTests):
             self.assertTrue(type(response) == TemplateResponse)
 
 
-@mock.patch.object(IdentityGatewayActions, "read", authenticate)
 class PostcodeEntryTests(PersonalDetailsTests):
 
     def test_postcode_entry_url_resolves_to_page(self):
@@ -544,7 +537,6 @@ class PostcodeEntryTests(PersonalDetailsTests):
             self.assertTrue(type(response) == TemplateResponse)
 
 
-@mock.patch.object(IdentityGatewayActions, "read", authenticate)
 class SelectAddressTests(PersonalDetailsTests):
 
     def test_select_address_url_resolves_to_page(self):
@@ -614,7 +606,6 @@ class SelectAddressTests(PersonalDetailsTests):
             self.assertTrue(type(response) == TemplateResponse)
 
 
-@mock.patch.object(IdentityGatewayActions, "read", authenticate)
 class SummaryTests(PersonalDetailsTests):
 
     def test_summary_url_resolves_to_page(self):
