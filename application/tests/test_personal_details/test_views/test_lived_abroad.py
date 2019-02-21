@@ -25,9 +25,12 @@ class LivedAbroadTests(PersonalDetailsTests):
             mock.patch.object(NannyGatewayActions, 'list') as nanny_api_list,\
             mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put, \
             mock.patch.object(NannyGatewayActions, 'delete') as nanny_api_delete, \
-            mock.patch.object(NannyGatewayActions, 'create') as nanny_api_create:
+            mock.patch.object(NannyGatewayActions, 'create') as nanny_api_create, \
+            mock.patch.object(NannyGatewayActions, 'patch') as nanny_api_patch:
 
             nanny_api_read.side_effect = side_effect
+            nanny_api_patch.side_effect = side_effect
+
             response = self.client.get(build_url('personal-details:Personal-Details-Lived-Abroad', get={
                 'id': uuid.UUID
             }))
@@ -42,10 +45,12 @@ class LivedAbroadTests(PersonalDetailsTests):
             mock.patch.object(NannyGatewayActions, 'list') as nanny_api_list,\
             mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put, \
             mock.patch.object(NannyGatewayActions, 'delete') as nanny_api_delete, \
-            mock.patch.object(NannyGatewayActions, 'create') as nanny_api_create:
+            mock.patch.object(NannyGatewayActions, 'create') as nanny_api_create, \
+            mock.patch.object(NannyGatewayActions, 'patch') as nanny_api_patch:
 
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
+            nanny_api_patch.side_effect = side_effect
 
             response = self.client.post(build_url('personal-details:Personal-Details-Lived-Abroad', get={
                 'id': uuid.UUID
@@ -64,10 +69,12 @@ class LivedAbroadTests(PersonalDetailsTests):
             mock.patch.object(NannyGatewayActions, 'list') as nanny_api_list,\
             mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put, \
             mock.patch.object(NannyGatewayActions, 'delete') as nanny_api_delete, \
-            mock.patch.object(NannyGatewayActions, 'create') as nanny_api_create:
+            mock.patch.object(NannyGatewayActions, 'create') as nanny_api_create, \
+            mock.patch.object(NannyGatewayActions, 'patch') as nanny_api_patch:
 
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
+            nanny_api_patch.side_effect = side_effect
 
             response = self.client.post(build_url('personal-details:Personal-Details-Lived-Abroad', get={
                 'id': uuid.UUID
@@ -86,9 +93,11 @@ class LivedAbroadTests(PersonalDetailsTests):
             mock.patch.object(NannyGatewayActions, 'list') as nanny_api_list,\
             mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put, \
             mock.patch.object(NannyGatewayActions, 'delete') as nanny_api_delete, \
-            mock.patch.object(NannyGatewayActions, 'create') as nanny_api_create:
+            mock.patch.object(NannyGatewayActions, 'create') as nanny_api_create, \
+            mock.patch.object(NannyGatewayActions, 'patch') as nanny_api_patch:
 
             nanny_api_read.side_effect = side_effect
+            nanny_api_patch.side_effect = side_effect
 
             response = self.client.post(build_url('personal-details:Personal-Details-Lived-Abroad', get={
                 'id': uuid.UUID
