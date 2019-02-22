@@ -9,35 +9,16 @@ from application.services.db_gateways import NannyGatewayActions
 
 def show_hide_tasks(context, application, application_id):
     """
-    Method hiding or showing the your children tasks based on whether the applicant has children
+    Method governing the hiding of conditionally revealed task
     :param context: a dictionary containing all tasks for the task list
     :param context: Application object
     :return: dictionary object
     """
 
     for task in context['tasks']:
-        if task['name'] == 'your_children':
-
-            nanny_api_response = NannyGatewayActions().read('applicant-personal-details',
-                                                            params={'application_id': application_id})
-            if nanny_api_response.status_code == 200:
-                application = nanny_api_response.record
-            else:
-                if settings.DEBUG:
-                    raise RuntimeError('The nanny-gateway API did not respond as expected.')
-                else:
-                    HttpResponseRedirect(reverse('Service-Unavailable'))
-
-            # If the applicant has children under 16, reveal the 'your children' task
-            if application['your_children'] is True:
-                task['hidden'] = False
-            else:
-                task['hidden'] = True
-
         # If the task is not conditionally revealed, set the 'hidden' flag to false
         # This allows the declaration task to be unlocked correctly
-        else:
-            task['hidden'] = False
+        task['hidden'] = False
 
     return context
 
@@ -88,18 +69,6 @@ class TaskListView(View):
                     'status_urls': {
                         'COMPLETED/FLAGGED': 'personal-details:Personal-Details-Summary',
                         'NOT_COMPLETED': 'personal-details:Personal-Details-Name'
-                    }
-
-                },
-                {
-                    'name': 'your_children',
-                    'status': application['your_children_status'],
-                    'arc_flagged': application['your_children_arc_flagged'],
-                    'description': 'Your children',
-                    'status_url': None,
-                    'status_urls': {
-                        'COMPLETED/FLAGGED': 'your-children:Your-Children-Summary',
-                        'NOT_COMPLETED': 'your-children:Your-Children-Guidance',
                     }
 
                 },
