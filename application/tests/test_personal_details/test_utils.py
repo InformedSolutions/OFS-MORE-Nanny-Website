@@ -52,3 +52,15 @@ class PersonalDetailsTests(TestCase):
 
     def setUp(self):
         self.client.cookies = SimpleCookie({'_ofs': 'test@informed.com'})
+        
+        
+    def assertInCount(self, obj: object, lst: list, count: int) -> None:
+        """
+        Asserts that an object is in a list, but exactly the count amount of it.
+        :param obj: Object
+        :param lst: List
+        :param count: Number of obj in lst
+        :return: None
+        """
+        if not lst.count(obj) == count:
+            raise AssertionError('Expected {0} obj\'s in lst, but found {1}'.format(count, lst.count(obj)))
