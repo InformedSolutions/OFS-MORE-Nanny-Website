@@ -68,7 +68,7 @@ class NonCapitaDBSDetailsForm(DBSNumberFormFieldMixin, NannyForm):
     GOV.UK form for the Captia DBS Details Page
     """
     field_label_classes = 'form-label-bold'
-    error_summary_title = 'There was a problem on this page'
+    error_summary_title = 'There was a problem'
     auto_replace_widgets = True
 
 
@@ -77,7 +77,7 @@ class CaptiaDBSDetailsForm(DBSNumberFormFieldMixin, NannyForm):
     GOV.UK form for the Non-Capita DBS Details Page
     """
     field_label_classes = 'form-label-bold'
-    error_summary_title = 'There was a problem on this page'
+    error_summary_title = 'There was a problem'
     auto_replace_widgets = True
 
 
