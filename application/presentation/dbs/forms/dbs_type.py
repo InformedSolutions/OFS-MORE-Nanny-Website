@@ -21,7 +21,7 @@ class DBSTypeForm(NannyForm):
     )
 
     on_dbs_update_service = forms.ChoiceField(
-        label=' Are you on the DBS update service?',
+        label='Are you on the DBS update service?',
         choices=options,
         widget=InlineRadioSelect,
         required=True,

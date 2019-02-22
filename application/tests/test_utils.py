@@ -31,7 +31,8 @@ mock_personal_details_record = {
     'last_name': 'Selenium',
     'date_of_birth': '2000-01-01',
     'lived_abroad': True,
-    'your_children': False,
+    'known_to_social_services': True,
+    'reasons_known_to_social_services': 'Some Important Reason'
 }
 
 mock_childcare_training_record = {

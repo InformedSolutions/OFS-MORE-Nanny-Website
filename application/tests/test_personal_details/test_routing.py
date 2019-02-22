@@ -634,7 +634,11 @@ class SummaryTests(PersonalDetailsTests):
 
 
 class YourChildrenRoutingTests(PersonalDetailsTests):
-    success_url = reverse('GET_URL_HERE')
+    from application.presentation.personal_details.forms.your_children import PersonalDetailsYourChildrenForm
+    ERROR_MESSAGE_PROVIDE_CHOICE_FIELD = PersonalDetailsYourChildrenForm.ERROR_MESSAGE_PROVIDE_CHOICE_FIELD
+    ERROR_MESSAGE_PROVIDE_REASON = PersonalDetailsYourChildrenForm.ERROR_MESSAGE_PROVIDE_REASON
+
+    success_url = reverse('personal-details:Personal-Details-Summary')
 
     def test_your_children_url_resolves_to_page(self):
         found = resolve(reverse('personal-details:Personal-Details-Your-Children'))
@@ -652,6 +656,7 @@ class YourChildrenRoutingTests(PersonalDetailsTests):
                 mock.patch.object(NannyGatewayActions, 'patch') as nanny_api_patch, \
                 mock.patch.object(IdentityGatewayActions, 'read') as identity_api_read:
             nanny_api_read.side_effect = side_effect
+            nanny_api_patch.side_effect = side_effect
 
             response = self.client.get(build_url('personal-details:Personal-Details-Your-Children', get={
                 'id': uuid.UUID
@@ -668,7 +673,7 @@ class YourChildrenRoutingTests(PersonalDetailsTests):
                 mock.patch.object(NannyGatewayActions, 'patch') as nanny_api_patch, \
                 mock.patch.object(IdentityGatewayActions, 'read') as identity_api_read:
             nanny_api_read.side_effect = side_effect
-            nanny_api_put.side_effect = side_effect
+            nanny_api_patch.side_effect = side_effect
 
             response = self.client.post(
                 build_url('personal-details:Personal-Details-Your-Children', get={'id': uuid.UUID}),
@@ -689,7 +694,7 @@ class YourChildrenRoutingTests(PersonalDetailsTests):
                 mock.patch.object(NannyGatewayActions, 'patch') as nanny_api_patch, \
                 mock.patch.object(IdentityGatewayActions, 'read') as identity_api_read:
             nanny_api_read.side_effect = side_effect
-            nanny_api_put.side_effect = side_effect
+            nanny_api_patch.side_effect = side_effect
 
             response = self.client.post(
                 build_url('personal-details:Personal-Details-Your-Children', get={'id': uuid.UUID}),
@@ -699,8 +704,7 @@ class YourChildrenRoutingTests(PersonalDetailsTests):
                 })
 
             self.assertEqual(response.status_code, 200)
-            self.assertContains(response, ERROR_MESSAGE_PROVIDE_REASON)
-
+            self.assertContains(response, self.ERROR_MESSAGE_PROVIDE_REASON)
 
     def test_can_submit_false_without_reason_on_your_children_page(self):
         with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
@@ -711,7 +715,7 @@ class YourChildrenRoutingTests(PersonalDetailsTests):
                 mock.patch.object(NannyGatewayActions, 'patch') as nanny_api_patch, \
                 mock.patch.object(IdentityGatewayActions, 'read') as identity_api_read:
             nanny_api_read.side_effect = side_effect
-            nanny_api_put.side_effect = side_effect
+            nanny_api_patch.side_effect = side_effect
 
             response = self.client.post(
                 build_url('personal-details:Personal-Details-Your-Children', get={'id': uuid.UUID}),
@@ -723,7 +727,6 @@ class YourChildrenRoutingTests(PersonalDetailsTests):
             self.assertEqual(response.status_code, 302)
             self.assertIn(self.success_url, response.url)
 
-
     def test_can_submit_false_with_a_reason_but_the_reason_is_not_stored_on_your_children_page(self):
         with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
                 mock.patch.object(NannyGatewayActions, 'list') as nanny_api_list, \
@@ -733,7 +736,7 @@ class YourChildrenRoutingTests(PersonalDetailsTests):
                 mock.patch.object(NannyGatewayActions, 'patch') as nanny_api_patch, \
                 mock.patch.object(IdentityGatewayActions, 'read') as identity_api_read:
             nanny_api_read.side_effect = side_effect
-            nanny_api_put.side_effect = side_effect
+            nanny_api_patch.side_effect = side_effect
 
             response = self.client.post(
                 build_url('personal-details:Personal-Details-Your-Children', get={'id': uuid.UUID}),
@@ -754,11 +757,14 @@ class YourChildrenRoutingTests(PersonalDetailsTests):
                 mock.patch.object(NannyGatewayActions, 'patch') as nanny_api_patch, \
                 mock.patch.object(IdentityGatewayActions, 'read') as identity_api_read:
             nanny_api_read.side_effect = side_effect
-            nanny_api_put.side_effect = side_effect
+            nanny_api_patch.side_effect = side_effect
 
             response = self.client.post(
                 build_url('personal-details:Personal-Details-Your-Children', get={'id': uuid.UUID}),
-                {})
+                {
+                    'known_to_social_services': None,
+                    'reasons_known_to_social_services': ''
+                })
 
             self.assertEqual(response.status_code, 200)
-            self.assertContains(response, ERROR_MESSAGE_PROVIDE_CHOICE_FIELD)
+            self.assertContains(response, self.ERROR_MESSAGE_PROVIDE_CHOICE_FIELD)
