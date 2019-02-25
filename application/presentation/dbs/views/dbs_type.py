@@ -7,7 +7,6 @@ from ..forms.dbs_type import DBSTypeForm
 class DBSTypeFormView(NannyFormView):
     form_class = DBSTypeForm
     success_url = None
-    template_name = 'dbs-type.html'
 
     def get_success_url(self):
         enhanced_check = self.criminal_checks_record['enhanced_check']
@@ -46,6 +45,7 @@ class DBSTypeFormView(NannyFormView):
         initial['is_ofsted_dbs'] = dbs_record['is_ofsted_dbs']
         initial['enhanced_check'] = dbs_record['enhanced_check']
         initial['on_dbs_update_service'] = dbs_record['on_dbs_update_service']
+        self.template_name = 'dbs-update-service.html' if initial['is_ofsted_dbs'] else 'dbs-type.html'
         return initial
 
 
