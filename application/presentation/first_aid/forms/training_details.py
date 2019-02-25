@@ -59,6 +59,8 @@ class FirstAidTrainingDetailsForm(NannyForm):
         if date_difference.years >= 3:
             raise forms.ValidationError("You must have completed your first aid course in the last 3 years")
 
+        return course_date
+
 
 
 
