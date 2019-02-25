@@ -761,10 +761,7 @@ class YourChildrenRoutingTests(PersonalDetailsTests):
 
             response = self.client.post(
                 build_url('personal-details:Personal-Details-Your-Children', get={'id': uuid.UUID}),
-                {
-                    'known_to_social_services': None,
-                    'reasons_known_to_social_services': ''
-                })
+                {})
 
             self.assertEqual(response.status_code, 200)
             self.assertContains(response, self.ERROR_MESSAGE_PROVIDE_CHOICE_FIELD)

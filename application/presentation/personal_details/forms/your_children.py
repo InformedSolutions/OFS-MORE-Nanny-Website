@@ -38,15 +38,17 @@ class PersonalDetailsYourChildrenForm(NannyForm):
 
     def clean(self):
         cleaned_data = self.cleaned_data
-        
-        known_to_social_services = cleaned_data['known_to_social_services'] == 'True'
-        reasons_known_to_social_services = cleaned_data['reasons_known_to_social_services']
 
-        if known_to_social_services is True and reasons_known_to_social_services == '':
+        known_to_social_services = cleaned_data.get('known_to_social_services', None)
+        reasons_known_to_social_services = cleaned_data.get('reasons_known_to_social_services', None)
+
+        known_to_social_services_bool = known_to_social_services == 'True'
+
+        if known_to_social_services_bool is True and reasons_known_to_social_services == '':
             self.add_error('reasons_known_to_social_services', self.ERROR_MESSAGE_PROVIDE_REASON)
-        elif known_to_social_services is False:
+        elif known_to_social_services_bool is False:
             cleaned_data['reasons_known_to_social_services'] = ''
 
         # Update cleaned_data
-        cleaned_data['known_to_social_services'] = known_to_social_services
+        cleaned_data['known_to_social_services'] = known_to_social_services_bool
         return cleaned_data
