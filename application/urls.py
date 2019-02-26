@@ -12,16 +12,13 @@ from application.presentation import childcare_address, \
     login, \
     payment, \
     personal_details, \
-    task_list, \
-    your_children
-
+    task_list
 
 urlpatterns = [
     url(r'^', include(childcare_address.urlpatterns)),
     url(r'^', include(task_list.urlpatterns)),
     url(r'^', include(personal_details.urlpatterns, namespace="personal-details")),
     url(r'^', include(login.urlpatterns)),
-    url(r'^', include(your_children.urlpatterns, namespace='your-children')),
     url(r'^', include(childcare_training.urlpatterns)),
     url(r'^', include(payment.urlpatterns, namespace="payment")),
     url(r'^', include(declaration.urlpatterns, namespace="declaration")),
