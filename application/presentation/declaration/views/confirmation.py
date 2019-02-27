@@ -60,6 +60,7 @@ class Confirmation(NannyTemplateView):
                 'first_name': personal_details_record['first_name'], 'ref': application_record['application_reference']
             }
 
-            send_email(email, survey_personalisation, survey_template_id)
             logger.debug("Attempting to send survey email: What do you think of our service? - Applicant")
+            send_email(email, survey_personalisation, survey_template_id)
+
 
