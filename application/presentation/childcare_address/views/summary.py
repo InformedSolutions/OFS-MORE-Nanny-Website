@@ -70,7 +70,7 @@ class ChildcareAddressSummaryView(View):
 
             home_address_row = Row(
                 'both_work_and_home_address',
-                'Will you live and work at the same address?',
+                'Do you currently live and work at the same address?',
                 home_address_value,
                 'Childcare-Address-Location',
                 None
