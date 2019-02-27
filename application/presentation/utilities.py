@@ -1,6 +1,7 @@
 """
 Generic helper functions
 """
+import enum
 import json
 import random
 import re
@@ -329,3 +330,65 @@ def app_id_finder(request):
     if request.POST.get('id'):
         app_id = request.POST.get('id')
     return (app_id)
+
+
+# Confirmation Status Helpers #
+
+class ConfirmationStatus(enum.Enum):
+    DBS_ONLY = 0
+    DBS_AND_LIVED_ABROAD = 1
+    LIVED_ABROAD_ONLY = 2
+    NO_DBS_NO_GOOD_CONDUCT = 3
+
+
+# Email Templates
+CONFIRMATION_EMAIL_DBS_ONLY = 'a7fe3279-7589-44e0-81a7-b05931fb2588'
+CONFIRMATION_EMAIL_DBS_AND_LIVED_ABROAD = 'fa1955dd-f252-4edf-85d1-b6ba7a9061c8'
+CONFIRMATION_EMAIL_LIVED_ABROAD_ONLY = 'b4b9e666-846b-48de-8e72-9901ab5474f0'
+CONFIRMATION_EMAIL_NO_DBS_NO_GOOD_CONDUCT = 'beb79a5f-97e8-47d2-afda-ae914f02cdaa'
+
+# Page Templates
+CONFIRMATION_PAGE_DBS_ONLY = 'confirmation_dbs_only.html'
+CONFIRMATION_PAGE_DBS_AND_LIVED_ABROAD = 'confirmation_dbs_and_lived_abroad.html'
+CONFIRMATION_PAGE_LIVED_ABROAD_ONLY = 'confirmation_lived_abroad_only.html'
+CONFIRMATION_PAGE_NO_DBS_NO_GOOD_CONDUCT = 'confirmation_no_dbs_no_good_conduct.html'
+
+# Mapping between Confirmation Status and a tuple of (Email, Page) templates
+CONFIRMATION_STATUS_TO_TEMPLATES_MAPPING = {
+    ConfirmationStatus.DBS_ONLY:
+        (CONFIRMATION_EMAIL_DBS_ONLY, CONFIRMATION_PAGE_DBS_ONLY),
+    ConfirmationStatus.DBS_AND_LIVED_ABROAD:
+        (CONFIRMATION_EMAIL_DBS_AND_LIVED_ABROAD, CONFIRMATION_PAGE_DBS_AND_LIVED_ABROAD),
+    ConfirmationStatus.LIVED_ABROAD_ONLY:
+        (CONFIRMATION_EMAIL_LIVED_ABROAD_ONLY, CONFIRMATION_PAGE_LIVED_ABROAD_ONLY),
+    ConfirmationStatus.NO_DBS_NO_GOOD_CONDUCT:
+        (CONFIRMATION_EMAIL_NO_DBS_NO_GOOD_CONDUCT, CONFIRMATION_PAGE_NO_DBS_NO_GOOD_CONDUCT),
+}
+
+
+def get_confirmation_email_template(confirmation_status):
+    return CONFIRMATION_STATUS_TO_TEMPLATES_MAPPING[confirmation_status][0]
+
+
+def get_confirmation_page_template(confirmation_status):
+    return CONFIRMATION_STATUS_TO_TEMPLATES_MAPPING[confirmation_status][1]
+
+
+def get_confirmation_status(capita: bool, certificate_information: str, lived_abroad: bool) -> ConfirmationStatus:
+    if capita:
+        if certificate_information:
+            if lived_abroad:
+                return ConfirmationStatus.DBS_AND_LIVED_ABROAD
+            else:
+                return ConfirmationStatus.DBS_ONLY
+        else:
+            if lived_abroad:
+                return ConfirmationStatus.NO_DBS_NO_GOOD_CONDUCT
+            else:
+                return ConfirmationStatus.LIVED_ABROAD_ONLY
+
+    else:
+        if lived_abroad:
+            return ConfirmationStatus.DBS_AND_LIVED_ABROAD
+        else:
+            return ConfirmationStatus.DBS_ONLY
