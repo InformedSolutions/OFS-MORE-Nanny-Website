@@ -46,7 +46,6 @@ class Confirmation(NannyTemplateView):
     def send_survey_email(application_id, personal_details_record, application_record):
         """
         function to get user's details and send them the survey email on confirmation of their payment
-
         :param application_id:
         :param personal_details_record:
         :param application_record:
