@@ -31,13 +31,12 @@ class Confirmation(NannyTemplateView):
 
             # Check for ARC_REVIEW to prevent resetting the status of apps assigned to a reviewer.
             if record['application_status'] != 'ARC_REVIEW':
+                if api_pd_response.status_code == 200 and api_app_response.status_code == 200:
+                    personal_details_record = api_pd_response.record
+                    if record['application_status'] == 'DRAFTING':
+                        self.send_survey_email(app_id, personal_details_record, record)
                 record['application_status'] = 'SUBMITTED'
                 NannyGatewayActions().put('application', params=record)
-
-        if api_pd_response.status_code == 200 and api_app_response.status_code == 200:
-            personal_details_record = api_pd_response.record
-            application_record = api_app_response.record
-            self.send_survey_email(app_id, personal_details_record, application_record)
 
         context['id'] = app_id
         return context
