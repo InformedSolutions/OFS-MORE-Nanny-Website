@@ -9,6 +9,7 @@ from application.presentation.declaration import views
 
 from application.tests.test_utils  import side_effect
 from application.services.db_gateways import IdentityGatewayActions, NannyGatewayActions
+from ...presentation.declaration.views import confirmation as confirmation_view
 
 
 @modify_settings(MIDDLEWARE={
@@ -161,3 +162,18 @@ class DeclarationTests(TestCase):
         Test that not selecting each declaration box raises the respective error.
         """
         pass
+
+    def test_sends_survey_email_get_confirmation_page(self):
+        with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
+                mock.patch.object(IdentityGatewayActions, 'read') as identity_api_read, \
+                mock.patch.object(confirmation_view, 'send_email') as send_email_mock:
+            nanny_api_read.side_effect = side_effect
+            identity_api_read.side_effect = side_effect
+
+            response = self.client.get(reverse('declaration:confirmation') + '?id=' + self.application_id)
+
+            self.assertEqual(response.status_code, 200)
+            send_email_mock.assert_called_with('test@informed.com', {'first_name': 'The Dark Lord', 'ref': 'NA000001'},
+                                               'ca1acc2f-cfc7-4d20-b5d6-5bb17fce1d0a')
+
+
