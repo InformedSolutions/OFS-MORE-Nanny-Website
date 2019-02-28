@@ -143,6 +143,7 @@ class ChildcareAddressLookupView(BaseFormView):
             record['street_line2'] = selected_address['line2']
             record['town'] = selected_address['townOrCity']
             record['postcode'] = selected_address['postcode']
+            record['home_address'] = False
             NannyGatewayActions().put('childcare-address', params=record)
 
         return HttpResponseRedirect(build_url('Childcare-Address-Details', get={
@@ -239,6 +240,7 @@ class ChildcareAddressManualView(BaseFormView):
             record['town'] = town
             record['county'] = county
             record['postcode'] = postcode
+            record['home_address'] = False
             NannyGatewayActions().patch('childcare-address', params=record)
 
         else:
@@ -252,6 +254,7 @@ class ChildcareAddressManualView(BaseFormView):
                     'town': town,
                     'county': county,
                     'postcode': postcode,
+                    'home_address': False
                 }
             )
 
@@ -353,9 +356,19 @@ class ChildcareAddressDetailsView(BaseTemplateView):
                         # Set Where you work default response to No
                         application_response = NannyGatewayActions().read('application',
                                                                           params={'application_id': app_id})
+
                         record = application_response.record
                         record['address_to_be_provided'] = False
                         NannyGatewayActions().put('application', params=record)
+
+                        # set childcare location to false
+                        ha_response =  NannyGatewayActions().read('applicant-home-address',
+                                                                          params={'application_id': app_id})
+                        if ha_response.status_code == 200:
+                            ha_record = ha_response.record
+                            ha_record['childcare_address'] = False
+                            NannyGatewayActions().put('applicant-home-address', ha_record)
+
 
                         # Redirect to Where you work page
                         return HttpResponseRedirect(build_url('Childcare-Address-Where-You-Work', get={
@@ -383,7 +396,15 @@ class ChildcareAddressDetailsView(BaseTemplateView):
         # If clicking on Remove this address link
         if 'childcare-address-id' in self.request.GET:
             childcare_address_id = self.request.GET['childcare-address-id']
+            childcare_address_api_response = NannyGatewayActions().read('childcare-address', params = {'childcare_address_id': childcare_address_id})
+            home_address_response = NannyGatewayActions().read('applicant-home-address', params = {'application_id': app_id})
             NannyGatewayActions().delete('childcare-address', params={'childcare_address_id': childcare_address_id})
+            if childcare_address_api_response.status_code == 200 and home_address_response.status_code == 200:
+                ca_record = childcare_address_api_response.record
+                ha_record = home_address_response.record
+                if ca_record['home_address'] == True:
+                    ha_record['childcare_address'] = False
+                    NannyGatewayActions().put('applicant-home-address', params=ha_record)
 
         # Generate list of childcare addresses and display in through page context
         api_response = NannyGatewayActions().list('childcare-address', params={'application_id': app_id})
