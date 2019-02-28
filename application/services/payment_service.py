@@ -89,11 +89,10 @@ def payment_email(email, name, application_reference, application_id):
     # Check for cautions and convictions, and whether the applicant has lived abroad
 
     dbs_record = NannyGatewayActions().read('dbs-check', params={'application_id': application_id}).record
-    personal_details_record = NannyGatewayActions().read('applicant-personal-details', params={'application_id': application_id}).record
 
     capita = dbs_record['is_ofsted_dbs']
     certificate_information = dbs_record['certificate_information']
-    lived_abroad = personal_details_record['lived_abroad']
+    lived_abroad = dbs_record['lived_abroad']
 
     # Get the email template_id to send
     confirmation_status = get_confirmation_status(capita, certificate_information, lived_abroad)

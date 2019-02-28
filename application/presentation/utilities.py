@@ -19,6 +19,7 @@ from govuk_forms.forms import GOVUKForm
 
 from application.services.db_gateways import NannyGatewayActions
 
+NO_ADDITIONAL_CERTIFICATE_INFORMATION = ['Certificate contains no information']
 
 class NeverCacheMixin(object):
     @method_decorator(never_cache)
@@ -323,15 +324,6 @@ class DBSNumberField(forms.CharField):
             raise forms.ValidationError('The certificate number should be 12 digits long')
         return dbs_number
 
-
-def app_id_finder(request):
-    if request.GET.get('id'):
-        app_id = request.GET.get('id')
-    if request.POST.get('id'):
-        app_id = request.POST.get('id')
-    return (app_id)
-
-
 # Confirmation Status Helpers #
 
 class ConfirmationStatus(enum.Enum):
@@ -376,16 +368,16 @@ def get_confirmation_page_template(confirmation_status):
 
 def get_confirmation_status(capita: bool, certificate_information: str, lived_abroad: bool) -> ConfirmationStatus:
     if capita:
-        if certificate_information:
+        if certificate_information not in NO_ADDITIONAL_CERTIFICATE_INFORMATION:
             if lived_abroad:
                 return ConfirmationStatus.DBS_AND_LIVED_ABROAD
             else:
                 return ConfirmationStatus.DBS_ONLY
         else:
             if lived_abroad:
-                return ConfirmationStatus.NO_DBS_NO_GOOD_CONDUCT
-            else:
                 return ConfirmationStatus.LIVED_ABROAD_ONLY
+            else:
+                return ConfirmationStatus.NO_DBS_NO_GOOD_CONDUCT
 
     else:
         if lived_abroad:
