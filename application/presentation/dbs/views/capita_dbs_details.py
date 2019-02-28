@@ -1,10 +1,10 @@
-from application.services.db_gateways import NannyGatewayActions
 from application.presentation.base_views import NannyFormView
+from application.presentation.utilities import NO_ADDITIONAL_CERTIFICATE_INFORMATION
 from application.presentation.utilities import app_id_finder
-from ..forms.dbs_details import CaptiaDBSDetailsForm
+from application.services.db_gateways import NannyGatewayActions
 from application.services.dbs import read_dbs, dbs_within_three_months
+from ..forms.dbs_details import CaptiaDBSDetailsForm
 
-NO_ADDITIONAL_CERTIFICATE_INFORMATION = ['Certificate contains no information']
 
 class CapitaDBSDetailsFormView(NannyFormView):
     template_name = 'capita-dbs-details.html'

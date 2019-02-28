@@ -74,7 +74,6 @@ class ChildcareLocationView(NannyFormView):
 
                 # add new childcare address
                 if both_work_and_home_address and not initial_both_work_and_home_address:
-
                     NannyGatewayActions().create(
                         'childcare-address',
                         params={
