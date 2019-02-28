@@ -70,8 +70,11 @@ class ChildcareLocationView(NannyFormView):
                 home_address_record['childcare_address'] = both_work_and_home_address
                 NannyGatewayActions().put('applicant-home-address', params=home_address_record)
 
+
+
                 # add new childcare address
                 if both_work_and_home_address and not initial_both_work_and_home_address:
+
                     NannyGatewayActions().create(
                         'childcare-address',
                         params={
@@ -83,6 +86,7 @@ class ChildcareLocationView(NannyFormView):
                             'county': home_address_record['county'],
                             'country': home_address_record['country'],
                             'postcode': home_address_record['postcode'],
+                            'home_address': True
                         }
                     )
 
