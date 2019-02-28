@@ -20,7 +20,7 @@ class ChildcareLocationForm(NannyForm):
                                                    required=True,
                                                    widget=InlineRadioSelect,
                                                    error_messages={
-                                                       'required': "Please say if you'll work and live at the same address"}
+                                                       'required': "Please say if you live and work at the same address"}
                                                    )
 
     def __init__(self, *args, **kwargs):
