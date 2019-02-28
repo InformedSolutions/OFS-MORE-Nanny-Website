@@ -18,7 +18,6 @@ class Confirmation(NannyTemplateView):
         app_id = app_id_finder(self.request)
         cost = '103.00'
         api_app_response = NannyGatewayActions().read('application', params={'application_id': app_id})
-        api_pd_response = NannyGatewayActions().read('applicant-personal-details', params={'application_id': app_id})
 
         context = {
             'id': app_id,
@@ -31,12 +30,17 @@ class Confirmation(NannyTemplateView):
 
             # Check for ARC_REVIEW to prevent resetting the status of apps assigned to a reviewer.
             if application_record['application_status'] != 'ARC_REVIEW':
+                api_pd_response = NannyGatewayActions().read('applicant-personal-details',
+                                                             params={'application_id': app_id})
+
+                if api_pd_response.status_code == 200:
+                    personal_details_record = api_pd_response.record
+
+                    if application_record['application_status'] == 'DRAFTING':
+                        self.send_survey_email(app_id, personal_details_record, application_record)
+
                 application_record['application_status'] = 'SUBMITTED'
                 NannyGatewayActions().put('application', params=application_record)
-
-            if api_pd_response.status_code == 200:
-                personal_details_record = api_pd_response.record
-                self.send_survey_email(app_id, personal_details_record, application_record)
 
         else:
             raise ValueError('Nanny-Gateway returned {0} response for "application" endpoint, not 200'.format(

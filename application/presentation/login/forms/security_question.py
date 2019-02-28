@@ -46,11 +46,11 @@ class PersonalDetailsSecurityQuestionForm(GOVUKForm):
 
     date_of_birth = CustomSplitDateFieldDOB(label='Date of birth',
                                             help_text='For example, 31 03 1980',
-                                            error_messages={'required': 'Please give an answer'})
+                                            error_messages={'required': 'Enter your date of birth'})
 
     postcode = forms.CharField(label='Postcode',
                                required=True,
-                               error_messages={'required': 'Please give an answer'},
+                               error_messages={'required': 'Enter your post code'},
                                widget=NannyFormInput)
 
     def clean_date_of_birth(self):

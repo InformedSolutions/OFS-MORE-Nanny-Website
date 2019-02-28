@@ -8,7 +8,8 @@ from django.urls import resolve, reverse
 from application.presentation.utilities import NO_ADDITIONAL_CERTIFICATE_INFORMATION
 from application.presentation.declaration import views
 from application.services.db_gateways import IdentityGatewayActions, NannyGatewayActions
-from application.tests.test_utils import side_effect, mock_endpoint_return_values, mock_dbs_record
+from application.tests.test_utils import side_effect, mock_endpoint_return_values, mock_dbs_record, \
+    mock_nanny_application
 from ...presentation.declaration.views import confirmation as confirmation_view
 
 
@@ -200,9 +201,24 @@ class DeclarationRoutingTests(TestCase):
                 mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put, \
                 mock.patch.object(IdentityGatewayActions, 'read') as identity_api_read, \
                 mock.patch.object(confirmation_view, 'send_email') as send_email_mock:
-            nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
             identity_api_read.side_effect = side_effect
+
+            # Set DBS Mock parameters
+            updated_mock_nanny_application = mock_nanny_application
+
+            updated_mock_nanny_application['application_status'] = 'DRAFTING'
+
+            # Update side effect function
+            updated_mock_nanny_application_response = HttpResponse()
+            updated_mock_nanny_application_response.status_code = 200
+            updated_mock_nanny_application_response.record = updated_mock_nanny_application
+
+            updated_mock_endpoint_return_values = mock_endpoint_return_values
+            updated_mock_endpoint_return_values['application'] = updated_mock_nanny_application_response
+
+            nanny_api_read.side_effect = \
+                lambda endpoint_name, *args, **kwargs: updated_mock_endpoint_return_values[endpoint_name]
 
             response = self.client.get(reverse('declaration:confirmation') + '?id=' + self.application_id)
 
