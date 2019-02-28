@@ -49,7 +49,8 @@ mock_dbs_record = {
     'is_ofsted_dbs': 'False',
     'within_three_months': None,
     'enhanced_check': None,
-    'on_dbs_update_service': None
+    'on_dbs_update_service': None,
+    'certificate_information': 'Certificate contains no information'
 }
 
 mock_home_address = {
