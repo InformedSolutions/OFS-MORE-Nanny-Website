@@ -103,7 +103,7 @@ class ChildcareAddressPostcodeView(BaseFormView):
                     'date_created': datetime.today(),
                     'application_id': app_id,
                     'childcare_address_id': uuid.uuid4(),
-                    'postcode': postcode,
+                    'postcode': postcode
                 }
             )
             if api_response.status_code == 201:
