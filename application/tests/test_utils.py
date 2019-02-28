@@ -69,6 +69,7 @@ mock_childcare_address_record = {
     'county': None,
     'postcode': 'WA14 4PA',
     'application_id': '998fd8ec-b96b-4a71-a1a1-a7a3ae186729',
+    'home_address': False
 }
 
 mock_first_aid_record = {
