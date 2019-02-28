@@ -10,7 +10,7 @@ from application.presentation.declaration import views
 from application.services.db_gateways import IdentityGatewayActions, NannyGatewayActions
 from application.tests.test_utils import side_effect, mock_endpoint_return_values, mock_dbs_record, \
     mock_nanny_application
-from ...presentation.declaration.views import confirmation as confirmation_view
+from application.presentation.declaration.views import confirmation as confirmation_view
 
 
 @modify_settings(MIDDLEWARE={

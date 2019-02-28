@@ -3,7 +3,7 @@ import logging
 from application.presentation.base_views import NannyTemplateView
 from application.presentation.utilities import *
 from ....services.db_gateways import NannyGatewayActions, IdentityGatewayActions
-from ....services.notify import send_email
+from application.services.notify import send_email
 from ...utilities import app_id_finder, get_confirmation_page_template, get_confirmation_status
 
 logger = logging.getLogger()
