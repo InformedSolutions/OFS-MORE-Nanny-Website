@@ -40,39 +40,7 @@ class AddressSummaryTests(PersonalDetailsTests):
             }))
 
             self.assertEqual(response.status_code, 302)
-            self.assertTrue('/lived-abroad/' in response.url)
-
-
-class CertificateTests(PersonalDetailsTests):
-
-    def test_conduct_certificates_url_resolves_to_page(self):
-        found = resolve(reverse('personal-details:Personal-Details-Certificates-Of-Good-Conduct'))
-        self.assertEqual(found.func.__name__, PersonalDetailCertificateView.__name__)
-
-    def test_can_render_conduct_certificates_page(self):
-        """
-        Test to assert that the 'good conduct certificates' page can be rendered.
-        """
-        response = self.client.get(build_url('personal-details:Personal-Details-Certificates-Of-Good-Conduct', get={
-            'id': uuid.UUID
-        }))
-
-        self.assertEqual(response.status_code, 200)
-
-    def test_post_certificates_url_resolves_to_page(self):
-        found = resolve(reverse('personal-details:Personal-Details-Post-Certificates'))
-        self.assertEqual(found.func.__name__, PersonalDetailsPostCertificateView.__name__)
-
-    def test_can_render_post_certificates_page(self):
-        """
-        Test to assert that the 'good conduct certificates' page can be rendered.
-        """
-        response = self.client.get(build_url('personal-details:Personal-Details-Post-Certificates', get={
-            'id': uuid.UUID
-        }))
-
-        self.assertEqual(response.status_code, 200)
-
+            self.assertTrue('/your-children' in response.url)
 
 class DateOfBirthTests(PersonalDetailsTests):
 
@@ -165,18 +133,12 @@ class LivedAbroadTests(PersonalDetailsTests):
             nanny_api_put.side_effect = side_effect
             nanny_api_patch.side_effect = side_effect
 
-            response = self.client.post(build_url('personal-details:Personal-Details-Manual-Address', get={
+            response = self.client.post(build_url('personal-details:Personal-Details-Address-Summary', get={
                 'id': uuid.UUID
-            }), {
-                                            'street_line1': 'Test',
-                                            'street_line2': '',
-                                            'town': 'test',
-                                            'county': '',
-                                            'postcode': 'WA14 4PA'
-                                        })
+            }))
 
             self.assertEqual(response.status_code, 302)
-            self.assertTrue('/your-children/' in response.url)
+            self.assertTrue('/your-children' in response.url)
 
 class ManualEntryTests(PersonalDetailsTests):
 
