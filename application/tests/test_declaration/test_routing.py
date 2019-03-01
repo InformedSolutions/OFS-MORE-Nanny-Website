@@ -291,7 +291,7 @@ class DeclarationRoutingTests(TestCase):
             response = self.client.get(reverse('declaration:confirmation') + '?id=' + self.application_id)
 
             # DBS Only
-            self.assertContains(response, 'Post your DBS certificate')
+            self.assertContains(response, 'Send your documents')
             self.assertNotContains(response, 'Email your criminal record certificates from abroad')
             self.assertNotContains(response,
                                    "We'll review your application to make sure we have everything that we need.")
@@ -430,6 +430,6 @@ class DeclarationRoutingTests(TestCase):
             response = self.client.get(reverse('declaration:confirmation') + '?id=' + self.application_id)
 
             # DBS only
-            self.assertContains(response, 'Post your DBS certificate')
+            self.assertContains(response, 'Send your documents')
             self.assertNotContains(response, 'Email your criminal record certificates from abroad')
             self.assertNotContains(response, "We'll review your application to make sure we have everything that we need.")
