@@ -37,7 +37,6 @@ class Summary(View):
                personal_details_record['last_name']
         date_of_birth = datetime.datetime.strptime(personal_details_record['date_of_birth'], '%Y-%m-%d').date()
         address = AddressHelper.format_address(address_record, ", ")
-        lived_abroad = personal_details_record['lived_abroad']
         known_to_social_services = personal_details_record['known_to_social_services']
         reasons_known_to_social_services = personal_details_record['reasons_known_to_social_services']
 
@@ -46,10 +45,6 @@ class Summary(View):
                                 'personal-details:Personal-Details-Date-Of-Birth', "your date of birth")
         home_address_row = Row('home_address', 'Your home address', address,
                                'personal-details:Personal-Details-Manual-Address', "your home address")
-        lived_abroad_row = Row('lived_abroad', 'Have you lived abroad in the last 5 years?',
-                               lived_abroad,
-                               'personal-details:Personal-Details-Lived-Abroad',
-                               "answer on living abroad in the last 5 years")
         known_to_social_services_row = Row('known_to_social_services', 'Known to council social Services?',
                                            known_to_social_services,
                                            'personal-details:Personal-Details-Your-Children',
@@ -61,7 +56,7 @@ class Summary(View):
 
         personal_details_table = Table(application_id)
         personal_details_table.row_list = [name_row, date_of_birth_row, home_address_row,
-                                           lived_abroad_row, known_to_social_services_row]
+                                        known_to_social_services_row]
 
         if known_to_social_services:
             personal_details_table.row_list.append(reasons_known_to_social_services_row)
