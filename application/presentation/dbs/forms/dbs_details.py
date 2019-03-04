@@ -39,7 +39,6 @@ class DBSNumberFormFieldMixin(forms.Form):
             app_details = NannyGatewayActions().read('applicant-personal-details', {'application_id': application_id})
             if dbs_date_of_birth_no_match(response.record, app_details.record):
                 raise forms.ValidationError(
-                    'Birth date does not match the date given on the \'Your date of birth\' page: '
                     'Check your DBS certificate. The number you entered does not match your number held by DBS.')
         return dbs_number
 
@@ -49,7 +48,7 @@ class NonCapitaDBSDetailsForm(DBSNumberFormFieldMixin, NannyForm):
     GOV.UK form for the Captia DBS Details Page
     """
     field_label_classes = 'form-label-bold'
-    error_summary_title = 'There was a problem'
+    error_summary_title = 'There was a problem on this page'
     auto_replace_widgets = True
 
 
@@ -58,7 +57,7 @@ class CaptiaDBSDetailsForm(DBSNumberFormFieldMixin, NannyForm):
     GOV.UK form for the Non-Capita DBS Details Page
     """
     field_label_classes = 'form-label-bold'
-    error_summary_title = 'There was a problem'
+    error_summary_title = 'There was a problem on this page'
     auto_replace_widgets = True
 
 

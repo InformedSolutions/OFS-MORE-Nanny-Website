@@ -207,7 +207,7 @@ class PersonalDetailManualAddressView(NannyFormView):
 
 class PersonalDetailSummaryAddressView(NannyTemplateView):
     template_name = 'address-details.html'
-    success_url_name = 'personal-details:Personal-Details-Lived-Abroad'
+    success_url_name = 'personal-details:Personal-Details-Your-Children'
 
     """
     Form view that controls the rendering and logic behind the summary view of the personal details task
@@ -228,4 +228,4 @@ class PersonalDetailSummaryAddressView(NannyTemplateView):
         Handle post requests to the guidance page.
         """
         app_id = app_id_finder(request)
-        return HttpResponseRedirect(reverse('personal-details:Personal-Details-Lived-Abroad') + "?id=" + app_id)
+        return HttpResponseRedirect(reverse('personal-details:Personal-Details-Your-Children') + "?id=" + app_id)

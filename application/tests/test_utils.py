@@ -23,6 +23,7 @@ mock_nanny_application = {
     'criminal_record_check_arc_flagged': False,
     'insurance_cover_status': 'COMPLETED',
     'insurance_cover_arc_flagged': False,
+    'application_reference': 'NA000001'
 }
 
 mock_personal_details_record = {
@@ -31,7 +32,8 @@ mock_personal_details_record = {
     'last_name': 'Selenium',
     'date_of_birth': '2000-01-01',
     'lived_abroad': True,
-    'your_children': False,
+    'known_to_social_services': True,
+    'reasons_known_to_social_services': 'Some Important Reason'
 }
 
 mock_childcare_training_record = {
@@ -47,7 +49,8 @@ mock_dbs_record = {
     'is_ofsted_dbs': 'False',
     'within_three_months': None,
     'enhanced_check': None,
-    'on_dbs_update_service': None
+    'on_dbs_update_service': None,
+    'certificate_information': 'Certificate contains no information'
 }
 
 mock_home_address = {
@@ -67,6 +70,7 @@ mock_childcare_address_record = {
     'county': None,
     'postcode': 'WA14 4PA',
     'application_id': '998fd8ec-b96b-4a71-a1a1-a7a3ae186729',
+    'home_address': False
 }
 
 mock_first_aid_record = {

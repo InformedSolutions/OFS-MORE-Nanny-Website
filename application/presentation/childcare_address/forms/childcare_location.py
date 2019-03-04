@@ -16,11 +16,11 @@ class ChildcareLocationForm(NannyForm):
         ('False', 'No')
     )
     both_work_and_home_address = forms.ChoiceField(choices=options,
-                                                   label='Will you work and live at the same address?',
+                                                   label='Do you currently live and work at the same address?',
                                                    required=True,
                                                    widget=InlineRadioSelect,
                                                    error_messages={
-                                                       'required': "Please say if you'll work and live at the same address"}
+                                                       'required': "Please say if you live and work at the same address"}
                                                    )
 
     def __init__(self, *args, **kwargs):

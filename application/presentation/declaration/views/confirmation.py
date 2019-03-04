@@ -1,34 +1,84 @@
+import logging
+
 from application.presentation.base_views import NannyTemplateView
 from application.presentation.utilities import *
+from ....services.db_gateways import NannyGatewayActions, IdentityGatewayActions
+from application.services.notify import send_email
+from ...utilities import app_id_finder, get_confirmation_page_template, get_confirmation_status
 
-from application.services.db_gateways import NannyGatewayActions
+logger = logging.getLogger()
 
 
 class Confirmation(NannyTemplateView):
     """
     Template view to  render the guidance page from first access of task from task list
     """
-    template_name = "confirmation.html"
 
     def get_context_data(self, **kwargs):
         app_id = app_id_finder(self.request)
-        context = {}
-        api_pd_response = NannyGatewayActions().read('applicant-personal-details', params={'application_id': app_id})
-
-        if api_pd_response.status_code == 200:
-            record = api_pd_response.record
-            context['lived_abroad'] = record['lived_abroad']
-
+        cost = '103.00'
         api_app_response = NannyGatewayActions().read('application', params={'application_id': app_id})
 
+        context = {
+            'id': app_id,
+            'cost': cost
+        }
+
         if api_app_response.status_code == 200:
-            record = api_app_response.record
-            context['application_reference'] = record['application_reference']
+            application_record = api_app_response.record
+            context['application_reference'] = application_record['application_reference']
 
             # Check for ARC_REVIEW to prevent resetting the status of apps assigned to a reviewer.
-            if record['application_status'] != 'ARC_REVIEW':
-                record['application_status'] = 'SUBMITTED'
-                NannyGatewayActions().put('application', params=record)
+            if application_record['application_status'] != 'ARC_REVIEW':
+                api_pd_response = NannyGatewayActions().read('applicant-personal-details',
+                                                             params={'application_id': app_id})
+
+                if api_pd_response.status_code == 200:
+                    personal_details_record = api_pd_response.record
+
+                    if application_record['application_status'] == 'DRAFTING':
+                        self.send_survey_email(app_id, personal_details_record, application_record)
+
+                application_record['application_status'] = 'SUBMITTED'
+                NannyGatewayActions().put('application', params=application_record)
+
+        else:
+            raise ValueError('Nanny-Gateway returned {0} response for "application" endpoint, not 200'.format(
+                api_app_response.status_code))
 
         context['id'] = app_id
         return context
+
+    def get_template_names(self):
+        app_id = app_id_finder(self.request)
+        dbs_record = NannyGatewayActions().read('dbs-check', params={'application_id': app_id}).record
+
+        capita = dbs_record['is_ofsted_dbs']
+        certificate_information = dbs_record['certificate_information']
+        lived_abroad = dbs_record['lived_abroad']
+
+        confirmation_status = get_confirmation_status(capita, certificate_information, lived_abroad)
+        template_name = get_confirmation_page_template(confirmation_status)
+
+        return [template_name]
+
+    @staticmethod
+    def send_survey_email(application_id, personal_details_record, application_record):
+        """
+        function to get user's details and send them the survey email on confirmation of their payment
+        :param application_id:
+        :param personal_details_record:
+        :param application_record:
+        """
+        survey_template_id = 'ca1acc2f-cfc7-4d20-b5d6-5bb17fce1d0a'
+        user_details_response = IdentityGatewayActions().read('user', params={'application_id': application_id})
+
+        if user_details_response.status_code == 200:
+            email = user_details_response.record['email']
+
+            survey_personalisation = {
+                'first_name': personal_details_record['first_name'], 'ref': application_record['application_reference']
+            }
+
+            logger.debug("Attempting to send survey email: What do you think of our service? - Applicant")
+            send_email(email, survey_personalisation, survey_template_id)

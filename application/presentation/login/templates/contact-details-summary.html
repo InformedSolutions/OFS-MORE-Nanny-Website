@@ -10,6 +10,8 @@
     Check your answers: your sign in details
 </h1>
 
+<p>You can change these details later.</p>
+
 <table class="check-your-answers" style="table-layout: fixed; width: 100%">
     <colgroup>
         <col class="summary-column">
@@ -77,7 +79,7 @@
 <br>
 
 <form method="post" novalidate>
-    <input type="submit" class="button" value="Confirm and continue" alt='Continue'>
+    <input type="submit" class="button" value="Continue" alt='Continue'>
     {% csrf_token %}
 </form>
 

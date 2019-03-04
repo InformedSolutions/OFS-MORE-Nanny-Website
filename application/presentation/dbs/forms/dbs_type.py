@@ -9,7 +9,7 @@ from application.services.ConditionalPostChoiceWidget import ConditionalPostInli
 class DBSTypeForm(NannyForm):
 
     field_label_classes = 'form-label-bold'
-    error_summary_title = 'There was a problem'
+    error_summary_title = 'There was a problem on this page'
     auto_replace_widgets = True
     capita_field_name = 'enhanced_check'
     update_field_name = 'on_dbs_update_service'
@@ -19,7 +19,7 @@ class DBSTypeForm(NannyForm):
     )
 
     on_dbs_update_service = forms.ChoiceField(
-        label=' Are you on the DBS update service?',
+        label='Are you on the DBS update service?',
         choices=options,
         widget=InlineRadioSelect,
         required=True,

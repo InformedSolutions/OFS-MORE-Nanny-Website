@@ -9,6 +9,8 @@ import json
 import logging
 import time
 from urllib.parse import quote
+
+from application.presentation.utilities import get_confirmation_status, get_confirmation_email_template
 from .notify import send_email
 
 import requests
@@ -84,37 +86,27 @@ def payment_email(email, name, application_reference, application_id):
     """
     logger.debug('Dispatching payment confirmation email for application with identifier: ' + application_id)
 
-    # If the applicant has neither cautions and convictions nor lived abroad
-    template_id = 'beb79a5f-97e8-47d2-afda-ae914f02cdaa'
-
     # Check for cautions and convictions, and whether the applicant has lived abroad
 
     dbs_record = NannyGatewayActions().read('dbs-check', params={'application_id': application_id}).record
-    conviction = dbs_record['convictions']
 
-    personal_details_record = NannyGatewayActions().read('applicant-personal-details', params={'application_id': application_id}).record
-    lived_abroad = personal_details_record['lived_abroad']
+    capita = dbs_record['is_ofsted_dbs']
+    certificate_information = dbs_record['certificate_information']
+    lived_abroad = dbs_record['lived_abroad']
 
-    # If the applicant has cautions and convictions and has lived abroad
-    if conviction is True and lived_abroad is True:
-        template_id = 'fa1955dd-f252-4edf-85d1-b6ba7a9061c8'
+    # Get the email template_id to send
+    confirmation_status = get_confirmation_status(capita, certificate_information, lived_abroad)
+    confirmation_email_template_id = get_confirmation_email_template(confirmation_status)
+    logger.debug('Attempting send of email with template_id: {0}'.format(confirmation_email_template_id))
 
-    # If the applicant has cautions and convictions but has not lived abroad
-    if conviction is True and lived_abroad is False:
-        template_id = 'a7fe3279-7589-44e0-81a7-b05931fb2588'
-
-    # If the applicant has no cautions and convictions but has lived abroad
-    if conviction is False and lived_abroad is True:
-        template_id = 'b4b9e666-846b-48de-8e72-9901ab5474f0'
-
-    response = send_email(email, {"firstName": name, "ref": application_reference}, template_id)
+    response = send_email(email, {"firstName": name, "ref": application_reference}, confirmation_email_template_id)
     return response
 
 
 def create_formatted_payment_reference(application_reference):
     """
     Function for formatting a payment reference to be issued to the payment provider
-    :param application_reference: a unique applicaiton reference
+    :param application_reference: a unique application reference
     :return: a formatted payment reference
     """
     logger.debug('Generating payment reference for application with reference: ' + application_reference)
@@ -129,7 +121,7 @@ def payment_record_exists(application_id):
     """
     Service layer implementation for testing whether a payment record has previously been lodged
     :param application_id: the UUID of the application
-    :return: a boolean indicator detailing whether a payyment record exists or not
+    :return: a boolean indicator detailing whether a payment record exists or not
     """
     logger.debug('Testing for presence of payment record for application with identifier: ' + application_id)
     payment_record = NannyGatewayActions().read('payment', params={'application_id': application_id})

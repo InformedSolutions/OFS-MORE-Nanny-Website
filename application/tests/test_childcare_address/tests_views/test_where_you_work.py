@@ -50,10 +50,12 @@ class WhereYouWorkTests(ChildcareAddressTests):
             mock.patch.object(NannyGatewayActions, 'list') as nanny_api_list,\
             mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put, \
             mock.patch.object(NannyGatewayActions, 'delete') as nanny_api_delete, \
-            mock.patch.object(NannyGatewayActions, 'create') as nanny_api_create:
+            mock.patch.object(NannyGatewayActions, 'create') as nanny_api_create, \
+            mock.patch.object(NannyGatewayActions, 'patch') as nanny_api_patch:
 
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
+            nanny_api_patch.side_effect = side_effect
 
             nanny_api_list.return_value.status_code = 404
             nanny_api_list.return_value.record = []
@@ -73,10 +75,12 @@ class WhereYouWorkTests(ChildcareAddressTests):
             mock.patch.object(NannyGatewayActions, 'list') as nanny_api_list,\
             mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put, \
             mock.patch.object(NannyGatewayActions, 'delete') as nanny_api_delete, \
-            mock.patch.object(NannyGatewayActions, 'create') as nanny_api_create:
+            mock.patch.object(NannyGatewayActions, 'create') as nanny_api_create, \
+            mock.patch.object(NannyGatewayActions, 'patch') as nanny_api_patch:
 
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
+            nanny_api_patch.side_effect = side_effect
 
             nanny_api_list.return_value.status_code = 404
             nanny_api_list.return_value.record = []

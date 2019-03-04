@@ -57,7 +57,7 @@ class CriminalRecordChecksSummaryView(NannyTemplateView):
             else:
                 row_list = [lived_abroad_row, dbs_number_row, dbs_update_service_row]
         elif not dbs_record['is_ofsted_dbs']:
-            row_list = [lived_abroad_row, dbs_number_row, dbs_enhanced_check_row, dbs_update_service_row,]
+            row_list = [lived_abroad_row, dbs_number_row, dbs_enhanced_check_row, dbs_update_service_row]
 
         dbs_summary_table = Table(application_id)
         dbs_summary_table.row_list = row_list
