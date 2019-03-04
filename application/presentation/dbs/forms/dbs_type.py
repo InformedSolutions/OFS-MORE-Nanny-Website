@@ -7,9 +7,7 @@ from application.services.ConditionalPostChoiceWidget import ConditionalPostInli
 
 
 class DBSTypeForm(NannyForm):
-    """
-    GOV.UK form for the 'Lived Abroad' Page
-    """
+
     field_label_classes = 'form-label-bold'
     error_summary_title = 'There was a problem on this page'
     auto_replace_widgets = True

@@ -43,25 +43,6 @@ class DBSNumberFormFieldMixin(forms.Form):
         return dbs_number
 
 
-class CriminalCautionsAndConvictionsFormFieldMixin(forms.Form):
-    """
-    Mixin for the 'Do you have any criminal cautions or convictions?' ChoiceField.
-    """
-    convictions_choices = (
-        (True, 'Yes'),
-        (False, 'No')
-    )
-
-    convictions = forms.ChoiceField(
-        label='Do you have any criminal cautions or convictions?',
-        choices=convictions_choices,
-        error_messages={
-            'required': 'Please say if you have any criminal cautions or convictions',
-        },
-        widget=InlineRadioSelect
-    )
-
-
 class NonCapitaDBSDetailsForm(DBSNumberFormFieldMixin, NannyForm):
     """
     GOV.UK form for the Captia DBS Details Page
