@@ -6,6 +6,7 @@ from django.test import modify_settings, TestCase
 from django.urls import resolve, reverse
 
 from ...presentation.feedback.views import feedback as feedback_view
+from ...presentation.login.views import StartPageView
 
 
 class FeedbackTests(TestCase):
@@ -24,12 +25,12 @@ class FeedbackTests(TestCase):
                 {
                     'feedback': 'Test feedback',
                     'email_address': 'tester@informed.com',
-                    'url': reverse('Start-Page') 
+                    'url': reverse('Start-Page')
                 }
             )
             self.assertEqual(response.status_code, 302)
             # Assert taken to feedback confirmation page
-            #self.assertEqual()
+            self.assertTemplateUsed('feedback-confirmation.html')
 
     def test_feedback_successfully_submitted_no_email(self):
         """
@@ -51,7 +52,7 @@ class FeedbackTests(TestCase):
 
             self.assertEqual(response.status_code, 302)
             # Assert taken to feedback confirmation page
-            #self.assertEqual()
+            self.assertTemplateUsed('feedback-confirmation.html')
 
     def test_invalid_feedback_submitted(self):
         """
@@ -81,3 +82,39 @@ class FeedbackTests(TestCase):
 
            # Assert error message returned to user
            self.assertEqual(error_message, 1)
+
+    def test_feedback_email_sent_when_validation_passes_on_feedback(self):
+        """
+        Test to assert that the send_email function is called on posting valid feedback
+        """
+        with mock.patch.object(feedback_view, 'send_email') as send_email_mock:
+            send_email_mock.return_value.status_code = 201
+
+            response = self.client.post(
+                reverse('Feedback'),
+                {
+                    'feedback': 'test',
+                    'email_address':'tester@informed.com',
+                    'url': reverse('Start-Page')
+                }
+            )
+
+
+
+
+
+    def test_feedback_confirmation_page_redirects_to_previous_url(self):
+        """
+         Test to assert that the feedback confirmation page redirects to the url
+         that the feedback page was accessed from
+        """
+        response = self.client.post(
+            reverse('Feedback-Confirmation'),
+            {
+                'url': reverse('Start-Page')
+            }
+        )
+        
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(resolve(response.url).func.__name__, StartPageView.__name__)
+        self.assertTemplateUsed('start-page.html')
