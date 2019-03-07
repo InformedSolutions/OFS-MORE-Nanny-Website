@@ -17,10 +17,11 @@ import requests
 
 from django.conf import settings
 
-from application.services.db_gateways import NannyGatewayActions
+from ..services.db_gateways import NannyGatewayActions
 
 
 logger = logging.getLogger()
+
 
 def make_payment(amount, name, number, cvc, expiry_m, expiry_y, currency, customer_order_code, desc):
     """
@@ -109,11 +110,10 @@ def create_formatted_payment_reference(application_reference):
     :param application_reference: a unique application reference
     :return: a formatted payment reference
     """
-    logger.debug('Generating payment reference for application with reference: ' + application_reference)
-    prefix = 'MORE'
+    prefix = settings.PAYMENT_REFERENCE_PREFIX
+    payment_urn_prefix = settings.PAYMENT_URN_PREFIX
     timestamp = time.strftime("%Y%m%d%H%M%S")
-    formatted_payment_reference = str(prefix + ':' + application_reference + ':' + timestamp)
-    logger.debug('Generated payment reference: ' + formatted_payment_reference)
+    formatted_payment_reference = str(prefix + ':' + payment_urn_prefix + application_reference + ':' + timestamp)
     return formatted_payment_reference
 
 
@@ -137,3 +137,15 @@ def get_payment_record(application_id):
     logger.debug('Fetching payment record for application with identifier: ' + application_id)
     return NannyGatewayActions().read('payment', params={'application_id': application_id}).record
 
+
+def created_formatted_payment_reference(application_reference):
+    """
+    Function for formatting a payment reference to be issued to the payment provider
+    :param application_reference: a unique application reference
+    :return: a formatted payment reference
+    """
+    prefix = settings.PAYMENT_REFERENCE_PREFIX
+    payment_urn_prefix = settings.PAYMENT_URN_PREFIX
+    timestamp = time.strftime("%Y%m%d%H%M%S")
+    formatted_payment_reference = str(prefix + ':' + payment_urn_prefix + application_reference + ':' + timestamp)
+    return formatted_payment_reference

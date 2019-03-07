@@ -11,9 +11,9 @@ from django.shortcuts import render
 from django.core.urlresolvers import reverse
 from django.views.decorators.cache import never_cache
 
-from application.services.db_gateways import NannyGatewayActions, IdentityGatewayActions
+from ....services.db_gateways import NannyGatewayActions, IdentityGatewayActions
 
-from application.services import payment_service
+from ....services import payment_service
 from ..forms.payment import PaymentDetailsForm
 
 logger = logging.getLogger()

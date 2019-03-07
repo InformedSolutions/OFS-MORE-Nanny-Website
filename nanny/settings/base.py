@@ -31,6 +31,12 @@ NOTIFY_URL = os.environ.get('APP_NOTIFY_URL')
 # Base URL of payment gateway
 PAYMENT_URL = os.environ.get('APP_PAYMENT_URL')
 
+# The prefix added before a URN for finance system reconciliation purposes
+PAYMENT_URN_PREFIX = 'EY'
+
+# The prefix used to distinguish Worldpay payment entries for MORE
+PAYMENT_REFERENCE_PREFIX = 'MO'
+
 # Payment specific settings
 PAYMENT_PROCESSING_ATTEMPTS = os.environ.get('PAYMENT_PROCESSING_ATTEMPTS', 10)
 PAYMENT_STATUS_QUERY_INTERVAL_IN_SECONDS = os.environ.get('PAYMENT_STATUS_QUERY_INTERVAL_IN_SECONDS', 10)
