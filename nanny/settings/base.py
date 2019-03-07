@@ -52,7 +52,6 @@ DBS_URL = os.environ.get('DBS_APP_URL')
 
 EXECUTING_AS_TEST = os.environ.get('EXECUTING_AS_TEST', False)
 
-FEEDBACK_EMAIL = os.environ.get('FEEDBACK_EMAIL', 'tester@informed.com')
 
 TEST_NOTIFY_CONNECTION = True
 
@@ -71,7 +70,6 @@ DEBUG = True
 
 PROJECT_PATH = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 
-FEEDBACK_EMAIL = os.environ.get('FEEDBACK_EMAIL', 'tester@informed.com')
 
 DATABASES = {
     'default': {

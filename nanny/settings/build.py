@@ -14,6 +14,8 @@ MIDDLEWARE_DEV = [
     'debug_toolbar.middleware.DebugToolbarMiddleware'
 ]
 
+FEEDBACK_EMAIL = 'tester@informed.com'
+
 URL_PREFIX = '/nanny'
 
 STATIC_URL = URL_PREFIX + '/static/'
