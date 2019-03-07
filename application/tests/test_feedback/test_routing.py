@@ -4,6 +4,7 @@ from unittest import mock
 from django.http import HttpResponse
 from django.test import modify_settings, TestCase
 from django.urls import resolve, reverse
+from django.conf import settings
 
 from ...presentation.feedback.views import feedback as feedback_view
 from ...presentation.login.views import StartPageView
@@ -99,8 +100,9 @@ class FeedbackTests(TestCase):
                 }
             )
 
-
-
+            feedback_email = settings.FEEDBACK_EMAIL
+            send_email_mock.assert_called_with(feedback_email, {'feedback': 'test', 'email_address': 'tester@informed.com'},
+                                                         '6e6a00f7-91fb-4cf3-b10a-74319188d07f')
 
 
     def test_feedback_confirmation_page_redirects_to_previous_url(self):
