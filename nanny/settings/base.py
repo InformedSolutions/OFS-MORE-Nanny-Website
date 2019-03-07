@@ -52,6 +52,8 @@ DBS_URL = os.environ.get('DBS_APP_URL')
 
 EXECUTING_AS_TEST = os.environ.get('EXECUTING_AS_TEST', False)
 
+FEEDBACK_EMAIL = os.environ.get('FEEDBACK_EMAIL', 'tester@informed.com')
+
 TEST_NOTIFY_CONNECTION = True
 
 # URL prefix for the identity-gateway API.
@@ -68,6 +70,8 @@ EMAIL_EXPIRY = 1
 DEBUG = True
 
 PROJECT_PATH = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+
+FEEDBACK_EMAIL = os.environ.get('FEEDBACK_EMAIL', 'tester@informed.com')
 
 DATABASES = {
     'default': {
@@ -270,6 +274,8 @@ AUTHENTICATION_EXEMPT_URLS = (
     r'^' + URL_PREFIX + '/application-cancelled/$',
     r'^' + URL_PREFIX + '/resend-code/',
     r'^' + URL_PREFIX + '/phone-number/',
+    r'^' + URL_PREFIX + '/feedback/',
+    r'^' + URL_PREFIX + '/feedback-submitted/',
 )
 
 # Regex Validation Strings

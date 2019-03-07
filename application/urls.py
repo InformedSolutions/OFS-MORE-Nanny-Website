@@ -3,7 +3,7 @@ from django.conf import settings
 
 import re
 
-from application.presentation import childcare_address, \
+from .presentation import childcare_address, \
     childcare_training, \
     dbs, \
     declaration, \
@@ -12,7 +12,8 @@ from application.presentation import childcare_address, \
     login, \
     payment, \
     personal_details, \
-    task_list
+    task_list, \
+    feedback
 
 urlpatterns = [
     url(r'^', include(childcare_address.urlpatterns)),
@@ -25,6 +26,7 @@ urlpatterns = [
     url(r'^', include(first_aid.urlpatterns, namespace='first-aid')),
     url(r'^insurance/', include(insurance_cover.urlpatterns, namespace='insurance')),
     url(r'^criminal-record/', include(dbs.urlpatterns, namespace='dbs')),
+    url(r'^', include(feedback.urlpatterns))
 ]
 
 
