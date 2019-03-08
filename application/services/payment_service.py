@@ -12,6 +12,7 @@ from urllib.parse import quote
 
 from ..presentation.utilities import get_confirmation_status, get_confirmation_email_template
 from .notify import send_email
+from ..messaging import SQSHandler
 
 import requests
 
@@ -21,6 +22,9 @@ from ..services.db_gateways import NannyGatewayActions
 
 
 logger = logging.getLogger()
+
+
+sqs_handler = SQSHandler(settings.PAYMENT_NOTIFICATIONS_QUEUE_NAME)
 
 
 def make_payment(amount, name, number, cvc, expiry_m, expiry_y, currency, customer_order_code, desc):
@@ -136,3 +140,40 @@ def get_payment_record(application_id):
     """
     logger.debug('Fetching payment record for application with identifier: ' + application_id)
     return NannyGatewayActions().read('payment', params={'application_id': application_id}).record
+
+
+def send_payment_notification(application_id, application_reference, payment_reference, amount):
+    """
+    Method for sending an ad-hoc payment to NOO
+    :param application_id: the application identifier
+    :param application_reference: the application reference number (URN)
+    :param payment_reference: the payment reference number
+    :param amount: the amount charged
+    """
+    app_cost_float = float(amount / 100)
+    msg_body = __build_message_body(application_id, application_reference, payment_reference, format(app_cost_float, '.4f'))
+    sqs_handler.send_message(msg_body)
+
+
+def __build_message_body(application_id, application_reference, payment_reference, amount):
+    """
+    Helper method to build an SQS request to be picked up by the Integration Adapter component
+    for relay to NOO
+    :return: an SQS request that can be consumed up by the Integration Adapter component
+    """
+    applicant_name_response = NannyGatewayActions().read('applicant-personal-details',
+                                                         params={'application_id': application_id}).record
+
+    if len(applicant_name_response.get('middle_names')):
+        applicant_name = applicant_name_response.get('last_name') + ',' \
+                         + applicant_name_response.get('first_name') + " " + applicant_name_response.get('middle_names')
+    else:
+        applicant_name = applicant_name_response.get('last_name') + ',' + applicant_name_response.get('first_name')
+
+    return {
+        "payment_action": "SC1",
+        "payment_ref": payment_reference,
+        "payment_amount": amount,
+        "urn": str(settings.PAYMENT_URN_PREFIX) + application_reference,
+        "setting_name": applicant_name
+    }
