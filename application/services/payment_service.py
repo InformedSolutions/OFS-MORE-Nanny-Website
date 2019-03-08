@@ -10,7 +10,7 @@ import logging
 import time
 from urllib.parse import quote
 
-from application.presentation.utilities import get_confirmation_status, get_confirmation_email_template
+from ..presentation.utilities import get_confirmation_status, get_confirmation_email_template
 from .notify import send_email
 
 import requests
@@ -136,16 +136,3 @@ def get_payment_record(application_id):
     """
     logger.debug('Fetching payment record for application with identifier: ' + application_id)
     return NannyGatewayActions().read('payment', params={'application_id': application_id}).record
-
-
-def created_formatted_payment_reference(application_reference):
-    """
-    Function for formatting a payment reference to be issued to the payment provider
-    :param application_reference: a unique application reference
-    :return: a formatted payment reference
-    """
-    prefix = settings.PAYMENT_REFERENCE_PREFIX
-    payment_urn_prefix = settings.PAYMENT_URN_PREFIX
-    timestamp = time.strftime("%Y%m%d%H%M%S")
-    formatted_payment_reference = str(prefix + ':' + payment_urn_prefix + application_reference + ':' + timestamp)
-    return formatted_payment_reference
