@@ -18,6 +18,8 @@ from ..forms.payment import PaymentDetailsForm
 
 logger = logging.getLogger()
 
+application_cost = 10300
+
 
 @never_cache
 def card_payment_details(request):
@@ -118,7 +120,7 @@ def card_payment_post_handler(request):
         expiry_year = '20' + request.POST["expiry_date_1"]
 
         # Invoke Payment Gateway API
-        create_payment_response = payment_service.make_payment(10300, cardholders_name, card_number, card_security_code,
+        create_payment_response = payment_service.make_payment(application_cost, cardholders_name, card_number, card_security_code,
                                                                expiry_month, expiry_year, 'GBP', payment_reference,
                                                                'Ofsted Fees')
 
@@ -298,6 +300,9 @@ def __handle_authorised_payment(application_id):
     __send_payment_confirmation_email(application_record)
 
     application_reference = application_record['application_reference']
+
+    # Dispatch payment notification to SQS for use by NOO
+    payment_service.send_payment_notification(application_id, application_cost)
 
     return __redirect_to_payment_confirmation(application_reference, application_id)
 

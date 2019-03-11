@@ -136,3 +136,24 @@ def get_payment_record(application_id):
     """
     logger.debug('Fetching payment record for application with identifier: ' + application_id)
     return NannyGatewayActions().read('payment', params={'application_id': application_id}).record
+
+
+def send_payment_notification(application_id, amount):
+    """
+    Function for sending a payment notification to the Nanny Gateway
+    :param application_id: the unique identifier of the application
+    :param amount: the amount charged
+    """
+    logger.debug('Dispatching payment notification for application with identifier: ' + application_id)
+
+    payment_notification_request = {
+        'application_id': application_id,
+        'amount': amount
+    }
+
+    endpoint = settings.APP_NANNY_GATEWAY_URL + '/api/v1/payment_notification'
+
+    response = requests.post(endpoint, data=payment_notification_request)
+
+    if response.status_code != 201:
+        raise Exception('Failed to create payment notification when calling Nanny Gateway')
