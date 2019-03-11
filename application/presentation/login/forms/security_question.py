@@ -4,7 +4,7 @@ from govuk_forms.forms import GOVUKForm
 from govuk_forms.widgets import Widget, TextInput
 
 from application.presentation.utilities import DBSNumberField, PhoneNumberField
-from application.presentation.customfields import CustomSplitDateFieldDOB
+from application.presentation.form_fields import CustomSplitDateFieldDOB
 
 
 class NannyFormInput(TextInput, Widget):

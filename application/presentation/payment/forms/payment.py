@@ -5,7 +5,8 @@ from django import forms
 from django.conf import settings
 from govuk_forms.forms import GOVUKForm
 
-from application.presentation.customfields import ExpirySplitDateField, ExpirySplitDateWidget
+from application.presentation.form_fields import ExpirySplitDateField
+from application.presentation.widgets import ExpirySplitDateWidget
 from application.presentation.forms_helper import full_stop_stripper
 
 
