@@ -3,7 +3,7 @@ from datetime import date
 from django import forms
 
 from application.presentation.utilities import NannyForm
-from application.presentation.customfields import CustomSplitDateFieldDOB
+from application.presentation.form_fields import CustomSplitDateFieldDOB
 
 
 class PersonalDetailsDOBForm(NannyForm):
