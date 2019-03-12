@@ -35,7 +35,10 @@ class Summary(View):
                                                     params={'application_id': application_id}).record
         name = personal_details_record['first_name'] + ' ' + personal_details_record['middle_names'] + ' ' + \
                personal_details_record['last_name']
-        date_of_birth = datetime.datetime.strptime(personal_details_record['date_of_birth'], '%Y-%m-%d').date()
+
+        date_of_birth_datetime = datetime.datetime.strptime(personal_details_record['date_of_birth'], '%Y-%m-%d')
+        date_of_birth = date_of_birth_datetime.strftime('%d/%m/%Y')
+
         address = AddressHelper.format_address(address_record, ", ")
         known_to_social_services = personal_details_record['known_to_social_services']
         reasons_known_to_social_services = personal_details_record['reasons_known_to_social_services']
