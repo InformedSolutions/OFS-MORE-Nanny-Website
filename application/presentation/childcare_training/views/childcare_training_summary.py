@@ -35,7 +35,7 @@ class ChildcareTrainingSummaryView(View):
         else:
             row_value = 'Training in common core skills'
 
-        childcare_training_row = Row('childcare_training', 'What type of childcare course have you completed?', row_value, 'Type-Of-Childcare-Training', None)
+        childcare_training_row = Row('childcare_training', 'What type of childcare course have you completed?', row_value, 'Type-Of-Childcare-Training', 'type of childcare course you have completed')
 
         childcare_training_summary_table = Table(application_id)
         childcare_training_summary_table.row_list = [childcare_training_row]

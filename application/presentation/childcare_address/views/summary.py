@@ -39,7 +39,7 @@ class ChildcareAddressSummaryView(View):
             address_to_be_provided = 'No'
 
         known_childcare_location_row = Row('address_to_be_provided', 'Do you know where you\'ll be working?',
-                                           address_to_be_provided, 'Childcare-Address-Where-You-Work', None)
+                                           address_to_be_provided, 'Childcare-Address-Where-You-Work', 'answer to knowing where you’ll be working')
 
         childcare_address_summary_table = Table(application_id)
         childcare_address_summary_table.row_list = [known_childcare_location_row]
@@ -55,7 +55,7 @@ class ChildcareAddressSummaryView(View):
                     "Childcare address " + str(index + 1),
                     AddressHelper.format_address(address_records[index], "</br>"),
                     'Childcare-Address-Details',
-                    None,
+                    "childcare address " + str(index + 1),
                     row_pk=address['childcare_address_id'],
                     use_many_to_one=True
                 )
@@ -73,7 +73,7 @@ class ChildcareAddressSummaryView(View):
                 'Do you currently live and work at the same address?',
                 home_address_value,
                 'Childcare-Address-Location',
-                None
+                'answer to currently living and working at the same address'
             )
 
             childcare_address_summary_table.row_list.insert(1, home_address_row)

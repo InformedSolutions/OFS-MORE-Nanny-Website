@@ -169,8 +169,8 @@
   text-transform: uppercase;
   letter-spacing: 1px;
   text-decoration: none;
-  color: #fff;
-  background-color: #005ea5;
+  color: #FFFFFF;
+  background-color: #005EA5;
   float: right;
   margin-right: 0;
   padding-top: 3px;
@@ -261,7 +261,7 @@
   letter-spacing: 1px;
   text-decoration: none;
   color: #FFFFFF;
-  background-color: #005ea5;
+  background-color: #005EA5;
   width: 20%;
   text-align: center;
 }
@@ -337,7 +337,8 @@ div.error-summary ul.error-summary-list {
 }
 
 .task-in-progress {
-  background-color: #6F777B;
+    background-color: #0B0C0C;
+  color: #FFFFFF;
 }
 
 .task-to-do {
@@ -352,10 +353,12 @@ div.error-summary ul.error-summary-list {
 
 .task-returned {
   background-color: #b10e1e;
+  color: #FFFFFF;
 }
 
 .task-waiting {
-  background-color: #ffa900;
+  background-color: #FFBF47;
+  color: #0B0C0C;
 }
 
 .task-disabled {
@@ -369,7 +372,7 @@ div.error-summary ul.error-summary-list {
   outline: 3px;
   outline-color: #6F777B;
   outline-style: solid;
-  color: #6F777B;
+  color: #0B0C0C;
   width: calc(20% - 6px);
   margin: 0px 3px 0px 3px;
 }
