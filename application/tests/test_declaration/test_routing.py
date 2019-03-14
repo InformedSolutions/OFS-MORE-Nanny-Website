@@ -97,7 +97,6 @@ class DeclarationRoutingTests(TestCase):
         Test to assert that the 'Master-Summary' page can be rendered.
         """
 
-        # The below test is not functional.
         with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
                 mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put, \
                 mock.patch.object(IdentityGatewayActions, 'read') as identity_api_read, \
@@ -120,7 +119,6 @@ class DeclarationRoutingTests(TestCase):
                 Test to assert that the 'Master-Summary' page can be rendered.
                 """
 
-        # The below test is not functional.
         with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
                 mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put, \
                 mock.patch.object(IdentityGatewayActions, 'read') as identity_api_read, \
