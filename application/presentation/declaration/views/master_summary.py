@@ -33,7 +33,8 @@ class MasterSummary(NeverCacheMixin, NannyTemplateView):
         if application_response.status_code == 200 and application_response.record:
             application_record = application_response.record
 
-            db_arc_flagged = {'user_details': application_record['login_details_arc_flagged'],
+            if application_record['application_status'] == "FURTHER_INFORMATION":
+                db_arc_flagged = {'user_details': application_record['login_details_arc_flagged'],
                             'applicant_personal_details_section': application_record['personal_details_arc_flagged'],
                             'applicant_home_address': application_record['personal_details_arc_flagged'],
                           'childcare_address_section': application_record['childcare_address_arc_flagged'],
@@ -42,7 +43,7 @@ class MasterSummary(NeverCacheMixin, NannyTemplateView):
                           'dbs_check': application_record['dbs_arc_flagged'],
                           'insurance_cover': application_record['insurance_cover_arc_flagged']}
 
-        return db_arc_flagged, application_record
+        return db_arc_flagged
 
 
     def get_context_data(self):
@@ -96,7 +97,7 @@ class MasterSummary(NeverCacheMixin, NannyTemplateView):
                 if response.status_code == 200:
                     data = response.json()
                     # Support for multiple tables being returned for one section
-                    if type(data[0]) == list and len(data) > 1:
+                    if len(data) > 1 and type(data[0]) == list:
                         for data_dict in data:
                             table_list = self.__parse_data(data_dict, app_id, section_key, section, recurse, table_list, arc_flagged)
                     else:
@@ -107,12 +108,11 @@ class MasterSummary(NeverCacheMixin, NannyTemplateView):
         return table_list
 
     def __parse_data(self, data, app_id, section_key, section, recurse, table_list, arc_flagged):
-        application_record = arc_flagged[1]
-        arc_flagged_dict = arc_flagged[0]
-        if application_record['application_status'] == "FURTHER_INFORMATION":
-            if section in arc_flagged_dict and arc_flagged_dict[section]:
+
+        if arc_flagged:
+            if section in arc_flagged and arc_flagged[section]:
                 data = self.generate_links(data, app_id)
-            elif section_key in arc_flagged_dict and arc_flagged_dict[section_key]:
+            elif section_key in arc_flagged and arc_flagged[section_key]:
                 data = self.generate_links(data, app_id)
         else:
             data = self.generate_links(data, app_id)

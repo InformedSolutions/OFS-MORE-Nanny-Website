@@ -96,7 +96,6 @@ class DeclarationRoutingTests(TestCase):
         """
         Test to assert that the 'Master-Summary' page can be rendered.
         """
-        self.skipTest('testNotImplemented')
 
         # The below test is not functional.
         with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
@@ -115,6 +114,40 @@ class DeclarationRoutingTests(TestCase):
 
             self.assertEqual(response.status_code, 200)
             self.assertEqual(found.func.view_class, views.MasterSummary)
+
+    def test_can_render_master_summary_page_returned_application(self):
+        """
+                Test to assert that the 'Master-Summary' page can be rendered.
+                """
+
+        # The below test is not functional.
+        with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
+                mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put, \
+                mock.patch.object(IdentityGatewayActions, 'read') as identity_api_read, \
+                mock.patch.object(confirmation_view, 'send_email') as send_email_mock:
+            nanny_api_read.side_effect = side_effect
+            nanny_api_put.side_effect = side_effect
+            identity_api_read.side_effect = side_effect
+
+            for task in self.tasks:
+                self.application_record[task] = 'COMPLETED'
+
+            self.application_record["application_status"] = "FURTHER_INFORMATION"
+            #
+            self.application_record["personal_details_arc_flagged"] = "False"
+            self.application_record["childcare_address_arc_flagged"] = "False"
+            self.application_record["first_aid_arc_flagged"] = "True"
+            self.application_record["childcare_training_arc_flagged"] = "False"
+            self.application_record["dbs_arc_flagged"] = "False"
+            self.application_record["insurance_cover_arc_flagged"] = "False"
+
+
+            response = self.client.get(reverse('declaration:Master-Summary') + '?id=' + self.application_id)
+            found = resolve(response.request.get('PATH_INFO'))
+
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(found.func.view_class, views.MasterSummary)
+
 
     def test_post_request_to_master_summary_redirects(self):
         """
