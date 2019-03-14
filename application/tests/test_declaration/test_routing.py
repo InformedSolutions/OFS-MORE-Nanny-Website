@@ -141,7 +141,6 @@ class DeclarationRoutingTests(TestCase):
             self.application_record["dbs_arc_flagged"] = "False"
             self.application_record["insurance_cover_arc_flagged"] = "False"
 
-
             response = self.client.get(reverse('declaration:Master-Summary') + '?id=' + self.application_id)
             found = resolve(response.request.get('PATH_INFO'))
 
