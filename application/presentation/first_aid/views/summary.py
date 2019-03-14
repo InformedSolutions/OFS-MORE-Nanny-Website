@@ -29,7 +29,8 @@ class Summary(View):
         first_aid_response = NannyGatewayActions().read('first-aid', params={'application_id': application_id})
         if first_aid_response.status_code == 200:
             first_aid_record = first_aid_response.record
-            formatted_course_date = datetime.datetime.strptime(first_aid_record['course_date'], '%Y-%m-%d').date()
+            course_date = datetime.datetime.strptime(first_aid_record['course_date'], '%Y-%m-%d').date()
+            formatted_course_date = course_date.strftime('%d/%m/%Y')
 
             organisation_row = Row('training_organisation', 'Training organisation',
                                    first_aid_record['training_organisation'], 'first-aid:Training-Details',
