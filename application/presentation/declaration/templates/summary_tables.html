@@ -24,14 +24,13 @@
                      <td>
                         {{row.value}}
                      </td>
-
-                    {% if row.link %}
                         <td class="change-answer">
+                            {% if row.link %}
                             <a href="{{row.link}}" alt="Change {{ row.change_link_description }}">
                                 Change <span class="visuallyhidden">{{ row.change_link_description }}</span>
                             </a>
+                             {% endif %}
                         </td>
-                    {% endif %}
                 </tr>
         {% endif %}
     {% endfor %}

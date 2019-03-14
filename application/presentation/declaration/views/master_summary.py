@@ -5,6 +5,7 @@ from django.shortcuts import reverse
 
 from application.presentation.base_views import NannyTemplateView
 from application.presentation.utilities import build_url, NeverCacheMixin
+from ....services.db_gateways import NannyGatewayActions
 
 
 class MasterSummary(NeverCacheMixin, NannyTemplateView):
@@ -19,6 +20,30 @@ class MasterSummary(NeverCacheMixin, NannyTemplateView):
     # Note that section_names is updated at get_context_data.
     section_names = ["user_details", "applicant_personal_details_section", "childcare_address_section",
                      "first_aid", "childcare_training", "dbs_check", "insurance_cover"]
+
+    @staticmethod
+    def get_arc_flagged(application_id):
+        """
+        Get the related _arc_flagged database value for each task in the summary
+        :param application_id: application_id for the user
+        :return: Dictionary containing the section names along with their arc flagged status
+        """
+        application_response = NannyGatewayActions().read('application', {'application_id': application_id})
+        db_arc_flagged = {}
+        if application_response.status_code == 200 and application_response.record:
+            application_record = application_response.record
+
+            db_arc_flagged = {'user_details': application_record['login_details_arc_flagged'],
+                            'applicant_personal_details_section': application_record['personal_details_arc_flagged'],
+                            'applicant_home_address': application_record['personal_details_arc_flagged'],
+                          'childcare_address_section': application_record['childcare_address_arc_flagged'],
+                          'first_aid': application_record['first_aid_arc_flagged'],
+                          'childcare_training': application_record['childcare_training_arc_flagged'],
+                          'dbs_check': application_record['dbs_arc_flagged'],
+                          'insurance_cover': application_record['insurance_cover_arc_flagged']}
+
+        return db_arc_flagged, application_record
+
 
     def get_context_data(self):
         context = super().get_context_data()
@@ -58,6 +83,7 @@ class MasterSummary(NeverCacheMixin, NannyTemplateView):
         """
         nanny_url = settings.APP_NANNY_GATEWAY_URL
         identity_url = settings.APP_IDENTITY_URL
+        arc_flagged = self.get_arc_flagged(app_id)
         table_list = []
         for section in section_names:
             if self.model_names.get(section):
@@ -72,16 +98,24 @@ class MasterSummary(NeverCacheMixin, NannyTemplateView):
                     # Support for multiple tables being returned for one section
                     if type(data[0]) == list and len(data) > 1:
                         for data_dict in data:
-                            table_list = self.__parse_data(data_dict, app_id, section_key, recurse, table_list)
+                            table_list = self.__parse_data(data_dict, app_id, section_key, section, recurse, table_list, arc_flagged)
                     else:
-                        table_list = self.__parse_data(data, app_id, section_key, recurse, table_list)
+                        table_list = self.__parse_data(data, app_id, section_key, section, recurse, table_list, arc_flagged)
 
         if recurse:
             table_list = sorted(table_list, key=lambda k: k['index'])
         return table_list
 
-    def __parse_data(self, data, app_id, section_key, recurse, table_list):
-        data = self.generate_links(data, app_id)
+    def __parse_data(self, data, app_id, section_key, section, recurse, table_list, arc_flagged):
+        application_record = arc_flagged[1]
+        arc_flagged_dict = arc_flagged[0]
+        if application_record['application_status'] == "FURTHER_INFORMATION":
+            if section in arc_flagged_dict and arc_flagged_dict[section]:
+                data = self.generate_links(data, app_id)
+            elif section_key in arc_flagged_dict and arc_flagged_dict[section_key]:
+                data = self.generate_links(data, app_id)
+        else:
+            data = self.generate_links(data, app_id)
         new_data = [row for row in data if (not row.get('section') or row.get('section') == section_key)]
 
         if recurse:
