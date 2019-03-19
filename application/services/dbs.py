@@ -1,9 +1,9 @@
 import requests
 import json
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from django.conf import settings
-from application.services.db_gateways import NannyGatewayActions
+from dateutil.relativedelta import relativedelta
 
 DBS_API_ENDPOINT = settings.DBS_URL
 
@@ -39,7 +39,7 @@ def dbs_within_three_months(record):
     """
     date_of_issue = datetime.strptime(record['date_of_issue'], '%Y-%m-%d')
     now = datetime.today()
-    if now - timedelta(3 * 365 / 12) <= date_of_issue:
+    if now - relativedelta(months=3) <= date_of_issue:
         return True
     else:
         return False
