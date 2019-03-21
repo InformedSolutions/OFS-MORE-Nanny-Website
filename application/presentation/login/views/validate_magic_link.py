@@ -41,7 +41,10 @@ class ValidateMagicLinkView(View):
                     CustomAuthenticationHandler.create_session(http_response, new_email)
                     return http_response
 
-                return HttpResponseRedirect(self.get_success_url())
+                email = self.record['email']
+                http_response = HttpResponseRedirect(self.get_success_url())
+                CustomAuthenticationHandler.create_session(http_response, email)
+                return http_response
 
             else:
                 return HttpResponseRedirect(reverse('Link-Used'))
