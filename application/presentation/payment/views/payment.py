@@ -173,7 +173,7 @@ def resubmission_handler(request, payment_reference, form, application):
 
     # If no record of the payment could be found, yield error
     if payment_status_response_raw.status_code == 404:
-        return __yield_general_processing_error_to_user(request, form, application.application_id)
+        return __yield_general_processing_error_to_user(request, form, application)
 
     # Deserialize Payment Gateway API response
     parsed_payment_response = payment_status_response_raw.json()
@@ -186,9 +186,9 @@ def resubmission_handler(request, payment_reference, form, application):
         # If payment has been marked as a REFUSED by Worldpay then payment has
         # been attempted but was not successful in which case a new order should be attempted.
         __rollback_payment_submission_status(application)
-        return __yield_general_processing_error_to_user(request, form, application.application_id)
+        return __yield_general_processing_error_to_user(request, form, application)
     if parsed_payment_response.get('lastEvent') == "ERROR":
-        return __yield_general_processing_error_to_user(request, form, application.application_id)
+        return __yield_general_processing_error_to_user(request, form, application)
     else:
         if 'processing_attempts' in request.META:
             processing_attempts = int(request.META.get('processing_attempts'))
@@ -202,11 +202,11 @@ def resubmission_handler(request, payment_reference, form, application):
 
                 variables = {
                     'form': form,
-                    'id': application.application_id,
+                    'id': application,
                 }
 
                 return HttpResponseRedirect(
-                    reverse('Payment-Details-View') + '?id=' + application.application_id, variables)
+                    reverse('Payment-Details-View') + '?id=' + application, variables)
 
             # Otherwise increment processing attempt count
             request.META['processing_attempts'] = processing_attempts + 1
