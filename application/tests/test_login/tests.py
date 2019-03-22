@@ -1,6 +1,8 @@
 import os
 from unittest import mock
 
+from django.contrib.sessions.middleware import SessionMiddleware
+from django.http import HttpRequest
 from django.test import TestCase
 from django.urls import resolve, reverse
 
@@ -10,6 +12,7 @@ from application.presentation.login import views
 from application.services.db_gateways import NannyGatewayActions, IdentityGatewayActions
 from application.services import notify
 from application.presentation import utilities
+from nanny.middleware import CustomAuthenticationHandler
 
 
 class LoginTests(TestCase):
@@ -29,7 +32,7 @@ class LoginTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
 
-    def test_can_render_accout_selection_page(self):
+    def test_can_render_account_selection_page(self):
         """
         Test to assert that the 'Account-Selection' page can be rendered.
         """
@@ -254,28 +257,6 @@ class LoginTests(TestCase):
 
             self.assertTrue(notify_email.called)
 
-    # def test_validating_email_magic_link_redirects_to_phone_number_page_for_new_applicant(self):
-    #     """
-    #     Test that the new user who navigates to the link sent via email is then redirected to the Phone number page.
-    #     """
-    #     with mock.patch('nanny.db_gateways.IdentityGatewayActions.read') as identity_api_get, \
-    #             mock.patch('nanny.db_gateways.IdentityGatewayActions.put') as identity_api_put, \
-    #             mock.patch('nanny.db_gateways.IdentityGatewayActions.list') as identity_api_list, \
-    #             mock.patch('nanny.notify.send_text') as notify_send_text, \
-    #             mock.patch('login_app.views.ValidateMagicLinkView.link_has_expired') as link_expired:
-    #         identity_api_list.return_value.record = [self.user_details_record]
-    #
-    #         identity_api_list.return_value.status_code = 200
-    #         identity_api_get.side_effect = side_effect
-    #         identity_api_put.side_effect = side_effect
-    #         link_expired.return_value = False
-    #
-    #         response = self.client.get(os.environ.get('PUBLIC_APPLICATION_URL') + '/validate/' + self.user_details_record['magic_link_email'] + '/')
-    #         found = resolve(response.url)
-    #
-    #         self.assertEqual(302, response.status_code)
-    #         self.assertEqual(found.func.view_class, views.PhoneNumbersFormView)
-
     def test_validating_email_magic_link_redirects_to_sms_page_for_existing_applicant(self):
         """
         Test that the returning user who navigates to the link sent via email is then redirected to the SMS page.
@@ -297,6 +278,28 @@ class LoginTests(TestCase):
 
             self.assertEqual(302, response.status_code)
             self.assertEqual(found.func.view_class, views.SecurityCodeFormView)
+
+    def test_cookie_update_after_magic_link(self):
+        """
+        Test that the returning user's cookie updates to match their email address for their session
+        """
+        with mock.patch.object(IdentityGatewayActions, 'read') as identity_api_get, \
+                mock.patch.object(IdentityGatewayActions, 'put') as identity_api_put, \
+                mock.patch.object(IdentityGatewayActions, 'list') as identity_api_list, \
+                mock.patch.object(notify, 'send_text') as notify_send_text, \
+                mock.patch.object(views.ValidateMagicLinkView, 'link_has_expired') as link_expired:
+
+            identity_api_list.return_value.record = [self.user_details_record]
+            identity_api_list.return_value.status_code = 200
+            identity_api_get.side_effect = side_effect
+            identity_api_put.side_effect = side_effect
+            link_expired.return_value = False
+            email = self.user_details_record['email']
+
+            response = self.client.get(os.environ.get('PUBLIC_APPLICATION_URL') + '/validate/' + self.user_details_record['magic_link_email'] + '/')
+            cookie = self.client.cookies['_ofs'].value
+
+            self.assertEqual(cookie, email)
 
     def test_validating_email_magic_link_sends_sms(self):
         """
@@ -358,30 +361,6 @@ class LoginTests(TestCase):
                 self.assertEqual(found.func.view_class, views.SecurityCodeFormView)
                 self.assertFormError(response, 'form', 'sms_code', error)
 
-    # def test_valid_sms_code_redirects_correctly(self):
-    #     """
-    #     Test that entering a correct SMS code redirects the user to the appropriate page.
-    #     """
-    #     with mock.patch('nanny.db_gateways.IdentityGatewayActions.read') as identity_api_get, \
-    #             mock.patch('nanny.db_gateways.IdentityGatewayActions.put') as identity_api_put, \
-    #             mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_get, \
-    #             mock.patch('login_app.views.ValidateMagicLinkView.link_has_expired') as link_expired:
-    #
-    #         identity_api_get.side_effect = side_effect
-    #         nanny_api_get.side_effect = side_effect
-    #
-    #         identity_api_get.return_value.record = self.user_details_record
-    #         link_expired.return_value = False
-    #
-    #         response = self.client.post(
-    #             reverse('Security-Code') + '?id=' + self.user_details_record['application_id'],
-    #             {'sms_code': self.user_details_record['magic_link_sms']},
-    #         )
-    #
-    #         found = resolve(response.url)
-    #
-    #         self.assertEqual(response.status_code, 302)
-    #         self.assertEqual(found.func.view_class, TaskListView)
 
     def test_can_render_link_used_page(self):
         """
@@ -599,67 +578,6 @@ class LoginTests(TestCase):
             self.assertEqual(response.status_code, 200)
             self.assertEqual(found.func.view_class, views.SecurityQuestionFormView)
 
-    # def test_mobile_security_question_returned_if_login_details_done(self):
-    #     """
-    #     Test to assert that an applicant who has completed the login details task is asked for their mobile
-    #     number as a security question.
-    #     """
-    #     with mock.patch('nanny.db_gateways.IdentityGatewayActions.read') as identity_api_get, \
-    #             mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_get:
-    #
-    #         identity_api_get.side_effect = side_effect
-    #         nanny_api_get.side_effect = side_effect
-    #
-    #         security_question_view = views.SecurityQuestionFormView()
-    #         r = self.client.get(reverse('Security-Question') + '?id=' + self.user_details_record['application_id'])
-    #         security_question_view.request = r.wsgi_request
-    #
-    #         self.assertEqual(security_question_view.get_security_question_form(), forms.MobileNumberSecurityQuestionForm)
-
-    # def test_DoB_and_postcode_security_question_returned_if_personal_details_done(self):
-    #     """
-    #     Test to assert that an applicant who has completed the personal details task is asked for their postcode and DoB
-    #     as a security question.
-    #     """
-    #     with mock.patch('nanny.db_gateways.IdentityGatewayActions.read') as identity_api_get, \
-    #             mock.patch('nanny.db_gateways.IdentityGatewayActions.put') as identity_api_put, \
-    #             mock.patch('nanny.db_gateways.IdentityGatewayActions.list') as identity_api_list, \
-    #             mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read:
-    #
-    #         identity_api_list.return_value.record = [self.user_details_record]
-    #
-    #         identity_api_get.side_effect = side_effect
-    #         identity_api_put.side_effect = side_effect
-    #         nanny_api_read.side_effect = side_effect
-    #
-    #         security_question_view = views.SecurityQuestionFormView()
-    #         r = self.client.get(reverse('Security-Question') + '?id=' + self.user_details_record['application_id'])
-    #         security_question_view.request = r.wsgi_request
-    #
-    #         self.assertEqual(security_question_view.get_security_question_form(), forms.PersonalDetailsSecurityQuestionForm)
-
-    # def test_DBS_security_question_returned_if_criminal_record_check_done(self):
-    #     """
-    #     Test to assert that an applicant who has completed the criminal record check task is asked for their DBS
-    #     number as a security question.
-    #     """
-    #     with mock.patch('nanny.db_gateways.IdentityGatewayActions.read') as identity_api_get, \
-    #             mock.patch('nanny.db_gateways.IdentityGatewayActions.put') as identity_api_put, \
-    #             mock.patch('nanny.db_gateways.IdentityGatewayActions.list') as identity_api_list, \
-    #             mock.patch('nanny.db_gateways.NannyGatewayActions.read') as nanny_api_read:
-    #
-    #         identity_api_list.return_value.record = [self.user_details_record]
-    #
-    #         identity_api_get.side_effect = side_effect
-    #         identity_api_put.side_effect = side_effect
-    #         nanny_api_read.side_effect = side_effect
-    #
-    #         security_question_view = views.SecurityQuestionFormView()
-    #         r = self.client.get(reverse('Security-Question') + '?id=' + self.user_details_record['application_id'])
-    #         security_question_view.request = r.wsgi_request
-    #
-    #         self.assertEqual(security_question_view.get_security_question_form(), forms.DBSSecurityQuestionForm)
-
     def test_login_redirect_helper_function_if_application_not_yet_created(self):
         """
         Test the behaviour of the login_redirect_helper_function in the case where an applicant has not yet
@@ -672,10 +590,13 @@ class LoginTests(TestCase):
             nanny_api_get.side_effect = AttributeError
             identity_api_get.side_effect = side_effect
 
+
             response = self.client.post(
                 reverse('Security-Code') + '?id=' + self.user_details_record['application_id'],
-                {'sms_code': '12345'}
+                {'sms_code': self.user_details_record['magic_link_sms']}
             )
 
             self.assertEqual(response.status_code, 302)
             self.assertEqual(resolve(response.url).func.view_class, views.ContactDetailsSummaryView)
+
+
