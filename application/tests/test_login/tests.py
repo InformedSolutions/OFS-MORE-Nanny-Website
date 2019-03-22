@@ -590,34 +590,13 @@ class LoginTests(TestCase):
             nanny_api_get.side_effect = AttributeError
             identity_api_get.side_effect = side_effect
 
+
             response = self.client.post(
                 reverse('Security-Code') + '?id=' + self.user_details_record['application_id'],
-                {'sms_code': '12345'}
+                {'sms_code': self.user_details_record['magic_link_sms']}
             )
 
             self.assertEqual(response.status_code, 302)
             self.assertEqual(resolve(response.url).func.view_class, views.ContactDetailsSummaryView)
 
-    def test_session_cookie_updates_for_new_user(self):
-        """
-        Test the behaviour of the login_redirect_helper_function in the case where an applicant has not yet
-        completed their login details => has not created a NannyApplication object.
-        Expect to land on the 'Contact-Details-Summary' page.
-        """
-        with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_get, \
-            mock.patch.object(IdentityGatewayActions, 'read') as identity_api_get:
-
-            nanny_api_get.side_effect = AttributeError
-            identity_api_get.side_effect = side_effect
-
-            response = self.client.post(
-                reverse('Security-Code') + '?id=' + self.user_details_record['application_id'],
-                {'sms_code': '12345'}
-            )
-
-            email = self.user_details_record['email']
-
-            cookie = self.client.cookies['_ofs'].value
-
-            self.assertEqual(cookie, email)
 
