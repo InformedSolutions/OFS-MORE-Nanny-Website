@@ -23,6 +23,7 @@ class FirstAidTrainingDetailsForm(NannyForm):
 
     course_title = forms.CharField(
         label='Title of training course',
+        help_text='Your application will be returned if the course does not cover the age groups you’ll look after',
         error_messages={
             'required': 'Please enter the title of the course',
         }
