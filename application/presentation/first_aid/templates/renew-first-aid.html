@@ -1,0 +1,26 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Renew your first aid certificate{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+<h1 class="form-title heading-large">
+    Renew your first aid training
+</h1>
+
+<p>Your certificate is only valid for 3 years and will run out in the next few months.</p>
+
+<p>You’ll have to go on a new first aid course that covers the age groups you’ll look after.</p>
+
+<p>You must renew your first aid training in the next few months.
+</p>
+
+<a href="{{ link_url }}" class="button">Continue</a>
+<br>
+<br>
+
+{% include 'return-to-list.html' %}
+{% endblock %}

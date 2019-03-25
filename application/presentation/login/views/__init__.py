@@ -16,3 +16,4 @@ from .help_and_contacts import *
 from .start_page import *
 from .change_email import *
 from .resend_change_email import *
+from .your_location import *

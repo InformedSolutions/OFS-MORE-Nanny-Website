@@ -1,8 +1,11 @@
 import datetime
 
+from dateutil.relativedelta import relativedelta
+from django.core.exceptions import ImproperlyConfigured
+
 from ..forms.training_details import FirstAidTrainingDetailsForm
 
-from application.presentation.utilities import app_id_finder
+from application.presentation.utilities import app_id_finder, build_url
 from application.presentation.base_views import NannyFormView
 from application.services.db_gateways import NannyGatewayActions
 
@@ -11,7 +14,6 @@ class FirstAidDetailsView(NannyFormView):
 
     template_name = 'training_details.html'
     form_class = FirstAidTrainingDetailsForm
-    success_url = 'first-aid:First-Aid-Declaration'
 
     def get_initial(self):
         """
@@ -55,4 +57,25 @@ class FirstAidDetailsView(NannyFormView):
         elif existing_record.status_code == 404:
             NannyGatewayActions().create('first-aid', params=data_dict)
 
+        if self.__first_aid_renew(form):
+            self.success_url = "first-aid:First-Aid-Renew"
+        else:
+            self.success_url = "first-aid:First-Aid-Declaration"
+
         return super().form_valid(form)
+
+
+    def __first_aid_renew(self, form):
+        """
+        function to determine if first aid course within 2.5 years
+        :param form:
+        :return:
+        """
+        renew = False
+        today = datetime.date.today()
+        course_date = form.cleaned_data['course_date']
+
+        if today - relativedelta(months=30) >= course_date:
+            renew = True
+
+        return renew
