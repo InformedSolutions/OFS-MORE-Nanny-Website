@@ -265,6 +265,7 @@ AUTHENTICATION_EXEMPT_URLS = (
     r'^' + URL_PREFIX + '/link-used/$',
     r'^' + URL_PREFIX + '/new-code/.*$',
     r'^' + URL_PREFIX + '/djga/+',
+    r'^' + URL_PREFIX + '/your-location/$',
     r'^' + URL_PREFIX + '/sign-in/',
     r'^' + URL_PREFIX + '/sign-in/check-email/',
     r'^' + URL_PREFIX + '/email-resent/',
