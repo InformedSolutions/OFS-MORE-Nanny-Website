@@ -1,7 +1,7 @@
 from django import forms
 
 from application.presentation.utilities import NannyForm
-from application.services.ConditionalPostChoiceWidget import ConditionalPostInlineRadioSelect
+from application.presentation.widgets import ConditionalPostInlineRadioSelect
 
 
 class PersonalDetailsYourChildrenForm(NannyForm):

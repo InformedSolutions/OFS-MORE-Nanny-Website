@@ -3,7 +3,7 @@ from django import forms
 from govuk_forms.widgets import InlineRadioSelect
 
 from application.presentation.utilities import NannyForm
-from application.services.ConditionalPostChoiceWidget import ConditionalPostInlineRadioSelect
+from application.presentation.widgets import ConditionalPostInlineRadioSelect
 
 
 class DBSTypeForm(NannyForm):
