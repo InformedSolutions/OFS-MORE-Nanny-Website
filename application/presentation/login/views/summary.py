@@ -51,6 +51,7 @@ class ContactDetailsSummaryView(View):
                     'application_status': 'DRAFTING',
                     'login_details_status': 'COMPLETED',
                     'date_last_accessed': datetime.datetime.now(),
+                    'application_expiry_email_sent': False
                 }
             )
             return HttpResponseRedirect(build_url('personal-details:Personal-Details-Name', get={

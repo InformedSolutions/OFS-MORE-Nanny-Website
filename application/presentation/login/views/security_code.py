@@ -32,7 +32,9 @@ class SecurityCodeFormView(BaseFormView):
             # application might not exist yet, if user signed out before completing contact details task
             application = app_response.record
             application['date_last_accessed'] = datetime.datetime.now()
+            application['application_expiry_email_sent'] = False
             nanny_actions.put('application', application)
+
 
         return response
 
