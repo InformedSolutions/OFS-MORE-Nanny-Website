@@ -1,3 +1,5 @@
+import datetime
+
 from django.http import HttpResponseRedirect
 from django.views import View
 from django.shortcuts import render
@@ -42,17 +44,15 @@ class ContactDetailsSummaryView(View):
                     'id': application_id}))
 
         if nanny_api_response.status_code == 404:
-            create_response = NannyGatewayActions().create(
+            NannyGatewayActions().create(
                 'application',
                 params={
                     'application_id': application_id,
                     'application_status': 'DRAFTING',
                     'login_details_status': 'COMPLETED',
-
+                    'date_last_accessed': datetime.datetime.now(),
                 }
             )
-            application = create_response.record
-
             return HttpResponseRedirect(build_url('personal-details:Personal-Details-Name', get={
                 'id': application_id}))
 

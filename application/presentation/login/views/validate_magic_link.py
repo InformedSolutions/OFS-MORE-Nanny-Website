@@ -5,7 +5,6 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import reverse
 from django.views import View
 
-from application.presentation.login import login_redirect_helper
 from application.services import notify
 from application.presentation import utilities
 from nanny.middleware import CustomAuthenticationHandler
@@ -44,6 +43,7 @@ class ValidateMagicLinkView(View):
                 email = self.record['email']
                 http_response = HttpResponseRedirect(self.get_success_url())
                 CustomAuthenticationHandler.create_session(http_response, email)
+
                 return http_response
 
             else:
@@ -65,19 +65,24 @@ class ValidateMagicLinkView(View):
             return True
 
     def get_success_url(self):
-        if not len(self.record['mobile_number']):
-            success_template = 'Phone-Number'
 
+        # no phone number yet, skip sms validation
+        if not self.record['mobile_number']:
+            success_view = 'Phone-Number'
+
+        # user changing email address
         elif 'email' in self.request.GET:
-            success_template = 'Task-List'
+            success_view = 'Task-List'
 
+        # sms validation
         else:
             self.record = self.sms_magic_link(self.record)
-            success_template = 'Security-Code'
+            success_view = 'Security-Code'
 
+        # expire magic link
         self.record['email_expiry_date'] = 0
         IdentityGatewayActions().put('user', params=self.record)
-        return utilities.build_url(success_template, get={'id': self.record['application_id']})
+        return utilities.build_url(success_view, get={'id': self.record['application_id']})
 
     @staticmethod
     def sms_magic_link(record):

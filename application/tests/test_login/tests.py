@@ -273,7 +273,8 @@ class LoginTests(TestCase):
             identity_api_put.side_effect = side_effect
             link_expired.return_value = False
 
-            response = self.client.get(os.environ.get('PUBLIC_APPLICATION_URL') + '/validate/' + self.user_details_record['magic_link_email'] + '/')
+            response = self.client.get(os.environ.get('PUBLIC_APPLICATION_URL') + '/validate/'
+                                       + self.user_details_record['magic_link_email'] + '/')
             found = resolve(response.url)
 
             self.assertEqual(302, response.status_code)
@@ -317,7 +318,8 @@ class LoginTests(TestCase):
             identity_api_put.side_effect = side_effect
             link_expired.return_value = False
 
-            self.client.get(os.environ.get('PUBLIC_APPLICATION_URL') + '/validate/' + self.user_details_record['magic_link_email'] + '/')
+            self.client.get(os.environ.get('PUBLIC_APPLICATION_URL') + '/validate/'
+                            + self.user_details_record['magic_link_email'] + '/')
 
             self.assertTrue(notify_send_text.called)
 
@@ -587,9 +589,11 @@ class LoginTests(TestCase):
         with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_get, \
             mock.patch.object(IdentityGatewayActions, 'read') as identity_api_get:
 
-            nanny_api_get.side_effect = AttributeError
+            nanny_get_response = mock.Mock()
+            nanny_get_response.status_code = 404
+            del nanny_get_response.record
+            nanny_api_get.return_value = nanny_get_response
             identity_api_get.side_effect = side_effect
-
 
             response = self.client.post(
                 reverse('Security-Code') + '?id=' + self.user_details_record['application_id'],

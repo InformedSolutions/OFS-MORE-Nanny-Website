@@ -1,3 +1,4 @@
+import datetime
 from nanny.middleware import CustomAuthenticationHandler
 from application.presentation.login import login_redirect_helper
 
@@ -5,7 +6,7 @@ from ..forms import SecurityCodeForm
 
 from .base import BaseFormView
 
-from application.services.db_gateways import IdentityGatewayActions
+from application.services.db_gateways import IdentityGatewayActions, NannyGatewayActions
 
 
 class SecurityCodeFormView(BaseFormView):
@@ -23,12 +24,22 @@ class SecurityCodeFormView(BaseFormView):
         IdentityGatewayActions().put('user', params=record)
         response = login_redirect_helper.redirect_by_status(record['application_id'])
         CustomAuthenticationHandler.create_session(response, record['email'])
+
+        # Update last accessed time when successfully signed in
+        nanny_actions = NannyGatewayActions()
+        app_response = nanny_actions.read('application', params={'application_id': application_id})
+        if app_response.status_code == 200 and hasattr(app_response, 'record'):
+            # application might not exist yet, if user signed out before completing contact details task
+            application = app_response.record
+            application['date_last_accessed'] = datetime.datetime.now()
+            nanny_actions.put('application', application)
+
         return response
 
     def get_form_kwargs(self):
         kwargs = super(SecurityCodeFormView, self).get_form_kwargs()
-        # kwargs['correct_sms_code'] = UserDetails.api.get_record(application_id=self.request.GET['id']).record['magic_link_sms']
-        kwargs['correct_sms_code'] = IdentityGatewayActions().read('user', params={'application_id': self.request.GET['id']}).record['magic_link_sms']
+        kwargs['correct_sms_code'] = IdentityGatewayActions().read(
+            'user', params={'application_id': self.request.GET['id']}).record['magic_link_sms']
         return kwargs
 
     def get_context_data(self, **kwargs):
@@ -40,7 +51,7 @@ class SecurityCodeFormView(BaseFormView):
         kwargs['sms_resend_attempts'] = record['sms_resend_attempts']
 
         # Template requires knowledge of whether or not the SMS was resent.
-        # If they have come from email valdiation link, the request.META.get('HTTP_REFERER') is None.
+        # If they have come from email validation link, the request.META.get('HTTP_REFERER') is None.
         if self.request.META.get('HTTP_REFERER') is not None:
             kwargs['code_resent'] = True
         else:
