@@ -1,10 +1,7 @@
 from ..tests import ChildcareAddressTests, authenticate
 from application.presentation.childcare_address.views import *
-from django.urls import resolve
+from django.urls import resolve, reverse
 from unittest import mock
-import uuid
-
-from application.tests.test_utils import side_effect, side_effect_childcare_address_list
 
 from application.services.db_gateways import IdentityGatewayActions, NannyGatewayActions
 
@@ -20,18 +17,20 @@ class ManualEntryTests(ChildcareAddressTests):
         """
         Test to assert that the summary page can be rendered.
         """
-        self.skipTest('FIXME')
         with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
             mock.patch.object(NannyGatewayActions, 'list') as nanny_api_list,\
             mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put, \
             mock.patch.object(NannyGatewayActions, 'delete') as nanny_api_delete, \
             mock.patch.object(NannyGatewayActions, 'create') as nanny_api_create:
 
-            nanny_api_read.side_effect = side_effect
-            nanny_api_list.side_effect = side_effect_childcare_address_list
+            nanny_api_read.return_value.status_code = 200
+            nanny_api_list.return_value.status_code = 200
+            self.sample_address['childcare_address_id'] = '7e6f1bf3-ee36-444d-99c6-b521d51a484f'
+            self.sample_address['endpoint_name'] = 'childcare-address'
+            nanny_api_list.return_value.record = [self.sample_address]
 
-            response = self.client.get(build_url('Childcare-Address-Summary', get={
-                'id': self.sample_app['application_id']
-            }))
+            url_suffix = '?id=' + self.sample_app['application_id']
+
+            response = self.client.get(reverse('Childcare-Address-Summary')+ url_suffix)
 
             self.assertEqual(response.status_code, 200)

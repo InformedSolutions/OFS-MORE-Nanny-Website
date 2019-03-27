@@ -164,8 +164,4 @@ mock_endpoint_return_values = {
 def side_effect(endpoint_name, *args, **kwargs):
     return mock_endpoint_return_values[endpoint_name]
 
-def side_effect_childcare_address_list(endpoint_name, *args, **kwargs):
-    list_response = childcare_address_response
-    list_response.record['childcare_address_id'] = uuid.uuid4()
-    list_response.record = [list_response.record]
-    return list_response
+
