@@ -11,6 +11,7 @@ from application.services.db_gateways import IdentityGatewayActions, NannyGatewa
 from application.tests.test_utils import side_effect, mock_endpoint_return_values, mock_dbs_record, \
     mock_nanny_application
 from application.presentation.declaration.views import confirmation as confirmation_view
+from ...presentation.payment.views import card_payment_details as PaymentDetailsView
 
 
 @modify_settings(MIDDLEWARE={
@@ -35,6 +36,7 @@ class DeclarationRoutingTests(TestCase):
         self.nanny_models = views.MasterSummary.model_names
         self.application_record = {
             'application_id': self.application_id,
+            'application_status': 'DRAFTING'
         }
         self.user_details_record = {
             'email': 'knights@ni.com'
@@ -44,8 +46,6 @@ class DeclarationRoutingTests(TestCase):
         """
         Test to assert that the 'Childcare-Training-Guidance' page can be rendered.
         """
-        self.skipTest('testNotImplemented')
-
         # The below test is not functional.
         with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
                 mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put, \
@@ -54,42 +54,39 @@ class DeclarationRoutingTests(TestCase):
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
             identity_api_read.side_effect = side_effect
+            mock_nanny_application['application_status'] = 'DRAFTING'
 
             for task in self.tasks:
-                self.application_record[task] = 'NOT_STARTED'
-
-            nanny_api_read.return_value.record = self.application_record
+                mock_nanny_application[task] = 'NOT STARTED'
 
             response = self.client.get(reverse('Task-List') + '?id=' + self.application_id)
-            link = reverse('Declaration-Summary') + '?id=' + self.application_id
+            link = reverse('declaration:Master-Summary') + '?id=' + self.application_id
 
-            self.assertNotIn(link, response.body)
+            self.assertNotContains(response, link, status_code=200)
 
     def test_link_to_master_summary_page_when_completed_tasks(self):
         """
         Test to assert that the 'Declaration-Summary' page can be rendered if all the tasks are 'COMPLETED'.
         """
-        self.skipTest('testNotImplemented')
 
         # The below test is not functional.
         with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
                 mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put, \
                 mock.patch.object(IdentityGatewayActions, 'read') as identity_api_read, \
                 mock.patch.object(confirmation_view, 'send_email') as send_email_mock:
-            nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
+            nanny_api_read.side_effect = side_effect
             identity_api_read.side_effect = side_effect
+            mock_nanny_application['application_status'] = 'DRAFTING'
 
             for task in self.tasks:
-                self.application_record[task] = 'COMPLETED'
+                mock_nanny_application[task] = 'COMPLETED'
 
             response = self.client.get(reverse('Task-List') + '?id=' + 'a4e6633f-5339-4de5-ae03-69c71fd008b3')
 
             self.assertContains(
                 response,
-                '<a href="{}">'.format(
-                    reverse('declaration:Master-Summary') + '?id=' + 'a4e6633f-5339-4de5-ae03-69c71fd008b3'),
-                html=True
+                '<a href="/nanny/check-answers/?id=a4e6633f-5339-4de5-ae03-69c71fd008b3">'
             )
 
     def test_can_render_master_summary_page(self):
@@ -197,9 +194,7 @@ class DeclarationRoutingTests(TestCase):
         Test to assert that the Final Declaration form can be completed and a POST request redirects to the
         'Payment-Details' page.
         """
-        self.skipTest('testNotImplemented')
 
-        # The below test is not functional.
         with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
                 mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put, \
                 mock.patch.object(IdentityGatewayActions, 'read') as identity_api_read, \
@@ -209,22 +204,31 @@ class DeclarationRoutingTests(TestCase):
             identity_api_read.side_effect = side_effect
 
             response = self.client.post(reverse('declaration:Declaration-Summary') + '?id=' + self.application_id,
-                                        {
-                                            'follow_rules': True,
-                                            'share_info_declare': True,
-                                            'information_correct_declare': True,
-                                            'change_declare': True,
+                                        data={
+                                            'confirm_declare': True
                                         })
             found = resolve(response.url)
 
             self.assertEqual(response.status_code, 302)
-            # self.assertEqual(found.func.view_class, views.PaymentDetails)
+            self.assertEqual(found.func.__name__, PaymentDetailsView.__name__)
 
     def test_unselected_declaration_boxes_raise_form_error(self):
         """
         Test that not selecting each declaration box raises the respective error.
         """
-        self.skipTest('testNotImplemented')
+        with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
+                mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put, \
+                mock.patch.object(IdentityGatewayActions, 'read') as identity_api_read, \
+                mock.patch.object(confirmation_view, 'send_email') as send_email_mock:
+            nanny_api_read.side_effect = side_effect
+            nanny_api_put.side_effect = side_effect
+            identity_api_read.side_effect = side_effect
+
+            response = self.client.post(reverse('declaration:Declaration-Summary') + '?id=' + self.application_id)
+
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.resolver_match.func.__name__, views.FinalDeclaration.__name__)
+
 
     def test_sends_survey_email_get_confirmation_page(self):
         with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \

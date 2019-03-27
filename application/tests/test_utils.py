@@ -18,9 +18,9 @@ mock_nanny_application = {
     'childcare_address_status': 'COMPLETED',
     'childcare_address_arc_flagged': False,
     'first_aid_status': 'COMPLETED',
-    'first_aid_training_arc_flagged': False,
+    'first_aid_arc_flagged': False,
     'childcare_training_arc_flagged': False,
-    'criminal_record_check_arc_flagged': False,
+    'dbs_arc_flagged': False,
     'insurance_cover_status': 'COMPLETED',
     'insurance_cover_arc_flagged': False,
     'application_reference': 'NA000001'
