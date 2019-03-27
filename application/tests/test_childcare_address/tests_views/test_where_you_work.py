@@ -2,7 +2,7 @@ import uuid
 from unittest import mock
 
 from django.template.response import TemplateResponse
-from django.urls import resolve
+from django.urls import resolve, reverse
 
 from application.tests.test_utils import side_effect
 from ..tests import ChildcareAddressTests, authenticate
@@ -13,6 +13,7 @@ from application.services.db_gateways import IdentityGatewayActions, NannyGatewa
 
 @mock.patch.object(IdentityGatewayActions, "read", authenticate)
 class WhereYouWorkTests(ChildcareAddressTests):
+
 
     def test_where_you_work_url_resolves_to_page(self):
         """
@@ -25,7 +26,6 @@ class WhereYouWorkTests(ChildcareAddressTests):
         """
         Test to assert that the 'where you work' page can be rendered.
         """
-        self.skipTest('FIXME')
         with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
             mock.patch.object(NannyGatewayActions, 'list') as nanny_api_list,\
             mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put, \
@@ -34,8 +34,8 @@ class WhereYouWorkTests(ChildcareAddressTests):
 
             nanny_api_read.side_effect = side_effect
             nanny_api_put.side_effect = side_effect
-
-            response = self.client.get(build_url('Childcare-Address-Where-You-Work', get={'id': uuid.UUID}))
+            url_suffix = '?id=' + self.sample_app['application_id']
+            response = self.client.get(reverse('Childcare-Address-Where-You-Work') + url_suffix)
 
             self.assertEqual(response.status_code, 200)
 
@@ -59,8 +59,8 @@ class WhereYouWorkTests(ChildcareAddressTests):
 
             nanny_api_list.return_value.status_code = 404
             nanny_api_list.return_value.record = []
-
-            response = self.client.post(build_url('Childcare-Address-Where-You-Work', get={'id': uuid.UUID}),
+            url_suffix = '?id=' + self.sample_app['application_id']
+            response = self.client.post(reverse('Childcare-Address-Where-You-Work') + url_suffix,
                                         {'address_to_be_provided': 'True'})
 
             self.assertEqual(response.status_code, 302)
@@ -95,7 +95,6 @@ class WhereYouWorkTests(ChildcareAddressTests):
         """
         Test that you are directed to the right page with a valid form but have previous addresses
         """
-        self.skipTest('FIXME')
         with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
             mock.patch.object(NannyGatewayActions, 'list') as nanny_api_list,\
             mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put, \
@@ -108,8 +107,9 @@ class WhereYouWorkTests(ChildcareAddressTests):
             nanny_api_list.return_value.status_code = 200
             nanny_api_list.return_value.record = [self.sample_address]
 
-            response = self.client.post(build_url('Childcare-Address-Where-You-Work', get={'id': uuid.UUID}),
-                                        {'address_to_be_provided': 'True'})
+            url_suffix = '?id=' + self.sample_app['application_id']
+            response = self.client.post(reverse('Childcare-Address-Where-You-Work') + url_suffix,
+                                        data={'address_to_be_provided': 'True'})
 
             self.assertEqual(response.status_code, 302)
             self.assertTrue("/childcare-location/" in response.url)
@@ -118,10 +118,18 @@ class WhereYouWorkTests(ChildcareAddressTests):
         """
         Test that you are directed to the right page with a valid form but have previous addresses
         """
-        self.skipTest('FIXME')
-        response = self.client.post(build_url('Childcare-Address-Where-You-Work', get={'id': uuid.UUID}),
-                                    {'address_to_be_provided': None})
+        with mock.patch.object(NannyGatewayActions, 'read') as nanny_api_read, \
+                mock.patch.object(NannyGatewayActions, 'list') as nanny_api_list, \
+                mock.patch.object(NannyGatewayActions, 'put') as nanny_api_put, \
+                mock.patch.object(NannyGatewayActions, 'delete') as nanny_api_delete, \
+                mock.patch.object(NannyGatewayActions, 'create') as nanny_api_create:
+            nanny_api_read.side_effect = side_effect
+            nanny_api_put.side_effect = side_effect
+            nanny_api_list.return_value.status_code = 404
+            url_suffix = '?id=' + self.sample_app['application_id']
+            response = self.client.post(reverse('Childcare-Address-Where-You-Work') + url_suffix)
 
-        self.assertEqual(response.status_code, 200)
-        # check if we get a template back (synonymous with an invalid form submission)
-        self.assertTrue(type(response) == TemplateResponse)
+            self.assertEqual(response.status_code, 200)
+            # check if we get a template back (synonymous with an invalid form submission)
+            self.assertTrue(type(response) == TemplateResponse)
+            self.assertTrue(response.resolver_match.func.__name__, WhereYouWorkView.__name__)

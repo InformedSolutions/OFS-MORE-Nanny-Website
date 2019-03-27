@@ -60,6 +60,7 @@ mock_home_address = {
     'county': None,
     'postcode': 'WA14 4PA',
     'childcare_address': False,
+    'flagged': False,
 }
 
 mock_childcare_address_record = {
