@@ -26,7 +26,6 @@ class ValidateMagicLinkView(View):
 
                 # If user has come from the 'Change Email' journey
                 if 'email' in request.GET:
-                    self.change_email = '_ofs' in self.request.COOKIES and (self.request.COOKIES['_ofs'] == self.record['email'])
                     # Update the user's email
                     new_email = request.GET.get('email')
                     new_email_record = self.record
@@ -70,10 +69,6 @@ class ValidateMagicLinkView(View):
         # no phone number yet, skip sms validation
         if not self.record['mobile_number']:
             success_view = 'Phone-Number'
-
-        # user changing email address
-        elif 'email' in self.request.GET and self.change_email:
-            success_view = 'Task-List'
 
         # sms validation
         else:
