@@ -3,6 +3,7 @@ import re
 from django import forms
 from django.conf import settings
 from govuk_forms.forms import GOVUKForm
+from django.utils.html import escape
 
 from application.services.db_gateways import NannyGatewayActions
 
@@ -110,7 +111,7 @@ class ChildcareAddressManualForm(GOVUKForm):
         Street name and number validation
         :return: string
         """
-        street_line1 = self.cleaned_data['street_line1']
+        street_line1 = escape(self.cleaned_data['street_line1'])
         if len(street_line1) > 50:
             raise forms.ValidationError('The first line of your address must be under 50 characters long')
         return street_line1
@@ -120,7 +121,7 @@ class ChildcareAddressManualForm(GOVUKForm):
         Street name and number line 2 validation
         :return: string
         """
-        street_line2 = self.cleaned_data['street_line2']
+        street_line2 = escape(self.cleaned_data['street_line2'])
         if len(street_line2) > 50:
             raise forms.ValidationError('The second line of your address must be under 50 characters long')
         return street_line2
@@ -130,7 +131,7 @@ class ChildcareAddressManualForm(GOVUKForm):
         Town validation
         :return: string
         """
-        town = self.cleaned_data['town']
+        town = escape(self.cleaned_data['town'])
         if re.match(settings.REGEX['TOWN'], town) is None:
             raise forms.ValidationError('Please spell out the name of the town or city using letters')
         if len(town) > 50:
@@ -142,7 +143,7 @@ class ChildcareAddressManualForm(GOVUKForm):
         County validation
         :return: string
         """
-        county = self.cleaned_data['county']
+        county = escape(self.cleaned_data['county'])
         if county != '':
             if re.match(settings.REGEX['COUNTY'], county) is None:
                 raise forms.ValidationError('Please spell out the name of the county using letters')
