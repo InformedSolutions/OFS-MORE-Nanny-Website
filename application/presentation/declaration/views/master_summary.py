@@ -21,8 +21,7 @@ class MasterSummary(NeverCacheMixin, NannyTemplateView):
     section_names = ["user_details", "applicant_personal_details_section", "childcare_address_section",
                      "first_aid", "childcare_training", "dbs_check", "insurance_cover"]
 
-    @staticmethod
-    def get_arc_flagged(application_id):
+    def get_arc_flagged(self, application_id):
         """
         Get the related _arc_flagged database value for each task in the summary
         :param application_id: application_id for the user
@@ -34,25 +33,26 @@ class MasterSummary(NeverCacheMixin, NannyTemplateView):
             application_record = application_response.record
 
             if application_record['application_status'] == "FURTHER_INFORMATION":
-                db_arc_flagged = {'user_details': application_record['login_details_arc_flagged'],
-                            'applicant_personal_details_section': application_record['personal_details_arc_flagged'],
-                            'applicant_home_address': application_record['personal_details_arc_flagged'],
-                          'childcare_address_section': application_record['childcare_address_arc_flagged'],
-                          'first_aid': application_record['first_aid_arc_flagged'],
-                          'childcare_training': application_record['childcare_training_arc_flagged'],
-                          'dbs_check': application_record['dbs_arc_flagged'],
-                          'insurance_cover': application_record['insurance_cover_arc_flagged']}
+                db_arc_flagged = {
+                    'user_details': application_record['login_details_arc_flagged'],
+                    'applicant_personal_details_section': application_record['personal_details_arc_flagged'],
+                    'applicant_home_address': application_record['personal_details_arc_flagged'],
+                    'childcare_address_section': application_record['childcare_address_arc_flagged'],
+                    'first_aid': application_record['first_aid_arc_flagged'],
+                    'childcare_training': application_record['childcare_training_arc_flagged'],
+                    'dbs_check': application_record['dbs_arc_flagged'],
+                    'insurance_cover': application_record['insurance_cover_arc_flagged']
+                }
 
         return db_arc_flagged
-
 
     def get_context_data(self):
         context = super().get_context_data()
         app_id = self.request.GET["id"]
 
-        json = self.load_json(app_id, '', self.section_names, False)
+        data = self.load_data(app_id, '', self.section_names, False)
 
-        context['json'] = json
+        context['json'] = data
         context['application_id'] = app_id
         context['id'] = self.request.GET['id']
         return context
@@ -60,8 +60,8 @@ class MasterSummary(NeverCacheMixin, NannyTemplateView):
     def post(self, request):
         return HttpResponseRedirect(build_url(self.success_url_name, get={'id': request.GET['id']}))
 
-    def generate_links(self, json, app_id):
-        for table in json:
+    def generate_links(self, data, app_id):
+        for table in data:
             if isinstance(table, list):
                 self.generate_links(table, app_id)
             else:
@@ -71,11 +71,11 @@ class MasterSummary(NeverCacheMixin, NannyTemplateView):
                         for extra_param in table['extra_reverse_params']:
                             param_name, param_val = extra_param
                             table['link'] += "&{0}={1}".format(param_name, param_val)
-        return json
+        return data
 
-    def load_json(self, app_id, section_key, section_names, recurse):
+    def load_data(self, app_id, section_key, section_names, recurse):
         """
-        Dynamically builds a JSON to be consumed by the HTML summary page
+        Dynamically builds a data structure to be used by the summary page template
         :param app_id: the id of the application being handled
         :param section_key: only set if recurse is true, the section name where the current task is being rendered
         :param section_names: the models to be built for the summary page
@@ -88,7 +88,7 @@ class MasterSummary(NeverCacheMixin, NannyTemplateView):
         table_list = []
         for section in section_names:
             if self.model_names.get(section):
-                table_list.append(self.load_json(app_id, section, self.model_names.get(section), True))
+                table_list.append(self.load_data(app_id, section, self.model_names.get(section), True))
             else:
                 if section == "user_details":
                     response = requests.get(identity_url + "api/v1/summary/" + str(section) + "/" + str(app_id))
@@ -99,9 +99,11 @@ class MasterSummary(NeverCacheMixin, NannyTemplateView):
                     # Support for multiple tables being returned for one section
                     if len(data) > 1 and type(data[0]) == list:
                         for data_dict in data:
-                            table_list = self.__parse_data(data_dict, app_id, section_key, section, recurse, table_list, arc_flagged)
+                            table_list = self.__parse_data(data_dict, app_id, section_key, section, recurse, table_list,
+                                                           arc_flagged)
                     else:
-                        table_list = self.__parse_data(data, app_id, section_key, section, recurse, table_list, arc_flagged)
+                        table_list = self.__parse_data(data, app_id, section_key, section, recurse, table_list,
+                                                       arc_flagged)
 
         if recurse:
             table_list = sorted(table_list, key=lambda k: k['index'])
@@ -124,3 +126,16 @@ class MasterSummary(NeverCacheMixin, NannyTemplateView):
             new_table_list = table_list
             new_table_list.append(new_data)
             return new_table_list
+
+
+class PrintableMasterSummary(MasterSummary):
+
+    template_name = 'master-summary-printable.html'
+
+    def generate_links(self, data, app_id):
+        # don't generate any change links for the print summary
+        return data
+
+    def get_arc_flagged(self, application_id):
+        # don't bother checking arc flags for print summary
+        return {}
