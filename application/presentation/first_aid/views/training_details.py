@@ -1,5 +1,5 @@
 import datetime
-
+from django.utils.html import escape
 from dateutil.relativedelta import relativedelta
 from django.core.exceptions import ImproperlyConfigured
 
@@ -46,8 +46,8 @@ class FirstAidDetailsView(NannyFormView):
 
         data_dict = {
             'application_id': application_id,
-            'training_organisation': form.cleaned_data['training_organisation'],
-            'course_title': form.cleaned_data['course_title'],
+            'training_organisation': escape(form.cleaned_data['training_organisation']),
+            'course_title': escape(form.cleaned_data['course_title']),
             'course_date': form.cleaned_data['course_date'],
         }
 

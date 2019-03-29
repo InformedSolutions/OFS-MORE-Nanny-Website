@@ -1,5 +1,5 @@
 import re
-
+from django.utils.html import escape
 from django import forms
 
 from django.conf import settings
@@ -34,7 +34,7 @@ class FeedbackForm(NannyForm):
         Feedback validation
         :return: string
         """
-        feedback = self.cleaned_data['feedback']
+        feedback = escape(self.cleaned_data['feedback'])
         if len(feedback) > 1000:
             raise forms.ValidationError('Feedback can only be up to 1000 characters long')
         return feedback
