@@ -1,0 +1,33 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Print Application{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+{% block inner_content %}
+{% include 'back-button.html' %}
+
+<h1 class="form-title heading-large">
+    Your nanny application
+</h1>
+{% with "4" as col %}
+{% for section in json %}
+{% include 'summary_tables.html' %}
+{% endfor %}
+{% endwith %}
+
+<div class="form-group visually-hidden aria-hidden" id="print">
+    <input class="button" type="submit" value="Print" onClick="javascript:window.print()">
+</div>
+
+<!-- Print function requires javascript so only show if available -->
+<script type="text/javascript">
+    window.onload = function () {
+        $("#print").removeClass('visually-hidden')
+        $("#print").removeClass('aria-hidden')
+    };
+</script>
+
+<div class="form-group">
+    <a href="{% url 'declaration:confirmation' %}?id={{ id }}">Return to confirmation</a>
+</div>
+
+{% endblock %}

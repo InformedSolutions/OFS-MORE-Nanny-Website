@@ -1,9 +1,11 @@
 from django.conf.urls import url
 
-from .views import declaration_guidance, final_declaration, master_summary, confirmation, accepted_confirmation, registration_rules
+from .views import (declaration_guidance, final_declaration, master_summary, confirmation, accepted_confirmation,
+                    registration_rules)
 
 urlpatterns = [
     url(r'^check-answers/', master_summary.MasterSummary.as_view(), name='Master-Summary'),
+    url(r'^print-application/', master_summary.PrintableMasterSummary.as_view(), name='Printable-Master-Summary'),
     url(r'^declaration/', declaration_guidance.DeclarationGuidance.as_view(), name='Declaration-Guidance'),
     url(r'^your-declaration', final_declaration.FinalDeclaration.as_view(), name='Declaration-Summary'),
     url(r'^accepted-confirmation/', accepted_confirmation.AcceptedConfirmation.as_view(), name='accepted-confirmation'),
