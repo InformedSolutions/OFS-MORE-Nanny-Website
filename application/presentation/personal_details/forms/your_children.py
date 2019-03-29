@@ -1,4 +1,5 @@
 from django import forms
+from django.utils.html import escape
 
 from application.presentation.utilities import NannyForm
 from application.presentation.widgets import ConditionalPostInlineRadioSelect
@@ -51,4 +52,5 @@ class PersonalDetailsYourChildrenForm(NannyForm):
 
         # Update cleaned_data
         cleaned_data['known_to_social_services'] = known_to_social_services_bool
+        cleaned_data['reasons_known_to_social_services'] = escape(reasons_known_to_social_services)
         return cleaned_data

@@ -2,6 +2,7 @@ import re
 
 from django import forms
 from django.conf import settings
+from django.utils.html import escape
 
 from application.services.db_gateways import NannyGatewayActions
 from application.presentation.utilities import NannyForm
@@ -32,7 +33,7 @@ class HomeAddressForm(NannyForm):
         Postcode validation
         :return: string
         """
-        postcode = self.cleaned_data['postcode']
+        postcode = escape(self.cleaned_data['postcode'])
         postcode_no_space = postcode.replace(" ", "")
         postcode_uppercase = postcode_no_space.upper()
         if re.match(settings.REGEX['POSTCODE_UPPERCASE'], postcode_uppercase) is None:
@@ -89,7 +90,7 @@ class HomeAddressManualForm(NannyForm):
         Street name and number validation
         :return: string
         """
-        street_line1 = self.cleaned_data['street_line1']
+        street_line1 = escape(self.cleaned_data['street_line1'])
         if len(street_line1) > 50:
             raise forms.ValidationError('The first line of your address must be under 50 characters long')
         return street_line1
@@ -99,7 +100,7 @@ class HomeAddressManualForm(NannyForm):
         Street name and number line 2 validation
         :return: string
         """
-        street_line2 = self.cleaned_data['street_line2']
+        street_line2 = escape(self.cleaned_data['street_line2'])
         if len(street_line2) > 50:
             raise forms.ValidationError('The second line of your address must be under 50 characters long')
         return street_line2
@@ -109,7 +110,7 @@ class HomeAddressManualForm(NannyForm):
         Town validation
         :return: string
         """
-        town = self.cleaned_data['town']
+        town = escape(self.cleaned_data['town'])
         if re.match(settings.REGEX['TOWN'], town) is None:
             raise forms.ValidationError('Please spell out the name of the town or city using letters')
         if len(town) > 50:
@@ -121,7 +122,7 @@ class HomeAddressManualForm(NannyForm):
         County validation
         :return: string
         """
-        county = self.cleaned_data['county']
+        county = escape(self.cleaned_data['county'])
         if county != '':
             if re.match(settings.REGEX['COUNTY'], county) is None:
                 raise forms.ValidationError('Please spell out the name of the county using letters')
@@ -134,7 +135,7 @@ class HomeAddressManualForm(NannyForm):
         Postcode validation
         :return: string
         """
-        postcode = self.cleaned_data['postcode']
+        postcode = escape(self.cleaned_data['postcode'])
         postcode_no_space = postcode.replace(" ", "")
         postcode_uppercase = postcode_no_space.upper()
         if re.match(settings.REGEX['POSTCODE_UPPERCASE'], postcode_uppercase) is None:
@@ -171,4 +172,4 @@ class HomeAddressLookupForm(NannyForm):
             self.fields['home_address'].choices = self.choices
 
     def clean_home_address(self):
-        return int(self.cleaned_data['home_address'])
+        return escape(int(self.cleaned_data['home_address']))
