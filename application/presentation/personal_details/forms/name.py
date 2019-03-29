@@ -1,4 +1,5 @@
 from django import forms
+from django.utils.html import escape
 
 from application.presentation.utilities import NannyForm
 
@@ -10,6 +11,7 @@ class PersonalDetailsNameForm(NannyForm):
     field_label_classes = 'form-label-bold'
     error_summary_title = 'There was a problem'
     auto_replace_widgets = True
+
 
     first_name = forms.CharField(
         label='First name',
@@ -40,7 +42,7 @@ class PersonalDetailsNameForm(NannyForm):
         First name validation
         :return: string
         """
-        first_name = self.cleaned_data['first_name']
+        first_name = escape(self.cleaned_data['first_name'])
         if len(first_name) > 100:
             raise forms.ValidationError("First name must be under 100 characters long")
         return first_name
@@ -50,7 +52,7 @@ class PersonalDetailsNameForm(NannyForm):
         Last name validation
         :return: string
         """
-        middle_names = self.cleaned_data['middle_names']
+        middle_names = escape(self.cleaned_data['middle_names'])
         if len(middle_names) > 100:
             raise forms.ValidationError("Middle names must be under 100 characters long")
         return middle_names
@@ -60,7 +62,7 @@ class PersonalDetailsNameForm(NannyForm):
         Last name validation
         :return: string
         """
-        last_name = self.cleaned_data['last_name']
+        last_name = escape(self.cleaned_data['last_name'])
         if len(last_name) > 100:
             raise forms.ValidationError("Last name must be under 100 characters long")
         return last_name

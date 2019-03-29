@@ -1,5 +1,5 @@
 from django import forms
-
+from django.utils.html import escape
 from application.presentation.utilities import NannyForm
 from datetime import date
 from application.presentation.form_fields import CustomSplitDateField
@@ -37,14 +37,14 @@ class FirstAidTrainingDetailsForm(NannyForm):
     )
 
     def clean_first_aid_training_organisation(self):
-        organisation = self.cleaned_data['first_aid_training_organisation']
+        organisation = escape(self.cleaned_data['first_aid_training_organisation'])
         if len(organisation) > 50:
             raise forms.ValidationError('The name of the training organisation must be under 50 characters')
 
         return organisation
 
     def clean_title_of_training_course(self):
-        title = self.cleaned_data['title_of_training_course']
+        title = escape(self.cleaned_data['title_of_training_course'])
         if len(title) > 50:
             raise forms.ValidationError('The title of the course must be under 50 characters long')
 
