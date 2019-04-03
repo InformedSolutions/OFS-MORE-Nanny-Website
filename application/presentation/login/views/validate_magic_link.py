@@ -25,7 +25,7 @@ class ValidateMagicLinkView(View):
             if not self.link_has_expired():
 
                 # If user has come from the 'Change Email' journey
-                if self.record['email'] != self.record['change_email']:
+                if self.record['email'] != self.record['change_email'] and self.record['change_email'] is not None and self.record['change_email'] != "":
                     # Update the user's email
                     update_email = self.record['change_email']
                     update_email_record = self.record
