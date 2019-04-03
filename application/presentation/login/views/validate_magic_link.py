@@ -25,19 +25,19 @@ class ValidateMagicLinkView(View):
             if not self.link_has_expired():
 
                 # If user has come from the 'Change Email' journey
-                if 'email' in request.GET:
+                if self.record['email'] != self.record['change_email']:
                     # Update the user's email
-                    new_email = request.GET.get('email')
-                    new_email_record = self.record
-                    new_email_record['email'] = new_email
+                    update_email = self.record['change_email']
+                    update_email_record = self.record
+                    update_email_record['email'] = update_email
 
-                    response = identity_actions.put('user', params=new_email_record)
+                    response = identity_actions.put('user', params=update_email_record)
 
                     if response.status_code != 200:
                         return HttpResponseRedirect(reverse('Service-Unavailable'))
 
                     http_response = HttpResponseRedirect(self.get_success_url())
-                    CustomAuthenticationHandler.create_session(http_response, new_email)
+                    CustomAuthenticationHandler.create_session(http_response, update_email)
                     return http_response
 
                 email = self.record['email']
