@@ -46,7 +46,7 @@ class ChangeEmailTests(TestCase):
         form_valid.return_value = mock_response
         form_valid.side_effect = None
 
-        mock_data = {'email_address': 'test_email@informed.com'}
+        mock_data = {'change_email': 'test_email@informed.com'}
 
         response = self.client.post(reverse('Change-Email'), mock_data)
 
@@ -92,7 +92,7 @@ def testing_change_email_email_sent(client, mock_personal_details_response,
 
     gen_magic_link.return_value = ('http://localhost:8000/nanny/validate/IDXN1DSCZNSR', 1534774007)
 
-    mock_data = {'email_address': 'test_email@informed.com'}
+    mock_data = {'change_email': 'test_email@informed.com'}
 
     # Send post request
     response = client.post(reverse('Change-Email'), mock_data)

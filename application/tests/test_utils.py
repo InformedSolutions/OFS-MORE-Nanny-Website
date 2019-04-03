@@ -92,6 +92,7 @@ mock_identity_record = {
     'mobile_number': '000000000012',
     'magic_link_email': 'ABCDEFGHIJKL',
     'add_phone_number': '',
+    'change_email': 'test@informed.com'
 }
 
 mock_declaration_record = {
