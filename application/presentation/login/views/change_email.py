@@ -23,6 +23,7 @@ class ChangeEmailTemplateView(BaseFormView):
     def get_context_data(self, **kwargs):
         context = super(ChangeEmailTemplateView, self).get_context_data(**kwargs)
         context['id'] = self.request.GET.get('id')
+        context['change_email'] = self.request.GET.get('change_email')
         return context
 
     def form_valid(self, form):
@@ -73,31 +74,33 @@ class ChangeEmailTemplateView(BaseFormView):
             if settings.DEBUG:
                 print("You will not see an email validation link printed because an account already exists with that email.")
             not_sent_email_redirect = utilities.build_url(self.success_url,
-                                                      get={'email_address': self.email_address, 'id': application_id})
+                                                      get={'id': application_id})
+            email_address = self.email_address
             return HttpResponseRedirect(not_sent_email_redirect)
 
         else:
+            change_email = self.email_address
             # Generate a new magic link and expiry date
-            validation_link, email_expiry_date = utilities.generate_email_validation_link(self.email_address)
+            validation_link, email_expiry_date = utilities.generate_email_validation_link(change_email)
             magic_link = validation_link.split('/')[-1]
-            validation_link += '?email=' + self.email_address
 
             # Create an update record with the magic_link information
             email_update_record = user_identity_record
             email_update_record['magic_link_email'] = magic_link
             email_update_record['email_expiry_date'] = email_expiry_date
+            email_update_record['change_email'] = change_email
 
             # Update the user record
-            IdentityGatewayActions().put('user', params=email_update_record)
+            record = IdentityGatewayActions().put('user', params=email_update_record)
 
             # Send the 'Change Email' email
             if settings.DEBUG:
                 print(validation_link)
 
-            send_change_email_email(self.email_address, first_name, validation_link)
+            send_change_email_email(change_email, first_name, validation_link)
 
-            sent_email_redirect = utilities.build_url(self.success_url,
-                                               get={'email_address': self.email_address, 'id': application_id})
+            sent_email_redirect = utilities.build_url(self.success_url, get={'id': application_id})
+
             return HttpResponseRedirect(sent_email_redirect)
 
 def send_change_email_email(email, first_name, url):
