@@ -18,6 +18,7 @@ class DBGatewayActions:
     event_list = None
     _endpoint_pk_dict = {}
 
+
     def __init__(self):
         # Register each of the REST verbs in DBGatewayActions as an event to be logged.
         exempt_funcs = [

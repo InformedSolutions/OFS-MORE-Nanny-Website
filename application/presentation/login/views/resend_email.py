@@ -13,7 +13,7 @@ class ResendEmail(View):
     """
     def get(self, request):
         email_address = request.GET['email_address']
-        api_response = IdentityGatewayActions().list('user', params={'email': email_address})
+        api_response = IdentityGatewayActions().list('user', params={'email': email_address, 'service': 'NANNY'})
         record = api_response.record[0]
         validation_link, email_expiry_date = utilities.generate_email_validation_link(email_address)
 

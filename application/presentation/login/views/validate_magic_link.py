@@ -16,7 +16,7 @@ class ValidateMagicLinkView(View):
 
     def get(self, request, id):
         identity_actions = IdentityGatewayActions()
-        api_response = identity_actions.list('user', params={'magic_link_email': id})
+        api_response = identity_actions.list('user', params={'magic_link_email': id, 'service': "NANNY"})
 
         if api_response.status_code == 200:
 

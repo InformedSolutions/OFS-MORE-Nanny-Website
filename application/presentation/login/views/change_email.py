@@ -58,7 +58,7 @@ class ChangeEmailTemplateView(BaseFormView):
         else:
             first_name = "Applicant"
 
-        existing_account_response = identity_actions.list('user', params={'email': self.email_address})
+        existing_account_response = identity_actions.list('user', params={'email': self.email_address, 'service': 'NANNY'})
         existing_account_response_status_code = existing_account_response.status_code
 
         email_in_use = existing_account_response_status_code == 200
