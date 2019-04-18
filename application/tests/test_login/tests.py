@@ -2,7 +2,8 @@ import os
 from unittest import mock
 
 from django.contrib.sessions.middleware import SessionMiddleware
-from django.http import HttpRequest
+from django.core.signing import Signer
+from django.http import HttpRequest, SimpleCookie
 from django.test import TestCase
 from django.urls import resolve, reverse
 
@@ -23,6 +24,10 @@ class LoginTests(TestCase):
         self.nanny_application_record = mock_nanny_application
 
         self.personal_details_record = mock_personal_details_record
+
+        signer = Signer()
+        signed_email = signer.sign('test@informed.com')
+        self.client.cookies = SimpleCookie({'_ofs': signed_email})
 
     def test_can_render_service_unavailable(self):
         """
@@ -297,10 +302,13 @@ class LoginTests(TestCase):
             link_expired.return_value = False
             email = self.user_details_record['email']
 
-            response = self.client.get(os.environ.get('PUBLIC_APPLICATION_URL') + '/validate/' + self.user_details_record['magic_link_email'] + '/')
+            self.client.get(os.environ.get('PUBLIC_APPLICATION_URL') + '/validate/' + self.user_details_record['magic_link_email'] + '/')
             cookie = self.client.cookies['_ofs'].value
 
-            self.assertEqual(cookie, email)
+            signer = Signer()
+            signed_email = signer.sign(email)
+
+            self.assertEqual(cookie, signed_email)
 
     def test_validating_email_magic_link_sends_sms(self):
         """
