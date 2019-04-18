@@ -12,10 +12,9 @@ PUBLIC_APPLICATION_URL = 'http://localhost:8000' + URL_PREFIX
 
 ALLOWED_HOSTS = ['*']
 
-INSTALLED_APPS = BUILTIN_APPS + THIRD_PARTY_APPS +  PROJECT_APPS
+INSTALLED_APPS = BUILTIN_APPS + THIRD_PARTY_APPS + PROJECT_APPS
 
 FEEDBACK_EMAIL = 'tester@informed.com'
-
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY', 'ezn^k@w45@&zncvn)fzsrnke-e04s#+3$$ol$m=_nfwsfchlvp')

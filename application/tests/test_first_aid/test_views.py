@@ -2,6 +2,7 @@ import datetime
 from unittest import mock
 
 from dateutil.relativedelta import relativedelta
+from django.core.signing import Signer
 from django.core.urlresolvers import reverse
 from django.http import SimpleCookie
 from django.test import TestCase
@@ -30,7 +31,9 @@ class FirstAidTrainingTests(TestCase):
     app_id = '3575d19f-5bfc-4fcc-a7cf-229323876043'
 
     def setUp(self):
-        self.client.cookies = SimpleCookie({'_ofs': 'test@informed.com'})
+        signer = Signer()
+        signed_email = signer.sign('test@informed.com')
+        self.client.cookies = SimpleCookie({'_ofs': signed_email})
 
     def test_can_access_guidance(self):
         r = self.client.get(reverse('first-aid:First-Aid-Guidance'), {'id': self.app_id})

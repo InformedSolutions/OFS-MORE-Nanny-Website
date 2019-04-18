@@ -208,12 +208,6 @@ def test_notify():
         return True
 
     return True
-    #
-    # if test_notify_connection():
-    #     return True
-    # else:
-    #     return False
-
 
 def test_notify_settings():
     """

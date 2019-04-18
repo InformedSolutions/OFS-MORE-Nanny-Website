@@ -1,3 +1,4 @@
+from django.core.signing import Signer
 from django.test import TestCase, modify_settings
 from unittest import mock
 from http.cookies import SimpleCookie
@@ -51,7 +52,9 @@ class PersonalDetailsTests(TestCase):
     }
 
     def setUp(self):
-        self.client.cookies = SimpleCookie({'_ofs': 'test@informed.com'})
+        signer = Signer()
+        signed_email = signer.sign('test@informed.com')
+        self.client.cookies = SimpleCookie({'_ofs': signed_email})
         
         
     def assertInCount(self, obj: object, lst: list, count: int) -> None:

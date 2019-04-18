@@ -2,6 +2,8 @@ from .base import *
 
 URL_PREFIX = '/nanny'
 
+DEBUG = False
+
 STATIC_URL = URL_PREFIX + '/static/'
 
 ALLOWED_HOSTS = ['*']
