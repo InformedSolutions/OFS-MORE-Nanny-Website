@@ -4,6 +4,8 @@ from .base import *
 
 DEBUG = True
 
+SESSION_COOKIE_SECURE = False
+
 TEST_NOTIFY_CONNECTION = False
 
 STATIC_URL = URL_PREFIX + '/static/'
