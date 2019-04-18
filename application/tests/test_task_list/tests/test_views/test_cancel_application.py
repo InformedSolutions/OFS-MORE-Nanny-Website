@@ -2,6 +2,7 @@ from http.cookies import SimpleCookie
 from unittest import mock
 import uuid
 
+from django.core.signing import Signer
 from django.test import modify_settings, TestCase
 from django.urls import resolve, reverse
 
@@ -20,7 +21,9 @@ from application.services.db_gateways import IdentityGatewayActions, NannyGatewa
 class TestCancelApplication(TestCase):
 
     def setUp(self):
-        self.client.cookies = SimpleCookie({'_ofs': 'test@informed.com'})
+        signer = Signer()
+        signed_email = signer.sign('test@informed.com')
+        self.client.cookies = SimpleCookie({'_ofs': signed_email})
         self.example_uuid = str(uuid.uuid4())
 
     # ---------- #

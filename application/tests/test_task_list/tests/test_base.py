@@ -1,3 +1,4 @@
+from django.core.signing import Signer
 from django.test import TestCase
 from unittest import mock
 from http.cookies import SimpleCookie
@@ -29,4 +30,6 @@ class TaskListTestsAuth(TestCase):
     }
 
     def setUp(self):
-        self.client.cookies = SimpleCookie({'_ofs': 'test@informed.com'})
+        signer = Signer()
+        signed_email = signer.sign('test@informed.com')
+        self.client.cookies = SimpleCookie({'_ofs': signed_email})
