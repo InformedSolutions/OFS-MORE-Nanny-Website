@@ -275,7 +275,7 @@ class LoginTests(TestCase):
 
             response = self.client.get(os.environ.get('PUBLIC_APPLICATION_URL') + '/validate/'
                                        + self.user_details_record['magic_link_email'] + '/')
-            found = resolvetest_can_remove_childcare_address(response.url)
+            found = resolve(response.url)
 
             self.assertEqual(302, response.status_code)
             self.assertEqual(found.func.view_class, views.SecurityCodeFormView)
