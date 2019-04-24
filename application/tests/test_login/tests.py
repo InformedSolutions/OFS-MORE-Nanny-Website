@@ -2,7 +2,7 @@ import os
 from unittest import mock
 
 from django.contrib.sessions.middleware import SessionMiddleware
-from django.core.signing import Signer
+from django.core.signing import Signer, TimestampSigner
 from django.http import HttpRequest, SimpleCookie
 from django.test import TestCase
 from django.urls import resolve, reverse
@@ -305,7 +305,7 @@ class LoginTests(TestCase):
             self.client.get(os.environ.get('PUBLIC_APPLICATION_URL') + '/validate/' + self.user_details_record['magic_link_email'] + '/')
             cookie = self.client.cookies['_ofs'].value
 
-            signer = Signer()
+            signer = TimestampSigner()
             signed_email = signer.sign(email)
 
             self.assertEqual(cookie, signed_email)

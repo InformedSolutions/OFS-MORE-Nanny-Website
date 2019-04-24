@@ -2,7 +2,7 @@ from unittest import mock
 
 from http.cookies import SimpleCookie
 
-from django.core.signing import Signer
+from django.core.signing import TimestampSigner
 from django.test import TestCase, modify_settings
 from django.urls import resolve, reverse
 
@@ -21,7 +21,7 @@ class ChildcareTrainingTests(TestCase):
 
     def setUp(self):
         self.application_id = 'ef78049d-40fb-4808-943c-593fa3a9700b'
-        signer = Signer()
+        signer = TimestampSigner()
         signed_email = signer.sign('test@informed.com')
         self.client.cookies = SimpleCookie({'_ofs': signed_email})
         self.application_record = {
