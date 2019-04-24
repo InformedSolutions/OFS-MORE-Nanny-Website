@@ -2,7 +2,7 @@ import datetime
 from unittest import mock
 
 from dateutil.relativedelta import relativedelta
-from django.core.signing import Signer, TimestampSigner
+from django.core.signing import TimestampSigner
 from django.core.urlresolvers import reverse
 from django.http import SimpleCookie
 from django.test import TestCase

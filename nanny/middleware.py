@@ -1,7 +1,7 @@
 from re import compile
 
 from django.conf import settings  # import the settings file
-from django.core.signing import Signer, BadSignature, TimestampSigner
+from django.core.signing import TimestampSigner, BadSignature, SignatureExpired
 from django.http import HttpResponseRedirect
 
 from application.services.db_gateways import IdentityGatewayActions, NannyGatewayActions
@@ -77,8 +77,8 @@ class CustomAuthenticationHandler(object):
             signer = TimestampSigner()
             try:
                 return signer.unsign(request.COOKIES.get(COOKIE_IDENTIFIER), max_age=1800)
-            except BadSignature:
-                # the cookie identifier has not been signed
+            except BadSignature or SignatureExpired:
+                # the cookie identifier has not been signed or has perished
                 return None
 
     @staticmethod
