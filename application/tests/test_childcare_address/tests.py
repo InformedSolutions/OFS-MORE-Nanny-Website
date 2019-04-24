@@ -1,4 +1,4 @@
-from django.core.signing import Signer
+from django.core.signing import TimestampSigner
 from django.test import TestCase
 from unittest import mock
 from http.cookies import SimpleCookie
@@ -28,6 +28,6 @@ class ChildcareAddressTests(TestCase):
     sample_address = mock_home_address
 
     def setUp(self):
-        signer = Signer()
+        signer = TimestampSigner()
         signed_email = signer.sign('test@informed.com')
         self.client.cookies = SimpleCookie({'_ofs': signed_email})

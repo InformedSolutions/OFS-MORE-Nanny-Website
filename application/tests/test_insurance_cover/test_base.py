@@ -1,5 +1,5 @@
 from application.presentation.utilities import *
-from django.core.signing import Signer
+from django.core.signing import TimestampSigner
 from django.test import TestCase
 from unittest import mock
 from http.cookies import SimpleCookie
@@ -33,6 +33,6 @@ class InsuranceCoverTests(TestCase):
 
     def setUp(self):
         self.application_id = uuid.UUID
-        signer = Signer()
+        signer = TimestampSigner()
         signed_email = signer.sign('test@informed.com')
         self.client.cookies = SimpleCookie({'_ofs': signed_email})

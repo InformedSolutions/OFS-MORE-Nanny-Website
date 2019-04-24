@@ -1,7 +1,7 @@
 from http.cookies import SimpleCookie
 from unittest import mock
 
-from django.core.signing import Signer
+from django.core.signing import TimestampSigner
 from django.http import HttpResponse
 from django.test import modify_settings, TestCase
 from django.urls import resolve, reverse
@@ -24,7 +24,7 @@ class DeclarationRoutingTests(TestCase):
 
     def setUp(self):
         self.application_id = 'ef78049d-40fb-4808-943c-593fa3a9700b'
-        signer = Signer()
+        signer = TimestampSigner()
         signed_email = signer.sign('test@informed.com')
         self.client.cookies = SimpleCookie({'_ofs': signed_email})
         self.tasks = (
