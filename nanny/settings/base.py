@@ -305,3 +305,5 @@ REGEX = {
     "MAESTRO": "^(?:5[0678]\d\d|6304|6390|67\d\d)\d{8,15}$",
     "CARD_SECURITY_NUMBER": "^[0-9]{3,4}$"
 }
+
+TITLE_OPTIONS = ['Mr', 'Mrs', 'Miss', 'Ms']

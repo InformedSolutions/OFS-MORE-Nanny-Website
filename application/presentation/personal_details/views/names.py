@@ -1,4 +1,5 @@
 from ..forms.name import PersonalDetailsNameForm
+from django.conf import settings
 
 from application.presentation.base_views import NannyFormView
 from application.services.db_gateways import NannyGatewayActions
@@ -25,6 +26,11 @@ class PersonalDetailNameView(NannyFormView):
         elif response.status_code == 404:
             return initial
 
+        if personal_details_record['title'] in settings.TITLE_OPTIONS:
+            initial['title'] = personal_details_record['title']
+        else:
+            initial['title'] = 'Other'
+            initial['other_title'] = personal_details_record['title']
         initial['first_name'] = personal_details_record['first_name']
         initial['middle_names'] = personal_details_record['middle_names']
         initial['last_name'] = personal_details_record['last_name']
@@ -47,8 +53,14 @@ class PersonalDetailNameView(NannyFormView):
             application_record['personal_details_status'] = 'IN_PROGRESS'
         NannyGatewayActions().put('application', params=application_record)
 
+        if form.cleaned_data['title'] != 'Other':
+            title = form.cleaned_data['title']
+        else:
+            title = form.cleaned_data['other_title']
+
         data_dict = {
             'application_id': application_id,
+            'title': title,
             'first_name': form.cleaned_data['first_name'],
             'middle_names': form.cleaned_data['middle_names'],
             'last_name': form.cleaned_data['last_name'],
