@@ -43,6 +43,7 @@ class Summary(View):
         known_to_social_services = personal_details_record['known_to_social_services']
         reasons_known_to_social_services = personal_details_record['reasons_known_to_social_services']
 
+        title_row = Row('title', 'Title', personal_details_record['title'], 'personal-details:Personal-Details-Name', 'title')
         name_row = Row('name', 'Your name', name, 'personal-details:Personal-Details-Name', "your name")
         date_of_birth_row = Row('date_of_birth', 'Date of birth', date_of_birth,
                                 'personal-details:Personal-Details-Date-Of-Birth', "your date of birth")
@@ -58,7 +59,7 @@ class Summary(View):
                                                    "why you are known to council social services in regards to your own children")
 
         personal_details_table = Table(application_id)
-        personal_details_table.row_list = [name_row, date_of_birth_row, home_address_row,
+        personal_details_table.row_list = [title_row, name_row, date_of_birth_row, home_address_row,
                                         known_to_social_services_row]
 
         if known_to_social_services:
