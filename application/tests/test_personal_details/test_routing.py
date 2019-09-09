@@ -292,9 +292,11 @@ class NameTests(PersonalDetailsTests):
             response = self.client.post(build_url('personal-details:Personal-Details-Name', get={
                 'id': uuid.uuid4()
             }), {
-                                            'first_name': 'Test',
-                                            'last_name': 'Test'
-                                        })
+                    'title': 'Other',
+                    'other_title': 'Test',
+                    'first_name': 'Test',
+                    'last_name': 'Test'
+                })
 
             self.assertEqual(response.status_code, 302)
             self.assertTrue('/your-date-of-birth/' in response.url)
@@ -316,6 +318,7 @@ class NameTests(PersonalDetailsTests):
             response = self.client.post(build_url('personal-details:Personal-Details-Name', get={
                 'id': uuid.UUID
             }), {
+                                            'title': '',
                                             'first_name': '',
                                             'last_name': ''
                                         })

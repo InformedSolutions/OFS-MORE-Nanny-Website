@@ -27,6 +27,7 @@ mock_nanny_application = {
 }
 
 mock_personal_details_record = {
+    'title': 'Darth',
     'first_name': 'The Dark Lord',
     'middle_names': '',
     'last_name': 'Selenium',
