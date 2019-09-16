@@ -1,3 +1,5 @@
+import re
+
 from django import forms
 from django.utils.html import escape
 from django.conf import settings
@@ -79,6 +81,8 @@ class PersonalDetailsNameForm(NannyForm):
         if self.cleaned_data.get('title') == 'Other':
             if len(other_title) == 0:
                 raise forms.ValidationError('Please tell us your title')
+            if re.match(settings.REGEX['TITLE'], other_title) is None:
+                raise forms.ValidationError('Title can only have letters')
             if len(other_title) > 100:
                 raise forms.ValidationError('Titles must be under 100 characters long')
         return other_title
@@ -89,6 +93,8 @@ class PersonalDetailsNameForm(NannyForm):
         :return: string
         """
         first_name = escape(self.cleaned_data['first_name'])
+        if re.match(settings.REGEX['FIRST_NAME'], first_name) is None:
+            raise forms.ValidationError('First name can only have letters')
         if len(first_name) > 100:
             raise forms.ValidationError("First name must be under 100 characters long")
         return first_name
@@ -99,8 +105,11 @@ class PersonalDetailsNameForm(NannyForm):
         :return: string
         """
         middle_names = escape(self.cleaned_data['middle_names'])
-        if len(middle_names) > 100:
-            raise forms.ValidationError("Middle names must be under 100 characters long")
+        if middle_names != '':
+            if re.match(settings.REGEX['MIDDLE_NAME'], middle_names) is None:
+                raise forms.ValidationError('Middle names can only have letters')
+            if len(middle_names) > 100:
+                raise forms.ValidationError("Middle names must be under 100 characters long")
         return middle_names
 
     def clean_last_name(self):
@@ -109,6 +118,8 @@ class PersonalDetailsNameForm(NannyForm):
         :return: string
         """
         last_name = escape(self.cleaned_data['last_name'])
+        if re.match(settings.REGEX['LAST_NAME'], last_name) is None:
+            raise forms.ValidationError('Last name can only have letters')
         if len(last_name) > 100:
             raise forms.ValidationError("Last name must be under 100 characters long")
         return last_name
