@@ -11,8 +11,7 @@
 <form method="post" novalidate>
 
     <h1 class="form-title heading-large">Get public liability insurance</h1>
-    <p>You will need to take out a public liability insurance policy.</p>
-    <p>An inspector will check that you have insurance if they inspect you.</p>
+    <p>You will need to take out a public liability insurance policy before you start work.</p>
     {% csrf_token %}
     <input type="hidden" id="id" value="{{application_id}}" name="id"/>
     <a href="{{link_url}}" class="button">Continue</a>
