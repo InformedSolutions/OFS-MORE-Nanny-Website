@@ -48,8 +48,8 @@ class CriminalRecordChecksSummaryView(NannyTemplateView):
             dbs_record['enhanced_check'], 'dbs:DBS-Type-View', 'answer to DBS being enhanced and home-based'
         )
         dbs_update_service_row = Row(
-            'on_dbs_update_service', 'Are you on the DBS update service?',
-            dbs_record['on_dbs_update_service'], 'dbs:DBS-Type-View', "answer to DBS being on update service"
+            'on_dbs_update_service', 'Are you on the DBS Update Service?',
+            dbs_record['on_dbs_update_service'], 'dbs:DBS-Type-View', "answer to DBS being on Update Service"
         )
         if dbs_record['is_ofsted_dbs']:
             if dbs_record['within_three_months']:
