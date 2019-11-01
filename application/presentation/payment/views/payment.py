@@ -34,7 +34,7 @@ def card_payment_details(request):
         return card_payment_post_handler(request)
 
 
-def check_tasks_completed(application_record):
+def check_tasks_completed(application_record, include_payment=False):
     """
     Checks if all tasks in an application are at the completed stage
     :param application_record: data from the application
@@ -48,9 +48,17 @@ def check_tasks_completed(application_record):
     dbs_completed = application_record['dbs_status'] == "COMPLETED"
     ic_completed = application_record['insurance_cover_status'] == "COMPLETED"
     info_declare = application_record['information_correct_declare']
+    app_submitted = True
+    payment_complete = True
+
+    if include_payment:
+        payment_record = NannyGatewayActions().read('payment', params={'application_id': application_record['application_id']})
+        if payment_record.status_code != 200:
+            payment_complete = False
+            app_submitted = application_record['application_status'] == "SUBMITTED"
 
     if (login_completed and pd_completed and ca_completed and fa_completed and ct_completed and dbs_completed and
-            ic_completed and info_declare):
+            ic_completed and info_declare and payment_complete and app_submitted):
 
         return True
 
