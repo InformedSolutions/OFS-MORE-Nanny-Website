@@ -34,6 +34,30 @@ def card_payment_details(request):
         return card_payment_post_handler(request)
 
 
+def check_tasks_completed(application_record):
+    """
+    Checks if all tasks in an application are at the completed stage
+    :param application_record: data from the application
+    :return: boolean determining whether all tasks are completed
+    """
+    login_completed = application_record['login_details_status'] == "COMPLETED"
+    pd_completed = application_record['personal_details_status'] == "COMPLETED"
+    ca_completed = application_record['childcare_address_status'] == "COMPLETED"
+    fa_completed = application_record['first_aid_status'] == "COMPLETED"
+    ct_completed = application_record['childcare_training_status'] == "COMPLETED"
+    dbs_completed = application_record['dbs_status'] == "COMPLETED"
+    ic_completed = application_record['insurance_cover_status'] == "COMPLETED"
+    info_declare = application_record['information_correct_declare']
+
+    if (login_completed and pd_completed and ca_completed and fa_completed and ct_completed and dbs_completed and
+            ic_completed and info_declare):
+
+        return True
+
+    else:
+        return False
+
+
 def card_payment_get_handler(request):
     """
     GET handler for card payment details page
@@ -42,12 +66,34 @@ def card_payment_get_handler(request):
     """
     application_id = request.GET["id"]
     application_record = NannyGatewayActions().read('application', params={'application_id': application_id}).record
-    paid = application_record['application_reference']
 
-    # Call out to payment service API
-    prior_payment_record_exists = payment_service.payment_record_exists(application_id)
+    if check_tasks_completed(application_record):
+        paid = application_record['application_reference']
 
-    if not prior_payment_record_exists:
+        # Call out to payment service API
+        prior_payment_record_exists = payment_service.payment_record_exists(application_id)
+
+        if not prior_payment_record_exists:
+            form = PaymentDetailsForm()
+            variables = {
+                'form': form,
+                'id': application_id
+            }
+
+            return render(request, 'payment-details.html', variables)
+
+        # If a previous attempt has been made, fetch payment record
+        payment_record = payment_service.get_payment_record(application_id)
+
+        # If payment has been fully authorised show fee paid page
+        if payment_record['payment_authorised']:
+            variables = {
+                'id': application_id,
+                'order_code': paid
+            }
+            return render(request, 'paid.html', variables)
+
+        # If none of the above have resulted in a yield, show payment page
         form = PaymentDetailsForm()
         variables = {
             'form': form,
@@ -55,26 +101,8 @@ def card_payment_get_handler(request):
         }
 
         return render(request, 'payment-details.html', variables)
-
-    # If a previous attempt has been made, fetch payment record
-    payment_record = payment_service.get_payment_record(application_id)
-
-    # If payment has been fully authorised show fee paid page
-    if payment_record['payment_authorised']:
-        variables = {
-            'id': application_id,
-            'order_code': paid
-        }
-        return render(request, 'paid.html', variables)
-
-    # If none of the above have resulted in a yield, show payment page
-    form = PaymentDetailsForm()
-    variables = {
-        'form': form,
-        'id': application_id
-    }
-
-    return render(request, 'payment-details.html', variables)
+    else:
+        return HttpResponseRedirect(reverse('Task-List') + '?id=' + application_id)
 
 
 def card_payment_post_handler(request):
@@ -120,7 +148,8 @@ def card_payment_post_handler(request):
         expiry_year = '20' + request.POST["expiry_date_1"]
 
         # Invoke Payment Gateway API
-        create_payment_response = payment_service.make_payment(application_cost, cardholders_name, card_number, card_security_code,
+        create_payment_response = payment_service.make_payment(application_cost, cardholders_name, card_number,
+                                                               card_security_code,
                                                                expiry_month, expiry_year, 'GBP', payment_reference,
                                                                'Ofsted Fees')
 
@@ -314,7 +343,8 @@ def __send_payment_confirmation_email(application_record):
     """
     application_id = application_record['application_id']
     user_details = IdentityGatewayActions().read('user', params={'application_id': application_id}).record
-    applicant_details = NannyGatewayActions().read('applicant-personal-details', params={'application_id': application_id}).record
+    applicant_details = NannyGatewayActions().read('applicant-personal-details',
+                                                   params={'application_id': application_id}).record
 
     payment_service.payment_email(user_details['email'],
                                   applicant_details['first_name'],
