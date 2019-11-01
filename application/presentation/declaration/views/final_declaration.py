@@ -97,7 +97,7 @@ class FinalDeclaration(NannyFormView):
     def form_valid(self, form):
         application_id = app_id_finder(self.request)
         record = NannyGatewayActions().read('application', params={'application_id': application_id}).record
-        record['confirm_declare'] = form.cleaned_data['confirm_declare']
+        record['information_correct_declare'] = form.cleaned_data['confirm_declare']
         record['date_updated'] = datetime.datetime.today()
         NannyGatewayActions().put('application', params=record)
 
