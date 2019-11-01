@@ -58,12 +58,13 @@ def check_tasks_completed(application_record, include_payment=False):
             app_submitted = application_record['application_status'] == "SUBMITTED"
 
     if (login_completed and pd_completed and ca_completed and fa_completed and ct_completed and dbs_completed and
-            ic_completed and info_declare and payment_complete and app_submitted):
-
+            ic_completed and info_declare and payment_complete):
         return True
-
     else:
-        return False
+        if app_submitted:
+            return True
+        else:
+            return False
 
 
 def card_payment_get_handler(request):
