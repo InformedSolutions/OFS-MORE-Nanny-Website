@@ -23,7 +23,8 @@ mock_nanny_application = {
     'dbs_arc_flagged': False,
     'insurance_cover_status': 'COMPLETED',
     'insurance_cover_arc_flagged': False,
-    'application_reference': 'NA000001'
+    'application_reference': 'NA000001',
+    'info_declare': True
 }
 
 mock_personal_details_record = {
@@ -147,6 +148,9 @@ identity_response.record = mock_identity_record
 arc_comments_response = HttpResponse()
 arc_comments_response.status_code = 404
 
+payment_response = HttpResponse()
+payment_response.status_code = 200
+
 
 mock_endpoint_return_values = {
     'application': nanny_application_response,
@@ -160,6 +164,7 @@ mock_endpoint_return_values = {
     'declaration': declaration_response,
     'user': identity_response,
     'arc-comments': arc_comments_response,
+    'payment': payment_response
 }
 
 
