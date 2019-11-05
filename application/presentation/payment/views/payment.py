@@ -61,7 +61,7 @@ def check_tasks_completed(application_record, include_payment=False):
             ic_completed and info_declare and payment_complete):
         return True
     else:
-        if app_submitted:
+        if app_submitted and include_payment:
             return True
         else:
             return False
