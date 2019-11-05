@@ -8,10 +8,10 @@ mock_nanny_application = {
     'application_id': '998fd8ec-b96b-4a71-a1a1-a7a3ae186729',
     'date_submitted': '2018-07-31 17:20:46.011717+00',
     'date_updated': '2018-07-31 17:20:46.011717+00',
-    'childcare_training_status': 'NOT_STARTED',
+    'childcare_training_status': 'COMPLETED',
     'login_details_status': 'COMPLETED',
-    'personal_details_status': 'NOT_STARTED',
-    'dbs_status': 'NOT_STARTED',
+    'personal_details_status': 'COMPLETED',
+    'dbs_status': 'COMPLETED',
     'address_to_be_provided': True,
     'login_details_arc_flagged': False,
     'personal_details_arc_flagged': False,
@@ -24,7 +24,7 @@ mock_nanny_application = {
     'insurance_cover_status': 'COMPLETED',
     'insurance_cover_arc_flagged': False,
     'application_reference': 'NA000001',
-    'info_declare': True
+    'information_correct_declare': True
 }
 
 mock_personal_details_record = {
