@@ -45,6 +45,7 @@ class DeclarationRoutingTests(TestCase):
             'email': 'knights@ni.com'
         }
 
+
     def test_no_link_to_master_summary_page_without_completed_tasks(self):
         """
         Test to assert that the 'Childcare-Training-Guidance' page can be rendered.
@@ -245,6 +246,8 @@ class DeclarationRoutingTests(TestCase):
             updated_mock_nanny_application = mock_nanny_application
 
             updated_mock_nanny_application['application_status'] = 'DRAFTING'
+            for task in self.tasks:
+                updated_mock_nanny_application[task] =  'COMPLETED'
 
             # Update side effect function
             updated_mock_nanny_application_response = HttpResponse()
@@ -273,6 +276,11 @@ class DeclarationRoutingTests(TestCase):
 
             # Set DBS Mock parameters
             updated_mock_dbs_record = mock_dbs_record
+            for task in self.tasks:
+                mock_nanny_application[task] =  'COMPLETED'
+
+            for task in self.tasks:
+                self.application_record[task] = 'COMPLETED'
 
             updated_mock_dbs_record['is_ofsted_dbs'] = 'True'
             updated_mock_dbs_record['certificate_information'] = 'Some Info'
@@ -282,9 +290,14 @@ class DeclarationRoutingTests(TestCase):
             updated_dbs_check_response = HttpResponse()
             updated_dbs_check_response.status_code = 200
             updated_dbs_check_response.record = updated_mock_dbs_record
+            updated_mock_nanny_application = HttpResponse()
+            updated_mock_nanny_application.record = mock_nanny_application
+            for task in self.tasks:
+                updated_mock_nanny_application.record[task] = 'COMPLETED'
 
             updated_mock_endpoint_return_values = mock_endpoint_return_values
             updated_mock_endpoint_return_values['dbs-check'] = updated_dbs_check_response
+            updated_mock_endpoint_return_values['application'] = updated_mock_nanny_application
 
             nanny_api_read.side_effect = \
                 lambda endpoint_name, *args, **kwargs: updated_mock_endpoint_return_values[endpoint_name]
@@ -318,8 +331,14 @@ class DeclarationRoutingTests(TestCase):
             updated_dbs_check_response.status_code = 200
             updated_dbs_check_response.record = updated_mock_dbs_record
 
+            updated_mock_nanny_application = HttpResponse()
+            updated_mock_nanny_application.record = mock_nanny_application
+            for task in self.tasks:
+                updated_mock_nanny_application.record[task] = 'COMPLETED'
+
             updated_mock_endpoint_return_values = mock_endpoint_return_values
             updated_mock_endpoint_return_values['dbs-check'] = updated_dbs_check_response
+            updated_mock_endpoint_return_values['application'] = updated_mock_nanny_application
 
             nanny_api_read.side_effect = \
                 lambda endpoint_name, *args, **kwargs: updated_mock_endpoint_return_values[endpoint_name]
@@ -353,8 +372,14 @@ class DeclarationRoutingTests(TestCase):
             updated_dbs_check_response.status_code = 200
             updated_dbs_check_response.record = updated_mock_dbs_record
 
+            updated_mock_nanny_application = HttpResponse()
+            updated_mock_nanny_application.record = mock_nanny_application
+            for task in self.tasks:
+                updated_mock_nanny_application.record[task] = 'COMPLETED'
+
             updated_mock_endpoint_return_values = mock_endpoint_return_values
             updated_mock_endpoint_return_values['dbs-check'] = updated_dbs_check_response
+            updated_mock_endpoint_return_values['application'] = updated_mock_nanny_application
 
             nanny_api_read.side_effect = \
                 lambda endpoint_name, *args, **kwargs: updated_mock_endpoint_return_values[endpoint_name]
@@ -388,8 +413,17 @@ class DeclarationRoutingTests(TestCase):
             updated_dbs_check_response.status_code = 200
             updated_dbs_check_response.record = updated_mock_dbs_record
 
+            updated_mock_nanny_application = HttpResponse()
+            updated_mock_nanny_application.record = mock_nanny_application
+            for task in self.tasks:
+                updated_mock_nanny_application.record[task] = 'COMPLETED'
+
             updated_mock_endpoint_return_values = mock_endpoint_return_values
             updated_mock_endpoint_return_values['dbs-check'] = updated_dbs_check_response
+            updated_mock_endpoint_return_values['application'] = updated_mock_nanny_application
+
+            for task in self.tasks:
+                updated_mock_nanny_application[task] =  'COMPLETED'
 
             nanny_api_read.side_effect = \
                 lambda endpoint_name, *args, **kwargs: updated_mock_endpoint_return_values[endpoint_name]
@@ -421,9 +455,14 @@ class DeclarationRoutingTests(TestCase):
             updated_dbs_check_response = HttpResponse()
             updated_dbs_check_response.status_code = 200
             updated_dbs_check_response.record = updated_mock_dbs_record
+            updated_mock_nanny_application = HttpResponse()
+            updated_mock_nanny_application.record = mock_nanny_application
+            for task in self.tasks:
+                updated_mock_nanny_application.record[task] = 'COMPLETED'
 
             updated_mock_endpoint_return_values = mock_endpoint_return_values
             updated_mock_endpoint_return_values['dbs-check'] = updated_dbs_check_response
+            updated_mock_endpoint_return_values['application'] = updated_mock_nanny_application
 
             nanny_api_read.side_effect = \
                 lambda endpoint_name, *args, **kwargs: updated_mock_endpoint_return_values[endpoint_name]
@@ -456,9 +495,14 @@ class DeclarationRoutingTests(TestCase):
             updated_dbs_check_response = HttpResponse()
             updated_dbs_check_response.status_code = 200
             updated_dbs_check_response.record = updated_mock_dbs_record
+            updated_mock_nanny_application = HttpResponse()
+            updated_mock_nanny_application.record = mock_nanny_application
+            for task in self.tasks:
+                updated_mock_nanny_application.record[task] = 'COMPLETED'
 
             updated_mock_endpoint_return_values = mock_endpoint_return_values
             updated_mock_endpoint_return_values['dbs-check'] = updated_dbs_check_response
+            updated_mock_endpoint_return_values['application'] = updated_mock_nanny_application
 
             nanny_api_read.side_effect = \
                 lambda endpoint_name, *args, **kwargs: updated_mock_endpoint_return_values[endpoint_name]
