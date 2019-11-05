@@ -48,7 +48,7 @@ def check_tasks_completed(application_record, include_payment=False):
     dbs_completed = application_record['dbs_status'] == "COMPLETED"
     ic_completed = application_record['insurance_cover_status'] == "COMPLETED"
     info_declare = application_record['information_correct_declare']
-    app_submitted = True
+    app_submitted = False
     payment_complete = True
 
     if include_payment:
@@ -61,7 +61,7 @@ def check_tasks_completed(application_record, include_payment=False):
             ic_completed and info_declare and payment_complete):
         return True
     else:
-        if app_submitted:
+        if app_submitted and include_payment:
             return True
         else:
             return False
