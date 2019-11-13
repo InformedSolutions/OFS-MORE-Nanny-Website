@@ -7,11 +7,9 @@ ALLOWED_HOSTS = ['*']
 INTERNAL_IPS = "127.0.0.1"
 
 DEV_APPS = [
-    'debug_toolbar'
 ]
 
 MIDDLEWARE_DEV = [
-    'debug_toolbar.middleware.DebugToolbarMiddleware'
 ]
 
 FEEDBACK_EMAIL = 'tester@informed.com'
