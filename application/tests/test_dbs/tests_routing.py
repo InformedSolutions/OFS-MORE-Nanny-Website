@@ -267,7 +267,7 @@ class CriminalRecordChecksTest(TestCase):
     def test_dbs_update_check_redirect_post_dbs(self, *args):
         response = self.client.get(reverse('dbs:DBS-Update-Check-View') + self.url_suffix)
 
-        expected_link = reverse('dbs:Post-DBS-Certificate') + self.url_suffix
+        expected_link = reverse('dbs:Criminal-Record-Check-Summary-View') + self.url_suffix
 
         self.assertContains(response, '<a href="%s" class="button">Continue</a>' % expected_link, html=True)
 
