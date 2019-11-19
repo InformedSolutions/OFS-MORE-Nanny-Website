@@ -17,7 +17,7 @@ class DBSUpdateCheckView(NannyTemplateView):
         On a post request, set the task status to completed and redirect the user to the task list
         :return:
         """
-git         post_dbs, summary = self.success_url_name
+        post_dbs, summary = self.success_url_name
         application_id = app_id_finder(self.request)
         crc_response = NannyGatewayActions().read('dbs-check', params={'application_id': application_id})
         if crc_response.status_code == 200:
