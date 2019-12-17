@@ -1,4 +1,5 @@
 from django import forms
+from django.utils.safestring import mark_safe
 
 from govuk_forms.widgets import InlineRadioSelect
 
@@ -35,12 +36,12 @@ class DBSTypeForm(NannyForm):
             self.fields[self.capita_field_name] = self.get_enhanced_check_field_data()
 
     def get_enhanced_check_field_data(self):
-        return forms.ChoiceField(
-            label='Is it an enhanced check for home-based childcare?',
-            choices=self.options,
-            widget=ConditionalPostInlineRadioSelect,
-            required=True,
-            error_messages={'required': 'Please say if you have an enhanced check for home-based childcare'}
-        )
-
-
+        return forms.ChoiceField(label=mark_safe('Is it an enhanced check with barred lists as well as being for a <a '
+                                                 'href="https://www.gov.uk/government/publications/dbs-home-based'
+                                                 '-positions-guide/home-based-position-definition-and-guidance" '
+                                                 'target="_blank">home-based childcare role</a>?'),
+                                 choices=self.options,
+                                 widget=ConditionalPostInlineRadioSelect,
+                                 required=True,
+                                 error_messages={
+                                     'required': 'Please say if you have an enhanced check for home-based childcare'})
