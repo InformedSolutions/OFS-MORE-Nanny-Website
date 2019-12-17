@@ -18,7 +18,13 @@
         {% else %}
                 <tr>
                     <td>
+                        {% if row.name == "enhanced_check" %}
+                        Is it an enhanced check with barred lists as well as being for a
+                        <a href="https://www.gov.uk/government/publications/dbs-home-based-positions-guide/home-based-position-definition-and-guidance"
+                           target="_blank">home-based childcare role</a>?
+                        {% else %}
                         {{row.name}}
+                        {% endif %}
                      </td>
 
                      <td>

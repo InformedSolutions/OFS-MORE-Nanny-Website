@@ -4,6 +4,7 @@ from application.presentation.base_views import NannyTemplateView
 from application.services.db_gateways import NannyGatewayActions
 from application.presentation.table_util import Row, Table
 from application.presentation.utilities import app_id_finder, build_url
+from django.utils.safestring import mark_safe
 
 
 class CriminalRecordChecksSummaryView(NannyTemplateView):
@@ -44,7 +45,10 @@ class CriminalRecordChecksSummaryView(NannyTemplateView):
             dbs_record['dbs_number'], dbs_page_link, 'DBS certificate number'
         )
         dbs_enhanced_check_row = Row(
-            'enhanced_check', 'Is it an enhanced DBS check for home-based childcare?',
+            'enhanced_check', mark_safe('Is it an enhanced check with barred lists as well as being for a <a '
+                                                 'href="https://www.gov.uk/government/publications/dbs-home-based'
+                                                 '-positions-guide/home-based-position-definition-and-guidance" '
+                                                 'target="_blank">home-based childcare role</a>?'),
             dbs_record['enhanced_check'], 'dbs:DBS-Type-View', 'answer to DBS being enhanced and home-based'
         )
         dbs_update_service_row = Row(
