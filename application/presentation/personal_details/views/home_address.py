@@ -73,6 +73,12 @@ class PersonalDetailSelectAddressView(NannyFormView):
             record['postcode'] = selected_address['postcode']
             NannyGatewayActions().put('applicant-home-address', params=record)  # Update entire record.
 
+        pd_api_response = NannyGatewayActions().read('applicant-personal-details', params={'application_id': app_id})
+        if pd_api_response.status_code == 200:
+            record = pd_api_response.record
+            record['moved_in_date'] = form.cleaned_data['moved_in_date']
+            NannyGatewayActions().put('applicant-personal-details', params=record)
+
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
@@ -173,6 +179,7 @@ class PersonalDetailManualAddressView(NannyFormView):
         town = form.cleaned_data['town']
         county = form.cleaned_data['county']
         postcode = form.cleaned_data['postcode']
+        moved_in_date = form.cleaned_data['moved_in_date']
 
         # update the address record if it already existed
         if api_response.status_code == 200:
@@ -201,6 +208,12 @@ class PersonalDetailManualAddressView(NannyFormView):
                         'postcode': postcode,
                     }
                 )
+
+        pd_api_response = NannyGatewayActions().read('applicant-personal-details', params={'application_id': app_id})
+        if pd_api_response.status_code == 200:
+            record = pd_api_response.record
+            record['moved_in_date'] = moved_in_date
+            NannyGatewayActions().put('applicant-personal-details', params=record)
 
         return super().form_valid(form)
 

@@ -175,6 +175,8 @@ class HomeAddressManualForm(NannyForm):
             if moved_in_date < applicant_dob:
                 raise forms.ValidationError('Please enter a move in date which is after your date of birth')
 
+        return self.cleaned_data['moved_in_date']
+
 
 
 
@@ -239,5 +241,7 @@ class HomeAddressLookupForm(NannyForm):
             # check that the date is not before the dob
             if moved_in_date < applicant_dob:
                 raise forms.ValidationError('Please enter a move in date which is after your date of birth')
+
+        return self.cleaned_data['moved_in_date']
 
 
