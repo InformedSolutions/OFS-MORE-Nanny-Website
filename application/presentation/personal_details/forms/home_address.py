@@ -73,7 +73,7 @@ class HomeAddressManualForm(NannyForm):
     moved_in_date = form_fields.CustomSplitDateFieldAddress(
         label='Moved in',
         required=True,
-        help_text='For example, 31 3 1980',
+        help_text='For example, 31 03 1980',
         error_messages={'required': ERROR_MESSAGE_DATE_BLANK,
                         'incomplete': ERROR_MESSAGE_DATE_BLANK,
                         'max_today': ERROR_MESSAGE_MOVED_IN_DATE_AFTER_CURRENT_DATE,
@@ -203,7 +203,7 @@ class HomeAddressLookupForm(NannyForm):
     moved_in_date = form_fields.CustomSplitDateFieldAddress(
         label='Moved in',
         required=True,
-        help_text='For example, 31 3 1980',
+        help_text='For example, 31 03 1980',
         error_messages={'required': ERROR_MESSAGE_DATE_BLANK,
                         'incomplete': ERROR_MESSAGE_DATE_BLANK,
                         'max_today': ERROR_MESSAGE_MOVED_IN_DATE_AFTER_CURRENT_DATE,
