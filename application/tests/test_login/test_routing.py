@@ -17,10 +17,10 @@ class AccountSelectionRoutingTests(TestCase):
 
     @tag('http')
     def test_manual_entry_url_resolves_to_page(self):
-        from application.presentation.login.views.account_selection import account_selection
+        from application.presentation.login.views.account_selection import AccountSelectionFormView
 
-        found = resolve(reverse('Account-Selection))
-        self.assertEqual(found.func.__name__, account_selection.__name__)
+        found = resolve(reverse('Account-Selection'))
+        self.assertEqual(found.func.__name__, AccountSelectionFormView.__name__)
 
     @tag('http')
     def test_can_render_page(self):
