@@ -1,11 +1,11 @@
 from django.test import TestCase, tag
 
 
-class YourLocationRoutingTests(TestCase):
-    from application.presentation.login.forms.your_location import YourLocationForm
-    form = YourLocationForm
+class AccountSelectionRoutingTests(TestCase):
+    from application.presentation.login.forms.account_selection import AcccountSelectionForm
+    form = AcccountSelectionForm
 
-    ERROR_MESSAGE_EMPTY = 'Please say if you live in Greater London'
+    ERROR_MESSAGE_EMPTY = 'Please select one'
 
     @tag('unit')
     def test_invalid_enter_empty_data(self):
@@ -17,12 +17,12 @@ class YourLocationRoutingTests(TestCase):
 
         # Check error messages
         self.assertEqual(form.errors, {
-            'your_location': [self.ERROR_MESSAGE_EMPTY]
+            'account_selection': [self.ERROR_MESSAGE_EMPTY]
         })
 
     @tag('unit')
     def test_invalid_enter_blank_data(self):
-        data = {'your_location': None}
+        data = {'account_selection': None}
 
         form = self.form(data)
 
@@ -30,12 +30,12 @@ class YourLocationRoutingTests(TestCase):
 
         # Check error messages
         self.assertEqual(form.errors, {
-            'your_location': [self.ERROR_MESSAGE_EMPTY]
+            'account_selection': [self.ERROR_MESSAGE_EMPTY]
         })
 
     @tag('unit')
     def test_valid_enter_true(self):
-        data = {'your_location': True}
+        data = {'account_selection': 'new'}
 
         form = self.form(data)
 
@@ -43,7 +43,7 @@ class YourLocationRoutingTests(TestCase):
 
     @tag('unit')
     def test_valid_enter_false(self):
-        data = {'your_location': False}
+        data = {'account_selection': 'existing'}
 
         form = self.form(data)
 
