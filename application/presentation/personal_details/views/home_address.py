@@ -2,6 +2,7 @@ from ..forms.home_address import HomeAddressForm, HomeAddressLookupForm, HomeAdd
 from application.services.address_helper import *
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+import datetime 
 
 from application.presentation.base_views import NannyFormView, NannyTemplateView
 from application.services.db_gateways import NannyGatewayActions
@@ -108,6 +109,11 @@ class PersonalDetailSelectAddressView(NannyFormView):
             address_choices = AddressHelper.create_address_lookup_list(postcode)
             initial['choices'] = address_choices
 
+        pd_api_response = NannyGatewayActions().read('applicant-personal-details', params={'application_id': app_id})
+        if pd_api_response.status_code == 200:
+            record = pd_api_response.record
+            initial['moved_in_date'] = initial['moved_in_date'] = datetime.datetime.strptime(record['moved_in_date'], '%Y-%m-%d').date()
+
         return initial
 
     def get_form(self, form_class=None):
@@ -143,6 +149,12 @@ class PersonalDetailManualAddressView(NannyFormView):
             initial['town'] = api_response.record['town']
             initial['county'] = api_response.record['county']
             initial['postcode'] = api_response.record['postcode']
+
+       # get moved in date
+        pd_api_response = NannyGatewayActions().read('applicant-personal-details', params={'application_id': app_id})
+        if pd_api_response.status_code == 200:
+            record = pd_api_response.record
+            initial['moved_in_date'] = datetime.datetime.strptime(record['moved_in_date'], '%Y-%m-%d').date()
 
         return initial
 
