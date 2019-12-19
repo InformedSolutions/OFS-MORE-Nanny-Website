@@ -9,18 +9,18 @@ from django.test import modify_settings
         'nanny.middleware.CustomAuthenticationHandler',
     ]
 })
-class YourLocationRoutingTests(TestCase):
+class AccountSelectionRoutingTests(TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.url = reverse('Your-Location')
+        self.url = reverse('Account-Selection')
 
     @tag('http')
     def test_manual_entry_url_resolves_to_page(self):
-        from application.presentation.login.views.your_location import your_location
+        from application.presentation.login.views.account_selection import account_selection
 
-        found = resolve(reverse('Your-Location'))
-        self.assertEqual(found.func.__name__, your_location.__name__)
+        found = resolve(reverse('Account-Selection))
+        self.assertEqual(found.func.__name__, account_selection.__name__)
 
     @tag('http')
     def test_can_render_page(self):
@@ -41,20 +41,7 @@ class YourLocationRoutingTests(TestCase):
         response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, 200)
 
-    @tag('http')
-    def test_valid_post_true(self):
-        data = {'your_location': True}
-        expected_redirect_page_name = 'Account-Selection'
 
-        response = self.client.post(self.url, data)
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, reverse(expected_redirect_page_name))
 
-    @tag('http')
-    def test_valid_post_false(self):
-        data = {'your_location': False}
-        expected_redirect_url = 'https://online.ofsted.gov.uk/onlineofsted/Ofsted_Online.ofml'
 
-        response = self.client.post(self.url, data)
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, expected_redirect_url)
+
