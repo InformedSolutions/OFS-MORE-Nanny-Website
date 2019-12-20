@@ -9,6 +9,16 @@ from application.services.db_gateways import NannyGatewayActions
 from application.presentation.utilities import NannyForm
 from application.presentation import form_fields
 
+ERROR_MESSAGE_DATE_BLANK = 'Enter the full date, including the day, month and year'
+ERROR_MESSAGE_DAY_OUT_OF_RANGE = 'Day must be between 1 and 31'
+ERROR_MESSAGE_MONTH_OUT_OF_RANGE = 'Month must be between 1 and 12'
+ERROR_MESSAGE_MOVED_IN_YEAR_BEFORE_1900 = 'Date moved in must be after 1900'
+ERROR_MESSAGE_YEAR_LESS_THAN_4_DIGITS = 'Enter the whole year (4 digits)'
+ERROR_MESSAGE_INVALID_DATE = 'Enter a real date'
+ERROR_MESSAGE_NON_NUMERIC = 'Use numbers for the date'
+
+ERROR_MESSAGE_MOVED_IN_DATE_AFTER_CURRENT_DATE = 'Date moved in must be today or in the past'
+ERROR_MESSAGE_MOVED_IN_DATE_AFTER_MOVED_OUT_DATE = 'Date you moved in must be before date you moved out'
 
 class HomeAddressForm(NannyForm):
     """
@@ -50,17 +60,6 @@ class HomeAddressManualForm(NannyForm):
     field_label_classes = 'form-label-bold'
     error_summary_title = 'There was a problem'
     auto_replace_widgets = True
-
-    ERROR_MESSAGE_DATE_BLANK = 'Enter the full date, including the day, month and year'
-    ERROR_MESSAGE_DAY_OUT_OF_RANGE = 'Day must be between 1 and 31'
-    ERROR_MESSAGE_MONTH_OUT_OF_RANGE = 'Month must be between 1 and 12'
-    ERROR_MESSAGE_MOVED_IN_YEAR_BEFORE_1900 = 'Date moved in must be after 1900'
-    ERROR_MESSAGE_YEAR_LESS_THAN_4_DIGITS = 'Enter the whole year (4 digits)'
-    ERROR_MESSAGE_INVALID_DATE = 'Enter a real date'
-    ERROR_MESSAGE_NON_NUMERIC = 'Use numbers for the date'
-
-    ERROR_MESSAGE_MOVED_IN_DATE_AFTER_CURRENT_DATE = 'Date moved in must be today or in the past'
-    ERROR_MESSAGE_MOVED_IN_DATE_AFTER_MOVED_OUT_DATE = 'Date you moved in must be before date you moved out'
 
     street_line1 = forms.CharField(label='Address line 1', error_messages={
         'required': 'Please enter the first line of your address'})
@@ -167,13 +166,7 @@ class HomeAddressManualForm(NannyForm):
 
     def clean_moved_in_date(self):
         moved_in_date = self.cleaned_data['moved_in_date']
-        # get applicant's date of birth
-        applicant_response = NannyGatewayActions().read('applicant-personal-details', params={'application_id': self.application_id_local})
-        # check that the moved in date is on or after the dob
-        if applicant_response.status_code == 200:
-            applicant_dob = datetime.datetime.strptime(applicant_response.record['date_of_birth'], '%Y-%m-%d').date()
-            if moved_in_date < applicant_dob:
-                raise forms.ValidationError('Please enter a move in date which is after your date of birth')
+        check_move_in_date_after_dob(moved_in_date, self.application_id_local)
 
         return self.cleaned_data['moved_in_date']
 
@@ -187,17 +180,6 @@ class HomeAddressLookupForm(NannyForm):
     field_label_classes = 'form-label-bold'
     error_summary_title = 'There was a problem'
     auto_replace_widgets = True
-
-    ERROR_MESSAGE_DATE_BLANK = 'Enter the full date, including the day, month and year'
-    ERROR_MESSAGE_DAY_OUT_OF_RANGE = 'Day must be between 1 and 31'
-    ERROR_MESSAGE_MONTH_OUT_OF_RANGE = 'Month must be between 1 and 12'
-    ERROR_MESSAGE_MOVED_IN_YEAR_BEFORE_1900 = 'Date moved in must be after 1900'
-    ERROR_MESSAGE_YEAR_LESS_THAN_4_DIGITS = 'Enter the whole year (4 digits)'
-    ERROR_MESSAGE_INVALID_DATE = 'Enter a real date'
-    ERROR_MESSAGE_NON_NUMERIC = 'Use numbers for the date'
-
-    ERROR_MESSAGE_MOVED_IN_DATE_AFTER_CURRENT_DATE = 'Date moved in must be today or in the past'
-    ERROR_MESSAGE_MOVED_IN_DATE_AFTER_MOVED_OUT_DATE = 'Date you moved in must be before date you moved out'
 
     home_address = forms.ChoiceField(label='Select address', required=True,
                                      error_messages={'required': 'Please select your address'})
@@ -234,14 +216,18 @@ class HomeAddressLookupForm(NannyForm):
 
     def clean_moved_in_date(self):
         moved_in_date = self.cleaned_data['moved_in_date']
-        # get applicant's date of birth
-        applicant_response = NannyGatewayActions().read('applicant-personal-details', params={'application_id': self.application_id_local})
-        if applicant_response.status_code == 200:
-            applicant_dob = datetime.datetime.strptime(applicant_response.record['date_of_birth'], '%Y-%m-%d').date()
-            # check that the date is not before the dob
-            if moved_in_date < applicant_dob:
-                raise forms.ValidationError('Please enter a move in date which is after your date of birth')
+        check_move_in_date_after_dob(moved_in_date, self.application_id_local)
 
         return self.cleaned_data['moved_in_date']
+
+
+def check_move_in_date_after_dob(moved_in_date, application_id):
+    applicant_response = NannyGatewayActions().read('applicant-personal-details',
+                                                   params={'application_id': application_id})
+    # check that the moved in date is on or after the dob
+    if applicant_response.status_code == 200:
+        applicant_dob = datetime.datetime.strptime(applicant_response.record['date_of_birth'], '%Y-%m-%d').date()
+        if moved_in_date < applicant_dob:
+            raise forms.ValidationError('Please enter a move in date which is after your date of birth')
 
 
