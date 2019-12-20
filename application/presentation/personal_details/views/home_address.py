@@ -2,7 +2,7 @@ from ..forms.home_address import HomeAddressForm, HomeAddressLookupForm, HomeAdd
 from application.services.address_helper import *
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-import datetime 
+import datetime
 
 from application.presentation.base_views import NannyFormView, NannyTemplateView
 from application.services.db_gateways import NannyGatewayActions
@@ -141,6 +141,7 @@ class PersonalDetailManualAddressView(NannyFormView):
     def get_initial(self):
         initial = super().get_initial()
         app_id = app_id_finder(self.request)
+        initial['id'] = app_id
 
         api_response = NannyGatewayActions().read('applicant-home-address', params={'application_id': app_id})
         if api_response.status_code == 200:
@@ -224,7 +225,7 @@ class PersonalDetailManualAddressView(NannyFormView):
         pd_api_response = NannyGatewayActions().read('applicant-personal-details', params={'application_id': app_id})
         if pd_api_response.status_code == 200:
             record = pd_api_response.record
-            record['moved_in_date'] = moved_in_date
+            record['moved_in_date'] = str(moved_in_date)
             NannyGatewayActions().put('applicant-personal-details', params=record)
 
         return super().form_valid(form)

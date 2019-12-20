@@ -40,7 +40,8 @@ class PersonalDetailsTests(TestCase):
         'last_name': 'TestLast',
         'date_of_birth': '1997-08-23',
         'lived_abroad': False,
-        'your_children': True
+        'your_children': True,
+        'moved_in_date': '2019-01-01'
             }
 
     sample_addr = {

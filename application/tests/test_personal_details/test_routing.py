@@ -187,7 +187,10 @@ class ManualEntryTests(PersonalDetailsTests):
                                             'street_line2': '',
                                             'town': 'test',
                                             'county': '',
-                                            'postcode': 'WA14 4PA'
+                                            'postcode': 'WA14 4PA',
+                                            'moved_in_date_0': 1,
+                                            'moved_in_date_1': 1,
+                                            'moved_in_date_2': 2019
                                         })
 
             self.assertEqual(response.status_code, 302)
@@ -214,7 +217,10 @@ class ManualEntryTests(PersonalDetailsTests):
                                             'street_line2': '',
                                             'town': 'test',
                                             'county': '',
-                                            'postcode': 'WA14 4PA'
+                                            'postcode': 'WA14 4PA',
+                                            'moved_in_date_0': 1,
+                                            'moved_in_date_1': 1,
+                                            'moved_in_date_2': 2019
                                         })
 
             self.assertEqual(response.status_code, 302)
@@ -241,7 +247,10 @@ class ManualEntryTests(PersonalDetailsTests):
                                             'street_line2': '',
                                             'town': '',
                                             'county': '',
-                                            'postcode': ''
+                                            'postcode': '',
+                                            'moved_in_date_0': '',
+                                            'moved_in_date_1': '',
+                                            'moved_in_date_2': ''
                                         })
 
             self.assertEqual(response.status_code, 200)

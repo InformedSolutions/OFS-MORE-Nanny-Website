@@ -35,7 +35,8 @@ mock_personal_details_record = {
     'date_of_birth': '2000-01-01',
     'lived_abroad': True,
     'known_to_social_services': True,
-    'reasons_known_to_social_services': 'Some Important Reason'
+    'reasons_known_to_social_services': 'Some Important Reason',
+    'moved_in_date': '2019-01-01'
 }
 
 mock_childcare_training_record = {
