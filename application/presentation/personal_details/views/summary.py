@@ -39,9 +39,6 @@ class Summary(View):
         date_of_birth_datetime = datetime.datetime.strptime(personal_details_record['date_of_birth'], '%Y-%m-%d')
         date_of_birth = date_of_birth_datetime.strftime('%d/%m/%Y')
 
-        moved_in_date_datetime = datetime.datetime.strptime(personal_details_record['moved_in_date'], '%Y-%m-%d').date()
-        moved_in_date = moved_in_date_datetime.strftime('%d/%m/%Y')
-
         address = AddressHelper.format_address(address_record, ", ")
         known_to_social_services = personal_details_record['known_to_social_services']
         reasons_known_to_social_services = personal_details_record['reasons_known_to_social_services']
@@ -52,8 +49,6 @@ class Summary(View):
                                 'personal-details:Personal-Details-Date-Of-Birth', "your date of birth")
         home_address_row = Row('home_address', 'Your home address', address,
                                'personal-details:Personal-Details-Manual-Address', "your home address")
-        moved_in_date_row = Row('moved_in_date', 'Moved in date', moved_in_date,
-                                'personal-details:Personal-Details-Manual-Address', 'moved in date')
         known_to_social_services_row = Row('known_to_social_services', 'Known to council social Services?',
                                            known_to_social_services,
                                            'personal-details:Personal-Details-Your-Children',
@@ -64,8 +59,20 @@ class Summary(View):
                                                    "why you are known to council social services in regards to your own children")
 
         personal_details_table = Table(application_id)
-        personal_details_table.row_list = [title_row, name_row, date_of_birth_row, home_address_row, moved_in_date_row,
-                                        known_to_social_services_row]
+
+        # Older applications won't have this - only try to do stuff if the date exists
+        if personal_details_record['moved_in_date']:
+            moved_in_date_datetime = datetime.datetime.strptime(personal_details_record['moved_in_date'],
+                                                                '%Y-%m-%d').date()
+            moved_in_date = moved_in_date_datetime.strftime('%d/%m/%Y')
+
+            moved_in_date_row = Row('moved_in_date', 'Moved in date', moved_in_date,
+                                    'personal-details:Personal-Details-Manual-Address', 'moved in date')
+            personal_details_table.row_list = [title_row, name_row, date_of_birth_row, home_address_row, moved_in_date_row,
+                                            known_to_social_services_row]
+        else:
+            personal_details_table.row_list = [title_row, name_row, date_of_birth_row, home_address_row,
+                                               known_to_social_services_row]
 
         if known_to_social_services:
             personal_details_table.row_list.append(reasons_known_to_social_services_row)
