@@ -156,7 +156,8 @@ class PersonalDetailManualAddressView(NannyFormView):
         pd_api_response = NannyGatewayActions().read('applicant-personal-details', params={'application_id': app_id})
         if pd_api_response.status_code == 200:
             record = pd_api_response.record
-            initial['moved_in_date'] = datetime.datetime.strptime(record['moved_in_date'], '%Y-%m-%d').date()
+            if record['moved_in_date'] is not None:
+                initial['moved_in_date'] = datetime.datetime.strptime(record['moved_in_date'], '%Y-%m-%d').date()
 
         return initial
 
