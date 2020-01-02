@@ -26,7 +26,8 @@ class Confirmation(NannyTemplateView):
         application_response = NannyGatewayActions().read('application', params={'application_id': application_id})
         if application_response.status_code == 200:
             application_record = application_response.record
-            if not check_tasks_completed(application_record, include_payment=True):
+            app_status = application_record['application_status']
+            if (app_status in ['DRAFTING', 'FURTHER_INFORMATION'])  and not check_tasks_completed(application_record, include_payment=True):
                 return HttpResponseRedirect(reverse('Task-List') + '?id=' + application_id)
             else:
                 context = self.get_context_data(**kwargs)
