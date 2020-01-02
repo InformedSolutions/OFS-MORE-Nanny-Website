@@ -10,49 +10,76 @@
     <div class="column-two-thirds">
 
         <h1 class="heading-xlarge">
-            Register as a nanny (England)
+            Apply to register as a nanny
         </h1>
 
-        <p>Register with Ofsted as a nanny or au pair to look after children in their own home.</p>
+        <p>You can apply to register as a nanny, including as an au pair, with Ofsted if you want to look after other people's children in their home.</p>
 
+        <h2 class="heading-medium">Contents</h2>
+        <ol class="list list-number">
+            <li><a href="#before-you-start">Before you start</a></li>
+            <li><a href="#how-much-it-costs">How much it costs</a></li>
+            <li><a href="#how-long-it-takes">How long the application takes</a></li>
+            <li><a href="#how-to-apply">How to apply</a></li>
+        </ol>
 
-        <h2 class="heading-medium">
+        <p>As a nanny, you can look after the children from 1 or 2 families at the same time. This will take place in one of those families’ homes.</p>
+        <p>If you want to look after children from more than 2 families at the same time, you must
+            <a href="https://www.gov.uk/become-childminder-nanny/register-childminder">register as a childminder.</a></p>
+
+        <h2 class="heading-medium" id="before-you-start">
             Before you start
         </h2>
 
-        <p>You will need the following:</p>
-        <ul class="list list-bullet" style="margin-left: 30px;">
-            <li><a href="https://www.gov.uk/guidance/criminal-record-checks-for-childminders-and-childcare-workers">UK criminal record certificate</a></li>
-            <li>first aid training for the age group you'll look after</li>
-            <li>childcare training - speak to your <a href="https://www.gov.uk/find-local-council">local council</a></li>
-            <li>public liability insurance</li>
-        </ul>
+        <h2 class="heading-small">DBS check</h2>
+        <p>In order to make your application, you will need an <a href="https://www.gov.uk/guidance/criminal-record-checks-for-childminders-and-childcare-workers">
+            enhanced criminal record (DBS) check with barred lists</a>
+            for a home-based role. You must get this type of DBS check, as having the wrong one will delay your registration.</p>
 
-        <p>If you've lived abroad in the last 5 years, you'll need
-            <a href="https://www.gov.uk/government/publications/criminal-records-checks-for-overseas-applicants">
-                certificates of good conduct</a> from those countries.</p>
+        <h2 class="heading-small">Training</h2>
+        <p>You will need both first aid training and childcare training. You can speak to your
+            <a href="https://www.gov.uk/find-local-council">local council</a> about these courses.
+            You must have these to complete your application.</p>
 
+        <h2 class="heading-small">Public liability insurance</h2>
+        <p>You must have public liability insurance before you apply to register as a nanny, or before you start working as one.
+            If you do not have this type of policy when you apply you will have to confirm you will have it in place before you start.</p>
 
-        <h2 class="heading-medium">
-            How long it takes
+        <h2 class="heading-small">Lived abroad</h2>
+        <p>If you have lived abroad in the last 5 years, you need <a href="https://www.gov.uk/government/publications/criminal-records-checks-for-overseas-applicants">
+                certificates of good conduct</a>  from the embassies.</p>
+
+        <h2 class="heading-medium" id="how-much-it-costs">How much it costs</h2>
+        <p>It usually costs £103 to apply to register with Ofsted. The registration fee is not refundable.</p>
+        <p>You will need to pay this registration fee each year.</p>
+        <p>There are <a href="https://www.gov.uk/become-childminder-nanny/how-much-it-costs">other costs</a> you will need to consider.</p>
+
+        <h2 class="heading-medium" id="how-long-it-takes">
+            How long the application takes
         </h2>
 
-        <p>It should take 15 minutes to fill in this form.</p>
+        <p>It should take you 15 to 20 minutes to complete your application.</p>
         <p>It usually takes up to 12 weeks to register with Ofsted.</p>
 
-
-        <h2 class="heading-medium">
-            How much it costs
+        <h2 class="heading-medium" id="how-to-apply">
+            How to apply
         </h2>
+        <div class="panel">
+        <p>Check whether you should be registering as one of the following instead of as a childminder:</p>
 
-        <p>It costs £103 to register with Ofsted.</p>
-        <p>It costs the same to renew every year.</p>
-        <p>Find out about <a href="{% url 'Costs' %}">other costs</a>.</p>
+        <ul class="list list-bullet">
+            <li>a nursery or other daycare</li>
+            <li>a childminder</li>
+        </ul>
+        </div>
 
+        <p>Registering as the wrong type of childcarer may delay when you can start work.</p>
 
         <form action="{% url 'Account-Selection' %}" method="get">
-            <input type=submit class="button button-start" value="Sign in">
+            <input type=submit class="button button-start" value="Register as a nanny">
         </form>
+        <br>
+        <p>You can only have one nanny application or registration associated with an email address.</p>
 
     </div>
 
