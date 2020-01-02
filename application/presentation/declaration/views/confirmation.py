@@ -28,7 +28,7 @@ class Confirmation(NannyTemplateView):
             application_record = application_response.record
             app_status = application_record['application_status']
             # if the applicant has hold of the application then check they have completed all tasks
-            if (app_status in ['DRAFTING', 'FURTHER_INFORMATION'])  and not check_tasks_completed(application_record, include_payment=True):
+            if (app_status in ['DRAFTING', 'FURTHER_INFORMATION']) and not check_tasks_completed(application_record, include_payment=True):
                 return HttpResponseRedirect(reverse('Task-List') + '?id=' + application_id)
             else:
                 context = self.get_context_data(**kwargs)
