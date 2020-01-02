@@ -498,6 +498,13 @@ div.error-summary ul.error-summary-list {
   margin-left: 20px !important;
 }
 
+.grey-panel {
+  background-color:#DEE0E2;
+  padding-left:10px;
+  padding-top:5px;
+  padding-bottom:2px;
+}
+
 .inline-radios {
   display: inline-block;
 }
