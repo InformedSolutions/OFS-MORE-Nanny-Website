@@ -5,6 +5,10 @@ DEBUG = False
 
 PROD_APPS = []
 
+ALLOWED_HOSTS = ['*']
+
+STATIC_URL = URL_PREFIX + '/static/'
+
 INSTALLED_APPS = BUILTIN_APPS + THIRD_PARTY_APPS + PROD_APPS + PROJECT_APPS
 
 FEEDBACK_EMAIL = 'registrationpilot@ofsted.gov.uk'
