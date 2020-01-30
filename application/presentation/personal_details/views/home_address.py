@@ -70,7 +70,7 @@ class PersonalDetailSelectAddressView(NannyFormView):
             record['street_line1'] = selected_address['line1']
             record['street_line2'] = selected_address['line2']
             record['town'] = selected_address['townOrCity']
-            record['county'] = None
+            record['county'] = ''
             record['postcode'] = selected_address['postcode']
             NannyGatewayActions().put('applicant-home-address', params=record)  # Update entire record.
 
