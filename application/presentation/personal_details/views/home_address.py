@@ -67,10 +67,10 @@ class PersonalDetailSelectAddressView(NannyFormView):
         if api_response.status_code == 200:
             record = api_response.record
             selected_address = AddressHelper.get_posted_address(selected_address_index, record['postcode'])
-            record['street_line1'] = selected_address['line1']
-            record['street_line2'] = selected_address['line2']
-            record['town'] = selected_address['townOrCity']
-            record['county'] = ''
+            record['street_line1'] = selected_address['line1'].title()
+            record['street_line2'] = selected_address['line2'].title()
+            record['town'] = selected_address['townOrCity'].title()
+            record['county'] = ''.title()
             record['postcode'] = selected_address['postcode']
             NannyGatewayActions().put('applicant-home-address', params=record)  # Update entire record.
 
