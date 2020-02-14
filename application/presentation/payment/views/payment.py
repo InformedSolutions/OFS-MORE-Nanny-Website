@@ -147,7 +147,7 @@ def card_payment_post_handler(request):
         application_reference = __assign_application_reference(application_record)
 
         # Set the official payment reference (uses the application reference)
-        payment_reference = __assign_payment_reference(application, application_reference)
+        payment_reference = __assign_payment_reference(application_record, application_reference)
 
         # Attempt to lodge payment by pulling form POST details
         card_number = re.sub('[ -]+', '', request.POST["card_number"])
@@ -189,12 +189,12 @@ def card_payment_post_handler(request):
             # If non-201 return status, this indicates a Payment gateway or Worldpay failure
             logger.info('Payment failed - rolling back payment status for application ' +
                         str(application.application_id))
-            __rollback_payment_submission_status(application)
+            __rollback_payment_submission_status(application_id)
             return __yield_general_processing_error_to_user(request, form, application_id)
 
     # If above logic gates have not been triggered, this indicates a form re-submission whilst processing
     # was taking place
-    return resubmission_handler(request, form, application_id)
+    return resubmission_handler(request, form, application_record)
 
 
 def resubmission_handler(request, form, application):
@@ -222,8 +222,8 @@ def resubmission_handler(request, form, application):
 
             # If no record of the payment could be found, yield error
             if payment_status_response_raw.status_code == 404:
-                logger.info('Worldpay payment record does not exist for application ' + str(application.application_id))
-                return __yield_general_processing_error_to_user(request, form, application)
+                logger.info('Worldpay payment record does not exist for application ' + str(application_id))
+                return __yield_general_processing_error_to_user(request, form, application_id)
 
             # Deserialize Payment Gateway API response
             parsed_payment_response = payment_status_response_raw.json()
@@ -231,14 +231,14 @@ def resubmission_handler(request, form, application):
             if parsed_payment_response.get('lastEvent') == "AUTHORISED":
                 # If payment has been marked as a AUTHORISED by Worldpay then payment has been captured
                 # meaning user can be safely progressed to confirmation page
-                return __handle_authorised_payment(application)
+                return __handle_authorised_payment(application_id)
             if parsed_payment_response.get('lastEvent') == "REFUSED":
                 # If payment has been marked as a REFUSED by Worldpay then payment has
                 # been attempted but was not successful in which case a new order should be attempted.
-                __rollback_payment_submission_status(application)
-                return __yield_general_processing_error_to_user(request, form, application)
+                __rollback_payment_submission_status(application_id)
+                return __yield_general_processing_error_to_user(request, form, application_id)
             if parsed_payment_response.get('lastEvent') == "ERROR":
-                return __yield_general_processing_error_to_user(request, form, application)
+                return __yield_general_processing_error_to_user(request, form, application_id)
             else:
                 if 'processing_attempts' in request.META:
                     processing_attempts = int(request.META.get('processing_attempts'))
@@ -252,11 +252,11 @@ def resubmission_handler(request, form, application):
 
                         variables = {
                             'form': form,
-                            'id': application,
+                            'id': application_id,
                         }
 
                         return HttpResponseRedirect(
-                            reverse('Payment-Details-View') + '?id=' + application, variables)
+                            reverse('Payment-Details-View') + '?id=' + application_id, variables)
 
                     # Otherwise increment processing attempt count
                     request.META['processing_attempts'] = processing_attempts + 1
@@ -268,12 +268,12 @@ def resubmission_handler(request, form, application):
 
         else:
             # No payment reference exists - clear the payment record so that applicant can try again
-            __rollback_payment_submission_status(application)
-            __yield_general_processing_error_to_user(request, form, application.application_id)
+            __rollback_payment_submission_status(application_id)
+            __yield_general_processing_error_to_user(request, form, application_id)
 
     else:
         # No payment record exists
-        __yield_general_processing_error_to_user(request, form, application.application_id)
+        __yield_general_processing_error_to_user(request, form, application_id)
 
 
 def __assign_application_reference(application):
