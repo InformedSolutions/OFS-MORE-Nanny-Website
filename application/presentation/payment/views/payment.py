@@ -120,6 +120,8 @@ def card_payment_post_handler(request):
     :param request: inbound HTTP POST request
     :return: confirmation of payment or error page based on payment processing outcome
     """
+    logger.info('Received request to process card payment')
+
     application_id = request.POST["id"]
     form = PaymentDetailsForm(request.POST)
 
@@ -133,21 +135,19 @@ def card_payment_post_handler(request):
 
     application_record = NannyGatewayActions().read('application', params={'application_id': application_id}).record
 
-    application_reference = __assign_application_reference(application_record)
-
     # Boolean flag for managing logic gates
     prior_payment_record_exists = payment_service.payment_record_exists(application_id)
 
-    payment_reference = __create_payment_record(application_record, application_reference)
-
-    payment_record = payment_service.get_payment_record(application_id)
-
-    payment_record_submitted = payment_record['payment_submitted']
+    __create_payment_record(application_record)
 
     # If no prior payment record exists, request to capture the payment
-    if not prior_payment_record_exists \
-            or (prior_payment_record_exists
-                and not payment_record_submitted):
+    if not prior_payment_record_exists:
+
+        # Assign the application reference - request goes to NOO to reserve this
+        application_reference = __assign_application_reference(application_record)
+
+        # Set the official payment reference (uses the application reference)
+        payment_reference = __assign_payment_reference(application_record, application_reference)
 
         # Attempt to lodge payment by pulling form POST details
         card_number = re.sub('[ -]+', '', request.POST["card_number"])
@@ -182,18 +182,22 @@ def card_payment_post_handler(request):
                 return __yield_general_processing_error_to_user(request, form, application_id)
 
             if parsed_payment_response.get('lastEvent') == "ERROR":
+                __rollback_payment_submission_status(application_id)
                 return __yield_general_processing_error_to_user(request, form, application_id)
 
         else:
             # If non-201 return status, this indicates a Payment gateway or Worldpay failure
+            logger.info('Payment failed - rolling back payment status for application ' +
+                        str(application.application_id))
+            __rollback_payment_submission_status(application_id)
             return __yield_general_processing_error_to_user(request, form, application_id)
 
     # If above logic gates have not been triggered, this indicates a form re-submission whilst processing
     # was taking place
-    return resubmission_handler(request, payment_reference, form, application_id)
+    return resubmission_handler(request, form, application_record)
 
 
-def resubmission_handler(request, payment_reference, form, application):
+def resubmission_handler(request, form, application):
     """
     Handling logic for managing page re-submissions to avoid duplicate payments being created
     :param request: Inbound HTTP post request
@@ -202,57 +206,74 @@ def resubmission_handler(request, payment_reference, form, application):
     :param application: the user's childminder application
     :return: HTTP response redirect based on payment status check outcome
     """
+    logger.info('Resubmission handler triggered due to multiple payment requests')
+    application_id = application['application_id']
 
     # All logic below acts as a handler for page re-submissions
     time.sleep(int(settings.PAYMENT_STATUS_QUERY_INTERVAL_IN_SECONDS))
 
-    # Check at this point whether Worldpay has marked the payment as authorised
-    payment_status_response_raw = payment_service.check_payment(payment_reference)
+    prior_payment_record_exists = payment_service.payment_record_exists(application_id)
+    if prior_payment_record_exists:
+        payment_record = NannyGatewayActions().read('payment', params={'application_id': application_id}).record
+        if payment_record['payment_reference'] is not None and payment_record['payment_reference'] != "PENDING":
 
-    # If no record of the payment could be found, yield error
-    if payment_status_response_raw.status_code == 404:
-        return __yield_general_processing_error_to_user(request, form, application)
+            # Check at this point whether Worldpay has marked the payment as authorised
+            payment_status_response_raw = payment_service.check_payment(payment_record['payment_reference'])
 
-    # Deserialize Payment Gateway API response
-    parsed_payment_response = payment_status_response_raw.json()
+            # If no record of the payment could be found, yield error
+            if payment_status_response_raw.status_code == 404:
+                logger.info('Worldpay payment record does not exist for application ' + str(application_id))
+                return __yield_general_processing_error_to_user(request, form, application_id)
 
-    if parsed_payment_response.get('lastEvent') == "AUTHORISED":
-        # If payment has been marked as a AUTHORISED by Worldpay then payment has been captured
-        # meaning user can be safely progressed to confirmation page
-        return __handle_authorised_payment(application)
-    if parsed_payment_response.get('lastEvent') == "REFUSED":
-        # If payment has been marked as a REFUSED by Worldpay then payment has
-        # been attempted but was not successful in which case a new order should be attempted.
-        __rollback_payment_submission_status(application)
-        return __yield_general_processing_error_to_user(request, form, application)
-    if parsed_payment_response.get('lastEvent') == "ERROR":
-        return __yield_general_processing_error_to_user(request, form, application)
-    else:
-        if 'processing_attempts' in request.META:
-            processing_attempts = int(request.META.get('processing_attempts'))
+            # Deserialize Payment Gateway API response
+            parsed_payment_response = payment_status_response_raw.json()
 
-            # If 3 attempts to process the payment have already been made without success
-            # yield error to user
-            if processing_attempts >= settings.PAYMENT_PROCESSING_ATTEMPTS:
-                form.add_error(None, 'There has been a problem when trying to process your payment. '
-                                     'Please contact Ofsted for assistance.', )
-                form.error_summary_template_name = 'error-summary.html'
+            if parsed_payment_response.get('lastEvent') == "AUTHORISED":
+                # If payment has been marked as a AUTHORISED by Worldpay then payment has been captured
+                # meaning user can be safely progressed to confirmation page
+                return __handle_authorised_payment(application_id)
+            if parsed_payment_response.get('lastEvent') == "REFUSED":
+                # If payment has been marked as a REFUSED by Worldpay then payment has
+                # been attempted but was not successful in which case a new order should be attempted.
+                __rollback_payment_submission_status(application_id)
+                return __yield_general_processing_error_to_user(request, form, application_id)
+            if parsed_payment_response.get('lastEvent') == "ERROR":
+                return __yield_general_processing_error_to_user(request, form, application_id)
+            else:
+                if 'processing_attempts' in request.META:
+                    processing_attempts = int(request.META.get('processing_attempts'))
 
-                variables = {
-                    'form': form,
-                    'id': application,
-                }
+                    # If 3 attempts to process the payment have already been made without success
+                    # yield error to user
+                    if processing_attempts >= settings.PAYMENT_PROCESSING_ATTEMPTS:
+                        form.add_error(None, 'There has been a problem when trying to process your payment. '
+                                             'Please contact Ofsted for assistance.', )
+                        form.error_summary_template_name = 'error-summary.html'
 
-                return HttpResponseRedirect(
-                    reverse('Payment-Details-View') + '?id=' + application, variables)
+                        variables = {
+                            'form': form,
+                            'id': application_id,
+                        }
 
-            # Otherwise increment processing attempt count
-            request.META['processing_attempts'] = processing_attempts + 1
+                        return HttpResponseRedirect(
+                            reverse('Payment-Details-View') + '?id=' + application_id, variables)
+
+                    # Otherwise increment processing attempt count
+                    request.META['processing_attempts'] = processing_attempts + 1
+                else:
+                    request.META['processing_attempts'] = 1
+
+                # Retry processing of payment
+                return resubmission_handler(request, form, application)
+
         else:
-            request.META['processing_attempts'] = 1
+            # No payment reference exists - clear the payment record so that applicant can try again
+            __rollback_payment_submission_status(application_id)
+            __yield_general_processing_error_to_user(request, form, application_id)
 
-        # Retry processing of payment
-        return resubmission_handler(request, payment_reference, form, application)
+    else:
+        # No payment record exists
+        __yield_general_processing_error_to_user(request, form, application_id)
 
 
 def __assign_application_reference(application):
@@ -269,7 +290,7 @@ def __assign_application_reference(application):
 
     response = requests.get(get_request_endpoint)
 
-    logger.debug('Received application reference number: ' + str(response.content) + ' from gateway API')
+    logger.info('Received application reference number: ' + str(response.content) + ' from gateway API')
 
     if response.status_code == 200:
         response_body = response.json()
@@ -279,42 +300,46 @@ def __assign_application_reference(application):
         raise Exception
 
 
-def __create_payment_record(application, application_reference):
+def __assign_payment_reference(application, application_reference):
+    """
+    Private helper method to create formatted payment reference for finance reconciliation purposes
+    :param application: the application for which a new payment reference is to be assigned
+    :return: a payment reference number for an application (either new or existing)
+    """
+    application_id = application['application_id']
+    payment_record = NannyGatewayActions().read('payment', params={'application_id': application_id}).record
+    if payment_record['payment_reference'] == "PENDING":
+        logger.info('Assigning new payment reference for application with id ' + str(application_id))
+        payment_reference = payment_service.create_formatted_payment_reference(application_reference)
+        payment_record['payment_reference'] = payment_reference
+        NannyGatewayActions().put('payment', params=payment_record)
+        return payment_reference
+    else:
+        logger.info('Returning existing payment reference for application with id: ' + str(application.application_id))
+        return payment_record['payment_reference']
+
+
+def __create_payment_record(application):
     """
     Private helper function for creating a payment record in the event one does not previously exist.
     If a previous record is already present, a payment reference is returned
     :param application: the application for which a new payment record is to be created
     :param application_reference: the reference number assigned to an application
-    :return: a payment reference number for an application (either new or)
     """
     application_id = application['application_id']
     prior_payment_record_exists = payment_service.payment_record_exists(application_id)
 
     # Lodge payment record if does not currently exist
     if not prior_payment_record_exists:
-        logger.info('Creating new payment record '
-                    'for application with id: ' + application_id)
-
-        # Create formatted payment reference for finance reconciliation purposes
-        payment_reference = payment_service.create_formatted_payment_reference(application_reference)
-
-        logger.info('Updating payment record with generated reference '
-                    'for application with id: ' + application_id)
+        logger.info('Creating new payment record for application with id: ' + application_id)
 
         NannyGatewayActions().create(
             'payment',
             params={
                 'application_id': application_id,
-                'payment_reference': payment_reference,
+                'payment_reference': "PENDING",
             }
         )
-        return payment_reference
-
-    else:
-        logger.info('Fetching existing payment record '
-                    'for application with id: ' + application_id)
-        payment_record = payment_service.get_payment_record(application_id)
-        return payment_record['payment_reference']
 
 
 def __handle_authorised_payment(application_id):
@@ -328,7 +353,7 @@ def __handle_authorised_payment(application_id):
     __mark_payment_record_as_authorised(application_id)
 
     # Transition application to submitted
-    logger.info('Assigning SUBMITTED state for application with id: ' + str(application_id))
+    logger.info('Assigning submitted date for application with id: ' + str(application_id))
 
     application_record = NannyGatewayActions().read('application', params={'application_id': application_id}).record
     application_record['date_submitted'] = datetime.datetime.today()
@@ -411,11 +436,14 @@ def __rollback_payment_submission_status(application_id):
     Method for rolling back a payment submission if card details have been declined
     :param application_id: the unique identifier of the application for which a payment is to be rolled back
     """
-    logger.info('Rolling payment back in response to REFUSED status for application with id: '
+    logger.info('Rolling payment back for application with id: '
                 + str(application_id))
     payment_record = NannyGatewayActions().read('payment', params={'application_id': application_id}).record
-    payment_record['payment_submitted'] = False
-    NannyGatewayActions().put('payment', params=payment_record)
+    if not payment_record['payment_authorised']:
+        # Only delete the record if the payment is not authorised
+        NannyGatewayActions().delete('payment', params=payment_record)
+    else:
+        logger.info('Rollback cancelled - payment has already been authorised')
 
 
 def __redirect_to_payment_confirmation(application_reference, application_id):
