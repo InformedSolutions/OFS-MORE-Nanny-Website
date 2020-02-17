@@ -188,13 +188,14 @@ def card_payment_post_handler(request):
         else:
             # If non-201 return status, this indicates a Payment gateway or Worldpay failure
             logger.info('Payment failed - rolling back payment status for application ' +
-                        str(application.application_id))
+                        str(application_id))
             __rollback_payment_submission_status(application_id)
             return __yield_general_processing_error_to_user(request, form, application_id)
-
-    # If above logic gates have not been triggered, this indicates a form re-submission whilst processing
-    # was taking place
-    return resubmission_handler(request, form, application_record)
+    else:
+        logger.info('Previous payment record already exists - handling resubmission')
+        # If above logic gates have not been triggered, this indicates a form re-submission whilst processing
+        # was taking place
+        return resubmission_handler(request, form, application_record)
 
 
 def resubmission_handler(request, form, application):
