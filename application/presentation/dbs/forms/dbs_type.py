@@ -36,10 +36,13 @@ class DBSTypeForm(NannyForm):
             self.fields[self.capita_field_name] = self.get_enhanced_check_field_data()
 
     def get_enhanced_check_field_data(self):
-        return forms.ChoiceField(label=mark_safe('Is it an enhanced check with barred lists as well as being for a <a '
+        return forms.ChoiceField(label=mark_safe('Is your DBS check: <ul style="list-style-type: disc; padding-left: 50px;">'
+                                                 '<li>an enhanced heck with barred '
+                                                 'lists?</li><li>if you lived with the family you are a nanny for, '
+                                                 'is it also for a <a '
                                                  'href="https://www.gov.uk/government/publications/dbs-home-based'
                                                  '-positions-guide/home-based-position-definition-and-guidance" '
-                                                 'target="_blank">home-based childcare role</a>?'),
+                                                 'target="_blank">home-based role</a>?</li></ul><br>'),
                                  choices=self.options,
                                  widget=ConditionalPostInlineRadioSelect,
                                  required=True,
