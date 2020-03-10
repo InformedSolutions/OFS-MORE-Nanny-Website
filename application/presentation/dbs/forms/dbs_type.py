@@ -37,7 +37,7 @@ class DBSTypeForm(NannyForm):
 
     def get_enhanced_check_field_data(self):
         return forms.ChoiceField(label=mark_safe('Is your DBS check: <ul style="list-style-type: disc; padding-left: 50px;">'
-                                                 '<li>an enhanced heck with barred '
+                                                 '<li>an enhanced check with barred '
                                                  'lists?</li><li>if you lived with the family you are a nanny for, '
                                                  'is it also for a <a '
                                                  'href="https://www.gov.uk/government/publications/dbs-home-based'
