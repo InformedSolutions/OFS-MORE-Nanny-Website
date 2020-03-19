@@ -82,7 +82,7 @@ class FirstAidTrainingTests(TestCase):
                 'course_title': 'Pediatric First Aid',
                 'course_date_0': '12',
                 'course_date_1': '3',
-                'course_date_2': '2017',
+                'course_date_2': '2020',
             }
 
             r = self.client.post(reverse('first-aid:Training-Details'), data=data, params={'id': self.app_id})
