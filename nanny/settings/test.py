@@ -8,6 +8,9 @@ STATIC_URL = URL_PREFIX + '/static/'
 
 ALLOWED_HOSTS = ['*']
 
+# GTM Container ID
+GOOGLE_TAG_MANAGER_ID = "GTM-MNCJ8QK"
+
 INSTALLED_APPS = BUILTIN_APPS + THIRD_PARTY_APPS + PROJECT_APPS
 
 FEEDBACK_EMAIL = 'registrationpilot@ofsted.gov.uk'

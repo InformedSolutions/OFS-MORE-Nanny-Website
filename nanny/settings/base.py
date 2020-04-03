@@ -141,6 +141,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django_settings_export.settings_export',
                 "nanny.middleware.globalise_url_prefix",
                 "nanny.middleware.globalise_authentication_flag",
                 'govuk_template_base.context_processors.govuk_template_base'
@@ -248,7 +249,8 @@ LOGGING = {
 
 # Export Settings variables DEBUG to templates context
 SETTINGS_EXPORT = [
-    'DEBUG'
+    'DEBUG',
+    'GOOGLE_TAG_MANAGER_ID'
 ]
 
 AUTHENTICATION_URL = URL_PREFIX + '/sign-in/'
