@@ -52,6 +52,11 @@ class MasterSummary(NeverCacheMixin, NannyTemplateView):
 
         data = self.load_data(app_id, '', self.section_names, False)
 
+        application_response = NannyGatewayActions().read('application', {'application_id': app_id})
+        if application_response.status_code == 200:
+            application_record = application_response.record
+            context['app_status'] = application_record['application_status']
+
         context['json'] = data
         context['application_id'] = app_id
         context['id'] = self.request.GET['id']
@@ -135,20 +140,6 @@ class PrintableMasterSummary(MasterSummary):
     def generate_links(self, data, app_id):
         # don't generate any change links for the print summary
         return data
-
-    def get_context_data(self):
-        context = super().get_context_data()
-        app_id = self.request.GET["id"]
-
-        application_response = NannyGatewayActions().read('application', {'application_id': app_id})
-        if application_response.status_code == 200:
-            application_record = application_response.record
-            context['app_status'] = application_record['application_status']
-
-        context['application_id'] = app_id
-        context['id'] = self.request.GET['id']
-
-        return context
 
     def get_arc_flagged(self, application_id):
         # don't bother checking arc flags for print summary
