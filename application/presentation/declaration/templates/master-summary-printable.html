@@ -27,7 +27,11 @@
 </script>
 
 <div class="form-group">
+    {% if app_status == 'ACCEPTED' %}
+    <a href="{% url 'declaration:accepted-confirmation' %}?id={{ id }}">Return to confirmation</a>
+    {% else %}
     <a href="{% url 'declaration:confirmation' %}?id={{ id }}">Return to confirmation</a>
+    {% endif %}
 </div>
 
 {% endblock %}
