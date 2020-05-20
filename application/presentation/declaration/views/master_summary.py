@@ -52,6 +52,11 @@ class MasterSummary(NeverCacheMixin, NannyTemplateView):
 
         data = self.load_data(app_id, '', self.section_names, False)
 
+        application_response = NannyGatewayActions().read('application', {'application_id': app_id})
+        if application_response.status_code == 200:
+            application_record = application_response.record
+            context['app_status'] = application_record['application_status']
+
         context['json'] = data
         context['application_id'] = app_id
         context['id'] = self.request.GET['id']
