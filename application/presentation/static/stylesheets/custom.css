@@ -540,3 +540,12 @@ div.error-summary ul.error-summary-list {
   clip: rect(0,0,0,0);
   border: 0;
 }
+
+.global-cookie-message-content {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 10px;
+}
+
+.global-cookie-message-heading {
+  margin-top: 0;
