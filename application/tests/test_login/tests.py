@@ -610,3 +610,20 @@ class LoginTests(TestCase):
             self.assertEqual(resolve(response.url).func.view_class, views.ContactDetailsSummaryView)
 
 
+    def test_can_render_cookie_page(self):
+        """
+        Test that the cookie page can render
+        """
+        response = self.client.get(reverse('Cookie-Policy'))
+
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(response.resolver_match.view_name, 'Cookie-Policy')
+
+    def test_cookie_update_after_form_submission(self):
+        form_data = {
+            'cookie_selection': 'opted_in',
+            'url': ''
+        }
+        self.client.get(reverse('Cookie-Policy'))
+        response = self.client.post(reverse('Cookie-Policy'), form_data)
+        self.assertEqual(response.cookies['cookie_preferences'].value, 'opted_in')

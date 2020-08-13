@@ -70,7 +70,6 @@
 
     if (hasCookieMessage) {
       message.style.display = 'block';
-      GOVUK.cookie('seen_cookie_message', 'yes', { days: 28 });
     }
   };
 }).call(this);
@@ -79,7 +78,6 @@
 
   // add cookie message
   if (window.GOVUK && GOVUK.addCookieMessage) {
-    GOVUK.addCookieMessage();
     if (!window.location.href.includes('cookies')) {
         GOVUK.addCookieMessage();
     }

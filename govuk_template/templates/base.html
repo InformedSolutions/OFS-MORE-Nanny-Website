@@ -3,11 +3,10 @@
 <!--[if lt IE 9]><html class="lte-ie8" lang="{{ html_lang|default:'en' }}"><![endif]-->
 <!--[if gt IE 8]><!--><html lang="{{ html_lang|default:'en' }}"><!--<![endif]-->
   <head>
-    {% if settings.GOOGLE_TAG_MANAGER_ID != "" %
+    {% if settings.GOOGLE_TAG_MANAGER_ID != "" %}
       <!-- Google Tag Manager -->
     <script src="{% static 'javascripts/govuk-template.js' %}"></script>
     <script>
-    console.log(GOVUK.cookie('cookie_preferences'));
     if (GOVUK.cookie('cookie_preferences') == 'opted_in') {
     console.log(GOVUK.getCookie('cookie_preferences'));
       var gtm_id = "{{settings.GOOGLE_TAG_MANAGER_ID}}";
