@@ -285,6 +285,7 @@ AUTHENTICATION_EXEMPT_URLS = (
     r'^' + URL_PREFIX + '/phone-number/',
     r'^' + URL_PREFIX + '/feedback/',
     r'^' + URL_PREFIX + '/feedback-submitted/',
+    r'^' + URL_PREFIX + '/cookies/',
 )
 
 # Regex Validation Strings

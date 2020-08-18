@@ -541,4 +541,11 @@ div.error-summary ul.error-summary-list {
   border: 0;
 }
 
+.global-cookie-message-content {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 10px;
+}
 
+.global-cookie-message-heading {
+  margin-top: 0;
