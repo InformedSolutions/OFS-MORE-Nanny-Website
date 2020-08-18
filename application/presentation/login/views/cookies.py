@@ -43,12 +43,14 @@ def cookie_policy(request):
                 'show_preference_set_confirmation': True,
                 'previous_url': previous_url
             })
+
+            response.set_cookie('cookie_preferences', cookie_value, max_age=2419200)
+            response.set_cookie('seen_cookie_message', 'yes', max_age=2419200)
+
             if cookie_value == 'opted_out':
                 for k in list(request.COOKIES.keys()):
                     if k.startswith('_'):
-                        response.set_cookie(k, request.COOKIES[k], expires=-86400)
-            response.set_cookie('cookie_preferences', cookie_value, max_age=2419200)
-            response.set_cookie('seen_cookie_message', 'yes', max_age=2419200)
+                        response.set_cookie(k, request.COOKIES[k], max_age=-1, expires=-1, domain='.'+settings.DOMAIN_URL)
         else:
             response = render(request, 'cookies.html', {
                 'form': form,
