@@ -3,18 +3,15 @@
 <!--[if lt IE 9]><html class="lte-ie8" lang="{{ html_lang|default:'en' }}"><![endif]-->
 <!--[if gt IE 8]><!--><html lang="{{ html_lang|default:'en' }}"><!--<![endif]-->
   <head>
-    {% if settings.GOOGLE_TAG_MANAGER_ID != "" %}
+    {% if not settings.GOOGLE_TAG_MANAGER_ID == "" %}
       <!-- Google Tag Manager -->
-    <script src="{% static 'javascripts/govuk-template.js' %}"></script>
-    <script>
-    if (GOVUK.cookie('cookie_preferences') == 'opted_in') {
+      <script>
       var gtm_id = "{{settings.GOOGLE_TAG_MANAGER_ID}}";
       (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
       new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
       j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-      })(window,document,'script','dataLayer', gtm_id);}
-  </script>
+      })(window,document,'script','dataLayer', gtm_id);</script>
       <!-- End Google Tag Manager -->
     {% endif %}
 
@@ -32,14 +29,14 @@
     <!--[if lt IE 9]><script src="{% static 'javascripts/ie.js' %}"></script><![endif]-->
 
     <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon" />
-    
+
     <link rel="mask-icon" href="{% static 'images/gov.uk_logotype_crown.svg' %}" color="#0b0c0c">
     <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/apple-touch-icon-180x180.png' %}">
     <link rel="apple-touch-icon" sizes="167x167" href="{% static 'images/apple-touch-icon-167x167.png' %}">
     <link rel="apple-touch-icon" sizes="152x152" href="{% static 'images/apple-touch-icon-152x152.png' %}">
     <link rel="apple-touch-icon" href="{% static 'images/apple-touch-icon.png' %}">
 
-    
+
     <meta name="theme-color" content="#0b0c0c" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -49,7 +46,7 @@
   </head>
 
   <body class="{% block body_classes %}{% endblock %}">
-    {% if settings.GOOGLE_TAG_MANAGER_ID != "" and request.COOKIES.cookie_preferences == 'opted_in' %}
+    {% if not settings.GOOGLE_TAG_MANAGER_ID == "" %}
       <!-- Google Tag Manager (noscript) -->
       <noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ settings.GOOGLE_TAG_MANAGER_ID }}"
       height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -67,12 +64,12 @@
     </div>
 
     <div id="global-cookie-message">
-      
+
         {% block cookie_message %}{% endblock %}
-      
+
     </div>
 
-    
+
     <header role="banner" id="global-header" class="{% block header_class %}{% endblock %}">
       <div class="header-wrapper">
         <div class="header-global">
@@ -86,7 +83,7 @@
         {% block proposition_header %}{% endblock %}
       </div>
     </header>
-    
+
 
     {% block after_header %}{% endblock %}
 
@@ -105,9 +102,9 @@
 
             <div class="open-government-licence">
               <p class="logo"><a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" rel="license">Open Government Licence</a></p>
-              
+
                 {% block licence_message %}<p>All content is available under the <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" rel="license">Open Government Licence v3.0</a>, except where otherwise stated</p>{% endblock %}
-              
+
             </div>
           </div>
 
@@ -124,10 +121,7 @@
 
     {% block body_end %}{% endblock %}
 
-    
+
     <script>if (typeof window.GOVUK === 'undefined') document.body.className = document.body.className.replace('js-enabled', '');</script>
-    {% if not request.COOKIES.cookie_preferences %}
-        <script>GOVUK.cookie('cookie_preferences', 'opted_out', { days: 28 });</script>
-    {% endif %}
   </body>
 </html>
