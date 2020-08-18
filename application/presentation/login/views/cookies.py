@@ -5,7 +5,7 @@ Method for returning the template for the Cookie Policy page
 from django.shortcuts import render
 
 from ..forms import AnalyticsCookieSelection
-from djang.conf import settings
+from django.conf import settings
 
 
 def cookie_policy(request):
