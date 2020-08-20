@@ -114,6 +114,7 @@ function globalCookieMessageOptIn() {
 
     GOVUK.cookie('cookie_preferences', 'opted_in', { days: 28 });
     GOVUK.cookie('seen_cookie_message', 'yes', { days: 28 });
+
     cookieSelection.style.display = "none";
     cookieAcceptConfirmation.style.display = "block";
 };
@@ -123,6 +124,7 @@ function globalCookieMessageOptOut() {
 
     GOVUK.cookie('cookie_preferences', 'opted_out', { days: 28 });
     GOVUK.cookie('seen_cookie_message', 'yes', { days: 28 });
+
     cookieSelection.style.display = "none";
     cookieRejectConfirmation.style.display = "block";
 };
