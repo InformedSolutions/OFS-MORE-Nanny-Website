@@ -6,15 +6,11 @@
   /*
     Cookie methods
     ==============
-
     Usage:
-
       Setting a cookie:
       GOVUK.cookie('hobnob', 'tasty', { days: 30 });
-
       Reading a cookie:
       GOVUK.cookie('hobnob');
-
       Deleting a cookie:
       GOVUK.cookie('hobnob', null);
   */
@@ -107,6 +103,3 @@
     }
   }
 }).call(this);
-
-
-

@@ -608,5 +608,3 @@ class LoginTests(TestCase):
 
             self.assertEqual(response.status_code, 302)
             self.assertEqual(resolve(response.url).func.view_class, views.ContactDetailsSummaryView)
-
-
