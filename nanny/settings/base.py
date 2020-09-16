@@ -56,6 +56,8 @@ PUBLIC_APPLICATION_URL = os.environ.get('PUBLIC_APPLICATION_URL')
 
 DBS_URL = os.environ.get('APP_DBS_URL')
 
+DOMAIN_URL = os.environ.get('APP_DOMAIN')
+
 EXECUTING_AS_TEST = os.environ.get('EXECUTING_AS_TEST', False)
 
 
@@ -285,6 +287,7 @@ AUTHENTICATION_EXEMPT_URLS = (
     r'^' + URL_PREFIX + '/phone-number/',
     r'^' + URL_PREFIX + '/feedback/',
     r'^' + URL_PREFIX + '/feedback-submitted/',
+    r'^' + URL_PREFIX + '/cookies/',
 )
 
 # Regex Validation Strings

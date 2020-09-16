@@ -24,4 +24,5 @@ urlpatterns = [
     url(r'^sign-in/change-email/$', views.ChangeEmailTemplateView.as_view(), name='Change-Email'),
     url(r'^sign-in/check-email-change/$', views.CheckEmailView.as_view(), name='Check-Change-Email'),
     url(r'^sign-in/change-email-resent/', views.ResendChangeEmail.as_view(), name='Resend-Change-Email'),
+    url(r'^cookies/', views.cookie_policy, name='Cookie-Policy'),
 ]
