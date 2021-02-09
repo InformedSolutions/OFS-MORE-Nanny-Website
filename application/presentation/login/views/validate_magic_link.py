@@ -2,7 +2,7 @@ import time
 
 from django.conf import settings
 from django.http import HttpResponseRedirect
-from django.shortcuts import reverse
+from django.shortcuts import reverse, render
 from django.views import View
 
 from application.services import notify
@@ -15,6 +15,27 @@ class ValidateMagicLinkView(View):
     record = None
 
     def get(self, request, id):
+        identity_actions = IdentityGatewayActions()
+        api_response = identity_actions.list('user', params={'magic_link_email': id, 'service': "NANNY"})
+
+        if api_response.status_code == 200:
+
+            self.record = api_response.record[0]
+
+            if not self.link_has_expired():
+                return render(request, 'validation-page.html')
+            else:
+                return HttpResponseRedirect(reverse('Link-Used'))
+
+        elif api_response.status_code == 404:
+            return HttpResponseRedirect(reverse('Link-Used'))
+
+        else:
+            return HttpResponseRedirect(reverse('Service-Unavailable'))
+
+
+    def post(self, request, id):
+        # return render(request, 'validation-page.html', {'code': id})
         identity_actions = IdentityGatewayActions()
         api_response = identity_actions.list('user', params={'magic_link_email': id, 'service': "NANNY"})
 
