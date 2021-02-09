@@ -23,7 +23,10 @@ class ValidateMagicLinkView(View):
             self.record = api_response.record[0]
 
             if not self.link_has_expired():
-                return render(request, 'validation-page.html')
+                if not self.record['mobile_number']:
+                    return render(request, 'validation-page-new.html')
+                else:
+                    return render(request, 'validation-page-existing.html')
             else:
                 return HttpResponseRedirect(reverse('Link-Used'))
 
