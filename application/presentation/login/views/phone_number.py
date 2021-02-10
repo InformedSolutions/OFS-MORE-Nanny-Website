@@ -23,6 +23,9 @@ class PhoneNumbersFormView(BaseFormView):
         record['mobile_number'] = form.cleaned_data['mobile_number']
         record['add_phone_number'] = form.cleaned_data['other_phone_number']
 
+        # Expire magic link
+        record['email_expiry_date'] = 0
+
         IdentityGatewayActions().put('user', params=record)
 
         response = HttpResponseRedirect(build_url('Contact-Details-Summary', get={'id': application_id}))
