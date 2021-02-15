@@ -21,6 +21,7 @@ class SecurityCodeFormView(BaseFormView):
         application_id = self.request.GET['id']
         record = IdentityGatewayActions().read('user', params={'application_id': application_id}).record
         record['sms_resend_attempts'] = 0
+        record['email_expiry_date'] = 0
         IdentityGatewayActions().put('user', params=record)
         response = login_redirect_helper.redirect_by_status(record['application_id'])
         CustomAuthenticationHandler.create_session(response, record['email'])

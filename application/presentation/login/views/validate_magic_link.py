@@ -75,9 +75,6 @@ class ValidateMagicLinkView(View):
             self.record = self.sms_magic_link(self.record)
             success_view = 'Security-Code'
 
-        # expire magic link
-        self.record['email_expiry_date'] = 0
-        IdentityGatewayActions().put('user', params=self.record)
         return utilities.build_url(success_view, get={'id': self.record['application_id']})
 
     @staticmethod
