@@ -11,9 +11,8 @@
 <form method="post" novalidate>
 
     <h1 class="form-title heading-large">Insurance cover</h1>
-    <p>You will need to have public liability insurance.</p>
-    <p>It must be in place before you start work.</p>
-    <p>This must be in your name.</p>
+    <p>You will need to have public liability insurance. This must be in your name.</p>
+    <p>If you do not have this type of policy, you can still complete your application. However, we will contact you to confirm that you have your policy in place before we approve your application.</p>
     <p>The insurance will cover you if anything goes wrong.</p>
     {% csrf_token %}
     <input type="hidden" id="id" value="{{application_id}}" name="id"/>
