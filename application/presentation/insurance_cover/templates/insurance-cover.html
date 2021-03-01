@@ -11,7 +11,8 @@
 <form method="post" novalidate>
 
     <h1 class="form-title heading-large">Get public liability insurance</h1>
-    <p>You will need to take out a public liability insurance policy before you start work.</p>
+    <p>You can continue with your application and send it to us, but we will contact you afterwards to confirm you have taken out a public liability insurance policy.</p>
+    <p>You must have this policy before we can approve your application.</p>
     {% csrf_token %}
     <input type="hidden" id="id" value="{{application_id}}" name="id"/>
     <a href="{{link_url}}" class="button">Continue</a>

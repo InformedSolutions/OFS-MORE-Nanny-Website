@@ -75,6 +75,7 @@ class ValidateMagicLinkView(View):
             self.record = self.sms_magic_link(self.record)
             success_view = 'Security-Code'
 
+        IdentityGatewayActions().put('user', params=self.record)
         return utilities.build_url(success_view, get={'id': self.record['application_id']})
 
     @staticmethod
