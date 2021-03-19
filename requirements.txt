@@ -18,7 +18,7 @@ django-govuk-forms==0.4
 django-govuk-template==0.4
 django-settings-export==1.2.1
 django-timeline-logger==1.0
-djangorestframework==3.5.3
+djangorestframework==3.11.2
 Faker==0.8.13
 idna==2.6
 inflect==0.2.5
