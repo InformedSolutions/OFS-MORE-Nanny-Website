@@ -39,7 +39,7 @@ pylint-plugin-utils==0.2.6
 pyparsing==2.2.0
 python-dateutil==2.7.2
 pytz==2018.4
-PyYAML==4.2b1
+PyYAML==5.4
 requests==2.20.0
 selenium==3.11.0
 six==1.11.0
