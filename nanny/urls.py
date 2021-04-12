@@ -13,7 +13,6 @@ urlpatterns = [
 if hasattr(settings, 'URL_PREFIX'):
     prefixed_url_pattern = []
     for pat in urlpatterns:
-        # pat.regex = re.compile(r"^%s/%s" % (settings.URL_PREFIX[1:], pat.regex.pattern[1:]))
         if hasattr(pat, 'lookup_str'):
             pat.pattern.regex = re.compile(r"^%s/%s" % (settings.URL_PREFIX[1:], pat.pattern.regex.pattern[1:]))
         else:
@@ -21,6 +20,5 @@ if hasattr(settings, 'URL_PREFIX'):
                 debug_pattern.pattern.regex = re.compile(r"^%s/%s" % (settings.URL_PREFIX[1:], debug_pattern.pattern.regex.pattern[1:]))
         prefixed_url_pattern.append(pat)
     urlpatterns = prefixed_url_pattern
-
 
 handler500 = base_views.error_500
