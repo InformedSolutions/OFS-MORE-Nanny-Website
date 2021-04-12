@@ -8,7 +8,7 @@ import time
 from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.views.decorators.cache import never_cache
 
 from ....services.db_gateways import NannyGatewayActions, IdentityGatewayActions
